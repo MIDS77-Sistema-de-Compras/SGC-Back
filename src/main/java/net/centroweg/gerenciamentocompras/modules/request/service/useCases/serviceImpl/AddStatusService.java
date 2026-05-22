@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.status;
+package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.Status;

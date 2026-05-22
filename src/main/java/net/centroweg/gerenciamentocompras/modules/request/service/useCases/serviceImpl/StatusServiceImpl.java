@@ -1,8 +1,9 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.status;
+package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
+import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.StatusService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

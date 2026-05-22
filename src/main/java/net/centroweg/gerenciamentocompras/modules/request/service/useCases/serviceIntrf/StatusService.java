@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.status;
+package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf;
 
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;

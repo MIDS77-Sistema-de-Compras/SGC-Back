@@ -7,10 +7,9 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.status.StatusService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/status")
 @RestController
@@ -23,5 +22,17 @@ public class StatusController {
     public ResponseEntity<StatusResponse> addStatus(@Valid @RequestBody StatusRequest statusRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(statusService.createStatus(statusRequest));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<StatusResponse>> listStatus () {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statusService.findAllStatus());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<StatusResponse> findStatusById (@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statusService.findStatusById(id));
     }
 }

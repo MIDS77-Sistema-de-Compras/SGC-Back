@@ -5,14 +5,29 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class StatusServiceImpl implements StatusService {
 
     private final AddStatusService addStatusService;
+    private final ListStatusService listStatusService;
+    private final FindStatusByIdService findStatusByIdService;
 
     @Override
     public StatusResponse createStatus(StatusRequest statusRequest) {
         return addStatusService.addStatus(statusRequest);
     }
+
+    @Override
+    public StatusResponse findStatusById(Long id) {
+        return findStatusByIdService.findStatusById(id);
+    }
+
+    @Override
+    public List<StatusResponse> findAllStatus() {
+        return listStatusService.listStatus();
+    }
+
 }

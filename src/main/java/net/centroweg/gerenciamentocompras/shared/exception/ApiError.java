@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.shared.exception;
+package net.centroweg.gerenciamentocompras.shared.exception;
 
 import java.time.LocalDateTime;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.user.domain;
+package net.centroweg.gerenciamentocompras.modules.user.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -47,4 +46,13 @@ public class User {
 
     @ManyToOne
     private Role role;
+
+    public User(String name, String cpf, String email, String password, String extensionNumber, boolean active) {
+        this.name = name;
+        this.cpf = cpf;
+        this.email = email;
+        this.password = password;
+        this.extensionNumber = extensionNumber;
+        this.active = active;
+    }
 }

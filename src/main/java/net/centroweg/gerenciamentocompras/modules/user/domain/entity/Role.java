@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.user.domain;
+package net.centroweg.gerenciamentocompras.modules.user.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,6 +30,9 @@ public class Role implements RoleLevels {
     }
 
     @OneToMany(mappedBy = "role")
-    private List<User> usuarios;
+    private List<User> users;
 
+    public Role(String name) {
+        this.name = name;
+    }
 }

@@ -10,4 +10,5 @@ public interface StatusService {
     StatusResponse createStatus (StatusRequest statusRequest);
     StatusResponse findStatusById (Long id);
     List<StatusResponse> findAllStatus ();
+    StatusResponse editStatus (Long id, StatusRequest statusRequest);
 }

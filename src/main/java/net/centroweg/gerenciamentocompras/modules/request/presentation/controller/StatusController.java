@@ -35,4 +35,10 @@ public class StatusController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(statusService.findStatusById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StatusResponse> editStatus (@PathVariable Long id, @Valid @RequestBody StatusRequest statusRequest) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statusService.editStatus(id, statusRequest));
+    }
 }

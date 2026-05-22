@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.provision.service.mapper;
 
+import java.util.List;
+
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
@@ -23,4 +25,11 @@ public interface ProvisionMapper {
      * @return ProvisionResponse - The provision response
      */
     ProvisionResponse toResponse(Provision provision);
+
+    /** Transforms a list of entities of type Provision into a list of responses of Provision
+     * 
+     * @param provisionList A list of entities of type Provision
+     * @return List<ProvisionResponse> - The list of provision response
+     */
+    List<ProvisionResponse> toResponse(List<Provision> provisionList);
 }

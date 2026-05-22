@@ -6,5 +6,5 @@ package net.centroweg.gerenciamentocompras.modules.provision.service.api;
  * @version 1.0
  */
 public interface ProvisionPublicApi {
-    
+    // here lies the specific methods used by other modules
 }

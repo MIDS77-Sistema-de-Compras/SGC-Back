@@ -11,4 +11,6 @@ public interface StatusService {
     StatusResponse findStatusById (Long id);
     List<StatusResponse> findAllStatus ();
     StatusResponse editStatus (Long id, StatusRequest statusRequest);
+    void deleteStatus (Long id);
+
 }

@@ -15,7 +15,7 @@ public class StatusServiceImpl implements StatusService {
     private final ListStatusService listStatusService;
     private final FindStatusByIdService findStatusByIdService;
     private final EditStatusService editStatusService;
-
+    private final DeleteStatusService deleteStatusService;
 
     @Override
     public StatusResponse createStatus(StatusRequest statusRequest) {
@@ -35,6 +35,11 @@ public class StatusServiceImpl implements StatusService {
     @Override
     public StatusResponse editStatus(Long id, StatusRequest statusRequest) {
         return editStatusService.editStatus(id, statusRequest);
+    }
+
+    @Override
+    public void deleteStatus(Long id) {
+        deleteStatusService.deleteStatus(id);
     }
 
 }

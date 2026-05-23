@@ -16,6 +16,7 @@ public class UserServiceImpl implements UserIntrf {
     private final ListUserImpl listUser;
     private final FindUserByIdImpl findUserById;
     private final UpdateUserAllImpl updateUserAll;
+    private final DeleteUserImpl deleteUser;
 
     @Override
     public UserResponse createUser(CreateUser user){
@@ -35,5 +36,10 @@ public class UserServiceImpl implements UserIntrf {
     @Override
     public UserResponse updateUserAll(Long id, CreateUser user){
         return updateUserAll.updateUserAll(id, user);
+    }
+
+    @Override
+    public void deleteUser(Long id){
+        deleteUser.deleteUser(id);
     }
 }

@@ -1,8 +1,11 @@
 package net.centroweg.gerenciamentocompras.modules.request.domain.exception;
 
-public class StatusNotFoundException extends RuntimeException {
+import net.centroweg.gerenciamentocompras.modules.shared.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class StatusNotFoundException extends BusinessException {
 
     public StatusNotFoundException() {
-        super("Status não encontrado!");
+        super("Status não encontrado!", HttpStatus.NOT_FOUND);
     }
 }

@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CreateCr{
 
-    private final CrRepository CrRepository;
-    private final CrMapper CrMapper;
+    private final CrRepository crRepository;
+    private final CrMapper crMapper;
 
     public CrResponse create(CrRequest dto){
-        return CrMapper.toResponse(CrRepository.save(CrMapper.toEntity(dto)));
+        return crMapper.toResponse(crRepository.save(crMapper.toEntity(dto)));
     }
 }

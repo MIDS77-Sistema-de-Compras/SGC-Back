@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
@@ -26,7 +27,7 @@ public class ProvisionController {
     private final ProvisionService provisionService;
 
     @PostMapping
-    public ResponseEntity<ProvisionResponse> saveProvision(@RequestBody ProvisionRequest request){
+    public ResponseEntity<ProvisionResponse> saveProvision(@Valid @RequestBody ProvisionRequest request){
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(provisionService.createProvision(request));
     }
@@ -44,7 +45,7 @@ public class ProvisionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProvisionResponse> updateProvision(@PathVariable("id") Long id, @RequestBody ProvisionRequest request){
+    public ResponseEntity<ProvisionResponse> updateProvision(@PathVariable("id") Long id, @Valid @RequestBody ProvisionRequest request){
         return ResponseEntity.status(HttpStatus.OK)
             .body(provisionService.updateProvision(id, request));
     }

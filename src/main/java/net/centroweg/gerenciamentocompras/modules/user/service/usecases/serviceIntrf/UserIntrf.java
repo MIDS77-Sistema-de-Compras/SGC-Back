@@ -10,4 +10,5 @@ public interface UserIntrf {
     UserResponse createUser(CreateUser user);
     List<UserResponse> listUser();
     UserResponse findUserById(Long id);
+    UserResponse updateUserAll(Long id, CreateUser user);
 }

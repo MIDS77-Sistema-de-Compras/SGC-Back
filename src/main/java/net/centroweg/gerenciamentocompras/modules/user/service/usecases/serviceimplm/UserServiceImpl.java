@@ -10,11 +10,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserIntrf {
+public class UserServiceImpl implements UserIntrf {
 
     private final CreateUserImpl createUser;
-    private final ListUser listUser;
-    private final FindUserById findUserById;
+    private final ListUserImpl listUser;
+    private final FindUserByIdImpl findUserById;
+    private final UpdateUserAllImpl updateUserAll;
 
     @Override
     public UserResponse createUser(CreateUser user){
@@ -29,5 +30,10 @@ public class UserService implements UserIntrf {
     @Override
     public UserResponse findUserById(Long id){
         return findUserById.findUserById(id);
+    }
+
+    @Override
+    public UserResponse updateUserAll(Long id, CreateUser user){
+        return updateUserAll.updateUserAll(id, user);
     }
 }

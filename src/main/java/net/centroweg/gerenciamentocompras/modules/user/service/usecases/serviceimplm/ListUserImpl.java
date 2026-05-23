@@ -6,15 +6,16 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class FindUserById {
+public class ListUserImpl {
 
     private final UserMapper mapper;
     private final UserRepository repository;
 
-    public UserResponse findUserById(Long id){
-        return mapper.toDTO(repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não foi encontrado!")));
+    public List<UserResponse> listUser(){
+        return mapper.toDTOList(repository.findAll());
     }
 }

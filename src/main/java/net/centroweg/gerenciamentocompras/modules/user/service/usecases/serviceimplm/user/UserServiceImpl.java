@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm;
+package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
@@ -15,6 +15,7 @@ public class UserServiceImpl implements UserIntrf {
     private final CreateUserImpl createUser;
     private final ListUserImpl listUser;
     private final FindUserByIdImpl findUserById;
+    private final FindUserByNameImpl findUserByName;
     private final UpdateUserAllImpl updateUserAll;
     private final DeleteUserImpl deleteUser;
 
@@ -31,6 +32,11 @@ public class UserServiceImpl implements UserIntrf {
     @Override
     public UserResponse findUserById(Long id){
         return findUserById.findUserById(id);
+    }
+
+    @Override
+    public List<UserResponse> findUserByName(String name){
+        return findUserByName.findUserByName(name);
     }
 
     @Override

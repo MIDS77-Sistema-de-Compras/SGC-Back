@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.shared.exception;
+package net.centroweg.gerenciamentocompras.shared.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

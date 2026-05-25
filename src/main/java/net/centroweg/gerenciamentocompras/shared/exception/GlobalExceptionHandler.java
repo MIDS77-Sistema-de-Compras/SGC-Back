@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.shared.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -65,6 +66,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CrNotFoundException.class)
     public ResponseEntity<ApiError> handleCrNotFound(CrNotFoundException exception){
         return  buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
+    }
+
+    @ExceptionHandler(BranchNotFoundException.class)
+    public ResponseEntity<ApiError> handleBranchNotFound(BranchNotFoundException exception) {
+        return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
     }
 
 }

@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.controller.ProvisionController;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
@@ -197,7 +196,7 @@ class ProvisionIntegrationTests {
     @DisplayName("Get Provision By ID Test - Should return 404 if not found")
     void getProvisionById_shouldReturn404_whenProvisionDoesNotExist() throws Exception {
         when(provisionService.getProvisionById(99L))
-            .thenThrow(new ProvisionNotFoundException("Provision not found"));
+            .thenThrow(new RuntimeException("Provision not found"));
 
         mockMvc.perform(get("/provisions/99"))
             .andExpect(status().isNotFound());
@@ -233,7 +232,7 @@ class ProvisionIntegrationTests {
     @DisplayName("Update Provision Test - Should return 404 if not found")
     void updateProvision_shouldReturn404_whenProvisionDoesNotExist() throws Exception {
         when(provisionService.updateProvision(eq(99L), any(ProvisionRequest.class)))
-            .thenThrow(new ProvisionNotFoundException("Provision not found"));
+            .thenThrow(new RuntimeException("Provision not found"));
 
         mockMvc.perform(put("/provisions/99")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -257,7 +256,7 @@ class ProvisionIntegrationTests {
     @Test
     @DisplayName("Delete Provision Test - Should return 404 is doesn't exists")
     void deleteProvision_shouldReturn404_whenProvisionDoesNotExist() throws Exception {
-        doThrow(new ProvisionNotFoundException("Provision not found"))
+        doThrow(new RuntimeException("Provision not found"))
             .when(provisionService).deleteProvision(99L);
 
         mockMvc.perform(delete("/provisions/99"))

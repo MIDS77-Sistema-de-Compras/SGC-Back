@@ -5,12 +5,12 @@ import jakarta.validation.constraints.NotNull;
 
 public record ProvisionRequest(
     @NotBlank(message="O nome do serviço não pode estar vazio.")
-    @NotNull(message="O nome do serviço não pode ser nulo.")
+    @NotNull(message="The provision's name cannot be null.")
     String name,
 
-    @NotNull(message="O valor total do serviço não pode ser nulo.")
+    @NotNull(message="The provision's total value cannot be null.")
     Double totalValue,
 
-    @NotBlank(message="A descrição do serviço não pode estar vazia.")
+    @NotBlank(message="The provision's description cannot be blank.")
     String description
 ) {}

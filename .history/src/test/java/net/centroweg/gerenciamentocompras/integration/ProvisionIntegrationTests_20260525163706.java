@@ -257,7 +257,7 @@ class ProvisionIntegrationTests {
     @Test
     @DisplayName("Delete Provision Test - Should return 404 is doesn't exists")
     void deleteProvision_shouldReturn404_whenProvisionDoesNotExist() throws Exception {
-        doThrow(new ProvisionNotFoundException("Provision not found"))
+        doThrow(new ProvisionNotFoundException("Provision not found for deleting"))
             .when(provisionService).deleteProvision(99L);
 
         mockMvc.perform(delete("/provisions/99"))

@@ -11,6 +11,6 @@ public record ProvisionRequest(
     @NotNull(message="O valor total do serviço não pode ser nulo.")
     Double totalValue,
 
-    @NotBlank(message="A descrição do serviço não pode estar vazia.")
+    @NotBlank(message="A descrição do serviço não pode ser va")
     String description
 ) {}

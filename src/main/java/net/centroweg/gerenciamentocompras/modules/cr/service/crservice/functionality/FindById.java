@@ -1,26 +1,21 @@
-package net.centroweg.gerenciamentocompras.modules.cr.service.crservice;
-
+package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.functionality;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
-public class FindAllCr {
+public class FindById {
     private final CrRepository crRepository;
     private final CrMapper crMapper;
 
-    public List<CrResponse> listAll(){
-        return crRepository.findAll()
-                .stream()
-                .map(crMapper::toResponse)
-                .toList();
+    public CrResponse listById(long id){
+        Cr cr = crRepository.findById(id).orElseThrow(() -> new CrNotFoundException(id));
+        return crMapper.toResponse(cr);
     }
-
-
 }

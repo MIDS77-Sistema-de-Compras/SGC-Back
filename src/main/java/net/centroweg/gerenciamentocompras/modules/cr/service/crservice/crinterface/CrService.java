@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.cr.service.crservice;
+package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface;
 
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;

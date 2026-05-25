@@ -4,7 +4,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFound
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
-import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.CrService;
+import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

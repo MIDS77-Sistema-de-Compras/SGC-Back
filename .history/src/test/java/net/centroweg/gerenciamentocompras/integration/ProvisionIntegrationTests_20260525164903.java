@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -233,8 +232,8 @@ class ProvisionIntegrationTests {
     @Test
     @DisplayName("Update Provision Test - Should return 404 if not found")
     void updateProvision_shouldReturn404_whenProvisionDoesNotExist() throws Exception {
-        when(provisionService.getProvisionById(99L))
-            .thenThrow(new ProvisionNotFoundException("Provision not found"));
+        doThrow(new ProvisionNotFoundException("Provision not found"))
+            .when(provisionService).updateProvision(eq(99L), any(ProvisionRequest.class));
 
         mockMvc.perform(put("/provisions/99")
                 .contentType(MediaType.APPLICATION_JSON)

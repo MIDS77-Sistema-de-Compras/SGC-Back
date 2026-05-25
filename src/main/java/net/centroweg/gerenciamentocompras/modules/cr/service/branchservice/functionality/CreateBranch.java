@@ -17,8 +17,8 @@ public class CreateBranch {
 
     public BranchResponse create(BranchRequest branchRequest){
         Branch branch = branchMapper.toEntity(branchRequest);
-        Branch branchSalvo = branchRepository.save(branch);
-        BranchResponse branchResponse = branchMapper.toResponse(branchSalvo);
+        Branch branchSaved = branchRepository.save(branch);
+        BranchResponse branchResponse = branchMapper.toResponse(branchSaved);
         return branchResponse;
     }
 }

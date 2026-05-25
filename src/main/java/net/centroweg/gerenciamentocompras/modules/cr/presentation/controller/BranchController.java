@@ -3,7 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.BranchRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.BranchResponse;
-import net.centroweg.gerenciamentocompras.modules.cr.service.branchservice.branchimpl.BranchService;
+import net.centroweg.gerenciamentocompras.modules.cr.service.branchservice.branchinterface.BranchService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

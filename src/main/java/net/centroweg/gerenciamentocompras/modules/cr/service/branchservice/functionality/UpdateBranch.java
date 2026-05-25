@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.branchservice.func
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.BranchRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.BranchResponse;
@@ -16,7 +17,7 @@ public class UpdateBranch {
     private final BranchMapper branchMapper;
 
     public BranchResponse update(long id, BranchRequest branchRequest){
-        Branch branch = branchRepository.findById(id).orElseThrow(() -> new RuntimeException());
+        Branch branch = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException());
         branch.setName(branchRequest.name());
         Branch branchSalva = branchRepository.save(branch);
         BranchResponse branchResponse = branchMapper.toResponse(branchSalva);

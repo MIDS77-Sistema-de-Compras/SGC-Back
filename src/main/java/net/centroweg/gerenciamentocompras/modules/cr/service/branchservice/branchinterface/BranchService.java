@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.cr.service.branchservice.branchimpl;
+package net.centroweg.gerenciamentocompras.modules.cr.service.branchservice.branchinterface;
 
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.BranchRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.BranchResponse;

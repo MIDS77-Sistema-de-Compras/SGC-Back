@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
@@ -100,7 +101,7 @@ class CrServiceIntegrationTest {
     @Test
     void shouldThrowExceptionWhenCrDoesNotExist() {
         assertThatThrownBy(() -> crService.listById(999L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("CR não existe!");
+                .isInstanceOf(CrNotFoundException.class)
+                .hasMessage("CR com id " + 999L + " não encontrado");
     }
 }

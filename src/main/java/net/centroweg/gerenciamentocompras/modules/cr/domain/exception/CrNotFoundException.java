@@ -1,7 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.cr.domain.exception;
 
-public class CrNotFoundException extends RuntimeException {
+import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class CrNotFoundException extends BusinessException {
   public CrNotFoundException(Long id) {
-    super("CR com id " + id + " não encontrado");
+    super("CR com id " + id + " não encontrado", HttpStatus.NOT_FOUND);
   }
 }

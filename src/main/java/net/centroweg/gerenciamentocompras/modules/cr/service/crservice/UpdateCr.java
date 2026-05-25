@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.crservice;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
@@ -15,7 +16,7 @@ public class UpdateCr {
     private final CrMapper crMapper;
 
     public CrResponse update(long id, CrRequest dto){
-        Cr cr = crRepository.findById(id).orElseThrow(()->new RuntimeException("CR não existe!"));
+        Cr cr = crRepository.findById(id).orElseThrow(()->new CrNotFoundException(id));
         cr.setName(dto.name());
         cr.setCode(dto.code());
         cr.setMaster(dto.master());

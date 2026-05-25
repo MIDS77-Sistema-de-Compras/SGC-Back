@@ -17,7 +17,7 @@ public class CrBranch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
@@ -29,5 +29,11 @@ public class CrBranch {
 
     @ManyToOne
     @JoinColumn(name = "responsible_user_id", nullable = true)
-    private User responsibleUserId;
+    private User responsibleUser;
+
+    public CrBranch(Branch branch, Cr cr, User responsibleUser) {
+        this.branch = branch;
+        this.cr = cr;
+        this.responsibleUser = responsibleUser;
+    }
 }

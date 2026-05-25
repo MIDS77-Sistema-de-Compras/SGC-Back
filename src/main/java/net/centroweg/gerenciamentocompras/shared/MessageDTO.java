@@ -1,6 +1,6 @@
 package net.centroweg.gerenciamentocompras.shared;
 
-public record MessageDTO (
+public record MessageDTO(
         String text
-){
+) {
 }

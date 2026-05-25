@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.shared.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -59,6 +60,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleGeneric(Exception exception) {
         log.error("Unexpected error: ", exception);
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ocorreu um erro inesperado.", null);
+    }
+
+    @ExceptionHandler(CrNotFoundException.class)
+    public ResponseEntity<ApiError> handleCrNotFound(CrNotFoundException exception){
+        return  buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
     }
 
 }

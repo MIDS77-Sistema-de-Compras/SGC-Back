@@ -3,9 +3,9 @@ package net.centroweg.gerenciamentocompras.modules.request.domain.exception;
 import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
-public class StatusNotFoundException extends BusinessException {
+public class StatusAlreadyExistsException extends BusinessException {
 
-    public StatusNotFoundException() {
-        super("Status não encontrado!", HttpStatus.NOT_FOUND);
+    public StatusAlreadyExistsException() {
+        super("Já existe um status cadastrado com esse nome.", HttpStatus.BAD_REQUEST);
     }
 }

@@ -2,6 +2,8 @@ package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serv
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
@@ -17,6 +19,10 @@ public class AddStatusService {
     private final StatusRepository statusRepository;
 
     public StatusResponse addStatus (StatusRequest statusRequest) {
+        if (statusRepository.existsByName(statusRequest.name())) {
+            throw new StatusAlreadyExistsException();
+        }
+
         Status status = statusRepository.save(statusMapper.toEntity(statusRequest));
 
         return statusMapper.toResponse(status);

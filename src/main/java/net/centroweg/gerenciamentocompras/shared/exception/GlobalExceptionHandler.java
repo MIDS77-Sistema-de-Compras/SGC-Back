@@ -1,7 +1,5 @@
 package net.centroweg.gerenciamentocompras.shared.exception;
 
-import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import java.util.HashMap;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 
 @Slf4j

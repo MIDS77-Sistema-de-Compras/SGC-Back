@@ -1,6 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusAlreadyExistsException; // IMPORT CORRIGIDO
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.StatusServiceImpl;
@@ -33,54 +33,54 @@ class StatusServiceTest {
 
     @Test
     @DisplayName("RN-STA09 — Deve lançar exceção ao tentar criar um status com nome já existente")
-    void deveLancarExcecaoQuandoStatusForDuplicado() {
-        String nomeDuplicado = "Aprovado";
-        StatusRequest requestDuplicado = new StatusRequest(nomeDuplicado, "Descrição válida com mais de dez caracteres");
+    void shouldThrowExceptionWhenStatusIsDuplicate() {
+        String duplicateName = "Aprovado";
+        StatusRequest duplicateRequest = new StatusRequest(duplicateName, "Descrição válida com mais de dez caracteres");
 
-        when(addStatusService.addStatus(requestDuplicado)).thenThrow(new StatusAlreadyExistsException());
+        when(addStatusService.addStatus(duplicateRequest)).thenThrow(new StatusAlreadyExistsException());
 
         assertThrows(StatusAlreadyExistsException.class, () -> {
-            statusService.createStatus(requestDuplicado);
+            statusService.createStatus(duplicateRequest);
         });
 
-        verify(addStatusService, times(1)).addStatus(requestDuplicado);
+        verify(addStatusService, times(1)).addStatus(duplicateRequest);
     }
 
     @Test
     @DisplayName("Deve criar um status com sucesso quando não for duplicado")
-    void deveCriarStatusComSucesso() {
-        StatusRequest requestValido = new StatusRequest("Novo Status", "Descrição com mais de dez caracteres");
-        StatusResponse responseFake = new StatusResponse(1L, "Novo Status", "Descrição com mais de dez caracteres");
+    void shouldCreateStatusSuccessfully() {
+        StatusRequest validRequest = new StatusRequest("Novo Status", "Descrição com mais de dez caracteres");
+        StatusResponse fakeResponse = new StatusResponse(1L, "Novo Status", "Descrição com mais de dez caracteres");
 
-        when(addStatusService.addStatus(requestValido)).thenReturn(responseFake);
+        when(addStatusService.addStatus(validRequest)).thenReturn(fakeResponse);
 
-        StatusResponse resultado = statusService.createStatus(requestValido);
+        StatusResponse result = statusService.createStatus(validRequest);
 
-        assertNotNull(resultado);
-        assertEquals(1L, resultado.id());
-        assertEquals("Novo Status", resultado.name());
+        assertNotNull(result);
+        assertEquals(1L, result.id());
+        assertEquals("Novo Status", result.name());
     }
 
     @Test
     @DisplayName("Deve buscar um status por ID com sucesso")
-    void deveBuscarStatusPorId() {
-        StatusResponse responseFake = new StatusResponse(1L, "Entregue", "Processo concluído com sucesso");
+    void shouldFindStatusById() {
+        StatusResponse fakeResponse = new StatusResponse(1L, "Entregue", "Processo concluído com sucesso");
 
-        when(findStatusByIdService.findStatusById(1L)).thenReturn(responseFake);
+        when(findStatusByIdService.findStatusById(1L)).thenReturn(fakeResponse);
 
-        StatusResponse resultado = statusService.findStatusById(1L);
+        StatusResponse result = statusService.findStatusById(1L);
 
-        assertNotNull(resultado);
-        assertEquals("Entregue", resultado.name());
+        assertNotNull(result);
+        assertEquals("Entregue", result.name());
     }
 
     @Test
     @DisplayName("Deve deletar um status por ID com sucesso")
-    void deveDeletarStatus() {
-        Long idParaDeletar = 1L;
+    void shouldDeleteStatus() {
+        Long idToDelete = 1L;
 
-        assertDoesNotThrow(() -> statusService.deleteStatus(idParaDeletar));
+        assertDoesNotThrow(() -> statusService.deleteStatus(idToDelete));
 
-        verify(deleteStatusService, times(1)).deleteStatus(idParaDeletar);
+        verify(deleteStatusService, times(1)).deleteStatus(idToDelete);
     }
 }

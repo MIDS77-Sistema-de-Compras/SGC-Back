@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface CrBranchRepository extends JpaRepository<CrBranch, Long> {
     List<CrBranch> findByBranchId(Long branchId);
     Optional<CrBranch> findByCrIdAndBranchId(Long crId, Long branchId);
-    Optional<CrBranch> findByIdAndResponsibleUserIdIsNotNull(Long id);
+    Optional<CrBranch> findByIdAndResponsibleUserIsNotNull(Long id);
 }

@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.crbranchinterface;
 
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchRequest;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.BranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
@@ -14,4 +13,7 @@ public interface CrBranchService {
     CrBranchResponse findById(Long id);
     CrBranchResponse update(Long id, CrBranchRequest request);
     MessageDTO delete(Long id);
+    List<CrBranchResponse> findCrBranchByBranch(Long branchId);
+    CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId);
+    CrBranchResponse removeCrBranchResponsible(Long crBranchId);
 }

@@ -5,6 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
@@ -33,6 +34,10 @@ public class CreateCrBranch {
 
         Cr cr = crRepository.findById(request.crId())
                 .orElseThrow(() -> new CrNotFoundException(request.crId()));
+
+        if (crBranchRepository.findByCrIdAndBranchId(request.crId(), request.branchId()).isPresent()) {
+            throw new CrBranchAlreadyExistsException();
+        }
 
         User user = null;
         if (request.responsibleUserId() != null) {

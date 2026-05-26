@@ -50,5 +50,23 @@ public class CrBranchController {
         );
     }
 
+    @GetMapping("/branch/{branchId}")
+    public ResponseEntity<List<CrBranchResponse>> findCrBranchByBranch(@PathVariable Long branchId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(crBranchService.findCrBranchByBranch(branchId));
+    }
+
+    @PutMapping("/{crBranchId}/responsible/{userId}")
+    public ResponseEntity<CrBranchResponse> assignCrBranchResponsible(@PathVariable Long crBranchId, @PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(crBranchService.assignCrBranchResponsible(crBranchId, userId));
+    }
+
+    @DeleteMapping("/{crBranchId}/responsible")
+    public ResponseEntity<CrBranchResponse> removeCrBranchResponsible(@PathVariable Long crBranchId) {
+        return ResponseEntity.ok(
+                crBranchService.removeCrBranchResponsible(crBranchId)
+        );
+    }
 
 }

@@ -233,7 +233,7 @@ class ProvisionIntegrationTests {
     @Test
     @DisplayName("Update Provision Test - Should return 404 if not found")
     void updateProvision_shouldReturn404_whenProvisionDoesNotExist() throws Exception {
-        when(provisionService.getProvisionById(99L))
+        when(provisionService.updateProvision(eq(99L), any(ProvisionRequest.class)))
             .thenThrow(new ProvisionNotFoundException("Provision not found"));
 
         mockMvc.perform(put("/provisions/99")

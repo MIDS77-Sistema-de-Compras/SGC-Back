@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.shared.exception;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 
 @Slf4j
@@ -71,6 +72,11 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(ProvisionNotFoundException.class)
     public ResponseEntity<ApiError> handleProvisionNotFound(ProvisionNotFoundException exception){
+        return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
+    }
+
+    @ExceptionHandler(BranchNotFoundException.class)
+    public ResponseEntity<ApiError> handleBranchNotFound(BranchNotFoundException exception) {
         return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
     }
 

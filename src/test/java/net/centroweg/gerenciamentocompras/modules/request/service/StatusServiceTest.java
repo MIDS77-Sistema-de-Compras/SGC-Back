@@ -34,14 +34,16 @@ class StatusServiceTest {
     @Test
     @DisplayName("RN-STA09 — Deve lançar exceção ao tentar criar um status com nome já existente")
     void deveLancarExcecaoQuandoStatusForDuplicado() {
-        String nomeAprovado = StatusName.APROVADO.getValue();
-        StatusRequest requestDuplicado = new StatusRequest(nomeAprovado, "Descrição válida com mais de dez caracteres");
+        String nomeDuplicado = "Aprovado";
+        StatusRequest requestDuplicado = new StatusRequest(nomeDuplicado, "Descrição válida com mais de dez caracteres");
 
         when(addStatusService.addStatus(requestDuplicado)).thenThrow(new StatusAlreadyExistsException());
 
         assertThrows(StatusAlreadyExistsException.class, () -> {
             statusService.createStatus(requestDuplicado);
         });
+
+        verify(addStatusService, times(1)).addStatus(requestDuplicado);
     }
 
     @Test

@@ -14,7 +14,7 @@ public class DeleteProvisionService {
 
     public void  deleteProvisionById(Long id){
         if(!provisionRepository.existsById(id)){
-            throw new ProvisionNotFoundException("Provision could not be found.");
+            throw new ProvisionNotFoundException("Serviço não encontrado.");
         }
 
         provisionRepository.deleteById(id);

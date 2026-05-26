@@ -34,7 +34,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldCreateCr() {
-        CrRequest request = new CrRequest("CR Compras", 1001L, true);
+        CrRequest request = new CrRequest("CR Compras", "1001L", true);
 
         CrResponse response = crService.create(request);
 
@@ -47,8 +47,8 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldListAllCrs() {
-        CrResponse firstCr = crService.create(new CrRequest("CR Compras", 1001L, true));
-        CrResponse secondCr = crService.create(new CrRequest("CR Engenharia", 1002L, false));
+        CrResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true));
+        CrResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false));
 
         List<CrResponse> responses = crService.listAll();
 
@@ -60,7 +60,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldFindCrById() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", 1001L, true));
+        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
 
         CrResponse response = crService.listById(createdCr.id());
 
@@ -72,8 +72,8 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldUpdateCr() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", 1001L, true));
-        CrRequest updateRequest = new CrRequest("CR Financeiro", 2002L, false);
+        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
+        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false);
 
         CrResponse response = crService.update(createdCr.id(), updateRequest);
 
@@ -90,7 +90,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldDeleteCr() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", 1001L, true));
+        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
 
         MessageDTO response = crService.delete(createdCr.id());
 

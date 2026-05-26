@@ -1,6 +1,5 @@
 package net.centroweg.gerenciamentocompras.modules.request.service;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.StatusName;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusAlreadyExistsException; // IMPORT CORRIGIDO
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;

@@ -5,13 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.centroweg.gerenciamentocompras.modules.request.domain.intfr.StatusIntrf;
 
 @Entity
 @Table(name = "status")
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
-public class Status {
-
-    public static final String INITIAL_STATUS_NAME = StatusName.AGUARDANDO_APROVACAO.getValue();
+public class Status implements StatusIntrf {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

@@ -2,6 +2,8 @@ package net.centroweg.gerenciamentocompras.shared.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -60,5 +62,6 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error: ", exception);
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ocorreu um erro inesperado.", null);
     }
+
 
 }

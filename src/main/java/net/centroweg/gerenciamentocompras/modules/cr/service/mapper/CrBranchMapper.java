@@ -24,7 +24,7 @@ public class CrBranchMapper {
                 crBranch.getBranch().getName(),
                 crBranch.getCr().getName(),
                 crBranch.getCr().getCode(),
-                crBranch.getResponsibleUser().getName() != null ? crBranch.getResponsibleUser().getName() : null
+                crBranch.getResponsibleUser() != null ? crBranch.getResponsibleUser().getName() : null
         );
     }
 }

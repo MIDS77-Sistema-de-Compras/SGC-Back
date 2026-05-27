@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.user.service.usecases.service
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
@@ -19,7 +20,7 @@ public class UpdateUserAllImpl {
 
     public UserResponse updateUserAll(Long id, CreateUser user){
         User userSave = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+                .orElseThrow(() -> new UserNotFoundException(id));
 
         userSave.setName(user.name());
         userSave.setCpf(user.cpf());

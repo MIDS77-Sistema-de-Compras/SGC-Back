@@ -18,11 +18,11 @@ public class Cr {
     private String name;
 
     @Column(nullable=false)
-    private long code;
+    private String code;
 
     private boolean master;
 
-    public Cr(String name, long code, boolean master) {
+    public Cr(String name, String code, boolean master) {
         this.name = name;
         this.code = code;
         this.master = master;

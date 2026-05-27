@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class FindById {
+public class FindByIdBranch {
 
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;

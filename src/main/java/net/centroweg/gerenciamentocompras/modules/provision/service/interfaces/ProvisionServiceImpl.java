@@ -9,7 +9,9 @@ import net.centroweg.gerenciamentocompras.modules.provision.service.AddProvision
 import net.centroweg.gerenciamentocompras.modules.provision.service.DeleteProvisionService;
 import net.centroweg.gerenciamentocompras.modules.provision.service.GetProvisionService;
 import net.centroweg.gerenciamentocompras.modules.provision.service.UpdateProvisionService;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class ProvisionServiceImpl implements ProvisionService {
     

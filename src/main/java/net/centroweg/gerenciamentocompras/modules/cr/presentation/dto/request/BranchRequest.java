@@ -1,6 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record BranchRequest (
-        String name
+        @NotBlank String name
 ){
 }

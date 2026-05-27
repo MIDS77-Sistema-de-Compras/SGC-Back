@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.cr.service.crservice;
+package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.functionality;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;

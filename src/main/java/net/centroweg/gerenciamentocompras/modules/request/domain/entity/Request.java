@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.domain;
+package net.centroweg.gerenciamentocompras.modules.request.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,8 +24,8 @@ public class Request {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private LocalDateTime requestDate;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime requestDate = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "cr_branch_id", nullable = false)

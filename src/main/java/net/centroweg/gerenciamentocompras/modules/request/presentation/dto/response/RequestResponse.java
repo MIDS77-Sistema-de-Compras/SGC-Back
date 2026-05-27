@@ -5,14 +5,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record RequestResponse(
-
-                Long id,
-                  LocalDateTime requestDate,
-                  LocalDateTime updatedAt,
-                  Long crBranchId,
-                  String crBranchName,
-                  Long statusId,
-                  String statusName,
-                  List<RequestItemResponse> items
-
+        Long id,
+        LocalDateTime requestDate,
+        LocalDateTime updatedAt,
+        Long crBranchId,
+        Long statusId,
+        List<RequestItemResponse> items
 ) {}

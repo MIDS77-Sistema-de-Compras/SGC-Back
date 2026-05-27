@@ -21,7 +21,7 @@ public record CreateUser(
                  message = "O CPF deve conter apenas números.")
         String cpf,
         @NotBlank(message = "A senha não deve estar em branco.")
-        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)(?=.*[@$!%*#?&])[A-Za-z\\\\d@$!%*#?&]{8,}$",
+        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
                  message = "A senha deve conter letra maiúscula e minúscula, número e caracteres especiais.")
         @Size(  min = 8,
                 max = 30,
@@ -30,7 +30,7 @@ public record CreateUser(
         @NotBlank(message = "O ramal não deve estar em branco.")
         @Size(  min = 4,
                 max = 6,
-                message = "O ramal deve ter entre 3 e 100 caracteres.")
+                message = "O ramal deve ter entre 4 e 6 caracteres.")
         String extensionNumber,
         @NotNull(message = "A atividade do usuário deve ser informada.")
         Boolean active,

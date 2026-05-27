@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -38,7 +38,7 @@ public class User {
     @Column(nullable = false)
     private boolean active;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
@@ -54,5 +54,11 @@ public class User {
         this.password = password;
         this.extensionNumber = extensionNumber;
         this.active = active;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }

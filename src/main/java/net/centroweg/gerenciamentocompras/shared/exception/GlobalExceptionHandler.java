@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleCrNotFound(CrNotFoundException exception){
         return  buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
     }
-    
+
     @ExceptionHandler(ProvisionNotFoundException.class)
     public ResponseEntity<ApiError> handleProvisionNotFound(ProvisionNotFoundException exception){
         return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);

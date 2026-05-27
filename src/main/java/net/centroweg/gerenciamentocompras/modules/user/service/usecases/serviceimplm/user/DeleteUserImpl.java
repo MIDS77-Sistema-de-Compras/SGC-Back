@@ -3,7 +3,9 @@ package net.centroweg.gerenciamentocompras.modules.user.service.usecases.service
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class DeleteUserImpl {
 

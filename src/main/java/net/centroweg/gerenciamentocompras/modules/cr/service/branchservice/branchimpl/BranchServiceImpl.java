@@ -17,7 +17,7 @@ public class BranchServiceImpl implements BranchService {
     private final CreateBranch createBranch;
     private final findAllBranch listAllBranch;
     private final UpdateBranch updateBranch;
-    private final FindById findById;
+    private final FindByIdBranch findById;
     private final DeleteBranch deleteBranch;
 
     @Override

@@ -1,5 +1,17 @@
 package net.centroweg.gerenciamentocompras.modules.product.presentation.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
+import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.UpdateProductRequest;
+import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
+import net.centroweg.gerenciamentocompras.modules.product.service.IProductService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor

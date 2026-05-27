@@ -10,7 +10,7 @@ public record ProductResponse(
             Double price,
             String type,
             String code,
-            List<VariationResponse> variations
+            String variation
 
-    ) {}
+) {}
 

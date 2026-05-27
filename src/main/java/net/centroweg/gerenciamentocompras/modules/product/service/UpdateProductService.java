@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.product.service;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.exception.Product;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.UpdateProductRequest;
@@ -20,10 +20,12 @@ public class UpdateProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
-        if (request.name() != null) product.setName(request.name());
-        if (request.description() != null) product.setDescription(request.description());
-        if (request.price() != null) product.setPrice(request.price());
-        if (request.type() != null) product.setType(request.type());
+        product.setName(request.name());
+        product.setDescription(request.description());
+        product.setPrice(request.price());
+        product.setType(request.type());
+        product.setCode(request.code());
+        product.setVariation(request.variation());
 
         return productMapper.toResponse(productRepository.save(product));
     }

@@ -7,7 +7,9 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateRole;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class UpdateRoleImpl {
 

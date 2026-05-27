@@ -25,7 +25,7 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getCpf(),
-                user.getPassword(),
+                user.getEmail(),
                 user.getExtensionNumber(),
                 user.isActive(),
                 user.getCreatedAt(),

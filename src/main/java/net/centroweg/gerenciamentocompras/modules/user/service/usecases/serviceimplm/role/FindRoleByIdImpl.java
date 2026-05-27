@@ -5,7 +5,9 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.exception.RoleNotF
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class FindRoleByIdImpl {
 

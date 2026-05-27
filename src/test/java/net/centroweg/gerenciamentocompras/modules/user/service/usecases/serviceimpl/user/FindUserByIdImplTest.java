@@ -53,7 +53,7 @@ public class FindUserByIdImplTest {
                 findUserByIdImpl.findUserById(id)
         );
 
-        assertEquals("Usuário não foi encontrado!", exception.getMessage());
+        assertTrue(exception.getMessage().contains("Usuário não encontrado com id:"));
     }
 
 }

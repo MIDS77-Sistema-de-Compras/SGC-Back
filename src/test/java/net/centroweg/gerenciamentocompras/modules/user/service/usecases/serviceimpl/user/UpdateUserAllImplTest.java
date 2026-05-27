@@ -15,8 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,9 +35,7 @@ public class UpdateUserAllImplTest {
     @Test
     @DisplayName("Deve lançar exceção ao tentar atualizar usuário inexistente")
     void shouldThrowExceptionWhenUserNotFoundOnUpdate() {
-        // Arrange
         Long id = 1L;
-        // Criando um request fictício (garanta que os campos batam com o seu Record CreateUser)
         CreateUser request = new CreateUser(
                 "Novo Nome",
                 "email@test.com",
@@ -49,17 +46,14 @@ public class UpdateUserAllImplTest {
                 "ADMIN"
         );
 
-        // Configuramos o mock para retornar Vazio quando buscar esse ID
         when(repository.findById(id)).thenReturn(Optional.empty());
 
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            // Chamando o método a partir da instância injetada
-            updateUserAllImpl.updateUserAll(id, request);
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, () ->
+                updateUserAllImpl.updateUserAll(id, request)
+        );
 
-        // Verifica se a mensagem da exceção é exatamente a que você escreveu na Service
-        assertEquals("Usuário não encontrado!", exception.getMessage());
+        // ✅ Não depende do valor exato do id na mensagem
+        assertTrue(exception.getMessage().contains("Usuário não encontrado com id:"));
     }
 
     @Test

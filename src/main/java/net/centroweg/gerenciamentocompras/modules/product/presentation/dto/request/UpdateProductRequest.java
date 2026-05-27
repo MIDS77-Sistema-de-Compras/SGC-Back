@@ -7,23 +7,20 @@ import jakarta.validation.constraints.Positive;
 public record UpdateProductRequest(
 
             @NotBlank
-            String name,
+                String name,
 
-            String description,
+                String description,
 
-            @NotNull
-            @Positive
-            Double price,
-
-            String type,
+                @NotNull
+                @Positive
+                Double price,
 
             @NotBlank
-            String code,
+                String type,
 
-            @NotBlank
-            String variation
+                @NotBlank
+                String code
 
 ) {}
-
 
 

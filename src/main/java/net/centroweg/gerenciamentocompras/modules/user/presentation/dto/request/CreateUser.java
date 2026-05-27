@@ -21,7 +21,7 @@ public record CreateUser(
                  message = "O CPF deve conter apenas números.")
         String cpf,
         @NotBlank(message = "A senha não deve estar em branco.")
-        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)(?=.*[@$!%*#?&])[A-Za-z\\\\d@$!%*#?&]{8,}$",
+        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
                  message = "A senha deve conter letra maiúscula e minúscula, número e caracteres especiais.")
         @Size(  min = 8,
                 max = 30,

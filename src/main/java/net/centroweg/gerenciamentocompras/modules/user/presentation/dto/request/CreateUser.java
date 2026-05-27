@@ -30,7 +30,7 @@ public record CreateUser(
         @NotBlank(message = "O ramal não deve estar em branco.")
         @Size(  min = 4,
                 max = 6,
-                message = "O ramal deve ter entre 3 e 100 caracteres.")
+                message = "O ramal deve ter entre 4 e 6 caracteres.")
         String extensionNumber,
         @NotNull(message = "A atividade do usuário deve ser informada.")
         Boolean active,

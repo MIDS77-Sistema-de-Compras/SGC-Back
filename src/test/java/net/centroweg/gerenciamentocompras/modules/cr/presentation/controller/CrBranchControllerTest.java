@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -65,7 +67,17 @@ class CrBranchControllerTest {
 
         branch = branchRepository.save(new Branch("Filial Centro"));
         cr = crRepository.save(new Cr("TI", "7940", false));
-        user = userRepository.save(new User("João", "12345678900", "joao@centroweg.com.br", "Senha@123", "1234", true));
+
+        user = new User();
+        user.setName("João");
+        user.setCpf("12345678900");
+        user.setEmail("joao@centroweg.com.br");
+        user.setPassword("Senha@123");
+        user.setExtensionNumber("1234");
+        user.setActive(true);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        user = userRepository.save(user);
     }
 
     @Test

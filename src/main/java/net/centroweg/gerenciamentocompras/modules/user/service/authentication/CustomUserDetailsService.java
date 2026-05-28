@@ -19,12 +19,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserPrincipal userPrincipal;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
-        User userSearched = userRepository.findByEmailOrCpf(username, username)
-                .orElseThrow( () -> new UsernameNotFoundException("Não há usuário com as credenciais digitadas para autenticação"));
+        String cleanLogin = login.trim();
+        String cleanCpf = cleanLogin.replaceAll("\\D", "");
 
+        User userSearched = userRepository.findByEmailOrCpf(cleanLogin, cleanCpf)
+                .orElseThrow( () -> new UsernameNotFoundException("Credenciais inválidas para o login fornecido"));
 
-        return null;
+        return new UserPrincipal(userSearched);
     }
 }

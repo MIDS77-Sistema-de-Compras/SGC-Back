@@ -9,6 +9,5 @@ public record RequestResponse(
         LocalDateTime requestDate,
         LocalDateTime updatedAt,
         Long crBranchId,
-        Long statusId,
-        List<RequestItemResponse> items
+        String statusId
 ) {}

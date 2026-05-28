@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.mapper;
+package net.centroweg.gerenciamentocompras.modules.request.service.mapper.status;
 
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;

@@ -45,4 +45,9 @@ public class Request {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     List<User> createdByUsers = new ArrayList<>();
+
+    public Request(CrBranch crBranch, Status status) {
+        this.crBranch = crBranch;
+        this.status = status;
+    }
 }

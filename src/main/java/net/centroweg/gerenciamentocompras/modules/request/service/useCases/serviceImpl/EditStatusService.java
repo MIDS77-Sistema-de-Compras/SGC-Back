@@ -6,7 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Statu
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.mapper.IStatusMapper;
+import net.centroweg.gerenciamentocompras.modules.request.service.mapper.status.IStatusMapper;
 import org.springframework.stereotype.Service;
 
 @Service

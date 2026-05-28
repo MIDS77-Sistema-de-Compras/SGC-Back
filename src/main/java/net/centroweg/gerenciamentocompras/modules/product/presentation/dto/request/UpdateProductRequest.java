@@ -6,21 +6,20 @@ import jakarta.validation.constraints.Positive;
 
 public record UpdateProductRequest(
 
-            @NotBlank
-                String name,
+        @NotBlank
+        String name,
 
-                String description,
+        String description,
 
-                @NotNull
-                @Positive
-                Double price,
+        @NotNull
+        @Positive
+        Double price,
 
-            @NotBlank
-                String type,
+        @NotBlank
+        String type,
 
-                @NotBlank
-                String code
+        @NotBlank
+        String code
 
-) {}
-
-
+) {
+}

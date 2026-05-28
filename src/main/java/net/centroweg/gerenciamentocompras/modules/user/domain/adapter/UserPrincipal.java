@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +18,17 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority(userEntity.getRole().getRole()));
     }
 
     @Override
     public @Nullable String getPassword() {
-        return "";
+        return userEntity.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return userEntity.getEmail();
     }
 
     @Override

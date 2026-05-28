@@ -1,15 +1,13 @@
-package net.centroweg.gerenciamentocompras.modules.user.service.authentication;
+package net.centroweg.gerenciamentocompras.modules.auth.service;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.user.domain.adapter.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor

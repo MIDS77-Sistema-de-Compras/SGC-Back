@@ -11,9 +11,14 @@ import org.springframework.stereotype.Service;
 public class RequestServiceImpl implements RequestService {
 
     private final CreateRequestServiceImpl createRequestService;
+    private final UpdateRequestServiceImpl updateRequestService;
 
     public RequestResponse createRequest(CreateRequestRequest request){
         return createRequestService.createRequest(request);
+    }
+
+    public RequestResponse updateRequest(CreateRequestRequest request, Long id){
+        return updateRequestService.updateRequest(request, id);
     }
 
 }

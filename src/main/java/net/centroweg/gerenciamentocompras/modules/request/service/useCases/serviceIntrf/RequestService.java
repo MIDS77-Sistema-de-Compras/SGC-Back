@@ -7,4 +7,5 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 public interface RequestService {
 
     RequestResponse createRequest(CreateRequestRequest request);
+    RequestResponse updateRequest(CreateRequestRequest request, Long id);
 }

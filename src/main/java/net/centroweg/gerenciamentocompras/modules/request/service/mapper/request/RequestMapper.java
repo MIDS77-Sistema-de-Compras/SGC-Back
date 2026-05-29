@@ -24,7 +24,6 @@ public class RequestMapper {
         Request requestSave = new Request();
         requestSave.setCrBranch(branch);
         requestSave.setStatus(status);
-        requestSave.setUpdatedAt(LocalDateTime.now());
         return requestSave;
     }
 

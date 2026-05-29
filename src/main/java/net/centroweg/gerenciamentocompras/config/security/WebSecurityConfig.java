@@ -13,10 +13,21 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Classe responsável por fazer a configuração da segurança da API
+ * @author hugo_paim
+ * @version 0.1
+ * */
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    /**
+     * Método que gerencia os filtros de segurança, como CORS, CSRF, autorização para determinados endpoints
+     * @param http parâmetro que representa a requisição do cliente HTTP
+     * @return Classe que representa os filtros de segurança para a requisição
+     * */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
@@ -27,6 +38,11 @@ public class WebSecurityConfig {
                 })
                 .build();
     }
+
+    /**
+     * Método que mostra as configurações do CORS (quem pode fazer a requisição, métodos HTTP permitidos, etc)
+     * @return Classe que representa a configuração do CORS e local de aplicação
+     * */
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
@@ -50,6 +66,10 @@ public class WebSecurityConfig {
         return source;
     }
 
+    /**
+     * Criptografia de senha
+     * @return Classe que representa o decodificador da criptografia
+     * */
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

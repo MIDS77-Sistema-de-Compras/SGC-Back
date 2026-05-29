@@ -12,6 +12,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Classe representante do módulo serviço, mapeada diretamente com o banco de dados.
+ * <p>
+ * Detém dados para persistencia.
+ * @author gabrielEFagundes
+ * @version 0.1.0
+ */
 @Entity
 @Table(name="provision")
 @AllArgsConstructor

@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+/**
+ * Controller REST responsável pelos endpoints de gerenciamento de Centros de Resultado (CR).
+ * <p>
+ * Expostos sob o caminho base {@code /cr}.
+ * </p>
+ */
 @Tag(name = "ENDPOINTS da entidade CR")
 @RestController
 @RequestMapping("/cr")
@@ -22,6 +28,12 @@ public class CrController {
 
     private final CrService crService;
 
+    /**
+     * Cria um novo Centro de Resultado.
+     *
+     * @param dto dados do CR a ser criado
+     * @return {@link CrResponse} com os dados do CR criado e status HTTP 201
+     */
     @Operation(description = "ENDPOINT responsável pela criação de CR")
     @PostMapping
     public ResponseEntity<CrResponse> create(@RequestBody CrRequest dto){
@@ -29,6 +41,11 @@ public class CrController {
                 .body(crService.create(dto));
     }
 
+    /**
+     * Lista todos os Centros de Resultado cadastrados.
+     *
+     * @return lista de {@link CrResponse} e status HTTP 200
+     */
     @Operation(description = "ENDPOINT responsável pela listagem de todos CR")
     @GetMapping
     public ResponseEntity<List<CrResponse>> listAll(){
@@ -36,6 +53,12 @@ public class CrController {
                 .body(crService.listAll());
     }
 
+    /**
+     * Busca um Centro de Resultado pelo seu identificador.
+     *
+     * @param id identificador do CR
+     * @return {@link CrResponse} com os dados do CR e status HTTP 200
+     */
     @Operation(description = "ENDPOINT responsável pela listagem de CR por id")
     @GetMapping("{id}")
     public ResponseEntity<CrResponse> listById(@PathVariable long id){
@@ -43,6 +66,13 @@ public class CrController {
                 .body(crService.listById(id));
     }
 
+    /**
+     * Atualiza os dados de um Centro de Resultado existente.
+     *
+     * @param id  identificador do CR a ser atualizado
+     * @param dto novos dados do CR
+     * @return {@link CrResponse} com os dados atualizados e status HTTP 200
+     */
     @Operation(description = "ENDPOINT responsável pela atualização de CR")
     @PutMapping("{id}")
     public ResponseEntity<CrResponse> update(@PathVariable long id, @RequestBody CrRequest dto){
@@ -50,7 +80,12 @@ public class CrController {
                 .body(crService.update(id, dto));
     }
 
-
+    /**
+     * Remove um Centro de Resultado pelo seu identificador.
+     *
+     * @param id identificador do CR a ser removido
+     * @return {@link MessageDTO} com mensagem de confirmação e status HTTP 200
+     */
     @Operation(description = "ENDPOINT responsável pelo delete de CR")
     @DeleteMapping("{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable long id){

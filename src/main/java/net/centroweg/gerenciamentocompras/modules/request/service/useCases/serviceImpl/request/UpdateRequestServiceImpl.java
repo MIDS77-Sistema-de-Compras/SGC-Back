@@ -35,7 +35,6 @@ public class UpdateRequestServiceImpl {
                         .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
         requestSave.setStatus(status);
         requestSave.setCrBranch(crBranch);
-        requestSave.setUpdatedAt(LocalDateTime.now());
         return mapper.toDTO(repository.save(requestSave));
     }
 }

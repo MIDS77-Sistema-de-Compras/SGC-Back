@@ -30,7 +30,7 @@ public class UpdateRequestServiceImpl {
     public RequestResponse updateRequest(CreateRequestRequest request, Long id){
         Request requestSave = repository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
-        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
+        Status status = statusRepository.findByNameIgnoringCase(request.statusName())
                         .orElseThrow(() -> new StatusNotFoundException());
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                         .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
@@ -40,6 +40,7 @@ public class UpdateRequestServiceImpl {
         requestSave.setStatus(status);
         requestSave.setCrBranch(crBranch);
         requestSave.setUpdatedAt(LocalDateTime.now());
+
         return mapper.toDTO(repository.save(requestSave));
     }
 }

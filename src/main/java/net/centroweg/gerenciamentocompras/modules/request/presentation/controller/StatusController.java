@@ -42,6 +42,13 @@ public class StatusController {
                 .body(statusService.findStatusById(id));
     }
 
+    @Operation(description = "ENDPOINT responsável por encontrar Status por id")
+    @GetMapping("/statusName/{statusName}")
+    public ResponseEntity<StatusResponse> findStatusByName(@PathVariable String statusName){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statusService.findStatusByName(statusName));
+    }
+
     @Operation(description = "ENDPOINT responsável pela atualização de Status")
     @PutMapping("/{id}")
     public ResponseEntity<StatusResponse> editStatus (@PathVariable Long id, @Valid @RequestBody StatusRequest statusRequest) {

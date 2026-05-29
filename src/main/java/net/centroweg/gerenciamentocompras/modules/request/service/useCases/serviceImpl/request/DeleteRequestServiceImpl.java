@@ -1,8 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyApprovedException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +16,12 @@ public class DeleteRequestServiceImpl {
     private final RequestRepository repository;
 
     public void deleteRequest(Long id){
-        repository.deleteById(id);
+        Request request = repository.findById(id)
+                .orElseThrow(() -> new RequestNotFoundException());
+        if(request.getStatus().getName().toLowerCase() == "aprovada"){
+            throw new RequestAlreadyApprovedException();
+        }
+        request.setActive(false);
+        repository.save(request);
     }
 }

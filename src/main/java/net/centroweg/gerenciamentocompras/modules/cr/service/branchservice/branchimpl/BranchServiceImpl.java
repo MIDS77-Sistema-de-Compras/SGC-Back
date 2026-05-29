@@ -10,6 +10,12 @@ import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
 import java.util.List;
 
+/**
+ * Implementação de {@link BranchService} que delega cada operação
+ * à sua respectiva classe de funcionalidade.
+ *
+ * @author Leandro
+ */
 @Service
 @RequiredArgsConstructor
 public class BranchServiceImpl implements BranchService {

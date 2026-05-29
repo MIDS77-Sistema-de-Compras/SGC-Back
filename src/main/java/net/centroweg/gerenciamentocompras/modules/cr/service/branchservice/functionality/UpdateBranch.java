@@ -9,6 +9,11 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.B
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.BranchMapper;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável pela atualização dos dados de uma {@link net.centroweg.gerenciamentocompras.modules.cr.domain.Branch}.
+ *
+ * @author Leandro
+ */
 @RequiredArgsConstructor
 @Service
 public class UpdateBranch {
@@ -16,6 +21,14 @@ public class UpdateBranch {
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
 
+    /**
+     * Atualiza o nome de uma branch existente.
+     *
+     * @param id            identificador da branch a ser atualizada
+     * @param branchRequest DTO com os novos dados da branch
+     * @return {@link BranchResponse} com os dados atualizados
+     * @throws net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException se nenhuma branch for encontrada com o id informado
+     */
     public BranchResponse update(long id, BranchRequest branchRequest){
         Branch branch = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException());
         branch.setName(branchRequest.name());

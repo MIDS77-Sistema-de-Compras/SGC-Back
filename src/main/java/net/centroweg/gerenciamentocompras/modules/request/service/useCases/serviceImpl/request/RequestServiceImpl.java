@@ -12,6 +12,7 @@ public class RequestServiceImpl implements RequestService {
 
     private final CreateRequestServiceImpl createRequestService;
     private final UpdateRequestServiceImpl updateRequestService;
+    private final DeleteRequestServiceImpl deleteRequestService;
 
     public RequestResponse createRequest(CreateRequestRequest request){
         return createRequestService.createRequest(request);
@@ -19,6 +20,10 @@ public class RequestServiceImpl implements RequestService {
 
     public RequestResponse updateRequest(CreateRequestRequest request, Long id){
         return updateRequestService.updateRequest(request, id);
+    }
+
+    public void deleteRequest(Long id){
+        deleteRequestService.deleteRequest(id);
     }
 
 }

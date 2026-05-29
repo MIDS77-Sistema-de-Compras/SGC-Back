@@ -8,4 +8,5 @@ public interface RequestService {
 
     RequestResponse createRequest(CreateRequestRequest request);
     RequestResponse updateRequest(CreateRequestRequest request, Long id);
+    void deleteRequest(Long id);
 }

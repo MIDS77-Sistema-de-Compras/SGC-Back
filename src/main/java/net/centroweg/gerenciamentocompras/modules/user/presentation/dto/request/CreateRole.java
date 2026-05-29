@@ -3,6 +3,8 @@ package net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/** DTO contendo dados necessários para criar uma role */
+
 public record CreateRole(
         @NotBlank
         @Size(  min = 3,

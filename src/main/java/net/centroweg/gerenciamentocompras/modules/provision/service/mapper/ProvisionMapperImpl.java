@@ -8,6 +8,12 @@ import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
 
+/**
+ * Classe responsável por implementar os métodos da interface {@code ProvisionMapper}
+ * @author gabrielEFagundes
+ * @version 0.1.0
+ * @see ProvisionMapper
+ */
 @Component
 public class ProvisionMapperImpl implements ProvisionMapper {
 

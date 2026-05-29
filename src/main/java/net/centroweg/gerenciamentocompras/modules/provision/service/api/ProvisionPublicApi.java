@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.provision.service.api;
 
-/** The API interface to share certain provision methods.
- * 
+/** 
+ * A interface de API responsável por compartilhar métodos específicos do módulo {@code Provision}
  * @author gabrielEFagundes
  * @version 1.0
  */

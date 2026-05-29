@@ -1,29 +1,29 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl;
+package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.status;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.status.IStatusMapper;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
-public class AddStatusService {
+public class EditStatusService {
 
     private final IStatusMapper statusMapper;
     private final StatusRepository statusRepository;
 
-    public StatusResponse addStatus (StatusRequest statusRequest) {
-        if (statusRepository.existsByName(statusRequest.name())) {
-            throw new StatusAlreadyExistsException();
-        }
+    public StatusResponse editStatus (Long id, StatusRequest statusRequest) {
+        Status status = statusRepository.findById(id)
+                .orElseThrow(StatusNotFoundException::new);
 
-        Status status = statusRepository.save(statusMapper.toEntity(statusRequest));
+        status.setName(statusRequest.name());
+        status.setDescription(statusRequest.description());
 
-        return statusMapper.toResponse(status);
+        Status updatedStatus = statusRepository.save(status);
+        return statusMapper.toResponse(updatedStatus);
     }
 }

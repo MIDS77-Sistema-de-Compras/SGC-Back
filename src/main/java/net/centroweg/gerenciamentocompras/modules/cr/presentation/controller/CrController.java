@@ -50,7 +50,6 @@ public class CrController {
                 .body(crService.update(id, dto));
     }
 
-
     @Operation(description = "ENDPOINT responsável pelo delete de CR")
     @DeleteMapping("{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable long id){

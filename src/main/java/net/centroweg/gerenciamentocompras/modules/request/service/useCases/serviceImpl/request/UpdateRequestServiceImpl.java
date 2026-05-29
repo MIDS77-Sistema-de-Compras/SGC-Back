@@ -6,6 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNo
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyApprovedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
@@ -29,10 +30,13 @@ public class UpdateRequestServiceImpl {
     public RequestResponse updateRequest(CreateRequestRequest request, Long id){
         Request requestSave = repository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
-        Status status = statusRepository.findByName(request.statusName())
+        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                         .orElseThrow(() -> new StatusNotFoundException());
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                         .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
+        if(status.getName().toLowerCase() == "aprovada"){
+            throw new RequestAlreadyApprovedException();
+        }
         requestSave.setStatus(status);
         requestSave.setCrBranch(crBranch);
         requestSave.setUpdatedAt(LocalDateTime.now());

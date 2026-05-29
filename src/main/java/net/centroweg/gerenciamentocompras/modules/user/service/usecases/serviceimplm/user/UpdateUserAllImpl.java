@@ -27,7 +27,6 @@ public class UpdateUserAllImpl {
         userSave.setEmail(user.email());
         userSave.setPassword(user.password());
         userSave.setExtensionNumber(user.extensionNumber());
-        userSave.setActive(user.active());
         userSave.setUpdatedAt(LocalDateTime.now());
 
         return mapper.toDTO(repository.save(userSave));

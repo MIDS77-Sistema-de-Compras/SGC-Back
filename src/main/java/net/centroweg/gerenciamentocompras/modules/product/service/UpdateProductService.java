@@ -25,7 +25,6 @@ public class UpdateProductService {
         product.setPrice(request.price());
         product.setType(request.type());
         product.setCode(request.code());
-        product.setVariation(request.variation());
 
         return productMapper.toResponse(productRepository.save(product));
     }

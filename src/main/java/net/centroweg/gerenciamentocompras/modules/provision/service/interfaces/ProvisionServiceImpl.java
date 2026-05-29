@@ -11,6 +11,16 @@ import net.centroweg.gerenciamentocompras.modules.provision.service.GetProvision
 import net.centroweg.gerenciamentocompras.modules.provision.service.UpdateProvisionService;
 import org.springframework.stereotype.Service;
 
+/**
+ * Classe responsável por implementar os métodos da interface {@code ProvisionService}
+ * @author gabrielEFagundes
+ * @version 0.1.0
+ * @see ProvisionService
+ * @see AddProvisionService
+ * @see GetProvisionService
+ * @see UpdateProvisionService
+ * @see DeleteProvisionService
+ */
 @Service
 @RequiredArgsConstructor
 public class ProvisionServiceImpl implements ProvisionService {

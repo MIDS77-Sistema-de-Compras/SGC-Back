@@ -10,6 +10,13 @@ import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.req
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
 import net.centroweg.gerenciamentocompras.modules.provision.service.mapper.ProvisionMapper;
 
+/**
+ * Classe responsável por atualizar os serviços no banco de dados.
+ * @author gabrielEFagundes
+ * @version 0.1.0
+ * @see ProvisionRepository
+ * @see ProvisionMapper
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateProvisionService {
@@ -17,6 +24,13 @@ public class UpdateProvisionService {
     private final ProvisionRepository provisionRepository;
     private final ProvisionMapper provisionMapper;
 
+    /**
+     * Método responsável por atualizar a entidade {@code Provision} por ID.
+     * @param id O ID da {@code Provision} desejada.
+     * @param request A requisição do usuário.
+     * @return ProvisionResponse A entidade atualizada no banco de dados, como DTO de resposta.
+     * @throws ProvisionNotFoundException Se a {@code Provision} não for encontrada.
+     */
     public ProvisionResponse updateProvision(Long id, ProvisionRequest request){
         Provision provision = provisionRepository.findById(id).orElseThrow(() -> 
             new ProvisionNotFoundException("Serviço não encontrado.")

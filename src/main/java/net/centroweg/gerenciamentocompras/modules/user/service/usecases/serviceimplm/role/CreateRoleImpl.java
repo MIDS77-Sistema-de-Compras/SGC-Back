@@ -7,6 +7,8 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
 import org.springframework.stereotype.Service;
 
+/** Classe de gerenciamento de criação de role */
+
 @Service
 @RequiredArgsConstructor
 public class CreateRoleImpl {
@@ -14,6 +16,14 @@ public class CreateRoleImpl {
     private final RoleMapper mapper;
     private final RoleRepository repository;
 
+    /**
+     * Cria uma nova role no sistema
+     * @param role role a ser criada
+     * @return responde DTO de role criada
+     * @see RoleMapper
+     * @see RoleResponse
+     * @see CreateRole
+     */
     public RoleResponse createRole(CreateRole role){
         return mapper.toDTO(repository.save(mapper.toEntity(role)));
     }

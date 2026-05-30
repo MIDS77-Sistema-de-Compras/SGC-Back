@@ -11,12 +11,28 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Atualizar usuário com o identificador único informado
+ */
+
+
 @Service
 @RequiredArgsConstructor
 public class UpdateUserAllImpl {
 
+    /**
+     * Injeção de dependências
+     */
+
     private final UserMapper mapper;
     private final UserRepository repository;
+
+    /**
+     * Método que atualiza usuário com o identificador único
+     * @param user dados do usuário
+     * @param id identificador único do usuário
+     * @return usuário já atualizado
+     */
 
     public UserResponse updateUserAll(Long id, CreateUser user){
         User userSave = repository.findById(id)

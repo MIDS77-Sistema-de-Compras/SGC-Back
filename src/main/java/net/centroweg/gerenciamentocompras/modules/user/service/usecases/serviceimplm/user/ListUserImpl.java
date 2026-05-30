@@ -8,12 +8,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Listar usuários
+ */
+
 @Service
 @RequiredArgsConstructor
 public class ListUserImpl {
 
+    /**
+     * Injeção de dependências
+     */
+
     private final UserMapper mapper;
     private final UserRepository repository;
+
+    /**
+     * Método que lista todos usuário
+     * @return lista de usuários
+     */
 
     public List<UserResponse> listUser(){
         return mapper.toDTOList(repository.findAll());

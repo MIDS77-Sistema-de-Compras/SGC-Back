@@ -6,6 +6,11 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.BranchMapper
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável pela remoção de uma {@link net.centroweg.gerenciamentocompras.modules.cr.domain.Branch}.
+ *
+ * @author Leandro
+ */
 @Service
 @RequiredArgsConstructor
 public class DeleteBranch {
@@ -13,6 +18,12 @@ public class DeleteBranch {
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
 
+    /**
+     * Remove a branch com o id informado do banco de dados.
+     *
+     * @param id identificador da branch a ser removida
+     * @return {@link MessageDTO} com a confirmação da operação
+     */
     public MessageDTO delete(long id){
         branchRepository.deleteById(id);
         return new MessageDTO("Error");

@@ -6,6 +6,12 @@ import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
 import java.util.List;
 
+/**
+ * Contrato de serviço para as operações sobre vínculos entre CR e filial.
+ *
+ * <p>Define os casos de uso disponíveis: CRUD básico, consulta por filial e
+ * gerenciamento do usuário responsável pelo vínculo.</p>
+ */
 public interface CrBranchService {
 
     CrBranchResponse create(CrBranchRequest request);

@@ -3,6 +3,14 @@ package net.centroweg.gerenciamentocompras.modules.cr.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entidade que representa uma filial (branch) no sistema de gerenciamento de compras.
+ *
+ * <p>Uma branch é uma unidade organizacional que pode ser associada a um ou mais
+ * Centros de Resultado (CR) por meio da entidade {@code CrBranch}.</p>
+ *
+ * @author Leandro
+ */
 @Setter
 @Getter
 @Entity
@@ -10,14 +18,24 @@ import lombok.*;
 @NoArgsConstructor
 public class Branch {
 
+    /**
+     * Identificador único da branch, gerado automaticamente pelo banco de dados.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    /**
+     * Nome da branch. Não pode ser nulo.
+     */
     @Column(nullable = false)
     private String name;
 
-
+    /**
+     * Construtor utilizado para criar uma nova branch informando apenas o nome.
+     *
+     * @param name nome da branch
+     */
     public Branch(String name) {
         this.name = name;
     }

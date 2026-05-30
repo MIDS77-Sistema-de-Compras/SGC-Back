@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Caso de uso responsável por listar todos os vínculos entre CR e filial.
+ */
 @Service
 @RequiredArgsConstructor
 public class FindAllCrBranch {
@@ -15,6 +18,11 @@ public class FindAllCrBranch {
     private final CrBranchRepository crBranchRepository;
     private final CrBranchMapper crBranchMapper;
 
+    /**
+     * Lista todos os vínculos CR-filial cadastrados.
+     *
+     * @return a lista de vínculos (vazia se não houver nenhum)
+     */
     public List<CrBranchResponse> findAll() {
         return crBranchRepository.findAll()
                 .stream()

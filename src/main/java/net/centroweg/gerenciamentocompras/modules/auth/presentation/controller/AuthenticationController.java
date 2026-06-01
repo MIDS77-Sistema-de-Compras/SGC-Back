@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.auth.service.AuthenticationService;
+import net.centroweg.gerenciamentocompras.modules.auth.service.usecase.AuthenticationService;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.http.ResponseEntity;

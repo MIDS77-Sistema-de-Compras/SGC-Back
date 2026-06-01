@@ -1,9 +1,7 @@
-package net.centroweg.gerenciamentocompras.modules.auth.service;
+package net.centroweg.gerenciamentocompras.modules.auth.service.usecase;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
-import net.centroweg.gerenciamentocompras.shared.MessageDTO;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationLogin {
 
     private final AuthenticationManager authenticationManager;
 

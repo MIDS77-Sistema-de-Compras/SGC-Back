@@ -25,7 +25,7 @@ public class Request {
     private Long id;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime requestDate = LocalDateTime.now();
+    private LocalDateTime requestDate;
 
     @ManyToOne
     @JoinColumn(name = "cr_branch_id", nullable = false)
@@ -53,4 +53,18 @@ public class Request {
         this.crBranch = crBranch;
         this.status = status;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.updatedAt = LocalDateTime.now();
+        if (this.requestDate == null) {
+            this.requestDate = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }

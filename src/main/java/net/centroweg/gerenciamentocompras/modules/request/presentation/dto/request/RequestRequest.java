@@ -2,11 +2,8 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.requ
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
-import java.util.List;
-
-public record CreateRequestRequest(
+public record RequestRequest(
 
         @NotNull(message = "A filial/CR é obrigatória.")
         Long crBranchId,

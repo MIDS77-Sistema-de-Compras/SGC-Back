@@ -11,7 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Reque
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.CreateRequestRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,14 @@ public class UpdateRequestServiceImpl {
     private final CrBranchRepository crBranchRepository;
     private final RequestMapper mapper;
 
-    public RequestResponse updateRequest(CreateRequestRequest request, Long id){
+    public RequestResponse updateRequest(RequestRequest request, Long id){
         Request requestSave = repository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
-        Status status = statusRepository.findByNameIgnoringCase(request.statusName())
+        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                         .orElseThrow(() -> new StatusNotFoundException());
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                         .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
-        if(status.getName().toLowerCase() == "aprovada"){
+        if(status.getName().equalsIgnoreCase("Aprovado")) {
             throw new RequestAlreadyApprovedException();
         }
         requestSave.setStatus(status);

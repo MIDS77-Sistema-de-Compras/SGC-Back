@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface StatusRepository extends JpaRepository<Status, Long> {
 
     boolean existsByName (String name);
-    Optional<Status> findByNameIgnoringCase(String name);
+    Optional<Status> findByNameIgnoreCase(String name);
 
 }

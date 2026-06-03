@@ -10,7 +10,7 @@ public interface RoleIntrf {
     RoleResponse createRole(CreateRole role);
     List<RoleResponse> listRole();
     RoleResponse findRoleById(Long id);
-    List<RoleResponse> findRoleByName(String name);
+    RoleResponse findRoleByName(String name);
     RoleResponse updateRole(Long id, CreateRole role);
     void deleteRole(Long id);
 }

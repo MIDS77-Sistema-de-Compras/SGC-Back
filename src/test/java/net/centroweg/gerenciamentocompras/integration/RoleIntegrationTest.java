@@ -83,17 +83,28 @@ class RoleIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integração] Deve buscar roles por nome ignorando maiúsculas/minúsculas")
-    void shouldFindRolesByNameIgnoringCase() {
+    @DisplayName("[Integração] Deve buscar role por nome ignorando maiúsculas/minúsculas")
+    void shouldFindRoleByNameIgnoringCase() {
         roleService.createRole(new CreateRole("ADMIN"));
 
-        List<RoleResponse> resultLower = roleService.findRoleByName("admin");
-        List<RoleResponse> resultUpper = roleService.findRoleByName("ADMIN");
-        List<RoleResponse> resultMixed = roleService.findRoleByName("Admin");
+        RoleResponse resultLower = roleService.findRoleByName("admin");
+        RoleResponse resultUpper = roleService.findRoleByName("ADMIN");
+        RoleResponse resultMixed = roleService.findRoleByName("Admin");
 
-        assertFalse(resultLower.isEmpty());
-        assertFalse(resultUpper.isEmpty());
-        assertFalse(resultMixed.isEmpty());
+        assertNotNull(resultLower);
+        assertNotNull(resultUpper);
+        assertNotNull(resultMixed);
+        assertEquals("ADMIN", resultLower.name());
+        assertEquals("ADMIN", resultUpper.name());
+        assertEquals("ADMIN", resultMixed.name());
+    }
+
+    @Test
+    @DisplayName("[Integração] Deve lançar RoleNotFoundException ao buscar nome inexistente")
+    void shouldThrowExceptionWhenFindingNonExistentName() {
+        assertThrows(RoleNotFoundException.class, () ->
+                roleService.findRoleByName("INEXISTENTE")
+        );
     }
 
     @Test

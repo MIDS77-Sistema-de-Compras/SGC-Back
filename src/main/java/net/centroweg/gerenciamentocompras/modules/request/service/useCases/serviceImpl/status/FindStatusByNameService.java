@@ -15,7 +15,7 @@ public class FindStatusByNameService {
     private final IStatusMapper mapper;
 
     public StatusResponse findStatusByName(String name){
-        return mapper.toResponse(repository.findByNameIgnoringCase(name)
+        return mapper.toResponse(repository.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new StatusNotFoundException()));
     }
 }

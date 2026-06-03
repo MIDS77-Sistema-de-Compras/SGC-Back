@@ -1,6 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence;
 
-import net.centroweg.gerenciamentocompras.modules.product.domain.exception.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByCode(String code);
 
     List<Product> findByNameContainingIgnoreCase(String name);
-
-    List<Product> findByVariationContainingIgnoreCase(String variation);
 
 }

@@ -2,7 +2,6 @@ package net.centroweg.gerenciamentocompras.modules.product.presentation.dto.requ
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 
 public record CreateProductRequest(
@@ -15,13 +14,10 @@ public record CreateProductRequest(
             @NotNull
             Double price,
 
+            @NotBlank
             String type,
 
             @NotBlank
-            String code,
+            String code
 
-            @NotBlank
-            String variation
-
-    ) {}
-
+) {}

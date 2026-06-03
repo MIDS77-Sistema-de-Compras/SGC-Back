@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.product.domain.exception;
+package net.centroweg.gerenciamentocompras.modules.product.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,12 +24,10 @@ public class Product {
     @Column(nullable = false)
     private Double price;
 
+    @Column(nullable = false)
     private String type;
 
     @Column(unique = true, nullable = false)
     private String code;
-
-    @Column(nullable = false)
-    private String variation;
 
 }

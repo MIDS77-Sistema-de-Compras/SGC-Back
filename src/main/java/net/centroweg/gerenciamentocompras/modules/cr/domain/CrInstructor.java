@@ -10,36 +10,31 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 @Entity
-@Table(name = "cr_branch")
+@Table(name="instructor_cr_branch")
 @AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
-public class CrBranch {
-
+@Getter
+public class CrInstructor {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @ManyToOne
+    @JoinColumn(name="instructor")
+    @NonNull
+    private User instructor;
 
     @ManyToOne
-    @JoinColumn(name = "branch_id")
-    private Branch branch;
-
-    @ManyToOne
-    @JoinColumn(name = "cr_id")
-    private Cr cr;
-
-    @ManyToOne
-    @JoinColumn(name = "responsible_user_id", nullable = true)
-    private User responsibleUser;
-
-    public CrBranch(Branch branch, Cr cr, User responsibleUser) {
-        this.branch = branch;
-        this.cr = cr;
-        this.responsibleUser = responsibleUser;
-    }
+    @JoinColumn(name="cr_branch")
+    @NonNull
+    private CrBranch crBranch;
 }

@@ -10,6 +10,7 @@ import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.ItemRequestProductRepository;
@@ -23,35 +24,43 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CreateRequestProductService {
+public class UpdateItemRequestProductService {
 
     private final ItemRequestProductRepository itemRequestProductRepository;
     private final RequestRepository requestRepository;
+
+    private final RequestPublicApi requestPublicApi;
     private final StatusRepository statusRepository;
     private final ItemRequestProductMapper itemRequestProductMapper;
-    private final RequestPublicApi requestPublicApi;
 
-    public ItemRequestProductResponse create(ItemRequestProductRequest dto) {
-
-        Request request = requestRepository.findById(dto.requestId()).orElseThrow(()-> new RequestNotFoundException());
-
-        Product product = requestPublicApi.findProuctByNameIgnoreCase(dto.productName()).orElseThrow(()-> new ProductNotFoundException());
-
-        MeasurementUnit measurementUnit =
-                requestPublicApi.findMeansurementByNameIgnoreCase(dto.measurementUnit())
-                        .orElseThrow(()-> new MeasurementUnitNotFoundException());
-
-        Status status = statusRepository.findByNameIgnoreCase(dto.statusName())
-                .orElseThrow(()-> new StatusNotFoundException());
+    public ItemRequestProductResponse update(Long id, ItemRequestProductRequest dto) {
 
         ItemRequestProduct itemRequestProduct =
-                itemRequestProductMapper.toEntity(
-                        dto,
-                        request,
-                        product,
-                        measurementUnit,
-                        status
-                );
+                itemRequestProductRepository.findById(id)
+                        .orElseThrow(()-> new ItemRequestProductNotFoundException());
+
+        Request request =
+                requestRepository.findById(dto.requestId())
+                        .orElseThrow(()-> new RequestNotFoundException());
+
+        Product product =
+                requestPublicApi.findProuctByNameIgnoreCase(dto.productName())
+                        .orElseThrow(()-> new ProductNotFoundException());
+
+        MeasurementUnit measurementUnit =
+                requestPublicApi
+                        .findMeansurementByNameIgnoreCase(dto.measurementUnit())
+                        .orElseThrow(()-> new MeasurementUnitNotFoundException());
+
+        Status status =
+                statusRepository.findByNameIgnoreCase(dto.statusName())
+                        .orElseThrow(()-> new StatusNotFoundException());
+
+        itemRequestProduct.setRequest(request);
+        itemRequestProduct.setProduct(product);
+        itemRequestProduct.setMeasurementUnit(measurementUnit);
+        itemRequestProduct.setQuantity(dto.quantity());
+        itemRequestProduct.setStatus_id(status);
 
         return itemRequestProductMapper.toResponse(itemRequestProductRepository.save(itemRequestProduct));
     }

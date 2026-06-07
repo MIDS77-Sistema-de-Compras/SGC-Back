@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
@@ -18,17 +20,30 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CreateRequestServiceImpl {
 
-    private final RequestRepository repository;
+    private final RequestRepository requestRepository;
     private final CrBranchRepository crBranchRepository;
     private final StatusRepository statusRepository;
-    private final RequestMapper mapper;
+    private final RequestMapper requestMapper;
+    private final NotificationService notificationService;
 
     public RequestResponse createRequest(RequestRequest request){
         Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                 .orElseThrow(() -> new StatusNotFoundException());
+
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
-        Request requestSave = mapper.toEntity(request, crBranch, status);
-        return mapper.toDTO(repository.save(requestSave));
+
+        Request savedRequest = requestRepository.save(requestMapper.toEntity(request, crBranch, status));
+
+        if (crBranch.getResponsibleUser() != null) {
+            notificationService.createNotification(new NotificationRequest(
+                    "Nova solicitação",
+                    "Há uma nova solicitação vinculada ao seu CR " + crBranch.getCr().getName() + ".",
+                    crBranch.getResponsibleUser().getId(),
+                    savedRequest.getId()
+            ));
+        }
+        return requestMapper.toDTO(savedRequest);
     }
+
 }

@@ -7,6 +7,6 @@ public record NotificationRequest(
         @NotBlank String title,
         @NotBlank String message,
         @NotNull Long userId,
-        @NotNull Long requestId
+        Long requestId
 ) {
 }

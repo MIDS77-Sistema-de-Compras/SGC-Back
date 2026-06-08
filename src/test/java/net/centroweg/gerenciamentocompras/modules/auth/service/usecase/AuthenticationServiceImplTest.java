@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.auth.service.usecase;
 
+import net.centroweg.gerenciamentocompras.modules.auth.service.usecase.implementations.AuthenticationServiceImpl;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

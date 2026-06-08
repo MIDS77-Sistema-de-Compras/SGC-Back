@@ -3,10 +3,10 @@ package net.centroweg.gerenciamentocompras.modules.request.service;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.StatusServiceImpl;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.AddStatusService;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.FindStatusByIdService;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.DeleteStatusService;
+import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.status.StatusServiceImpl;
+import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.status.AddStatusService;
+import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.status.FindStatusByIdService;
+import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.status.DeleteStatusService;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

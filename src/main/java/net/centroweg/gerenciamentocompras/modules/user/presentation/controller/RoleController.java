@@ -34,7 +34,7 @@ public class RoleController {
     }
 
     @GetMapping("/RoleName/{RoleName}")
-    public ResponseEntity<List<RoleResponse>> findRoleByName(@PathVariable String RoleName){
+    public ResponseEntity<RoleResponse> findRoleByName(@PathVariable String RoleName){
         return ResponseEntity.ok(role.findRoleByName(RoleName));
     }
 

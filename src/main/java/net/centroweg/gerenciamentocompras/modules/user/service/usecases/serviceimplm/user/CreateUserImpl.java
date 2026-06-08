@@ -25,7 +25,7 @@ public class CreateUserImpl {
 
     public UserResponse createUser(CreateUser user){
         uniquenessValidator.checkInfo(user);
-        Role role = roleRepository.findByName(user.nameRole()).orElseThrow(() -> new RoleNotFoundException());
+        Role role = roleRepository.findByNameIgnoringCase(user.nameRole()).orElseThrow(() -> new RoleNotFoundException());
         String encryptedPassword = passwordEncoder.encode(user.password());
         String encryptedCPF = passwordEncoder.encode(user.cpf());
         CreateUser userWithEncryptedPassword = new CreateUser(

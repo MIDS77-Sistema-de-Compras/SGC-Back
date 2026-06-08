@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.domain;
+package net.centroweg.gerenciamentocompras.modules.request.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

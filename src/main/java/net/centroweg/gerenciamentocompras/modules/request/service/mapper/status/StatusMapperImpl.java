@@ -1,7 +1,6 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.mapper;
+package net.centroweg.gerenciamentocompras.modules.request.service.mapper.status;
 
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.request.domain.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
 import org.springframework.stereotype.Component;

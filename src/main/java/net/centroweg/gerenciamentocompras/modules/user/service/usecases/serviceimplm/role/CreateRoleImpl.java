@@ -1,7 +1,9 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.role;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateRole;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
@@ -13,8 +15,10 @@ public class CreateRoleImpl {
 
     private final RoleMapper mapper;
     private final RoleRepository repository;
+    private final UserRepository userRepository;
 
     public RoleResponse createRole(CreateRole role){
+
         return mapper.toDTO(repository.save(mapper.toEntity(role)));
     }
 }

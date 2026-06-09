@@ -66,7 +66,6 @@ public class NotificationIntegrationTest {
     @Autowired
     private CrRepository crRepository;
 
-    // Mockado para nao enviar e-mail real durante os testes
     @MockitoBean
     private NotificationEmailService notificationEmailService;
 
@@ -99,7 +98,6 @@ public class NotificationIntegrationTest {
         return notificationRepository.save(notification);
     }
 
-    // monta a cadeia Branch -> Cr -> CrBranch (com responsavel) usada nos testes de disparo
     private CrBranch criarCrBranchComResponsavel() {
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
@@ -182,7 +180,6 @@ public class NotificationIntegrationTest {
         statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
         statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
 
-        // cria a solicitacao (ja gera a notificacao de criacao)
         String response = mockMvc.perform(post("/requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -198,7 +195,6 @@ public class NotificationIntegrationTest {
 
         Long requestId = objectMapper.readTree(response).get("id").asLong();
 
-        // muda o status -> gera a segunda notificacao
         mockMvc.perform(put("/requests/{id}", requestId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -209,7 +205,6 @@ public class NotificationIntegrationTest {
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isOk());
 
-        // uma da criacao + uma da mudanca de status = 2
         assertEquals(2, notificationRepository.findByUserId(user.getId()).size());
     }
 }

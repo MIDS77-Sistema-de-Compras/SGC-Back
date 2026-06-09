@@ -1,7 +1,5 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
@@ -40,6 +38,13 @@ public class StatusController {
     public ResponseEntity<StatusResponse> findStatusById (@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(statusService.findStatusById(id));
+    }
+
+    @Operation(description = "ENDPOINT responsável por encontrar Status por id")
+    @GetMapping("/statusName/{statusName}")
+    public ResponseEntity<StatusResponse> findStatusByName(@PathVariable String statusName){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statusService.findStatusByName(statusName));
     }
 
     @Operation(description = "ENDPOINT responsável pela atualização de Status")

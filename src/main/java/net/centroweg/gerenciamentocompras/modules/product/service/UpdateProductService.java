@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.product.service;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.product.domain.exception.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.UpdateProductRequest;
@@ -25,7 +25,6 @@ public class UpdateProductService {
         product.setPrice(request.price());
         product.setType(request.type());
         product.setCode(request.code());
-        product.setVariation(request.variation());
 
         return productMapper.toResponse(productRepository.save(product));
     }

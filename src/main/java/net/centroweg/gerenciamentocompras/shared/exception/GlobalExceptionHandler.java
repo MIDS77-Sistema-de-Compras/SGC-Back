@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.shared.exception;
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrInstructorNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import org.springframework.security.core.AuthenticationException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
@@ -59,6 +61,11 @@ public class GlobalExceptionHandler {
         return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthentication(AuthenticationException exception) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "Credenciais inválidas: verifique seu usuário e senha.", null);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception exception) {
         log.error("Unexpected error: ", exception);
@@ -77,6 +84,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BranchNotFoundException.class)
     public ResponseEntity<ApiError> handleBranchNotFound(BranchNotFoundException exception) {
+        return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
+    }
+
+    @ExceptionHandler(CrInstructorNotFoundException.class)
+    public ResponseEntity<ApiError> handleCrInstructorNotFound(CrInstructorNotFoundException exception){
         return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
     }
 

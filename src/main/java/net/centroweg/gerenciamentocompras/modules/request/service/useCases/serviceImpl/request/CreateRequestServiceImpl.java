@@ -24,7 +24,7 @@ public class CreateRequestServiceImpl {
     private final RequestMapper mapper;
 
     public RequestResponse createRequest(CreateRequestRequest request){
-        Status status = statusRepository.findByName(request.statusName())
+        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                 .orElseThrow(() -> new StatusNotFoundException());
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));

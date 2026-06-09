@@ -38,6 +38,9 @@ public class Request {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     @ManyToMany
     @JoinTable(
             name = "request_users",
@@ -50,4 +53,18 @@ public class Request {
         this.crBranch = crBranch;
         this.status = status;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.updatedAt = LocalDateTime.now();
+        if (this.requestDate == null) {
+            this.requestDate = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }

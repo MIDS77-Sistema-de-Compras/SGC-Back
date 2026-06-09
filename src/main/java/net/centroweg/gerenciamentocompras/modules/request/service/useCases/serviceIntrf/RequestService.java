@@ -1,16 +1,16 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf;
 
 
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.CreateRequestRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 
 import java.util.List;
 
 public interface RequestService {
 
-    RequestResponse createRequest(CreateRequestRequest request);
+    RequestResponse createRequest(RequestRequest request);
     List<RequestResponse> findAllRequest();
     RequestResponse findRequestById(Long id);
-    RequestResponse updateRequest(CreateRequestRequest request, Long id);
+    RequestResponse updateRequest(RequestRequest request, Long id);
     void deleteRequest(Long id);
 }

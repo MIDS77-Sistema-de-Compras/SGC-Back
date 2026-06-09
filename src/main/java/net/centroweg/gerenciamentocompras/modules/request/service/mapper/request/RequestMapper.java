@@ -6,7 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.CreateRequestRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class RequestMapper {
     private final CrBranchRepository repositoryCR;
     private final StatusRepository repositorySt;
 
-    public Request toEntity(CreateRequestRequest request, CrBranch branch, Status status){
+    public Request toEntity(RequestRequest request, CrBranch branch, Status status){
         Request requestSave = new Request();
         requestSave.setCrBranch(branch);
         requestSave.setStatus(status);

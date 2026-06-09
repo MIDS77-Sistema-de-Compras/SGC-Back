@@ -2,7 +2,6 @@ package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serv
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.CreateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class RequestServiceImpl implements RequestService {
     private final FindAllRequestServiceImpl findAllRequestService;
     private final FindRequestByIdServiceImpl findRequestByIdService;
 
-    public RequestResponse createRequest(CreateRequestRequest request){
+    public RequestResponse createRequest(RequestRequest request){
         return createRequestService.createRequest(request);
     }
 
@@ -31,7 +30,7 @@ public class RequestServiceImpl implements RequestService {
         return findRequestByIdService.findRequestById(id);
     }
 
-    public RequestResponse updateRequest(CreateRequestRequest request, Long id){
+    public RequestResponse updateRequest(RequestRequest request, Long id){
         return updateRequestService.updateRequest(request, id);
     }
 

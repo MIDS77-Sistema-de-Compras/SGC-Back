@@ -2,7 +2,6 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.controll
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.CreateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
@@ -20,7 +19,7 @@ public class RequestController {
     private final RequestService requestService;
 
     @PostMapping
-    public ResponseEntity<RequestResponse> createRequest(@Valid @RequestBody CreateRequestRequest request){
+    public ResponseEntity<RequestResponse> createRequest(@Valid @RequestBody RequestRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request));
     }
 
@@ -35,7 +34,7 @@ public class RequestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody CreateRequestRequest request, @PathVariable Long id){
+    public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody RequestRequest request, @PathVariable Long id){
         return ResponseEntity.ok(requestService.updateRequest(request, id));
     }
 

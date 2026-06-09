@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.CreateRequestRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class CreateRequestServiceImpl {
     private final StatusRepository statusRepository;
     private final RequestMapper mapper;
 
-    public RequestResponse createRequest(CreateRequestRequest request){
+    public RequestResponse createRequest(RequestRequest request){
         Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                 .orElseThrow(() -> new StatusNotFoundException());
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())

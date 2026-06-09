@@ -1,11 +1,15 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimpl.user;
 
+import net.centroweg.gerenciamentocompras.config.security.CpfHasher;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.CreateUserImpl;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.UniquenessValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,10 +27,13 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateUserImplTest {
-    @Mock
-    private UserRepository repository;
-    @Mock
-    private UserMapper mapper;
+
+    @Mock private UserRepository repository;
+    @Mock private UserMapper mapper;
+    @Mock private RoleRepository roleRepository;
+    @Mock private PasswordEncoder passwordEncoder;
+    @Mock private CpfHasher cpfHasher;
+    @Mock private UniquenessValidator uniquenessValidator;
 
     @InjectMocks
     private CreateUserImpl createUserImpl;
@@ -33,33 +41,28 @@ public class CreateUserImplTest {
     @Test
     @DisplayName("Deve criar usuário com sucesso")
     void deveCriarUsuarioComSucesso() {
-        // 1. DTO de entrada (conforme seu record original)
         CreateUser dto = new CreateUser(
                 "Maria Eduarda", "maria@gmail.com", "12345678900",
-                "Senha@123", "1234", true, "ADMIN"
+                "Senha@123", "1234", true, "COMPRADOR"
         );
 
-        // 2. Entidade que o mapper vai retornar
         User entity = new User();
         entity.setName("Maria Eduarda");
 
-        // 3. Resposta que o mapper vai converter no final
         UserResponse response = new UserResponse(
                 1L, "Maria Eduarda", "12345678900", "maria@gmail.com",
                 "1234", true, LocalDateTime.now(), LocalDateTime.now()
         );
 
-        // --- CONFIGURAÇÃO DOS MOCKS (Stubbing) ---
-
-        // Usamos doReturn ou any() para garantir que o Mockito não se perca nas referências
+        when(passwordEncoder.encode(any())).thenReturn("hashed-password");
+        when(cpfHasher.hash(any())).thenReturn("hashed-cpf");
+        when(roleRepository.findByNameIgnoringCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
         when(mapper.toEntity(any())).thenReturn(entity);
         when(repository.save(any())).thenReturn(entity);
         when(mapper.toDTO(any())).thenReturn(response);
 
-        // --- EXECUÇÃO ---
         UserResponse result = createUserImpl.createUser(dto);
 
-        // --- VERIFICAÇÕES ---
         assertNotNull(result);
         verify(mapper).toEntity(any());
         verify(repository).save(any());
@@ -69,18 +72,11 @@ public class CreateUserImplTest {
     @Test
     @DisplayName("Deve verificar se os dados do DTO estão chegando corretamente na Entidade antes de salvar")
     void deveVerificarSeDadosEstaoSendoPassadosCorretamente() {
-        // Arrange
         CreateUser request = new CreateUser(
-                "João Silva",
-                "joao@email.com",
-                "12345678901",
-                "Senha@123",
-                "4321",
-                true,
-                "ADMIN"
+                "João Silva", "joao@email.com", "12345678901",
+                "Senha@123", "4321", true, "COMPRADOR"
         );
 
-        // ✅ Agora o mapper retorna um User real, não null
         User userMapeado = new User();
         userMapeado.setName(request.name());
         userMapeado.setEmail(request.email());
@@ -88,15 +84,16 @@ public class CreateUserImplTest {
         userMapeado.setExtensionNumber(request.extensionNumber());
         userMapeado.setActive(request.active());
 
-        when(mapper.toEntity(any(CreateUser.class))).thenReturn(userMapeado); // ← estava faltando isso
+        when(passwordEncoder.encode(any())).thenReturn("hashed-password");
+        when(cpfHasher.hash(any())).thenReturn("hashed-cpf");
+        when(roleRepository.findByNameIgnoringCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
+        when(mapper.toEntity(any(CreateUser.class))).thenReturn(userMapeado);
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
-        // Act
         createUserImpl.createUser(request);
 
-        // Assert
         verify(repository).save(userCaptor.capture());
         User userEnviadoParaOBanco = userCaptor.getValue();
 
@@ -106,6 +103,4 @@ public class CreateUserImplTest {
         assertEquals(request.extensionNumber(), userEnviadoParaOBanco.getExtensionNumber(), "O ramal foi mandado errado!");
         assertEquals(request.active(), userEnviadoParaOBanco.isActive(), "O status ativo foi mandado errado!");
     }
-
 }
-

@@ -11,4 +11,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailOrCpf(String email, String cpf);
     List<User> findByNameIgnoringCase(String name);
+    boolean existsByEmail(String email);
+    boolean existsByCpf(String cpf);
+
 }

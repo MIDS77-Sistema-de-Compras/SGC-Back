@@ -18,7 +18,7 @@ public class UpdateRoleImpl {
 
     public RoleResponse updateRole(Long id, CreateRole role){
         Role roleSave = repository.findById(id)
-                .orElseThrow(() -> new RoleNotFoundException(id));
+                .orElseThrow(() -> new RoleNotFoundException());
 
         roleSave.setName(role.name());
         return mapper.toDTO(repository.save(roleSave));

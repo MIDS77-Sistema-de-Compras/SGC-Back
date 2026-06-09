@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.product.service.api;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.product.domain.exception.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.product.service.api.dto.ProductData;

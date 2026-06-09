@@ -45,6 +45,6 @@ public class CreateUserImpl {
 
         newUser.setRole(role);
 
-        return userMapper.toDTO(userRepository.save(userMapper.toEntity(userWithEncryptedPassword)));
+        return userMapper.toDTO(userRepository.save(newUser));
     }
 }

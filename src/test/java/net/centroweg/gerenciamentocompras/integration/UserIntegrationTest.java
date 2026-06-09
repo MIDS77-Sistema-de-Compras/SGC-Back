@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,12 +36,15 @@ public class UserIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    // CPF válido para testes
+    @Autowired
+    private RoleRepository roleRepository;
+
     private static final String CPF_VALIDO = "52998224725";
 
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
+        roleRepository.save(new Role("COMPRADOR"));
     }
 
     private Long criarUsuarioEObterIdRetornado() throws Exception {
@@ -50,7 +55,7 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "1234",
                 true,
-                "ADMIN"
+                "COMPRADOR"
         );
 
         String response = mockMvc.perform(post("/users")
@@ -75,7 +80,7 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "1234",
                 true,
-                "ADMIN"
+                "COMPRADOR"
         );
 
         mockMvc.perform(post("/users")
@@ -149,7 +154,7 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "9999",
                 true,
-                "ADMIN"
+                "COMPRADOR"
         );
 
         mockMvc.perform(put("/users/UserId/{id}", id)

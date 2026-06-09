@@ -28,24 +28,24 @@ public class UserController {
         return ResponseEntity.ok(user.listUser());
     }
 
-    @GetMapping("/UserId/{UserId}")
-    public ResponseEntity<UserResponse> findUserById(@PathVariable Long UserId){
-        return ResponseEntity.ok(user.findUserById(UserId));
+    @GetMapping("/userId/{userId}")
+    public ResponseEntity<UserResponse> findUserById(@PathVariable Long userId){
+        return ResponseEntity.ok(user.findUserById(userId));
     }
 
-    @GetMapping("/UserName/{UserName}")
-    public ResponseEntity<List<UserResponse>> findUserByName(@PathVariable String UserName){
-        return ResponseEntity.ok(user.findUserByName(UserName));
+    @GetMapping("/userName/{userName}")
+    public ResponseEntity<List<UserResponse>> findUserByName(@PathVariable String userName){
+        return ResponseEntity.ok(user.findUserByName(userName));
     }
 
-    @PutMapping("/UserId/{UserId}")
-    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody CreateUser userRequest, @PathVariable Long UserId){
-        return ResponseEntity.ok(user.updateUserAll(UserId, userRequest));
+    @PutMapping("/userId/{userId}")
+    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody CreateUser userRequest, @PathVariable Long userId){
+        return ResponseEntity.ok(user.updateUserAll(userId, userRequest));
     }
 
-    @DeleteMapping("/UserId/{UserId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long UserId){
-        user.deleteUser(UserId);
+    @DeleteMapping("/userId/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
+        user.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimpl.role;
 
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import net.centroweg.gerenciamentocompras.modules.user.domain.exception.RoleNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
@@ -12,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,36 +31,29 @@ class FindRoleByNameImplTest {
     private FindRoleByNameImpl findRoleByNameImpl;
 
     @Test
-    @DisplayName("Deve retornar lista de roles pelo nome ignorando maiúsculas/minúsculas")
-    void shouldReturnRolesIgnoringCase() {
+    @DisplayName("Deve retornar role pelo nome ignorando maiúsculas/minúsculas")
+    void shouldReturnRoleIgnoringCase() {
         String name = "admin";
         Role role = new Role();
         role.setName("ADMIN");
-        List<Role> roles = List.of(role);
-        List<RoleResponse> expectedResponses = List.of(new RoleResponse(1L, "ADMIN"));
+        RoleResponse expectedResponse = new RoleResponse(1L, "ADMIN");
 
-        when(repository.findByNameIgnoringCase(name)).thenReturn(roles);
-        when(mapper.toDTOList(roles)).thenReturn(expectedResponses);
+        when(repository.findByNameIgnoringCase(name)).thenReturn(Optional.of(role));
+        when(mapper.toDTO(role)).thenReturn(expectedResponse);
 
-        List<RoleResponse> result = findRoleByNameImpl.findRoleByName(name);
+        RoleResponse result = findRoleByNameImpl.findRoleByName(name);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals("ADMIN", result.get(0).name());
+        assertEquals("ADMIN", result.name());
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando não encontrar roles com o nome informado")
-    void shouldReturnEmptyListWhenNoRoleFound() {
+    @DisplayName("Deve lançar RoleNotFoundException quando não encontrar role com o nome informado")
+    void shouldThrowRoleNotFoundExceptionWhenNoRoleFound() {
         String name = "INEXISTENTE";
 
-        when(repository.findByNameIgnoringCase(name)).thenReturn(List.of());
-        when(mapper.toDTOList(List.of())).thenReturn(List.of());
+        when(repository.findByNameIgnoringCase(name)).thenReturn(Optional.empty());
 
-        List<RoleResponse> result = findRoleByNameImpl.findRoleByName(name);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertThrows(RoleNotFoundException.class, () -> findRoleByNameImpl.findRoleByName(name));
     }
 }

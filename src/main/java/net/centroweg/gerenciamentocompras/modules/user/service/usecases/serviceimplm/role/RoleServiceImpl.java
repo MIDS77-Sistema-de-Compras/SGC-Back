@@ -35,7 +35,7 @@ public class RoleServiceImpl implements RoleIntrf {
     }
 
     @Override
-    public List<RoleResponse> findRoleByName(String name){
+    public RoleResponse findRoleByName(String name){
         return findRoleByName.findRoleByName(name);
     }
 

@@ -1,8 +1,17 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email.NotificationEmailService;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +26,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,11 +43,30 @@ public class NotificationIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
     private NotificationRepository notificationRepository;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RequestRepository requestRepository;
+
+    @Autowired
+    private StatusRepository statusRepository;
+
+    @Autowired
+    private CrBranchRepository crBranchRepository;
+
+    @Autowired
+    private BranchRepository branchRepository;
+
+    @Autowired
+    private CrRepository crRepository;
+
+    // Mockado para nao enviar e-mail real durante os testes
     @MockitoBean
     private NotificationEmailService notificationEmailService;
 
@@ -47,6 +77,11 @@ public class NotificationIntegrationTest {
     @BeforeEach
     void setUp() {
         notificationRepository.deleteAll();
+        requestRepository.deleteAll();
+        crBranchRepository.deleteAll();
+        statusRepository.deleteAll();
+        crRepository.deleteAll();
+        branchRepository.deleteAll();
         userRepository.deleteAll();
 
         user = userRepository.save(
@@ -62,6 +97,13 @@ public class NotificationIntegrationTest {
         notification.setUser(user);
         notification.setRequest(null);
         return notificationRepository.save(notification);
+    }
+
+    // monta a cadeia Branch -> Cr -> CrBranch (com responsavel) usada nos testes de disparo
+    private CrBranch criarCrBranchComResponsavel() {
+        Branch branch = branchRepository.save(new Branch("Filial Centro"));
+        Cr cr = crRepository.save(new Cr("TI", "7940", false));
+        return crBranchRepository.save(new CrBranch(branch, cr, user));
     }
 
     @Test
@@ -110,5 +152,64 @@ public class NotificationIntegrationTest {
     void deveRetornarNotFoundParaNotificacaoInexistente() throws Exception {
         mockMvc.perform(patch("/notifications/{id}/viewed", 9999L))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("[Integração] Deve gerar notificação ao criar uma solicitação (RN-NOT02)")
+    void deveGerarNotificacaoAoCriarSolicitacao() throws Exception {
+        CrBranch crBranch = criarCrBranchComResponsavel();
+        statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
+
+        mockMvc.perform(post("/requests")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "crBranchId": %d,
+                                    "statusName": "Aguardando aprovação"
+                                }
+                                """.formatted(crBranch.getId())))
+                .andExpect(status().isCreated());
+
+        assertEquals(1, notificationRepository.findByUserId(user.getId()).size());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("[Integração] Deve gerar notificação ao mudar o status de uma solicitação (RN-NOT01)")
+    void deveGerarNotificacaoAoMudarStatus() throws Exception {
+        CrBranch crBranch = criarCrBranchComResponsavel();
+        statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
+        statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
+
+        // cria a solicitacao (ja gera a notificacao de criacao)
+        String response = mockMvc.perform(post("/requests")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "crBranchId": %d,
+                                    "statusName": "Aguardando aprovação"
+                                }
+                                """.formatted(crBranch.getId())))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Long requestId = objectMapper.readTree(response).get("id").asLong();
+
+        // muda o status -> gera a segunda notificacao
+        mockMvc.perform(put("/requests/{id}", requestId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "crBranchId": %d,
+                                    "statusName": "Em atendimento"
+                                }
+                                """.formatted(crBranch.getId())))
+                .andExpect(status().isOk());
+
+        // uma da criacao + uma da mudanca de status = 2
+        assertEquals(2, notificationRepository.findByUserId(user.getId()).size());
     }
 }

@@ -28,12 +28,15 @@ public class ItemRequestProvision {
     private Long id;
 
     @ManyToOne
+    @NonNull
     private Request request;
 
     @ManyToOne
+    @NonNull
     private Provision provision;
 
     @ManyToOne
+    @NonNull
     private Status status;
 
     @NonNull

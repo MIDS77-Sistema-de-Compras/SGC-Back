@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.shared.exception;
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrInstructorNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,6 +84,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BranchNotFoundException.class)
     public ResponseEntity<ApiError> handleBranchNotFound(BranchNotFoundException exception) {
+        return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
+    }
+
+    @ExceptionHandler(CrInstructorNotFoundException.class)
+    public ResponseEntity<ApiError> handleCrInstructorNotFound(CrInstructorNotFoundException exception){
         return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
     }
 

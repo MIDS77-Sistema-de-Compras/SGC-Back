@@ -31,9 +31,9 @@ src/main/java/net/centroweg/gerenciamentocompras/
 │
 ├── modules/
 │   ├── user/        ← Usuários e perfis de acesso
-│   ├── cr/          ← Centros de Resultado e Filiais
+│   ├── cr/          ← Centros de Responsabilidade e Filiais
 │   ├── request/     ← Solicitações de compra (domínio central)
-│   ├── provision/   ← Provisões orçamentárias
+│   ├── provision/   ← Solicitações de serviço
 │   └── product/     ← Unidades de medida de produtos
 │
 ├── shared/          ← Código reutilizado por todos os módulos
@@ -96,9 +96,9 @@ Gerencia os usuários do sistema e seus papéis de acesso.
 
 ---
 
-### `cr` — Centros de Resultado e Filiais
+### `cr` — Centros de Responsabilidade e Filiais
 
-Gerencia a estrutura organizacional da empresa: os **CRs** (Centros de Resultado) e as **Filiais**, além da associação entre eles (`CrBranch`).
+Gerencia a estrutura organizacional da empresa: os **CRs** (Centros de Responsabilidade) e as **Filiais**, além da associação entre eles (`CrBranch`).
 
 **Entidades:**
 - `Cr` — Centro de Responsabilidade com nome, código e flag `master`

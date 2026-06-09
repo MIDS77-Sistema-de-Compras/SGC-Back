@@ -27,4 +27,10 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.markAsViewed(id));
     }
+
+    @GetMapping("user/{userId}/unviewed")
+    public ResponseEntity<List<NotificationResponse>> findUnviewedByUser(@PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(notificationService.findUnviewedNotificationsByUser(userId));
+    }
 }

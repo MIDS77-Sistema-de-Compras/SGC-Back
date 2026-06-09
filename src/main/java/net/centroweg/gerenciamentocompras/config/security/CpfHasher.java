@@ -17,9 +17,9 @@ public class CpfHasher {
         this.secret = phrase.getBytes(StandardCharsets.UTF_8);
     }
 
-    public String hash(String cpf, String passwordBcrypt) {
+    public String hash(String cpf) {
         try{
-            String key = new String (secret, StandardCharsets.UTF_8) + passwordBcrypt;
+            String key = new String (secret, StandardCharsets.UTF_8);
             Mac mac = Mac.getInstance("HmacSHA256");
 
             mac.init(new SecretKeySpec(

@@ -24,10 +24,12 @@ public class CreateUserImpl {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final CpfHasher cpfHasher;
+    private final UniquenessValidator uniquenessValidator;
 
     public UserResponse createUser(CreateUser user){
+        uniquenessValidator.checkInfo(user);
         String encryptedPassword = passwordEncoder.encode(user.password());
-        String hashedCpf = cpfHasher.hash(user.cpf(), encryptedPassword);
+        String hashedCpf = cpfHasher.hash(user.cpf());
 
         Role role = roleRepository.findByNameIgnoringCase(user.nameRole())
                 .orElseThrow(() -> new UserNotFoundException(user.nameRole()));

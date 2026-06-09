@@ -35,7 +35,7 @@ public class CreateUserImpl {
         CreateUser userWithEncryptedPassword = new CreateUser(
                 user.name(), user.email(), hashedCpf, encryptedPassword, user.extensionNumber(), user.active(), user.nameRole()
         );
-      
+
         if(userWithEncryptedPassword.nameRole().equals("ADMIN")){
             throw new RoleNotAllowedException();
         }

@@ -9,5 +9,6 @@ public interface NotificationService {
 
     NotificationResponse createNotification(NotificationRequest request);
     List<NotificationResponse> findNotificationsByUser(Long userId);
+    List<NotificationResponse> findUnviewedNotificationsByUser(Long userId);
     NotificationResponse markAsViewed(Long id);
 }

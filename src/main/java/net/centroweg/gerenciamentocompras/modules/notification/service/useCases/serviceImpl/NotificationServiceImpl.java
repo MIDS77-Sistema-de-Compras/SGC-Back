@@ -14,6 +14,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final CreateNotificationServiceImpl createNotificationService;
     private final FindNotificationsByUserServiceImpl findNotificationsByUserService;
+    private final FindUnviewedNotificationsByUserServiceImpl findUnviewedNotificationsByUserService;
     private final MarkAsViewedServiceImpl markAsViewedService;
 
     @Override
@@ -24,6 +25,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<NotificationResponse> findNotificationsByUser(Long userId) {
         return findNotificationsByUserService.findNotificationsByUser(userId);
+    }
+
+    @Override
+    public List<NotificationResponse> findUnviewedNotificationsByUser(Long userId) {
+        return findUnviewedNotificationsByUserService.findUnviewedByUser(userId);
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemRequestProduct {
 
-    private ItemRequestProductService itemRequestProductService;
+    private final ItemRequestProductService itemRequestProductService;
 
     @PostMapping
     public ResponseEntity<ItemRequestProductResponse> createItemRequestProduct(@RequestBody ItemRequestProductRequest itemRequestProductRequest){

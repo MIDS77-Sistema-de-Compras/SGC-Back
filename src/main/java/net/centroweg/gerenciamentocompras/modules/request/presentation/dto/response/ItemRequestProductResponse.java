@@ -6,6 +6,7 @@ public record ItemRequestProductResponse(
         String productName,
         String measurementUnit,
         double quantity,
-        String statusName
+        String statusName,
+        String additionalInformations
 ) {
 }

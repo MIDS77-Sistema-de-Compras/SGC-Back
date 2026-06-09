@@ -20,22 +20,25 @@ public class ItemRequestProduct {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "request_id")
+    @JoinColumn(name = "request_id", nullable = false)
     private Request request;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "measurement_unit_id")
+    @JoinColumn(name = "measurement_unit_id", nullable = false)
     private MeasurementUnit measurementUnit;
 
     private double quantity;
 
     @ManyToOne
-    @JoinColumn(name = "status_id_id")
+    @JoinColumn(name = "status_id_id", nullable = false)
     private Status status_id;
+
+
+    private String additionalInformations;
 
 
 }

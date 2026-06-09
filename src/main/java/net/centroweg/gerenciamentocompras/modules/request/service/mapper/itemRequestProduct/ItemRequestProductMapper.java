@@ -19,7 +19,8 @@ public class ItemRequestProductMapper {
                 item.getProduct() != null ? item.getProduct().getName() : null,
                 item.getMeasurementUnit() != null ? item.getMeasurementUnit().getName() : null,
                 item.getQuantity(),
-                item.getStatus_id() != null ? item.getStatus_id().getName() : null
+                item.getStatus_id() != null ? item.getStatus_id().getName() : null,
+                item.getAdditionalInformations()
         );
     }
 
@@ -38,7 +39,7 @@ public class ItemRequestProductMapper {
         item.setMeasurementUnit(measurementUnit);
         item.setQuantity(dto.quantity());
         item.setStatus_id(status);
-
+        dto.additionalInformations();
         return item;
     }
 }

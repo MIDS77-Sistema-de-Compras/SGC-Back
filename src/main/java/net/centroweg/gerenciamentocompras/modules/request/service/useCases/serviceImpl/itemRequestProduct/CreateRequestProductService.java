@@ -44,6 +44,8 @@ public class CreateRequestProductService {
         Status status = statusRepository.findByNameIgnoreCase(dto.statusName())
                 .orElseThrow(()-> new StatusNotFoundException());
 
+        status.setName("EM_ANDAMENTO");
+
         ItemRequestProduct itemRequestProduct =
                 itemRequestProductMapper.toEntity(
                         dto,

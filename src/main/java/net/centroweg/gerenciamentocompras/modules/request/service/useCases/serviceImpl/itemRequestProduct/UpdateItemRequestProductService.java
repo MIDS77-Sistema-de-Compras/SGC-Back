@@ -61,6 +61,7 @@ public class UpdateItemRequestProductService {
         itemRequestProduct.setMeasurementUnit(measurementUnit);
         itemRequestProduct.setQuantity(dto.quantity());
         itemRequestProduct.setStatus_id(status);
+        itemRequestProduct.setAdditionalInformations(itemRequestProduct.getAdditionalInformations());
 
         return itemRequestProductMapper.toResponse(itemRequestProductRepository.save(itemRequestProduct));
     }

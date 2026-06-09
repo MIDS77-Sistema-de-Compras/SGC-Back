@@ -1,12 +1,23 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public record ItemRequestProductRequest(
-
+        @NotNull
         long requestId,
-        String productName,
-        String measurementUnit,
-        double quantity,
-        String statusName
 
+        @NotNull
+        String productName,
+
+        @NotNull
+        String measurementUnit,
+
+        @NotNull
+        double quantity,
+        String statusName,
+
+        @NotBlank
+        String additionalInformations
 ) {
 }

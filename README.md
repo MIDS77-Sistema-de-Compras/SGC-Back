@@ -16,7 +16,7 @@
 
 ## 📖 Contexto
 
-O **SGC** é o backend do sistema corporativo de **solicitação e controle de compras** da **Centroweg**, desenvolvido a pedido de **Tissi**. Ele centraliza o fluxo de aquisições: um colaborador abre uma solicitação vinculada ao seu Centro de Resultado (CR) e filial, e essa solicitação percorre um ciclo de estados até ser entregue ou cancelada.
+O **SGC** é o backend do sistema corporativo de **solicitação e controle de compras** do **Centroweg**, desenvolvido a pedido de **Tissi**. Ele centraliza o fluxo de aquisições: um colaborador abre uma solicitação de compra ou de serviço (provision), vinculada ao seu Centro de Responsabilidade (CR) e filial, e essa solicitação percorre um ciclo de estados até ser entregue ou cancelada.
 
 A API REST é consumida pelo frontend web da empresa.
 
@@ -101,7 +101,7 @@ Gerencia os usuários do sistema e seus papéis de acesso.
 Gerencia a estrutura organizacional da empresa: os **CRs** (Centros de Resultado) e as **Filiais**, além da associação entre eles (`CrBranch`).
 
 **Entidades:**
-- `Cr` — Centro de Resultado com nome, código e flag `master`
+- `Cr` — Centro de Responsabilidade com nome, código e flag `master`
 - `Branch` — Filial da empresa
 - `CrBranch` — Vínculo entre um CR e uma Filial, com responsável atribuído
 
@@ -149,11 +149,11 @@ Cada transição é implementada como uma estratégia independente (`ApprovedSta
 
 ---
 
-### `provision` — Provisões Orçamentárias
+### `provision` — Serviços (Provisões)
 
-Gerencia as provisões de orçamento disponíveis para as compras.
+Gerencia as **provisões de serviço** — quando a necessidade não é comprar um produto, mas contratar alguém para realizar algo (ex: uma manutenção, um conserto, uma instalação). O termo "provision" no sistema representa esse tipo de solicitação de serviço.
 
-**Entidade:** `Provision` — nome, valor total e descrição.
+**Entidade:** `Provision` — nome, valor total e descrição do serviço.
 
 **Endpoints:** `/provisions` — CRUD completo.
 

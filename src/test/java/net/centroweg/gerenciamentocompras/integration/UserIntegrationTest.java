@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 public class UserIntegrationTest {
 
     @Autowired
@@ -34,12 +34,16 @@ public class UserIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    // CPF válido para testes
+    @Autowired
+    private RoleRepository roleRepository;
+
     private static final String CPF_VALIDO = "52998224725";
 
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
+        roleRepository.deleteAll();
+        roleRepository.save(new Role("COMPRADOR"));
     }
 
     private Long criarUsuarioEObterIdRetornado() throws Exception {
@@ -50,7 +54,7 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "1234",
                 true,
-                "ADMIN"
+                "COMPRADOR"
         );
 
         String response = mockMvc.perform(post("/users")
@@ -75,7 +79,7 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "1234",
                 true,
-                "ADMIN"
+                "COMPRADOR"
         );
 
         mockMvc.perform(post("/users")
@@ -107,7 +111,7 @@ public class UserIntegrationTest {
     void deveBuscarUsuarioPorId() throws Exception {
         Long id = criarUsuarioEObterIdRetornado();
 
-        mockMvc.perform(get("/users/UserId/{id}", id)
+        mockMvc.perform(get("/users/userId/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
@@ -118,7 +122,7 @@ public class UserIntegrationTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("[Integração] Deve retornar 404 ao buscar usuário com ID inexistente")
     void deveRetornarNotFoundParaIdInexistente() throws Exception {
-        mockMvc.perform(get("/users/UserId/{id}", 9999L)
+        mockMvc.perform(get("/users/userId/{id}", 9999L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -129,7 +133,7 @@ public class UserIntegrationTest {
     void deveBuscarUsuarioPorNome() throws Exception {
         criarUsuarioEObterIdRetornado();
 
-        mockMvc.perform(get("/users/UserName/{name}", "Admin Teste")
+        mockMvc.perform(get("/users/userName/{name}", "Admin Teste")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -149,10 +153,10 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "9999",
                 true,
-                "ADMIN"
+                "COMPRADOR"
         );
 
-        mockMvc.perform(put("/users/UserId/{id}", id)
+        mockMvc.perform(put("/users/userId/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
@@ -166,7 +170,7 @@ public class UserIntegrationTest {
     void deveDeletarUsuario() throws Exception {
         Long id = criarUsuarioEObterIdRetornado();
 
-        mockMvc.perform(delete("/users/UserId/{id}", id))
+        mockMvc.perform(delete("/users/userId/{id}", id))
                 .andExpect(status().isNoContent());
 
         assertEquals(0, userRepository.count());

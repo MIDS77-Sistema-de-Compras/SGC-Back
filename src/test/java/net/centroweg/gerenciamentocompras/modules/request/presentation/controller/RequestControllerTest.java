@@ -72,7 +72,7 @@ class RequestControllerTest {
         branchRepository.deleteAll();
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
-        Cr cr = crRepository.save(new Cr("TI", "7940", false));
+        Cr cr = crRepository.save(new Cr("TI", "7940", false, null));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
 
         waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));

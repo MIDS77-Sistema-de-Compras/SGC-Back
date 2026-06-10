@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrInstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 

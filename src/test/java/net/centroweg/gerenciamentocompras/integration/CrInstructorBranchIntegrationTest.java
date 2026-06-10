@@ -22,7 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrInstructorRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrInstructorRequest;

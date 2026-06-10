@@ -3,7 +3,7 @@ package net.centroweg.gerenciamentocompras.integration;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ class CrServiceIntegrationTest {
     void shouldCreateCr() {
         CrRequest request = new CrRequest("CR Compras", "1001L", true);
 
-        CrResponse response = crService.create(request);
+        CrCompoundResponse response = crService.create(request);
 
         assertThat(response.id()).isPositive();
         assertThat(response.name()).isEqualTo("CR Compras");
@@ -47,22 +47,22 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldListAllCrs() {
-        CrResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true));
-        CrResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false));
+        CrCompoundResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true));
+        CrCompoundResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false));
 
-        List<CrResponse> responses = crService.listAll();
+        List<CrCompoundResponse> responses = crService.listAll();
 
         assertThat(responses)
                 .hasSize(2)
-                .extracting(CrResponse::id)
+                .extracting(CrCompoundResponse::id)
                 .containsExactlyInAnyOrder(firstCr.id(), secondCr.id());
     }
 
     @Test
     void shouldFindCrById() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
 
-        CrResponse response = crService.listById(createdCr.id());
+        CrCompoundResponse response = crService.listById(createdCr.id());
 
         assertThat(response.id()).isEqualTo(createdCr.id());
         assertThat(response.name()).isEqualTo("CR Compras");
@@ -72,17 +72,17 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldUpdateCr() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
         CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false);
 
-        CrResponse response = crService.update(createdCr.id(), updateRequest);
+        CrCompoundResponse response = crService.update(createdCr.id(), updateRequest);
 
         assertThat(response.id()).isEqualTo(createdCr.id());
         assertThat(response.name()).isEqualTo("CR Financeiro");
         assertThat(response.code()).isEqualTo(2002L);
         assertThat(response.master()).isFalse();
 
-        CrResponse persistedCr = crService.listById(createdCr.id());
+        CrCompoundResponse persistedCr = crService.listById(createdCr.id());
         assertThat(persistedCr.name()).isEqualTo("CR Financeiro");
         assertThat(persistedCr.code()).isEqualTo(2002L);
         assertThat(persistedCr.master()).isFalse();
@@ -90,7 +90,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldDeleteCr() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
 
         MessageDTO response = crService.delete(createdCr.id());
 

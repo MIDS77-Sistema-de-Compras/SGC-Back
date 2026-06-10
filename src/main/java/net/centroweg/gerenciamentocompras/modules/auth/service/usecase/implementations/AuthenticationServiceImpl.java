@@ -14,7 +14,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationLogin authenticationLogin;
 
-    public Authentication login(@RequestBody LogIn loginDto){
-        return authenticationLogin.login(loginDto);
+    public String login(@RequestBody LogIn loginDto){
+        return authenticationLogin.loginAndGenerateToken(loginDto);
     }
 }

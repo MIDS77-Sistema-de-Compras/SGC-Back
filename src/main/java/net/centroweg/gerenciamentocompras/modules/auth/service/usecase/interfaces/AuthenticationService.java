@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface AuthenticationService {
 
-     Authentication login(@RequestBody LogIn loginDto);
+     String login(@RequestBody LogIn loginDto);
 }

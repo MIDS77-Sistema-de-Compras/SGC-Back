@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.auth.domain;
+package net.centroweg.gerenciamentocompras.modules.auth.domain.entity;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;

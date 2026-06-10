@@ -9,6 +9,7 @@ public interface StatusService {
 
     StatusResponse createStatus (StatusRequest statusRequest);
     StatusResponse findStatusById (Long id);
+    StatusResponse findStatusByName (String name);
     List<StatusResponse> findAllStatus ();
     StatusResponse editStatus (Long id, StatusRequest statusRequest);
     void deleteStatus (Long id);

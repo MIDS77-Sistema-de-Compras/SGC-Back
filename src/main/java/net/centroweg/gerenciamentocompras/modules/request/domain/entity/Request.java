@@ -49,6 +49,8 @@ public class Request {
     )
     List<User> createdByUsers = new ArrayList<>();
 
+    private String feedback;
+
     public Request(CrBranch crBranch, Status status) {
         this.crBranch = crBranch;
         this.status = status;

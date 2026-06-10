@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.cr.domain;
+package net.centroweg.gerenciamentocompras.modules.cr.domain.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

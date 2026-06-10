@@ -21,9 +21,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto){
 
-        authenticationService.login(loginDto);
 
         return  ResponseEntity.status(200)
-                .body(new MessageDTO("Usuário autenticado com sucesso!"));
+                .body(new MessageDTO(authenticationService.login(loginDto)));
     }
 }

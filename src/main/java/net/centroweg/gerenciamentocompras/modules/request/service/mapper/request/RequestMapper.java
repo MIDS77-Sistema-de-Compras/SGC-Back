@@ -32,7 +32,9 @@ public class RequestMapper {
                 request.getRequestDate(),
                 request.getUpdatedAt(),
                 request.getCrBranch().getId(),
-                request.getStatus().getName());
+                request.getStatus().getName(),
+                request.getFeedback()
+        );
     }
 
     public List<RequestResponse> toDTOList(List<Request> requests){

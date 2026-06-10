@@ -41,29 +41,31 @@ public class SecurityFilter extends OncePerRequestFilter {
         try {
             String token = extractJwt(request);
 
-            String tokenValidated = jwtService.validateToken(token);
+            if (token != null) {
+                String tokenValidated = jwtService.validateToken(token);
 
-            if(tokenValidated == null){
-                throw new InvalidTokenException("Token inválido");
+                if (tokenValidated == null) {
+                    throw new InvalidTokenException("Token inválido");
+                }
+
+                UserDetails user = customUserDetailsService.loadUserByUsername(tokenValidated);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
-
-            UserDetails user = customUserDetailsService.loadUserByUsername(tokenValidated);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
             filterChain.doFilter(request, response);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             resolver.resolveException(request, response, null, e);
         }
 
     }
 
-    private String extractJwt(HttpServletRequest request){
+    private String extractJwt(HttpServletRequest request) {
         String jwtHeader = request.getHeader("Authorization");
 
-        if(jwtHeader == null || !jwtHeader.startsWith("Bearer ") ) return null;
+        if (jwtHeader == null || !jwtHeader.startsWith("Bearer ")) return null;
 
         return jwtHeader.replace("Bearer", "");
     }

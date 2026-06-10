@@ -24,6 +24,6 @@ public class AuthenticationLogin {
 
         var authentication = authenticationManager.authenticate(authenticationToken);
 
-        return jwtService.generateToken((UserPrincipal) authentication);
+        return jwtService.generateToken((UserPrincipal) authentication.getPrincipal());
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class ItemRequestProduct {
     private final ItemRequestProductService itemRequestProductService;
 
     @PostMapping
-    public ResponseEntity<ItemRequestProductResponse> createItemRequestProduct(@RequestBody ItemRequestProductRequest itemRequestProductRequest){
+    public ResponseEntity<ItemRequestProductResponse> createItemRequestProduct(@Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
         return ResponseEntity.status(201).body(itemRequestProductService.createRequestProduct(itemRequestProductRequest));
     }
 
@@ -32,7 +33,7 @@ public class ItemRequestProduct {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ItemRequestProductResponse> updateItemRequestProduct(@PathVariable Long id, @RequestBody ItemRequestProductRequest itemRequestProductRequest){
+    public ResponseEntity<ItemRequestProductResponse> updateItemRequestProduct(@PathVariable Long id, @Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
         return ResponseEntity.status(200).body(itemRequestProductService.updateRequestProduct(itemRequestProductRequest, id));
     }
 

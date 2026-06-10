@@ -15,8 +15,10 @@ public record ItemRequestProductRequest(
         @NotBlank
         String measurementUnit,
 
-        @NotBlank
+        @NotNull
         double quantity,
+
+        @NotBlank
         String statusName,
 
         @NotBlank

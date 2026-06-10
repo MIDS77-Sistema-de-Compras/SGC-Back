@@ -38,7 +38,7 @@ public class CreateRequestProductService {
         Product product = requestPublicApi.findProuctByNameIgnoreCase(dto.productName()).orElseThrow(()-> new ProductNotFoundException());
 
         MeasurementUnit measurementUnit =
-                requestPublicApi.findMeansurementByNameIgnoreCase(dto.measurementUnit())
+                requestPublicApi.findMeasurementByNameIgnoreCase(dto.measurementUnit())
                         .orElseThrow(()-> new MeasurementUnitNotFoundException());
 
         Status status = statusRepository.findByNameIgnoreCase(dto.statusName())

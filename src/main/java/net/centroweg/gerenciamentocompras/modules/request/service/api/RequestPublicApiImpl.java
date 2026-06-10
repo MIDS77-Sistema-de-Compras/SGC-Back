@@ -23,7 +23,7 @@ public class RequestPublicApiImpl implements RequestPublicApi{
     }
 
     @Override
-    public Optional<MeasurementUnit> findMeansurementByNameIgnoreCase(String name){
+    public Optional<MeasurementUnit> findMeasurementByNameIgnoreCase(String name){
         return measurementUnitRepository.findByNameIgnoreCase(name);
     }
 }

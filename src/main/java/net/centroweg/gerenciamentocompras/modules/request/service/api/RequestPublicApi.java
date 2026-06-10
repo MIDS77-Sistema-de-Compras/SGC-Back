@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface RequestPublicApi {
 
     Optional<Product> findProuctByNameIgnoreCase(String name);
-    Optional<MeasurementUnit> findMeansurementByNameIgnoreCase(String name);
+    Optional<MeasurementUnit> findMeasurementByNameIgnoreCase(String name);
 }

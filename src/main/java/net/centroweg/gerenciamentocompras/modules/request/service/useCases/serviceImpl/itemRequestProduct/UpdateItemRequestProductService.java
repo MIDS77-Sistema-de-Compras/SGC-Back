@@ -49,7 +49,7 @@ public class UpdateItemRequestProductService {
 
         MeasurementUnit measurementUnit =
                 requestPublicApi
-                        .findMeansurementByNameIgnoreCase(dto.measurementUnit())
+                        .findMeasurementByNameIgnoreCase(dto.measurementUnit())
                         .orElseThrow(()-> new MeasurementUnitNotFoundException());
 
         Status status =

@@ -29,11 +29,8 @@ public class CreateNotificationServiceImpl {
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new UserNotFoundException(request.userId()));
 
-        Request relatedRequest = null;
-        if (request.requestId() != null) {
-            relatedRequest = requestRepository.findById(request.requestId())
-                    .orElseThrow(() -> new RequestNotFoundException());
-        }
+        Request relatedRequest = requestRepository.findById(request.requestId())
+                .orElseThrow(() -> new RequestNotFoundException());
 
         Notification notification = notificationMapper.toEntity(request.title(), request.message(), user, relatedRequest);
         Notification saved = notificationRepository.save(notification);

@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email.NotificationEmailService;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
@@ -72,6 +73,9 @@ public class NotificationIntegrationTest {
     private static final String CPF_VALIDO = "52998224725";
 
     private User user;
+    private CrBranch crBranch;
+    private Status waitingStatus;
+    private Request request;
 
     @BeforeEach
     void setUp() {
@@ -86,6 +90,14 @@ public class NotificationIntegrationTest {
         user = userRepository.save(
                 new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true)
         );
+
+        Branch branch = branchRepository.save(new Branch("Filial Centro"));
+        Cr cr = crRepository.save(new Cr("TI", "7940", false));
+        crBranch = crBranchRepository.save(new CrBranch(branch, cr, user));
+
+        waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
+
+        request = requestRepository.save(new Request(crBranch, waitingStatus));
     }
 
     private Notification criarNotificacao(String title, String message) {
@@ -94,14 +106,8 @@ public class NotificationIntegrationTest {
         notification.setMessage(message);
         notification.setViewed(false);
         notification.setUser(user);
-        notification.setRequest(null);
+        notification.setRequest(request);
         return notificationRepository.save(notification);
-    }
-
-    private CrBranch criarCrBranchComResponsavel() {
-        Branch branch = branchRepository.save(new Branch("Filial Centro"));
-        Cr cr = crRepository.save(new Cr("TI", "7940", false));
-        return crBranchRepository.save(new CrBranch(branch, cr, user));
     }
 
     @Test
@@ -156,9 +162,6 @@ public class NotificationIntegrationTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("[Integração] Deve gerar notificação ao criar uma solicitação (RN-NOT02)")
     void deveGerarNotificacaoAoCriarSolicitacao() throws Exception {
-        CrBranch crBranch = criarCrBranchComResponsavel();
-        statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
-
         mockMvc.perform(post("/requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -176,8 +179,6 @@ public class NotificationIntegrationTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("[Integração] Deve gerar notificação ao mudar o status de uma solicitação (RN-NOT01)")
     void deveGerarNotificacaoAoMudarStatus() throws Exception {
-        CrBranch crBranch = criarCrBranchComResponsavel();
-        statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
         statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
 
         String response = mockMvc.perform(post("/requests")

@@ -26,7 +26,7 @@ public class NotificationMapper {
                 notification.getViewed(),
                 notification.getCreatedAt(),
                 notification.getUser().getId(),
-                notification.getRequest() != null ? notification.getRequest().getId() : null
+                notification.getRequest().getId()
         );
     }
 }

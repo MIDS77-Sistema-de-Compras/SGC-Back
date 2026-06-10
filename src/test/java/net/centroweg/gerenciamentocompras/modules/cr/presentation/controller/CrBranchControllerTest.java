@@ -66,7 +66,7 @@ class CrBranchControllerTest {
         branchRepository.deleteAll();
 
         branch = branchRepository.save(new Branch("Filial Centro"));
-        cr = crRepository.save(new Cr("TI", "7940", false));
+        cr = crRepository.save(new Cr("TI", "7940", false, null));
 
         user = new User();
         user.setName("João");

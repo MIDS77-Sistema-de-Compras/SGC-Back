@@ -16,6 +16,6 @@ public class FindRoleByIdImpl {
 
     public RoleResponse findRoleById(Long id){
         return mapper.toDTO(repository.findById(id)
-                .orElseThrow(() -> new RoleNotFoundException()));
+                .orElseThrow(() -> new RoleNotFoundException(id)));
     }
 }

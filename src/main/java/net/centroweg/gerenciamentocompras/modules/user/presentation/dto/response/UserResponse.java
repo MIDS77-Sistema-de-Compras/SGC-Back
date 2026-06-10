@@ -10,6 +10,7 @@ public record UserResponse(
         String extensionNumber,
         boolean active,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        String userProfile
 ) {
 }

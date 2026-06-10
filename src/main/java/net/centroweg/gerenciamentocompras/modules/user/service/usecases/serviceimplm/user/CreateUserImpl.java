@@ -20,7 +20,7 @@ public class CreateUserImpl {
         String encryptedPassword = passwordEncoder.encode(user.password());
         String encryptedCPF = passwordEncoder.encode(user.cpf());
         CreateUser userWithEncryptedPassword = new CreateUser(
-                user.name(), user.email(), encryptedCPF, encryptedPassword, user.extensionNumber(), user.active(), user.nameRole()
+                user.name(), user.email(), encryptedCPF, encryptedPassword, user.extensionNumber(), user.active(), user.nameRole(), user.profilePicture()
         );
         return mapper.toDTO(repository.save(mapper.toEntity(userWithEncryptedPassword)));
     }

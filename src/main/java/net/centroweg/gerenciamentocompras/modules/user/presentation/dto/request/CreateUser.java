@@ -35,6 +35,9 @@ public record CreateUser(
         @NotNull(message = "A atividade do usuário deve ser informada.")
         Boolean active,
         @NotBlank(message = "A permissão do usuário não deve estar em branco")
-        String nameRole
+        String nameRole,
+
+        @NotBlank(message = "A foto de perfil do usuário não deve estar em branco")
+        String profilePicture
 ) {
 }

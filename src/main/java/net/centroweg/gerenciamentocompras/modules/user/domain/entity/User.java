@@ -1,6 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.user.domain.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,16 +46,20 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
+    private String profilePicture;
+
     @ManyToOne
     private Role role;
 
-    public User(String name, String cpf, String email, String password, String extensionNumber, boolean active) {
+    public User(String name, String cpf, String email, String password, String extensionNumber, boolean active, String profilePicture) {
         this.name = name;
         this.cpf = cpf;
         this.email = email;
         this.password = password;
         this.extensionNumber = extensionNumber;
         this.active = active;
+        this.profilePicture=profilePicture;
     }
 
     @PrePersist

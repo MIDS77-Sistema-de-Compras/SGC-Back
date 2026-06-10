@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
@@ -38,7 +38,7 @@ public class ItemRequestProvisionController {
     }
 
     @GetMapping("/request/{requestId}/{itemId}")
-    public ResponseEntity<ItemRequestProvisionResponse> findItemByIdAndRequestId(@PathVariable("requestId") Long requestId, @PathVariable("itemID") Long itemId){
+    public ResponseEntity<ItemRequestProvisionResponse> findItemByIdAndRequestId(@PathVariable("requestId") Long requestId, @PathVariable("itemId") Long itemId){
         return ResponseEntity.status(HttpStatus.OK)
             .body(itemRequestProvisionService.findProvisionRequestItemById(requestId, itemId));
     }

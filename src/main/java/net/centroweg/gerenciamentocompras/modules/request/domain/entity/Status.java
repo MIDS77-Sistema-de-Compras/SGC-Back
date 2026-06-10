@@ -1,5 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.request.domain.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +23,9 @@ public class Status implements StatusIntrf {
 
     @Column(nullable = false)
     private String description;
+
+    @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemRequestProvision> itemRequestProvisions = new ArrayList<>();
 
     public Status(String name, String description) {
         this.name = name;

@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.controll
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
 import org.springframework.http.HttpStatus;
@@ -42,5 +43,10 @@ public class RequestController {
     public ResponseEntity<Void> deleteRequest(@PathVariable Long id){
         requestService.deleteRequest(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<RequestResponse> updateFeedback(@Valid @RequestBody UpdateFeedback feedback, @PathVariable Long id){
+        return ResponseEntity.ok(requestService.updateFeedback(feedback, id));
     }
 }

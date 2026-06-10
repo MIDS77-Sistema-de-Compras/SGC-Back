@@ -9,5 +9,6 @@ public record RequestResponse(
         LocalDateTime requestDate,
         LocalDateTime updatedAt,
         Long crBranchId,
-        String statusName
+        String statusName,
+        String feedback
 ) {}

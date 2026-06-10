@@ -1,29 +1,16 @@
 package net.centroweg.gerenciamentocompras.modules.request.domain.entity;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "requests")
@@ -61,6 +48,8 @@ public class Request {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     List<User> createdByUsers = new ArrayList<>();
+
+    private String feedback;
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemRequestProvision> itemRequestProvisions = new ArrayList<>();

@@ -51,6 +51,9 @@ public class Request {
 
     private String feedback;
 
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemRequestProvision> itemRequestProvisions = new ArrayList<>();
+
     public Request(CrBranch crBranch, Status status) {
         this.crBranch = crBranch;
         this.status = status;

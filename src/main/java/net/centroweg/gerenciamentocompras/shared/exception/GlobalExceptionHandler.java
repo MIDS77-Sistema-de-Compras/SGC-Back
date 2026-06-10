@@ -1,7 +1,5 @@
 package net.centroweg.gerenciamentocompras.shared.exception;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,14 +7,17 @@ import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import org.springframework.security.core.AuthenticationException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestProvisionItemNotFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -83,6 +84,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BranchNotFoundException.class)
     public ResponseEntity<ApiError> handleBranchNotFound(BranchNotFoundException exception) {
+        return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
+    }
+
+    @ExceptionHandler(RequestProvisionItemNotFoundException.class)
+    public ResponseEntity<ApiError> handleIRPNotFound(RequestProvisionItemNotFoundException exception){
         return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
     }
 

@@ -1,8 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Branch;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
@@ -66,7 +66,7 @@ class CrBranchControllerTest {
         branchRepository.deleteAll();
 
         branch = branchRepository.save(new Branch("Filial Centro"));
-        cr = crRepository.save(new Cr("TI", "7940", false));
+        cr = crRepository.save(new Cr("TI", "7940", false, null));
 
         user = new User();
         user.setName("João");

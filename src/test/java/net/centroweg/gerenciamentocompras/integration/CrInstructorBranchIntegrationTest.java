@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,6 +81,13 @@ class CrInstructorBranchIntegrationTest {
         CrBranch crBranch = new CrBranch();
         crBranch = crBranchRepository.save(crBranch);
         crBranchId = crBranch.getId();
+    }
+
+    @AfterEach
+    void tearDown() {
+        crInstructorRepository.deleteAll();
+        userRepository.deleteAll();
+        crBranchRepository.deleteAll();
     }
 
     // =========================================================================

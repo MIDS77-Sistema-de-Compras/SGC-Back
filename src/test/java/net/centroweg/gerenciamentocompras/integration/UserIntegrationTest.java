@@ -4,6 +4,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
 public class UserIntegrationTest {
 
     @Autowired
@@ -52,9 +55,18 @@ public class UserIntegrationTest {
                 .defaultRequest(get("/").with(user("test-admin").roles("ADMIN")))
                 .build();
 
+        // Cleanup em ordem segura: filhos antes dos pais (FK)
         userRepository.deleteAll();
         roleRepository.deleteAll();
         roleRepository.save(new Role("COMPRADOR"));
+    }
+
+    @AfterEach
+    void tearDown() {
+        // MockMvc não reverte @Transactional (cada request HTTP tem sua própria transação).
+        // Por isso limpamos explicitamente após cada teste para não vazar dados para outros testes da Suite.
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     private Long criarUsuarioEObterIdRetornado() throws Exception {

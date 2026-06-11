@@ -15,7 +15,7 @@ public class FindRoleByNameImpl {
     private final RoleRepository repository;
 
     public RoleResponse findRoleByName(String name) {
-        return mapper.toDTO(repository.findByNameIgnoringCase(name)
+        return mapper.toDTO(repository.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new RoleNotFoundException(name)));
     }
 }

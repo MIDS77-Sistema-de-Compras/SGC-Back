@@ -3,7 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.crinstructor.funct
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrInstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrInstructorNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;

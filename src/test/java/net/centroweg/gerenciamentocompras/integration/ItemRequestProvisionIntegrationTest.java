@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
-import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,7 +35,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 

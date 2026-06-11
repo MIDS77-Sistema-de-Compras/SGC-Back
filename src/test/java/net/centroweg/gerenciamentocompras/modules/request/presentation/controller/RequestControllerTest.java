@@ -1,8 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.controller;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Branch;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
@@ -72,7 +72,7 @@ class RequestControllerTest {
         branchRepository.deleteAll();
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
-        Cr cr = crRepository.save(new Cr("TI", "7940", false));
+        Cr cr = crRepository.save(new Cr("TI", "7940", false, null));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
 
         waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));

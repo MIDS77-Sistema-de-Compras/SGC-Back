@@ -50,7 +50,7 @@ class CustomUserDetailsServiceTest {
     @Test
     @DisplayName("Should load user by email successfully")
     void shouldLoadUserByEmailSuccessfully() {
-        when(authPublicApi.findByEmailOrCpf("maria@gmail.com", "mariagmailcom"))
+        when(authPublicApi.findByEmailOrCpf("maria@gmail.com", ""))
                 .thenReturn(Optional.of(user));
 
         UserDetails result = customUserDetailsService.loadUserByUsername("maria@gmail.com");
@@ -59,7 +59,7 @@ class CustomUserDetailsServiceTest {
         assertInstanceOf(UserPrincipal.class, result);
         assertEquals("maria@gmail.com", result.getUsername());
         assertEquals("encryptedPassword", result.getPassword());
-        verify(authPublicApi).findByEmailOrCpf("maria@gmail.com", "mariagmailcom");
+        verify(authPublicApi).findByEmailOrCpf("maria@gmail.com", "");
     }
 
     @Test
@@ -91,13 +91,13 @@ class CustomUserDetailsServiceTest {
     @Test
     @DisplayName("Should trim login input before searching")
     void shouldTrimLoginBeforeSearching() {
-        when(authPublicApi.findByEmailOrCpf("maria@gmail.com", "mariagmailcom"))
+        when(authPublicApi.findByEmailOrCpf("maria@gmail.com", ""))
                 .thenReturn(Optional.of(user));
 
         UserDetails result = customUserDetailsService.loadUserByUsername("  maria@gmail.com  ");
 
         assertNotNull(result);
-        verify(authPublicApi).findByEmailOrCpf("maria@gmail.com", "mariagmailcom");
+        verify(authPublicApi).findByEmailOrCpf("maria@gmail.com", "");
     }
 
     @Test

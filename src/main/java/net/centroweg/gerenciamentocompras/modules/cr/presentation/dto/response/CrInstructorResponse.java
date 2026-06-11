@@ -1,9 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response;
 
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 
 public record CrInstructorResponse(
     Long id,
-    User user,
+    UserResponse user,
     Long crBranchId
 ) {}

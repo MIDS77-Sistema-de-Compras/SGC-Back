@@ -1,7 +1,6 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.irp;
+package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.irprovision;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -9,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestProvisionItemNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.ItemRequestProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.mapper.irp.ItemRequestProvisionMapper;
+import net.centroweg.gerenciamentocompras.modules.request.service.mapper.irprovision.ItemRequestProvisionMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +18,7 @@ public class FindAllItemsRequestProvisionServiceImpl {
     private final ItemRequestProvisionRepository itemRequestProvisionRepository;
 
     public List<ItemRequestProvisionResponse> findAll(Long requestId){
-        if(!requestId.equals(null)){
+        if(requestId != null){
             return itemRequestProvisionMapper.toResponseList(itemRequestProvisionRepository.findAllByRequestId(requestId));
         }
 

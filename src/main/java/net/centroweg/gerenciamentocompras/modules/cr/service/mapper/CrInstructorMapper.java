@@ -17,7 +17,7 @@ public class CrInstructorMapper {
     }
 
     public CrInstructorResponse toResponse(CrInstructor instructor){
-        return new CrInstructorResponse(instructor.getId(), instructor.getInstructor(), instructor.getCrBranch());
+        return new CrInstructorResponse(instructor.getId(), instructor.getInstructor(), instructor.getCrBranch().getId());
     }
 
     public List<CrInstructorResponse> toResponseList(List<CrInstructor> instructors){

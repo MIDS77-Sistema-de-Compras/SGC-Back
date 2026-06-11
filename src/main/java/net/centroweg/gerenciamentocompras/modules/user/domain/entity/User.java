@@ -44,7 +44,8 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "role_id")
     private Role role;
 
     public User(String name, String cpf, String email, String password, String extensionNumber, boolean active) {

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 class CrServiceIntegrationTest {
 
     @Autowired
@@ -40,7 +42,7 @@ class CrServiceIntegrationTest {
 
         assertThat(response.id()).isPositive();
         assertThat(response.name()).isEqualTo("CR Compras");
-        assertThat(response.code()).isEqualTo(1001L);
+        assertThat(response.code()).isEqualTo("1001L");
         assertThat(response.master()).isTrue();
         assertThat(crRepository.existsById(response.id())).isTrue();
     }
@@ -66,7 +68,7 @@ class CrServiceIntegrationTest {
 
         assertThat(response.id()).isEqualTo(createdCr.id());
         assertThat(response.name()).isEqualTo("CR Compras");
-        assertThat(response.code()).isEqualTo(1001L);
+        assertThat(response.code()).isEqualTo("1001L");
         assertThat(response.master()).isTrue();
     }
 
@@ -79,12 +81,12 @@ class CrServiceIntegrationTest {
 
         assertThat(response.id()).isEqualTo(createdCr.id());
         assertThat(response.name()).isEqualTo("CR Financeiro");
-        assertThat(response.code()).isEqualTo(2002L);
+        assertThat(response.code()).isEqualTo("2002L");
         assertThat(response.master()).isFalse();
 
         CrResponse persistedCr = crService.listById(createdCr.id());
         assertThat(persistedCr.name()).isEqualTo("CR Financeiro");
-        assertThat(persistedCr.code()).isEqualTo(2002L);
+        assertThat(persistedCr.code()).isEqualTo("2002L");
         assertThat(persistedCr.master()).isFalse();
     }
 

@@ -4,6 +4,7 @@ public record CrCompoundResponse(
         long id,
         String name,
         String code,
-        boolean master
+        boolean master,
+        String sector
 ){
 }

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,6 +73,7 @@ class ItemRequestProvisionIntegrationTest {
     private Provision mockProvision;
     private Status mockStatus;
     private ItemRequestProvision mockItemRequestProvision;
+    private CrBranch crBranch;
 
     @BeforeEach
     void setUp() {
@@ -87,7 +89,7 @@ class ItemRequestProvisionIntegrationTest {
         mockRequest.setId(1L);
         mockRequest.setRequestDate(LocalDateTime.now());
         // Set required relationships (would normally come from DB)
-        mockRequest.setCrBranch(new net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch());
+        mockRequest.setCrBranch(crBranch);
         mockRequest.setStatus(new Status()); // This is the Request's status, different from ItemRequestProvision's status
 
         // Setup Provision with required fields

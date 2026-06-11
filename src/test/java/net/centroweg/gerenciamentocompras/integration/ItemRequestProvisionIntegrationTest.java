@@ -157,9 +157,9 @@ class ItemRequestProvisionIntegrationTest {
                 .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1000L))
-                .andExpect(jsonPath("$.request.id").value(1L))
-                .andExpect(jsonPath("$.provision.id").value(10L))
-                .andExpect(jsonPath("$.status.id").value(100L))
+                .andExpect(jsonPath("$.requestId").value(1L))
+                .andExpect(jsonPath("$.provisionId").value(10L))
+                .andExpect(jsonPath("$.statusName").value("PENDING"))
                 .andExpect(jsonPath("$.additionalInformation").value("Test info"));
 
         // Verify service was called
@@ -179,9 +179,9 @@ class ItemRequestProvisionIntegrationTest {
         mockMvc.perform(get("/item-provision-requests/request/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1000L))
-                .andExpect(jsonPath("$[0].request.id").value(1L))
-                .andExpect(jsonPath("$[0].provision.id").value(10L))
-                .andExpect(jsonPath("$[0].status.id").value(100L))
+                .andExpect(jsonPath("$[0].requestId").value(1L))
+                .andExpect(jsonPath("$[0].provisionId").value(10L))
+                .andExpect(jsonPath("$[0].statusName").value("PENDING"))
                 .andExpect(jsonPath("$[0].additionalInformation").value("Test info"));
 
         // Verify service was called
@@ -200,9 +200,9 @@ class ItemRequestProvisionIntegrationTest {
         mockMvc.perform(get("/item-provision-requests/request/1/1000"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1000L))
-                .andExpect(jsonPath("$.request.id").value(1L))
-                .andExpect(jsonPath("$.provision.id").value(10L))
-                .andExpect(jsonPath("$.status.id").value(100L))
+                .andExpect(jsonPath("$.requestId").value(1L))
+                .andExpect(jsonPath("$.provisionId").value(10L))
+                .andExpect(jsonPath("$.statusName").value("PENDING"))
                 .andExpect(jsonPath("$.additionalInformation").value("Test info"));
 
         // Verify service was called
@@ -229,9 +229,9 @@ class ItemRequestProvisionIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1000L))
-                .andExpect(jsonPath("$.request.id").value(1L))
-                .andExpect(jsonPath("$.provision.id").value(10L))
-                .andExpect(jsonPath("$.status.id").value(100L))
+                .andExpect(jsonPath("$.requestId").value(1L))
+                .andExpect(jsonPath("$.provisionId").value(10L))
+                .andExpect(jsonPath("$.statusName").value("PENDING"))
                 .andExpect(jsonPath("$.additionalInformation").value("Test info"));
 
         verify(itemRequestProvisionService, times(1))

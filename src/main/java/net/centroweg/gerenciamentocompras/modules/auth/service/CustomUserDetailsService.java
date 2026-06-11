@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
         String cleanLogin = login.trim();
-        String cleanCpf = cleanLogin.replaceAll("\\D", "");
+        String cleanCpf = cleanLogin.replaceAll("\\W", "");
 
         User userSearched = authPublicApi.findByEmailOrCpf(cleanLogin, cleanCpf)
                 .orElseThrow( () -> new UsernameNotFoundException("Credenciais inválidas para o login fornecido"));

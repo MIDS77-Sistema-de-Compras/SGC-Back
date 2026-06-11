@@ -23,9 +23,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 
 import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
+import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
+import net.centroweg.gerenciamentocompras.config.security.WebSecurityConfig;
+import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -36,14 +43,26 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProvisionService;
 import tools.jackson.databind.ObjectMapper;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+
 @WebMvcTest(ItemRequestProvisionController.class)
+@Import({WebSecurityConfig.class, SecurityFilter.class})
 class ItemRequestProvisionIntegrationTest {
 
     @Autowired
+    private WebApplicationContext context;
+
     private MockMvc mockMvc;
 
     @MockitoBean
     private ItemRequestProvisionService itemRequestProvisionService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -58,6 +77,11 @@ class ItemRequestProvisionIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(springSecurity())
+                .defaultRequest(get("/").with(user("test-user").roles("ADMIN")))
+                .build();
+
         MockitoAnnotations.openMocks(this);
 
         // Setup Request with minimal required fields

@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
@@ -41,8 +42,16 @@ class ItemRequestProductIntegrationTest {
     private ItemRequestProductRequest validRequest;
     private ItemRequestProductResponse mockResponse;
 
+    private Request createRequest(Long id) {
+        Request request = new Request();
+        request.setId(id);
+        return request;
+    }
+
     @BeforeEach
     void setUp() {
+        Request request = createRequest(1L);
+
         validRequest = new ItemRequestProductRequest(
                 1L,
                 "Parafuso",
@@ -54,7 +63,7 @@ class ItemRequestProductIntegrationTest {
 
         mockResponse = new ItemRequestProductResponse(
                 1L,
-                1L,
+                request,
                 "Parafuso",
                 "UN",
                 10.0,
@@ -76,7 +85,7 @@ class ItemRequestProductIntegrationTest {
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.itemRequestProduct").value(1L))
-                .andExpect(jsonPath("$.requestId").value(1L))
+                .andExpect(jsonPath("$.request.id").value(1L))
                 .andExpect(jsonPath("$.productName").value("Parafuso"))
                 .andExpect(jsonPath("$.measurementUnit").value("UN"))
                 .andExpect(jsonPath("$.quantity").value(10.0))
@@ -107,7 +116,7 @@ class ItemRequestProductIntegrationTest {
     @DisplayName("[Integração] Deve retornar 200 com lista de itens de produto")
     void listItemRequestProduct_shouldReturn200_withFullList() throws Exception {
         ItemRequestProductResponse second = new ItemRequestProductResponse(
-                2L, 2L, "Porca", "CX", 5.0, "EM_ANDAMENTO", "Outra observação"
+                2L, createRequest(2L), "Porca", "CX", 5.0, "EM_ANDAMENTO", "Outra observação"
         );
 
         when(itemRequestProductService.findAllRequestProduct()).thenReturn(List.of(mockResponse, second));
@@ -172,7 +181,7 @@ class ItemRequestProductIntegrationTest {
                 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
         ItemRequestProductResponse updatedResponse = new ItemRequestProductResponse(
-                1L, 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+                1L, createRequest(1L), "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
 
         when(itemRequestProductService.updateRequestProduct(any(ItemRequestProductRequest.class), eq(1L)))

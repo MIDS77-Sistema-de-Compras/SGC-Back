@@ -1,6 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.auth.service;
 
-import net.centroweg.gerenciamentocompras.modules.auth.domain.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.auth.service.api.AuthPublicApi;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;

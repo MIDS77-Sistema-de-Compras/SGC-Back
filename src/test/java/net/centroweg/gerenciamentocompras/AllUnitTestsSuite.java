@@ -4,6 +4,6 @@ import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
-@SelectPackages("net.centroweg.gerenciamentocompras")
-public class AllTestsSuite {
+@SelectPackages("net.centroweg.gerenciamentocompras.modules")
+public class AllUnitTestsSuite {
 }

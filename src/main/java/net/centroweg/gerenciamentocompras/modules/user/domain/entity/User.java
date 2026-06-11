@@ -46,7 +46,7 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String profilePicture;
 
     @ManyToOne

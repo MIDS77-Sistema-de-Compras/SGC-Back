@@ -1,31 +1,33 @@
 package net.centroweg.gerenciamentocompras.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -92,9 +94,9 @@ class ItemRequestProvisionIntegrationTest {
         // Setup the response DTO (matches your record structure)
         validResponse = new ItemRequestProvisionResponse(
             1000L,           // id
-            mockRequest,     // request (full object)
-            mockProvision,   // provision (full object)
-            mockStatus,      // status (full object)
+            mockRequest.getId(),     // request (full object)
+            mockProvision.getId(),   // provision (full object)
+            mockStatus.getName(),      // status (full object)
             "Test info"      // additionalInformation
         );
 

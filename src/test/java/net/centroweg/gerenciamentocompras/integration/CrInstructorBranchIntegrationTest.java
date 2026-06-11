@@ -20,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
@@ -30,14 +32,16 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import tools.jackson.databind.ObjectMapper;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @ImportAutoConfiguration(JacksonAutoConfiguration.class)
-@WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
 class CrInstructorBranchIntegrationTest {
 
-    @Autowired private MockMvc mockMvc;
+    @Autowired private WebApplicationContext context;
     @Autowired private ObjectMapper objectMapper;
 
     @Autowired private CrInstructorRepository crInstructorRepository;
@@ -46,9 +50,15 @@ class CrInstructorBranchIntegrationTest {
 
     private Long userId;
     private Long crBranchId;
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(springSecurity())
+                .defaultRequest(get("/").with(user("admin").roles("USER", "ADMIN")))
+                .build();
+
         // Clear all tracking tables in safe dependency order
         crInstructorRepository.deleteAll();
         userRepository.deleteAll();

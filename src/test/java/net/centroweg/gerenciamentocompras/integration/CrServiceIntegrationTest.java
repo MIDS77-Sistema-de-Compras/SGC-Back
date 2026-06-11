@@ -40,7 +40,7 @@ class CrServiceIntegrationTest {
 
         assertThat(response.id()).isPositive();
         assertThat(response.name()).isEqualTo("CR Compras");
-        assertThat(response.code()).isEqualTo(1001L);
+        assertThat(response.code()).isEqualTo("1001L");
         assertThat(response.master()).isTrue();
         assertThat(crRepository.existsById(response.id())).isTrue();
     }
@@ -66,7 +66,7 @@ class CrServiceIntegrationTest {
 
         assertThat(response.id()).isEqualTo(createdCr.id());
         assertThat(response.name()).isEqualTo("CR Compras");
-        assertThat(response.code()).isEqualTo(1001L);
+        assertThat(response.code()).isEqualTo("1001L");
         assertThat(response.master()).isTrue();
     }
 
@@ -79,12 +79,12 @@ class CrServiceIntegrationTest {
 
         assertThat(response.id()).isEqualTo(createdCr.id());
         assertThat(response.name()).isEqualTo("CR Financeiro");
-        assertThat(response.code()).isEqualTo(2002L);
+        assertThat(response.code()).isEqualTo("2002L");
         assertThat(response.master()).isFalse();
 
         CrResponse persistedCr = crService.listById(createdCr.id());
         assertThat(persistedCr.name()).isEqualTo("CR Financeiro");
-        assertThat(persistedCr.code()).isEqualTo(2002L);
+        assertThat(persistedCr.code()).isEqualTo("2002L");
         assertThat(persistedCr.master()).isFalse();
     }
 

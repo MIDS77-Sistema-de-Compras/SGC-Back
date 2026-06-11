@@ -15,7 +15,7 @@ public class ItemRequestProductMapper {
     public ItemRequestProductResponse toResponse(ItemRequestProduct item) {
         return new ItemRequestProductResponse(
                 item.getId(),
-                item.getRequest() != null ? item.getRequest().getId() : 0,
+                item.getRequest(),
                 item.getProduct() != null ? item.getProduct().getName() : null,
                 item.getMeasurementUnit() != null ? item.getMeasurementUnit().getName() : null,
                 item.getQuantity(),
@@ -39,7 +39,7 @@ public class ItemRequestProductMapper {
         item.setMeasurementUnit(measurementUnit);
         item.setQuantity(dto.quantity());
         item.setStatus_id(status);
-        dto.additionalInformations();
+        item.setAdditionalInformations(dto.additionalInformations());
         return item;
     }
 }

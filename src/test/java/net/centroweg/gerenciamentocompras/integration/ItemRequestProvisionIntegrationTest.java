@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
+import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -46,16 +54,24 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProvisionService;
 import tools.jackson.databind.ObjectMapper;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-
-@WebMvcTest(ItemRequestProvisionController.class)
-@Import({WebSecurityConfig.class, SecurityFilter.class})
+// 1. Explicitly isolate the web slice to ONLY load your targeted controller type
+@WebMvcTest(
+        controllers = ItemRequestProvisionController.class,
+        excludeAutoConfiguration = {SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class}
+)
+@AutoConfigureMockMvc(addFilters = false)
+// 2. Override default scanning to strictly include ONLY this controller, bypassing all others
+@ComponentScan(
+        basePackageClasses = ItemRequestProvisionController.class,
+        useDefaultFilters = false, // Stop automatic package parsing
+        includeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = ItemRequestProvisionController.class
+        )
+)
 class ItemRequestProvisionIntegrationTest {
 
     @Autowired
-    private WebApplicationContext context;
-
     private MockMvc mockMvc;
 
     @MockitoBean
@@ -65,7 +81,7 @@ class ItemRequestProvisionIntegrationTest {
     private JwtService jwtService;
 
     @MockitoBean
-    private CustomUserDetailsService customUserDetailsService;
+    private SecurityFilter securityFilter;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -80,11 +96,6 @@ class ItemRequestProvisionIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(springSecurity())
-                .defaultRequest(get("/").with(user("test-user").roles("ADMIN")))
-                .build();
-
         MockitoAnnotations.openMocks(this);
 
         // Setup Request with minimal required fields

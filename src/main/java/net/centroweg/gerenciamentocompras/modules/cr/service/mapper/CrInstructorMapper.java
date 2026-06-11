@@ -2,6 +2,9 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.mapper;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
+import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Component;
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
@@ -10,18 +13,26 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 @Component
+@RequiredArgsConstructor
 public class CrInstructorMapper {
-    
+
+    private final UserMapper userMapper;
+
     public CrInstructor toEntity(User user, CrBranch crBranch){
         return new CrInstructor(user, crBranch);
     }
 
     public CrInstructorResponse toResponse(CrInstructor instructor){
-        return new CrInstructorResponse(instructor.getId(), instructor.getInstructor(), instructor.getCrBranch().getId());
+        return new CrInstructorResponse(
+                instructor.getId(),
+                userMapper.toDTO(instructor.getInstructor()),
+                instructor.getCrBranch().getId()
+        );
     }
 
     public List<CrInstructorResponse> toResponseList(List<CrInstructor> instructors){
-        return instructors.stream().map(instructor -> new CrInstructorMapper().toResponse(instructor)).toList();
+        return instructors.stream().map(
+                this::toResponse).toList();
     }
 
 }

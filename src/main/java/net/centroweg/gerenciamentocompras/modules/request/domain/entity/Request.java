@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 import java.time.LocalDateTime;
@@ -48,6 +48,11 @@ public class Request {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     List<User> createdByUsers = new ArrayList<>();
+
+    private String feedback;
+
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemRequestProvision> itemRequestProvisions = new ArrayList<>();
 
     public Request(CrBranch crBranch, Status status) {
         this.crBranch = crBranch;

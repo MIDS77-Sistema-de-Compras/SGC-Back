@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.cr.domain;
+package net.centroweg.gerenciamentocompras.modules.cr.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,9 +22,13 @@ public class Cr {
 
     private boolean master;
 
-    public Cr(String name, String code, boolean master) {
+    @ManyToOne
+    private Sector sector;
+
+    public Cr(String name, String code, boolean master, Sector sector) {
         this.name = name;
         this.code = code;
         this.master = master;
+        this.sector = sector;
     }
 }

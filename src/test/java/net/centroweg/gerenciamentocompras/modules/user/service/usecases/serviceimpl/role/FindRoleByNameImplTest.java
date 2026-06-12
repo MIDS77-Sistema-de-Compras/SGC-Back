@@ -38,7 +38,7 @@ class FindRoleByNameImplTest {
         role.setName("ADMIN");
         RoleResponse expectedResponse = new RoleResponse(1L, "ADMIN");
 
-        when(repository.findByNameIgnoringCase(name)).thenReturn(Optional.of(role));
+        when(repository.findByNameIgnoreCase(name)).thenReturn(Optional.of(role));
         when(mapper.toDTO(role)).thenReturn(expectedResponse);
 
         RoleResponse result = findRoleByNameImpl.findRoleByName(name);
@@ -52,7 +52,7 @@ class FindRoleByNameImplTest {
     void shouldThrowRoleNotFoundExceptionWhenNoRoleFound() {
         String name = "INEXISTENTE";
 
-        when(repository.findByNameIgnoringCase(name)).thenReturn(Optional.empty());
+        when(repository.findByNameIgnoreCase(name)).thenReturn(Optional.empty());
 
         assertThrows(RoleNotFoundException.class, () -> findRoleByNameImpl.findRoleByName(name));
     }

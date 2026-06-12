@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.auth.domain;
 
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.junit.jupiter.api.BeforeEach;

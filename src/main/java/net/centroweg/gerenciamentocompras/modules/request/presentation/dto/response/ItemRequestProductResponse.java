@@ -1,6 +1,5 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response;
 
-
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 
 public record ItemRequestProductResponse(

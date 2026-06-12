@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.irp;
+package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.irprovision;
 
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

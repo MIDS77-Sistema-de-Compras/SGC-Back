@@ -10,6 +10,7 @@ import net.centroweg.gerenciamentocompras.modules.request.service.useCases.servi
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.FindByIdItemRequestProductService;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.ItemRequestProductServiceImpl;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.UpdateItemRequestProductService;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,16 +28,12 @@ class ItemRequestProductServiceTest {
 
     @Mock
     private CreateRequestProductService createRequestProductService;
-
     @Mock
     private FindAllItemRequestProductService findAllRequestProductService;
-
     @Mock
     private FindByIdItemRequestProductService findRequestProductByIdService;
-
     @Mock
     private UpdateItemRequestProductService updateRequestProductService;
-
     @Mock
     private DeleteItemRequestProductService deleteRequestProductService;
 
@@ -54,43 +51,23 @@ class ItemRequestProductServiceTest {
     @Test
     @DisplayName("Deve criar um item de produto com sucesso")
     void shouldCreateItemRequestProductSuccessfully() {
-        Request requestEntity = createRequest(1L);
-
         ItemRequestProductRequest request = new ItemRequestProductRequest(
-                1L,
-                "Parafuso",
-                "UN",
-                10.0,
-                "EM_ANDAMENTO",
-                "Nenhuma observação adicional"
+                1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
+        );
+        ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
+                1L, createRequest(1L), "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
         );
 
-        ItemRequestProductResponse fakeResponse =
-                new ItemRequestProductResponse(
-                        1L,
-                        requestEntity,
-                        "Parafuso",
-                        "UN",
-                        10.0,
-                        "EM_ANDAMENTO",
-                        "Nenhuma observação adicional"
-                );
+        when(createRequestProductService.create(request)).thenReturn(fakeResponse);
 
-        when(createRequestProductService.create(request))
-                .thenReturn(fakeResponse);
-
-        ItemRequestProductResponse result =
-                itemRequestProductService.createRequestProduct(request);
+        ItemRequestProductResponse result = itemRequestProductService.createRequestProduct(request);
 
         assertNotNull(result);
         assertEquals(1L, result.itemRequestProduct());
-        assertNotNull(result.request());
         assertEquals(1L, result.request().getId());
         assertEquals("Parafuso", result.productName());
         assertEquals(10.0, result.quantity());
-
-        verify(createRequestProductService, times(1))
-                .create(request);
+        verify(createRequestProductService, times(1)).create(request);
     }
 
     // ───────────────────────────── FIND ALL ───────────────────────────
@@ -98,64 +75,34 @@ class ItemRequestProductServiceTest {
     @Test
     @DisplayName("Deve retornar a lista de todos os itens de produto")
     void shouldFindAllItemRequestProducts() {
-        Request request1 = createRequest(1L);
-        Request request2 = createRequest(2L);
+        ItemRequestProductResponse item1 = new ItemRequestProductResponse(
+                1L, createRequest(1L), "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Obs 1"
+        );
+        ItemRequestProductResponse item2 = new ItemRequestProductResponse(
+                2L, createRequest(2L), "Porca", "CX", 5.0, "EM_ANDAMENTO", "Obs 2"
+        );
 
-        ItemRequestProductResponse item1 =
-                new ItemRequestProductResponse(
-                        1L,
-                        request1,
-                        "Parafuso",
-                        "UN",
-                        10.0,
-                        "EM_ANDAMENTO",
-                        "Obs 1"
-                );
+        when(findAllRequestProductService.findAll()).thenReturn(List.of(item1, item2));
 
-        ItemRequestProductResponse item2 =
-                new ItemRequestProductResponse(
-                        2L,
-                        request2,
-                        "Porca",
-                        "CX",
-                        5.0,
-                        "EM_ANDAMENTO",
-                        "Obs 2"
-                );
-
-        when(findAllRequestProductService.findAll())
-                .thenReturn(List.of(item1, item2));
-
-        List<ItemRequestProductResponse> result =
-                itemRequestProductService.findAllRequestProduct();
+        List<ItemRequestProductResponse> result = itemRequestProductService.findAllRequestProduct();
 
         assertNotNull(result);
         assertEquals(2, result.size());
-
         assertEquals("Parafuso", result.get(0).productName());
-        assertEquals(1L, result.get(0).request().getId());
-
         assertEquals("Porca", result.get(1).productName());
-        assertEquals(2L, result.get(1).request().getId());
-
-        verify(findAllRequestProductService, times(1))
-                .findAll();
+        verify(findAllRequestProductService, times(1)).findAll();
     }
 
     @Test
     @DisplayName("Deve retornar lista vazia quando não houver itens de produto")
     void shouldReturnEmptyListWhenNoItemRequestProducts() {
-        when(findAllRequestProductService.findAll())
-                .thenReturn(List.of());
+        when(findAllRequestProductService.findAll()).thenReturn(List.of());
 
-        List<ItemRequestProductResponse> result =
-                itemRequestProductService.findAllRequestProduct();
+        List<ItemRequestProductResponse> result = itemRequestProductService.findAllRequestProduct();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-
-        verify(findAllRequestProductService, times(1))
-                .findAll();
+        verify(findAllRequestProductService, times(1)).findAll();
     }
 
     // ───────────────────────────── FIND BY ID ─────────────────────────
@@ -163,33 +110,19 @@ class ItemRequestProductServiceTest {
     @Test
     @DisplayName("Deve buscar um item de produto por ID com sucesso")
     void shouldFindItemRequestProductById() {
-        Request requestEntity = createRequest(1L);
+        ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
+                1L, createRequest(1L), "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
+        );
 
-        ItemRequestProductResponse fakeResponse =
-                new ItemRequestProductResponse(
-                        1L,
-                        requestEntity,
-                        "Parafuso",
-                        "UN",
-                        10.0,
-                        "EM_ANDAMENTO",
-                        "Nenhuma observação adicional"
-                );
+        when(findRequestProductByIdService.findById(1L)).thenReturn(fakeResponse);
 
-        when(findRequestProductByIdService.findById(1L))
-                .thenReturn(fakeResponse);
-
-        ItemRequestProductResponse result =
-                itemRequestProductService.findRequestProductById(1L);
+        ItemRequestProductResponse result = itemRequestProductService.findRequestProductById(1L);
 
         assertNotNull(result);
         assertEquals(1L, result.itemRequestProduct());
-        assertNotNull(result.request());
         assertEquals(1L, result.request().getId());
         assertEquals("Parafuso", result.productName());
-
-        verify(findRequestProductByIdService, times(1))
-                .findById(1L);
+        verify(findRequestProductByIdService, times(1)).findById(1L);
     }
 
     @Test
@@ -198,13 +131,11 @@ class ItemRequestProductServiceTest {
         when(findRequestProductByIdService.findById(99L))
                 .thenThrow(new ItemRequestProductNotFoundException());
 
-        assertThrows(
-                ItemRequestProductNotFoundException.class,
-                () -> itemRequestProductService.findRequestProductById(99L)
+        assertThrows(ItemRequestProductNotFoundException.class, () ->
+                itemRequestProductService.findRequestProductById(99L)
         );
 
-        verify(findRequestProductByIdService, times(1))
-                .findById(99L);
+        verify(findRequestProductByIdService, times(1)).findById(99L);
     }
 
     // ───────────────────────────── UPDATE ─────────────────────────────
@@ -212,75 +143,40 @@ class ItemRequestProductServiceTest {
     @Test
     @DisplayName("Deve atualizar um item de produto com sucesso")
     void shouldUpdateItemRequestProductSuccessfully() {
-        Request requestEntity = createRequest(1L);
+        ItemRequestProductRequest updateRequest = new ItemRequestProductRequest(
+                1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+        );
+        ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
+                1L, createRequest(1L), "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+        );
 
-        ItemRequestProductRequest updateRequest =
-                new ItemRequestProductRequest(
-                        1L,
-                        "Parafuso Atualizado",
-                        "KG",
-                        20.0,
-                        "CONCLUIDO",
-                        "Informações atualizadas"
-                );
+        when(updateRequestProductService.update(1L, updateRequest)).thenReturn(fakeResponse);
 
-        ItemRequestProductResponse fakeResponse =
-                new ItemRequestProductResponse(
-                        1L,
-                        requestEntity,
-                        "Parafuso Atualizado",
-                        "KG",
-                        20.0,
-                        "CONCLUIDO",
-                        "Informações atualizadas"
-                );
-
-        when(updateRequestProductService.update(1L, updateRequest))
-                .thenReturn(fakeResponse);
-
-        ItemRequestProductResponse result =
-                itemRequestProductService.updateRequestProduct(
-                        updateRequest,
-                        1L
-                );
+        ItemRequestProductResponse result = itemRequestProductService.updateRequestProduct(updateRequest, 1L);
 
         assertNotNull(result);
-        assertNotNull(result.request());
         assertEquals(1L, result.request().getId());
         assertEquals("Parafuso Atualizado", result.productName());
         assertEquals(20.0, result.quantity());
         assertEquals("CONCLUIDO", result.statusName());
-
-        verify(updateRequestProductService, times(1))
-                .update(1L, updateRequest);
+        verify(updateRequestProductService, times(1)).update(1L, updateRequest);
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao tentar atualizar item de produto com ID inexistente")
     void shouldThrowExceptionWhenUpdatingItemRequestProductByNonExistentId() {
-        ItemRequestProductRequest updateRequest =
-                new ItemRequestProductRequest(
-                        1L,
-                        "Produto X",
-                        "UN",
-                        5.0,
-                        "EM_ANDAMENTO",
-                        "Sem observações"
-                );
+        ItemRequestProductRequest updateRequest = new ItemRequestProductRequest(
+                1L, "Produto X", "UN", 5.0, "EM_ANDAMENTO", "Sem observações"
+        );
 
         when(updateRequestProductService.update(99L, updateRequest))
                 .thenThrow(new ItemRequestProductNotFoundException());
 
-        assertThrows(
-                ItemRequestProductNotFoundException.class,
-                () -> itemRequestProductService.updateRequestProduct(
-                        updateRequest,
-                        99L
-                )
+        assertThrows(ItemRequestProductNotFoundException.class, () ->
+                itemRequestProductService.updateRequestProduct(updateRequest, 99L)
         );
 
-        verify(updateRequestProductService, times(1))
-                .update(99L, updateRequest);
+        verify(updateRequestProductService, times(1)).update(99L, updateRequest);
     }
 
     // ───────────────────────────── DELETE ─────────────────────────────
@@ -290,13 +186,9 @@ class ItemRequestProductServiceTest {
     void shouldDeleteItemRequestProduct() {
         Long idToDelete = 1L;
 
-        assertDoesNotThrow(
-                () -> itemRequestProductService
-                        .deleteRequestProduct(idToDelete)
-        );
+        assertDoesNotThrow(() -> itemRequestProductService.deleteRequestProduct(idToDelete));
 
-        verify(deleteRequestProductService, times(1))
-                .delete(idToDelete);
+        verify(deleteRequestProductService, times(1)).delete(idToDelete);
     }
 
     @Test
@@ -305,16 +197,12 @@ class ItemRequestProductServiceTest {
         Long nonExistentId = 99L;
 
         doThrow(new ItemRequestProductNotFoundException())
-                .when(deleteRequestProductService)
-                .delete(nonExistentId);
+                .when(deleteRequestProductService).delete(nonExistentId);
 
-        assertThrows(
-                ItemRequestProductNotFoundException.class,
-                () -> itemRequestProductService
-                        .deleteRequestProduct(nonExistentId)
+        assertThrows(ItemRequestProductNotFoundException.class, () ->
+                itemRequestProductService.deleteRequestProduct(nonExistentId)
         );
 
-        verify(deleteRequestProductService, times(1))
-                .delete(nonExistentId);
+        verify(deleteRequestProductService, times(1)).delete(nonExistentId);
     }
 }

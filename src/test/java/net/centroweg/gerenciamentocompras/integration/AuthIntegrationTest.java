@@ -5,6 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -66,8 +70,14 @@ public class AuthIntegrationTest {
         userRepository.save(user);
     }
 
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+    }
+
     @Test
-    @DisplayName("[Integration] Should authenticate user with valid email and password")
+    @DisplayName("[Integration] Should authenticate user with valid email and return JWT token")
     void shouldAuthenticateWithValidEmailAndPassword() throws Exception {
         LogIn loginDto = new LogIn(EMAIL, PASSWORD);
 
@@ -75,11 +85,12 @@ public class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Usuário autenticado com sucesso!"));
+                .andExpect(jsonPath("$.text").value(notNullValue()))
+                .andExpect(jsonPath("$.text").value(startsWith("eyJ")));
     }
 
     @Test
-    @DisplayName("[Integration] Should authenticate user with valid CPF and password")
+    @DisplayName("[Integration] Should authenticate user with valid CPF and return JWT token")
     void shouldAuthenticateWithValidCpfAndPassword() throws Exception {
         LogIn loginDto = new LogIn(CPF, PASSWORD);
 
@@ -87,7 +98,41 @@ public class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Usuário autenticado com sucesso!"));
+                .andExpect(jsonPath("$.text").value(notNullValue()))
+                .andExpect(jsonPath("$.text").value(startsWith("eyJ")));
+    }
+
+    @Test
+    @DisplayName("[Integration] Should allow access to protected route with valid JWT token")
+    void shouldAllowAccessToProtectedRouteWithValidJwtToken() throws Exception {
+        LogIn loginDto = new LogIn(EMAIL, PASSWORD);
+
+        String responseContent = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginDto)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        String token = objectMapper.readTree(responseContent).get("text").asText();
+
+        mockMvc.perform(get("/users")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[Integration] Should deny access to protected route with invalid JWT token")
+    void shouldDenyAccessToProtectedRouteWithInvalidJwtToken() throws Exception {
+        mockMvc.perform(get("/users")
+                        .header("Authorization", "Bearer invalidtoken"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("[Integration] Should deny access to protected route without JWT token")
+    void shouldDenyAccessToProtectedRouteWithoutJwtToken() throws Exception {
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isForbidden());
     }
 
     @Test

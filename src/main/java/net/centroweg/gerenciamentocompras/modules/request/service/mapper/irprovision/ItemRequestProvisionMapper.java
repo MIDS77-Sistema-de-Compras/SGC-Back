@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.mapper.irp;
+package net.centroweg.gerenciamentocompras.modules.request.service.mapper.irprovision;
 
 import java.util.List;
 
@@ -20,11 +20,12 @@ public class ItemRequestProvisionMapper {
 
     public ItemRequestProvisionResponse toResponse(ItemRequestProvision itemRequestProvision){
         return new ItemRequestProvisionResponse(
-                itemRequestProvision.getId(), 
-                itemRequestProvision.getRequest(), 
-                itemRequestProvision.getProvision(), 
-                itemRequestProvision.getStatus(), 
-                itemRequestProvision.getAdditionalInformation());
+                itemRequestProvision.getId(),
+                itemRequestProvision.getRequest().getId(),
+                itemRequestProvision.getProvision().getId(),
+                itemRequestProvision.getStatus().getName(),
+                itemRequestProvision.getAdditionalInformation()
+        );
     }
 
     public List<ItemRequestProvisionResponse> toResponseList(List<ItemRequestProvision> itemRequestProvisions){

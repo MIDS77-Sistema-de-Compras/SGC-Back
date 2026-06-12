@@ -31,7 +31,7 @@ public class CreateUserImpl {
         String encryptedPassword = passwordEncoder.encode(user.password());
         String hashedCpf = cpfHasher.hash(user.cpf());
 
-        Role role = roleRepository.findByNameIgnoringCase(user.nameRole())
+        Role role = roleRepository.findByNameIgnoreCase(user.nameRole())
                 .orElseThrow(() -> new UserNotFoundException(user.nameRole()));
 
         CreateUser userWithEncryptedPassword = new CreateUser(

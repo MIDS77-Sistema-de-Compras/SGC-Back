@@ -1,7 +1,6 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.irp;
+package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.irprovision;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -12,7 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.request.service.useCases.servi
 
 @Service
 @RequiredArgsConstructor
-public class IRPServiceImpl implements ItemRequestProvisionService {
+public class IRProvisionServiceImpl implements ItemRequestProvisionService {
 
     private final AddItemToRequestProvisionServiceImpl addItemToRequestProvision;
     private final FindAllItemsRequestProvisionServiceImpl findAllItemsRequestProvision;

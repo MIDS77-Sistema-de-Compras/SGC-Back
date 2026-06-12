@@ -75,7 +75,7 @@ class RequestControllerTest {
         Cr cr = crRepository.save(new Cr("TI", "7940", false, null));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
 
-        waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
+        waitingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Solicitação aguardando aprovação"));
         approvedStatus = statusRepository.save(new Status("Aprovado", "Solicitação aprovada pelo supervisor"));
     }
 
@@ -87,12 +87,12 @@ class RequestControllerTest {
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "Aguardando aprovação"
+                                    "statusName": "EM_ANDAMENTO"
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.crBranchId").value(crBranch.getId()))
-                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"));
+                .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"));
     }
 
     @Test
@@ -112,7 +112,7 @@ class RequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(saved.getId()))
                 .andExpect(jsonPath("$.crBranchId").value(crBranch.getId()))
-                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"));
+                .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"));
     }
 
     @Test
@@ -131,11 +131,11 @@ class RequestControllerTest {
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "Aguardando aprovação"
+                                    "statusName": "EM_ANDAMENTO"
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"));
+                .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"));
     }
 
     @Test

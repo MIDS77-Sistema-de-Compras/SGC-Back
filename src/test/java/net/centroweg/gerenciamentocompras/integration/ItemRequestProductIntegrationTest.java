@@ -1,12 +1,8 @@
 package net.centroweg.gerenciamentocompras.integration;
 
-import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
-import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
-import net.centroweg.gerenciamentocompras.config.security.WebSecurityConfig;
-import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProduct;
+import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProductController;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProductService;
@@ -16,13 +12,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import tools.jackson.databind.ObjectMapper;
 
@@ -31,18 +25,14 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ItemRequestProduct.class)
-@Import({WebSecurityConfig.class, SecurityFilter.class})
+@WebMvcTest(ItemRequestProductController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ItemRequestProductIntegrationTest {
 
     @Autowired
-    private WebApplicationContext context;
-
     private MockMvc mockMvc;
 
     @Autowired
@@ -52,29 +42,13 @@ class ItemRequestProductIntegrationTest {
     private ItemRequestProductService itemRequestProductService;
 
     @MockitoBean
-    private JwtService jwtService;
-
-    @MockitoBean
-    private CustomUserDetailsService customUserDetailsService;
+    private SecurityFilter securityFilter;
 
     private ItemRequestProductRequest validRequest;
     private ItemRequestProductResponse mockResponse;
 
-    private Request createRequest(Long id) {
-        Request request = new Request();
-        request.setId(id);
-        return request;
-    }
-
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(springSecurity())
-                .defaultRequest(get("/").with(user("test-user").roles("ADMIN")))
-                .build();
-
-        Request request = createRequest(1L);
-
         validRequest = new ItemRequestProductRequest(
                 1L,
                 "Parafuso",
@@ -86,7 +60,7 @@ class ItemRequestProductIntegrationTest {
 
         mockResponse = new ItemRequestProductResponse(
                 1L,
-                request,
+                1L,
                 "Parafuso",
                 "UN",
                 10.0,
@@ -108,7 +82,7 @@ class ItemRequestProductIntegrationTest {
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.itemRequestProduct").value(1L))
-                .andExpect(jsonPath("$.request.id").value(1L))
+                .andExpect(jsonPath("$.requestId").value(1L))
                 .andExpect(jsonPath("$.productName").value("Parafuso"))
                 .andExpect(jsonPath("$.measurementUnit").value("UN"))
                 .andExpect(jsonPath("$.quantity").value(10.0))
@@ -139,7 +113,7 @@ class ItemRequestProductIntegrationTest {
     @DisplayName("[Integração] Deve retornar 200 com lista de itens de produto")
     void listItemRequestProduct_shouldReturn200_withFullList() throws Exception {
         ItemRequestProductResponse second = new ItemRequestProductResponse(
-                2L, createRequest(2L), "Porca", "CX", 5.0, "EM_ANDAMENTO", "Outra observação"
+                2L, 2L, "Porca", "CX", 5.0, "EM_ANDAMENTO", "Outra observação"
         );
 
         when(itemRequestProductService.findAllRequestProduct()).thenReturn(List.of(mockResponse, second));
@@ -204,7 +178,7 @@ class ItemRequestProductIntegrationTest {
                 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
         ItemRequestProductResponse updatedResponse = new ItemRequestProductResponse(
-                1L, createRequest(1L), "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+                1L, 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
 
         when(itemRequestProductService.updateRequestProduct(any(ItemRequestProductRequest.class), eq(1L)))

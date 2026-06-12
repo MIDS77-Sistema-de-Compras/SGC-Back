@@ -30,6 +30,8 @@ public class CreateRequestServiceImpl {
         Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                 .orElseThrow(() -> new StatusNotFoundException());
 
+        status.setName("EM_ANDAMENTO");
+
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
@@ -45,5 +47,4 @@ public class CreateRequestServiceImpl {
         }
         return requestMapper.toDTO(savedRequest);
     }
-
 }

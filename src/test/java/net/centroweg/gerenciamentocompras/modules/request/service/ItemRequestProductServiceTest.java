@@ -1,6 +1,5 @@
 package net.centroweg.gerenciamentocompras.modules.request.service;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
@@ -40,12 +39,6 @@ class ItemRequestProductServiceTest {
     @InjectMocks
     private ItemRequestProductServiceImpl itemRequestProductService;
 
-    private Request createRequest(Long id) {
-        Request request = new Request();
-        request.setId(id);
-        return request;
-    }
-
     // ───────────────────────────── CREATE ─────────────────────────────
 
     @Test
@@ -55,7 +48,7 @@ class ItemRequestProductServiceTest {
                 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
         );
         ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
-                1L, createRequest(1L), "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
+                1L, 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
         );
 
         when(createRequestProductService.create(request)).thenReturn(fakeResponse);
@@ -64,7 +57,7 @@ class ItemRequestProductServiceTest {
 
         assertNotNull(result);
         assertEquals(1L, result.itemRequestProduct());
-        assertEquals(1L, result.request().getId());
+        assertEquals(1L, result.requestId());
         assertEquals("Parafuso", result.productName());
         assertEquals(10.0, result.quantity());
         verify(createRequestProductService, times(1)).create(request);
@@ -76,10 +69,10 @@ class ItemRequestProductServiceTest {
     @DisplayName("Deve retornar a lista de todos os itens de produto")
     void shouldFindAllItemRequestProducts() {
         ItemRequestProductResponse item1 = new ItemRequestProductResponse(
-                1L, createRequest(1L), "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Obs 1"
+                1L, 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Obs 1"
         );
         ItemRequestProductResponse item2 = new ItemRequestProductResponse(
-                2L, createRequest(2L), "Porca", "CX", 5.0, "EM_ANDAMENTO", "Obs 2"
+                2L, 2L, "Porca", "CX", 5.0, "EM_ANDAMENTO", "Obs 2"
         );
 
         when(findAllRequestProductService.findAll()).thenReturn(List.of(item1, item2));
@@ -111,7 +104,7 @@ class ItemRequestProductServiceTest {
     @DisplayName("Deve buscar um item de produto por ID com sucesso")
     void shouldFindItemRequestProductById() {
         ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
-                1L, createRequest(1L), "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
+                1L, 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
         );
 
         when(findRequestProductByIdService.findById(1L)).thenReturn(fakeResponse);
@@ -120,7 +113,7 @@ class ItemRequestProductServiceTest {
 
         assertNotNull(result);
         assertEquals(1L, result.itemRequestProduct());
-        assertEquals(1L, result.request().getId());
+        assertEquals(1L, result.requestId());
         assertEquals("Parafuso", result.productName());
         verify(findRequestProductByIdService, times(1)).findById(1L);
     }
@@ -147,7 +140,7 @@ class ItemRequestProductServiceTest {
                 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
         ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
-                1L, createRequest(1L), "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+                1L, 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
 
         when(updateRequestProductService.update(1L, updateRequest)).thenReturn(fakeResponse);
@@ -155,7 +148,7 @@ class ItemRequestProductServiceTest {
         ItemRequestProductResponse result = itemRequestProductService.updateRequestProduct(updateRequest, 1L);
 
         assertNotNull(result);
-        assertEquals(1L, result.request().getId());
+        assertEquals(1L, result.requestId());
         assertEquals("Parafuso Atualizado", result.productName());
         assertEquals(20.0, result.quantity());
         assertEquals("CONCLUIDO", result.statusName());

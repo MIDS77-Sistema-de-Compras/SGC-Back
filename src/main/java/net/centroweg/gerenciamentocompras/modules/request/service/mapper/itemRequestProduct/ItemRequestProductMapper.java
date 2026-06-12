@@ -15,7 +15,7 @@ public class ItemRequestProductMapper {
     public ItemRequestProductResponse toResponse(ItemRequestProduct item) {
         return new ItemRequestProductResponse(
                 item.getId(),
-                item.getRequest(),
+                item.getRequest().getId(),
                 item.getProduct() != null ? item.getProduct().getName() : null,
                 item.getMeasurementUnit() != null ? item.getMeasurementUnit().getName() : null,
                 item.getQuantity(),

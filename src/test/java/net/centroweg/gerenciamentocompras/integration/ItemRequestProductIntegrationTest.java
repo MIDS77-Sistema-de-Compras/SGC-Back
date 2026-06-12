@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.integration;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProductController;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ItemRequestProductController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ItemRequestProductIntegrationTest {
 
     @Autowired
@@ -39,19 +41,14 @@ class ItemRequestProductIntegrationTest {
     @MockitoBean
     private ItemRequestProductService itemRequestProductService;
 
+    @MockitoBean
+    private SecurityFilter securityFilter;
+
     private ItemRequestProductRequest validRequest;
     private ItemRequestProductResponse mockResponse;
 
-    private Request createRequest(Long id) {
-        Request request = new Request();
-        request.setId(id);
-        return request;
-    }
-
     @BeforeEach
     void setUp() {
-        Request request = createRequest(1L);
-
         validRequest = new ItemRequestProductRequest(
                 1L,
                 "Parafuso",
@@ -63,7 +60,7 @@ class ItemRequestProductIntegrationTest {
 
         mockResponse = new ItemRequestProductResponse(
                 1L,
-                request,
+                1L,
                 "Parafuso",
                 "UN",
                 10.0,
@@ -85,7 +82,7 @@ class ItemRequestProductIntegrationTest {
                         .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.itemRequestProduct").value(1L))
-                .andExpect(jsonPath("$.request.id").value(1L))
+                .andExpect(jsonPath("$.requestId").value(1L))
                 .andExpect(jsonPath("$.productName").value("Parafuso"))
                 .andExpect(jsonPath("$.measurementUnit").value("UN"))
                 .andExpect(jsonPath("$.quantity").value(10.0))
@@ -116,7 +113,7 @@ class ItemRequestProductIntegrationTest {
     @DisplayName("[Integração] Deve retornar 200 com lista de itens de produto")
     void listItemRequestProduct_shouldReturn200_withFullList() throws Exception {
         ItemRequestProductResponse second = new ItemRequestProductResponse(
-                2L, createRequest(2L), "Porca", "CX", 5.0, "EM_ANDAMENTO", "Outra observação"
+                2L, 2L, "Porca", "CX", 5.0, "EM_ANDAMENTO", "Outra observação"
         );
 
         when(itemRequestProductService.findAllRequestProduct()).thenReturn(List.of(mockResponse, second));
@@ -181,7 +178,7 @@ class ItemRequestProductIntegrationTest {
                 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
         ItemRequestProductResponse updatedResponse = new ItemRequestProductResponse(
-                1L, createRequest(1L), "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+                1L, 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
 
         when(itemRequestProductService.updateRequestProduct(any(ItemRequestProductRequest.class), eq(1L)))

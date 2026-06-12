@@ -1,10 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-
 public record ItemRequestProductResponse(
         long itemRequestProduct,
-        Request request,
+        Long requestId,
         String productName,
         String measurementUnit,
         double quantity,

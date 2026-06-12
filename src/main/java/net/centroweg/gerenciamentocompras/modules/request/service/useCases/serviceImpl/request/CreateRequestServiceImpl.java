@@ -26,9 +26,12 @@ public class CreateRequestServiceImpl {
     public RequestResponse createRequest(RequestRequest request){
         Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                 .orElseThrow(() -> new StatusNotFoundException());
+        status.setName("EM_ANDAMENTO");
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
         Request requestSave = mapper.toEntity(request, crBranch, status);
         return mapper.toDTO(repository.save(requestSave));
+
+
     }
 }

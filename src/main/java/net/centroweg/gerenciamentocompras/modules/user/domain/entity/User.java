@@ -38,7 +38,7 @@ public class User {
     private String extensionNumber;
 
     @Column(nullable = false)
-    private boolean active;
+    private Boolean active;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -52,7 +52,7 @@ public class User {
     @ManyToOne
     private Role role;
 
-    public User(String name, String cpf, String email, String password, String extensionNumber, boolean active, String profilePicture) {
+    public User(String name, String cpf, String email, String password, String extensionNumber, Boolean active, String profilePicture) {
         this.name = name;
         this.cpf = cpf;
         this.email = email;

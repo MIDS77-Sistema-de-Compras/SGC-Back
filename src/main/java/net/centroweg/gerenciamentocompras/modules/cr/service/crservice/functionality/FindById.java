@@ -14,7 +14,7 @@ public class FindById {
     private final CrRepository crRepository;
     private final CrMapper crMapper;
 
-    public CrResponse listById(long id){
+    public CrResponse listById(Long id){
         Cr cr = crRepository.findById(id).orElseThrow(() -> new CrNotFoundException(id));
         return crMapper.toResponse(cr);
     }

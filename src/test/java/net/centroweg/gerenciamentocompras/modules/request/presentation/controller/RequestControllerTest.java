@@ -147,7 +147,7 @@ class RequestControllerTest {
                 .andExpect(status().isNoContent());
 
         Request inactivated = requestRepository.findById(saved.getId()).orElseThrow();
-        assertThat(inactivated.isActive()).isFalse();
+        assertThat(inactivated.getActive()).isFalse();
     }
 
     @Test

@@ -15,7 +15,7 @@ public class UpdateCr {
     private final CrRepository crRepository;
     private final CrMapper crMapper;
 
-    public CrResponse update(long id, CrRequest dto){
+    public CrResponse update(Long id, CrRequest dto){
         Cr cr = crRepository.findById(id).orElseThrow(()->new CrNotFoundException(id));
         cr.setName(dto.name());
         cr.setCode(dto.code());

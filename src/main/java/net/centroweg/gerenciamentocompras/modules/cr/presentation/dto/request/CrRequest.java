@@ -7,6 +7,6 @@ import jakarta.validation.constraints.Positive;
 public record CrRequest(
         @NotBlank(message = "O nome do CR é obrigatório") String name,
         @NotBlank(message = "O código do CR é obrigatório") String code,
-        boolean master
+        Boolean master
 ) {
 }

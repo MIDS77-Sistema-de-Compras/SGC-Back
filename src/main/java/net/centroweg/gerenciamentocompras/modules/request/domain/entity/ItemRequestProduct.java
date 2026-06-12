@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class ItemRequestProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)
@@ -31,13 +32,14 @@ public class ItemRequestProduct {
     @JoinColumn(name = "measurement_unit_id", nullable = false)
     private MeasurementUnit measurementUnit;
 
-    private double quantity;
+    private Double quantity;
 
     @ManyToOne
     @JoinColumn(name = "status_id_id", nullable = false)
     private Status status_id;
 
-
+    @NotBlank
+    @Column(nullable = false)
     private String additionalInformations;
 
 

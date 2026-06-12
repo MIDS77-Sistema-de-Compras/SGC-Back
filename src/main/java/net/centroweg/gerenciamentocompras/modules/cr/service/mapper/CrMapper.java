@@ -20,7 +20,7 @@ public class CrMapper {
                 cr.getId(),
                 cr.getName(),
                 cr.getCode(),
-                cr.isMaster()
+                cr.getMaster()
         );
     }
 }

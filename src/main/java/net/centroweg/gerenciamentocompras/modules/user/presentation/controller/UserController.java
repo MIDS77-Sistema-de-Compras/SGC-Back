@@ -51,8 +51,8 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/userId/{userId}/pfp")
-    public ResponseEntity<UserResponse> updateProfilePicture(@PathVariable long id, @RequestParam ("file")MultipartFile file) throws IOException {
+    @PatchMapping("/userId/{id}")
+    public ResponseEntity<UserResponse> updateProfilePicture(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.status(200).body(user.uploadProfilePicture(id, file));
     }
 

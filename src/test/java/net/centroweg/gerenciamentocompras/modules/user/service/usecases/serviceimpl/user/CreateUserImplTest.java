@@ -43,7 +43,7 @@ public class CreateUserImplTest {
     void deveCriarUsuarioComSucesso() {
         CreateUser dto = new CreateUser(
                 "Maria Eduarda", "maria@gmail.com", "12345678900",
-                "Senha@123", "1234", true, "COMPRADOR"
+                "Senha@123", "1234", true, "COMPRADOR", null
         );
 
         User entity = new User();
@@ -51,7 +51,7 @@ public class CreateUserImplTest {
 
         UserResponse response = new UserResponse(
                 1L, "Maria Eduarda", "12345678900", "maria@gmail.com",
-                "1234", true, LocalDateTime.now(), LocalDateTime.now()
+                "1234", true, LocalDateTime.now(), LocalDateTime.now(), null
         );
 
         when(passwordEncoder.encode(any())).thenReturn("hashed-password");
@@ -74,7 +74,7 @@ public class CreateUserImplTest {
     void deveVerificarSeDadosEstaoSendoPassadosCorretamente() {
         CreateUser request = new CreateUser(
                 "João Silva", "joao@email.com", "12345678901",
-                "Senha@123", "4321", true, "COMPRADOR"
+                "Senha@123", "4321", true, "COMPRADOR", null
         );
 
         User userMapeado = new User();
@@ -101,6 +101,6 @@ public class CreateUserImplTest {
         assertEquals(request.email(), userEnviadoParaOBanco.getEmail(), "O email foi mandado errado!");
         assertEquals(request.cpf(), userEnviadoParaOBanco.getCpf(), "O CPF foi mandado errado!");
         assertEquals(request.extensionNumber(), userEnviadoParaOBanco.getExtensionNumber(), "O ramal foi mandado errado!");
-        assertEquals(request.active(), userEnviadoParaOBanco.isActive(), "O status ativo foi mandado errado!");
+        assertEquals(request.active(), userEnviadoParaOBanco.getActive(), "O status ativo foi mandado errado!");
     }
 }

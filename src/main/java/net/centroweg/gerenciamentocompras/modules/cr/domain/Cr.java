@@ -12,7 +12,7 @@ public class Cr {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable=false)
     private String name;
@@ -20,9 +20,9 @@ public class Cr {
     @Column(nullable=false)
     private String code;
 
-    private boolean master;
+    private Boolean master;
 
-    public Cr(String name, String code, boolean master) {
+    public Cr(String name, String code, Boolean master) {
         this.name = name;
         this.code = code;
         this.master = master;

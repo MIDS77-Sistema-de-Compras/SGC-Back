@@ -22,7 +22,7 @@ public class UploadProfilePicture {
     private final ClaudinaryService cloudinaryService;
     private final UserMapper userMapper;
 
-    public UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException{
+    public UserResponse uploadProfilePicture(Long id, MultipartFile file) throws IOException{
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(""));
         Map result = cloudinaryService.upload(file);
         String url = (String) result .get("url");

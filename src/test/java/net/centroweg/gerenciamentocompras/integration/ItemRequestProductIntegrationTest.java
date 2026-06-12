@@ -1,13 +1,8 @@
 package net.centroweg.gerenciamentocompras.integration;
 
-import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
-import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
-import net.centroweg.gerenciamentocompras.config.security.WebSecurityConfig;
-import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.config.security.WebSecurityConfig;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProduct;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProductController;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProductService;
@@ -19,11 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import tools.jackson.databind.ObjectMapper;
 
@@ -32,18 +24,13 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ItemRequestProduct.class)
-@Import({WebSecurityConfig.class, SecurityFilter.class})
+@WebMvcTest(ItemRequestProductController.class)
 class ItemRequestProductIntegrationTest {
 
     @Autowired
-    private WebApplicationContext context;
-
     private MockMvc mockMvc;
 
     @Autowired
@@ -51,12 +38,6 @@ class ItemRequestProductIntegrationTest {
 
     @MockitoBean
     private ItemRequestProductService itemRequestProductService;
-
-    @MockitoBean
-    private JwtService jwtService;
-
-    @MockitoBean
-    private CustomUserDetailsService customUserDetailsService;
 
     private ItemRequestProductRequest validRequest;
     private ItemRequestProductResponse mockResponse;
@@ -69,11 +50,6 @@ class ItemRequestProductIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(springSecurity())
-                .defaultRequest(get("/").with(user("test-user").roles("ADMIN")))
-                .build();
-
         Request request = createRequest(1L);
 
         validRequest = new ItemRequestProductRequest(

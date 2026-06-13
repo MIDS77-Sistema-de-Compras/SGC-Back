@@ -2,8 +2,8 @@ package net.centroweg.gerenciamentocompras.integration;
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.SectorRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.SectorRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;

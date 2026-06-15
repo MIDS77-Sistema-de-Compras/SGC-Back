@@ -37,7 +37,6 @@ public record CreateUser(
         @NotBlank(message = "A permissão do usuário não deve estar em branco")
         String nameRole,
 
-        @NotBlank(message = "A foto de perfil do usuário não deve estar em branco")
         String profilePicture
 ) {
 }

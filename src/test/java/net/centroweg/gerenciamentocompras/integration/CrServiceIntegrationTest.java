@@ -1,9 +1,11 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.SectorRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 class CrServiceIntegrationTest {
 
     @Autowired
@@ -27,16 +31,21 @@ class CrServiceIntegrationTest {
     @Autowired
     private CrRepository crRepository;
 
+    @Autowired
+    private SectorRepository sectorRepository;
+
     @BeforeEach
     void setUp() {
         crRepository.deleteAll();
+        sectorRepository.deleteAll();
+        sectorRepository.save(new Sector("Setor Teste"));
     }
 
     @Test
     void shouldCreateCr() {
-        CrRequest request = new CrRequest("CR Compras", "1001L", true);
+        CrRequest request = new CrRequest("CR Compras", "1001L", true, "Setor Teste");
 
-        CrResponse response = crService.create(request);
+        CrCompoundResponse response = crService.create(request);
 
         assertThat(response.id()).isPositive();
         assertThat(response.name()).isEqualTo("CR Compras");
@@ -47,22 +56,22 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldListAllCrs() {
-        CrResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true));
-        CrResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false));
+        CrCompoundResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
+        CrCompoundResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false, "Setor Teste"));
 
-        List<CrResponse> responses = crService.listAll();
+        List<CrCompoundResponse> responses = crService.listAll();
 
         assertThat(responses)
                 .hasSize(2)
-                .extracting(CrResponse::id)
+                .extracting(CrCompoundResponse::id)
                 .containsExactlyInAnyOrder(firstCr.id(), secondCr.id());
     }
 
     @Test
     void shouldFindCrById() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
 
-        CrResponse response = crService.listById(createdCr.id());
+        CrCompoundResponse response = crService.listById(createdCr.id());
 
         assertThat(response.id()).isEqualTo(createdCr.id());
         assertThat(response.name()).isEqualTo("CR Compras");
@@ -72,25 +81,25 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldUpdateCr() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
-        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false);
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
+        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false, null);
 
-        CrResponse response = crService.update(createdCr.id(), updateRequest);
+        CrCompoundResponse response = crService.update(createdCr.id(), updateRequest);
 
         assertThat(response.id()).isEqualTo(createdCr.id());
         assertThat(response.name()).isEqualTo("CR Financeiro");
         assertThat(response.code()).isEqualTo("2002L");
         assertThat(response.master()).isFalse();
 
-        CrResponse persistedCr = crService.listById(createdCr.id());
+        CrCompoundResponse persistedCr = crService.listById(createdCr.id());
         assertThat(persistedCr.name()).isEqualTo("CR Financeiro");
-        assertThat(persistedCr.code()).isEqualTo(2002L);
+        assertThat(persistedCr.code()).isEqualTo("2002L");
         assertThat(persistedCr.master()).isFalse();
     }
 
     @Test
     void shouldDeleteCr() {
-        CrResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true));
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
 
         MessageDTO response = crService.delete(createdCr.id());
 

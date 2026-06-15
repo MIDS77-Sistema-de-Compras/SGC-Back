@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.mapper.request;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
@@ -33,7 +33,8 @@ public class RequestMapper {
                 request.getUpdatedAt(),
                 request.getCrBranch().getId(),
                 request.getStatus().getName(),
-                request.getFeedback());
+                request.getFeedback()
+        );
     }
 
     public List<RequestResponse> toDTOList(List<Request> requests){

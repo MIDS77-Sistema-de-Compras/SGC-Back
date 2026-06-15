@@ -1,9 +1,11 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyApprovedException;
@@ -22,25 +24,44 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UpdateRequestServiceImpl {
 
-    private final RequestRepository repository;
+    private final RequestRepository requestRepository;
     private final StatusRepository statusRepository;
     private final CrBranchRepository crBranchRepository;
-    private final RequestMapper mapper;
+    private final RequestMapper requestMapper;
+    private final NotificationService notificationService;
 
-    public RequestResponse updateRequest(RequestRequest request, Long id){
-        Request requestSave = repository.findById(id)
+    public RequestResponse updateRequest(RequestRequest requestDTO, Long id){
+        Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
-        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
+
+        Status status = statusRepository.findByNameIgnoreCase(requestDTO.statusName())
                         .orElseThrow(() -> new StatusNotFoundException());
-        CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
-                        .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
+
+        CrBranch crBranch = crBranchRepository.findById(requestDTO.crBranchId())
+                        .orElseThrow(() -> new CrBranchNotFoundException(requestDTO.crBranchId()));
+
         if(status.getName().equalsIgnoreCase("Aprovado")) {
             throw new RequestAlreadyApprovedException();
         }
-        requestSave.setStatus(status);
-        requestSave.setCrBranch(crBranch);
-        requestSave.setUpdatedAt(LocalDateTime.now());
 
-        return mapper.toDTO(repository.save(requestSave));
+        boolean statusChange = !request.getStatus().getId().equals(status.getId());
+
+        request.setStatus(status);
+        request.setCrBranch(crBranch);
+        request.setUpdatedAt(LocalDateTime.now());
+
+        Request savedRequest = requestRepository.save(request);
+
+        if (statusChange && crBranch.getResponsibleUser() != null) {
+            notificationService.createNotification(new NotificationRequest(
+                    "Status da solicitação atualizado",
+                    "A solicitação #" + savedRequest.getId() + " teve o status alterado para " + status.getName() + ".",
+                    crBranch.getResponsibleUser().getId(),
+                    savedRequest.getId()
+            ));
+        }
+
+        return requestMapper.toDTO(savedRequest);
+
     }
 }

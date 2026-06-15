@@ -56,7 +56,7 @@ public class CreateUserImplTest {
 
         when(passwordEncoder.encode(any())).thenReturn("hashed-password");
         when(cpfHasher.hash(any())).thenReturn("hashed-cpf");
-        when(roleRepository.findByNameIgnoringCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
+        when(roleRepository.findByNameIgnoreCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
         when(mapper.toEntity(any())).thenReturn(entity);
         when(repository.save(any())).thenReturn(entity);
         when(mapper.toDTO(any())).thenReturn(response);
@@ -86,7 +86,7 @@ public class CreateUserImplTest {
 
         when(passwordEncoder.encode(any())).thenReturn("hashed-password");
         when(cpfHasher.hash(any())).thenReturn("hashed-cpf");
-        when(roleRepository.findByNameIgnoringCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
+        when(roleRepository.findByNameIgnoreCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
         when(mapper.toEntity(any(CreateUser.class))).thenReturn(userMapeado);
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
 
@@ -101,6 +101,6 @@ public class CreateUserImplTest {
         assertEquals(request.email(), userEnviadoParaOBanco.getEmail(), "O email foi mandado errado!");
         assertEquals(request.cpf(), userEnviadoParaOBanco.getCpf(), "O CPF foi mandado errado!");
         assertEquals(request.extensionNumber(), userEnviadoParaOBanco.getExtensionNumber(), "O ramal foi mandado errado!");
-        assertEquals(request.active(), userEnviadoParaOBanco.getActive(), "O status ativo foi mandado errado!");
+        assertEquals(request.active(), userEnviadoParaOBanco.isActive(), "O status ativo foi mandado errado!");
     }
 }

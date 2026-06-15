@@ -35,7 +35,7 @@ public class ItemRequestProduct {
     private Double quantity;
 
     @ManyToOne
-    @JoinColumn(name = "status_id_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Status status_id;
 
     @NotBlank

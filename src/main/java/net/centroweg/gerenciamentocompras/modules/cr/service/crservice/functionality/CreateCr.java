@@ -1,9 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.functionality;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.SectorNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.SectorRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +15,12 @@ import org.springframework.stereotype.Service;
 public class CreateCr{
 
     private final CrRepository crRepository;
+    private final SectorRepository sectorRepository;
     private final CrMapper crMapper;
 
-    public CrResponse create(CrRequest dto){
-        return crMapper.toResponse(crRepository.save(crMapper.toEntity(dto)));
+    public CrCompoundResponse create(CrRequest dto){
+        Sector sector = sectorRepository.findByName(dto.sectorName())
+                .orElseThrow(() -> new SectorNotFoundException());
+        return crMapper.toCrCompoundResponse(crRepository.save(crMapper.toEntity(dto, sector)));
     }
 }

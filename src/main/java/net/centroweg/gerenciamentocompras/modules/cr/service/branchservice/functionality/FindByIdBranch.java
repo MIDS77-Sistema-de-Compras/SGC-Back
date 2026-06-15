@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.branchservice.functionality;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.BranchResponse;

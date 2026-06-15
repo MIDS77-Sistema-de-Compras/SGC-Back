@@ -38,7 +38,7 @@ public class User {
     private String extensionNumber;
 
     @Column(nullable = false)
-    private Boolean active;
+    private boolean active;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -49,7 +49,8 @@ public class User {
     @Column(nullable = true)
     private String profilePicture;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "role_id")
     private Role role;
 
     public User(String name, String cpf, String email, String password, String extensionNumber, Boolean active, String profilePicture) {

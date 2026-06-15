@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.auth.service.usecase.AuthenticationService;
+import net.centroweg.gerenciamentocompras.modules.auth.service.usecase.interfaces.AuthenticationService;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +21,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto){
 
-        authenticationService.login(loginDto);
 
         return  ResponseEntity.status(200)
-                .body(new MessageDTO("Usuário autenticado com sucesso!"));
+                .body(new MessageDTO(authenticationService.login(loginDto)));
     }
 }

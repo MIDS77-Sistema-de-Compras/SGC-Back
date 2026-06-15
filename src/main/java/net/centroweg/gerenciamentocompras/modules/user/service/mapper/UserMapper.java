@@ -28,7 +28,7 @@ public class UserMapper {
                 user.getCpf(),
                 user.getEmail(),
                 user.getExtensionNumber(),
-                user.getActive(),
+                user.isActive(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
                 user.getProfilePicture());

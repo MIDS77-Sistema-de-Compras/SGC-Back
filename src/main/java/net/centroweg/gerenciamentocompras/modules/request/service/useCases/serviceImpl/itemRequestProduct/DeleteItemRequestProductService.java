@@ -14,7 +14,7 @@ public class DeleteItemRequestProductService {
 
     private final ItemRequestProductRepository itemRequestProductRepository;
 
-    public void delete(long id){
+    public void delete(Long id){
         ItemRequestProduct itemRequestProduct =
                 itemRequestProductRepository.findById(id)
                         .orElseThrow(()-> new ItemRequestProductNotFoundException());

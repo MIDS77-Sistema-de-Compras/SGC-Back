@@ -39,7 +39,7 @@ public class Request {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private boolean active = true;
+    private Boolean active = true;
 
     @ManyToMany
     @JoinTable(

@@ -20,7 +20,7 @@ public class CreateCr{
     private final CrMapper crMapper;
 
     public CrCompoundResponse create(CrRequest dto){
-        Sector sectorSearched = sectorRepository.findByName(dto.sector())
+        Sector sectorSearched = sectorRepository.findByName(dto.sectorName())
                 .orElseThrow(() -> new SectorNotFoundException());
 
         Cr crEntity = crMapper.toEntity(dto, sectorSearched);

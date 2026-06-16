@@ -42,7 +42,8 @@ public class UpdateUserAllImplTest {
                 "Senha@123",
                 "1234",
                 true,
-                "ADMIN"
+                "ADMIN",
+                null
         );
 
         when(repository.findById(id)).thenReturn(Optional.empty());
@@ -60,7 +61,7 @@ public class UpdateUserAllImplTest {
     void deveVerificarSeUpdateEstaMandandoDadosCertos() {
         // Arrange
         Long id = 1L;
-        CreateUser request = new CreateUser("Novo Nome", "novo@email.com", "111", "S@1", "999", false, "USER");
+        CreateUser request = new CreateUser("Novo Nome", "novo@email.com", "111", "S@1", "999", false, "USER", null);
         User usuarioExistenteNoBanco = new User(); // simulando usuário antigo
 
         when(repository.findById(id)).thenReturn(java.util.Optional.of(usuarioExistenteNoBanco));

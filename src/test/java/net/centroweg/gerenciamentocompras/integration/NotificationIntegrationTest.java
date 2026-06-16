@@ -113,12 +113,12 @@ public class NotificationIntegrationTest {
         userRepository.deleteAll();
 
         user = userRepository.save(
-                new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true)
+                new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true, null)
         );
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Sector sector = sectorRepository.save(new Sector("Aprendizagem Industrial"));
-        Cr cr = crRepository.save(new Cr("TI", "7940", false, sector));
+        Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, user));
 
         waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));

@@ -31,17 +31,17 @@ public class CrServiceImpl implements CrService {
     }
 
     @Override
-    public CrCompoundResponse listById(long id){
+    public CrCompoundResponse listById(Long id){
         return findById.listById(id);
     }
 
     @Override
-    public CrCompoundResponse update(long id, CrRequest dto){
+    public CrCompoundResponse update(Long id, CrRequest dto){
         return updateCr.update(id, dto);
     }
 
     @Override
-    public MessageDTO delete(long id){
+    public MessageDTO delete(Long id){
         return deleteCr.delete(id);
     }
 }

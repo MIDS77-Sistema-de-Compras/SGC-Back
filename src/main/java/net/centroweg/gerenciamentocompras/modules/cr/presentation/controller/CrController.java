@@ -38,14 +38,14 @@ public class CrController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de CR por id")
     @GetMapping("{id}")
-    public ResponseEntity<CrCompoundResponse> listById(@PathVariable long id){
+    public ResponseEntity<CrCompoundResponse> listById(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.listById(id));
     }
 
     @Operation(description = "ENDPOINT responsável pela atualização de CR")
     @PutMapping("{id}")
-    public ResponseEntity<CrCompoundResponse> update(@PathVariable long id, @RequestBody CrRequest dto){
+    public ResponseEntity<CrCompoundResponse> update(@PathVariable Long id, @RequestBody CrRequest dto){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.update(id, dto));
     }
@@ -53,7 +53,7 @@ public class CrController {
 
     @Operation(description = "ENDPOINT responsável pelo delete de CR")
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageDTO> delete(@PathVariable long id){
+    public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.delete(id));
     }

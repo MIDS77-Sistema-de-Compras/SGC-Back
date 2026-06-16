@@ -44,14 +44,11 @@ public class SecurityFilter extends OncePerRequestFilter {
             if (token != null) {
                 String tokenValidated = jwtService.validateToken(token);
 
-                if (tokenValidated == null) {
-                    throw new InvalidTokenException("Token inválido");
+                if (tokenValidated != null) {
+                    UserDetails user = customUserDetailsService.loadUserByUsername(tokenValidated);
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
-
-                UserDetails user = customUserDetailsService.loadUserByUsername(tokenValidated);
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
 
             filterChain.doFilter(request, response);

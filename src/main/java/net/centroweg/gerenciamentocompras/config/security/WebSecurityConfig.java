@@ -2,6 +2,8 @@ package net.centroweg.gerenciamentocompras.config.security;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
+import org.springframework.core.env.Environment;
+import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,6 +28,7 @@ import java.util.List;
 public class WebSecurityConfig {
 
     private final SecurityFilter securityFilter;
+    private final Environment env;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -34,8 +37,19 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests
-                            .requestMatchers(HttpMethod.POST, "/users", "/auth/login").permitAll()
-                            .anyRequest().authenticated();
+                            .requestMatchers(HttpMethod.POST, "/users", "/auth/login").permitAll();
+
+                    if (Arrays.asList(env.getActiveProfiles()).contains("dev")) {
+                        authorizeRequests.requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/swagger-ui.html",
+                                "/webjars/**"
+                        ).permitAll();
+                    }
+
+                    authorizeRequests.anyRequest().authenticated();
                 })
                 .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

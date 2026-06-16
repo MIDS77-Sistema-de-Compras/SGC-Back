@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.functionality;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.SectorNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
@@ -19,8 +20,13 @@ public class CreateCr{
     private final CrMapper crMapper;
 
     public CrCompoundResponse create(CrRequest dto){
-        Sector sector = sectorRepository.findByName(dto.sector())
+        Sector sectorSearched = sectorRepository.findByName(dto.sectorName())
                 .orElseThrow(() -> new SectorNotFoundException());
-        return crMapper.toCrCompoundResponse(crRepository.save(crMapper.toEntity(dto, sector)));
+
+        Cr crEntity = crMapper.toEntity(dto, sectorSearched);
+
+        crEntity.setSector(sectorSearched);
+
+        return crMapper.toCrCompoundResponse(crRepository.save(crEntity));
     }
 }

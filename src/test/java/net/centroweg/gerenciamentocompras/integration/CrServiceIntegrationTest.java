@@ -82,7 +82,7 @@ class CrServiceIntegrationTest {
     @Test
     void shouldUpdateCr() {
         CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
-        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false, "Setor Teste");
+        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false, null);
 
         CrCompoundResponse response = crService.update(createdCr.id(), updateRequest);
 

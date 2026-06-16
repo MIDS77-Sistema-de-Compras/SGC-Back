@@ -37,10 +37,13 @@ public class JwtService {
                 .findFirst()
                 .orElse("");
 
+        String cpf = principal.getCpf();
+
         return Jwts.builder()
                 .setIssuer("sgs-api")
                 .setSubject(principal.getUsername())
                 .claim("role", role)
+                .claim("cpf", cpf)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

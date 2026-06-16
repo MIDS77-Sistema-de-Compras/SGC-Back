@@ -1,10 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response;
 
 public record CrCompoundResponse(
-        long id,
+        Long id,
         String name,
         String code,
-        boolean master,
+        Boolean master,
         String sector
 ){
 }

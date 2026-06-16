@@ -10,7 +10,9 @@ import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceI
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "ENDPOINTS da entidade USER")
@@ -57,4 +59,11 @@ public class UserController {
         user.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/userId/{id}")
+    public ResponseEntity<UserResponse> updateProfilePicture(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+        return ResponseEntity.status(200).body(user.uploadProfilePicture(id, file));
+    }
+
+
 }

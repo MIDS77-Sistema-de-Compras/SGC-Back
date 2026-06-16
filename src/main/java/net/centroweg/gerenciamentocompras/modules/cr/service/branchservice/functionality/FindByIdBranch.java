@@ -15,7 +15,7 @@ public class FindByIdBranch {
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
 
-    public BranchResponse findById(long id){
+    public BranchResponse findById(Long id){
         Branch branch = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException());
         BranchResponse branchResponse = branchMapper.toResponse(branch);
         return branchResponse;

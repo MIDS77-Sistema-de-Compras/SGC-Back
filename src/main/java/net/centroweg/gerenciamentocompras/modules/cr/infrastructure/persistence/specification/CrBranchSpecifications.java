@@ -1,22 +1,84 @@
 package net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification;
 
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import lombok.NoArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Locale;
 
-import static io.micrometer.common.util.StringUtils.isBlank;
 
 @NoArgsConstructor
 public final class CrBranchSpecifications {
 
-    public Specification<CrBranch> crCodeContain(String crCode){
+    public static Specification<CrBranch> crCodeContain(String crCode){
         if(isBlank(crCode)){
             Specification.unrestricted();
         }
 
         String pattern = containsIgnoreCase(crCode);
+
+        return (root, query, criteriaBuilder) -> {
+            Join<CrBranch,Cr> crJoin =
+                    root.join("cr", JoinType.INNER);
+
+            Expression<String> code = crJoin.get("code");
+
+            return criteriaBuilder.like(
+              code,
+              pattern
+            );
+        };
+    }
+
+    public static Specification<CrBranch> crNameContain(String crName){
+        if(isBlank(crName)){
+            Specification.unrestricted();
+        }
+
+        String pattern = containsIgnoreCase(crName);
+
+        return (root, query, criteriaBuilder) -> {
+            Join<CrBranch, Cr> crJoin =
+                    root.join("cr", JoinType.INNER);
+
+            Expression<String> name = crJoin.get("name");
+
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(name),
+                    pattern
+            );
+        };
+    }
+
+    public static Specification<CrBranch> crResponsibleNameContain(String responsibleName){
+
+        if (isBlank(responsibleName)){
+            Specification.unrestricted();
+        }
+
+        String pattern = containsIgnoreCase(responsibleName);
+
+        return (root, query, criteriaBuilder) -> {
+            Join<CrBranch, Cr> crJoin =
+                    root.join("cr", JoinType.LEFT);
+
+            Expression<String> name = crJoin.get("responsibleUser");
+
+            return  criteriaBuilder.like(
+                    criteriaBuilder.lower(name),
+                    pattern
+            );
+        };
+    };
+
+
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     private static String containsIgnoreCase(String value) {

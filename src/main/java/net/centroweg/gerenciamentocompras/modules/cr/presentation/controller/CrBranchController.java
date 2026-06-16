@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchFilterRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.crbranchinterface.CrBranchService;
@@ -26,9 +27,20 @@ public class CrBranchController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CrBranchResponse>> findAll() {
+    public ResponseEntity<List<CrBranchResponse>> findAll(
+            @RequestParam(required = false) String crCode,
+            @RequestParam(required = false) String crName,
+            @RequestParam(required = false) String responsibleName
+    ) {
+        CrBranchFilterRequest filter =
+                new CrBranchFilterRequest(
+                        crCode,
+                        crName,
+                        responsibleName
+                );
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(crBranchService.findAll());
+                .body(crBranchService.findAll(filter));
     }
 
     @GetMapping("/{id}")

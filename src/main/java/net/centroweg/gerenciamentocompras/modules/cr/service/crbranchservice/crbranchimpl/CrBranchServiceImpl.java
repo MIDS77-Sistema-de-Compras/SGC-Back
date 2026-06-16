@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.crbranchimpl;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchFilterRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.crbranchinterface.CrBranchService;
@@ -29,8 +30,8 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     @Override
-    public List<CrBranchResponse> findAll() {
-        return findAllCrBranch.findAll();
+    public List<CrBranchResponse> findAll(CrBranchFilterRequest filter) {
+        return findAllCrBranch.findAll(filter);
     }
 
     @Override

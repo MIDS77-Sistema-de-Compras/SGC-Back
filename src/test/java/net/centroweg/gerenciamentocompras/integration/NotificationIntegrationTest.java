@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.integration;
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;

@@ -23,11 +23,15 @@ public class FindAllCrBranch {
     public List<CrBranchResponse> findAll(
             CrBranchFilterRequest filter
     ) {
+        CrBranchFilterRequest safeFilter = filter != null
+                ? filter
+                : new CrBranchFilterRequest(null, null, null);
+
         Specification<CrBranch> specification =
                 Specification.allOf(
-                        crCodeContain(filter.crCode()),
-                        crNameContain(filter.crName()),
-                        crResponsibleNameContain(filter.responsibleName())
+                        crCodeContain(safeFilter.crCode()),
+                        crNameContain(safeFilter.crName()),
+                        crResponsibleNameContain(safeFilter.responsibleName())
                 );
 
         return crBranchRepository.findAll(specification)

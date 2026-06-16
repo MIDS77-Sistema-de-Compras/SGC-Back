@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.JoinType;
 import lombok.NoArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Locale;
@@ -16,7 +17,7 @@ public final class CrBranchSpecifications {
 
     public static Specification<CrBranch> crCodeContain(String crCode){
         if(isBlank(crCode)){
-            Specification.unrestricted();
+            return Specification.unrestricted();
         }
 
         String pattern = containsIgnoreCase(crCode);
@@ -36,7 +37,7 @@ public final class CrBranchSpecifications {
 
     public static Specification<CrBranch> crNameContain(String crName){
         if(isBlank(crName)){
-            Specification.unrestricted();
+            return Specification.unrestricted();
         }
 
         String pattern = containsIgnoreCase(crName);
@@ -57,16 +58,16 @@ public final class CrBranchSpecifications {
     public static Specification<CrBranch> crResponsibleNameContain(String responsibleName){
 
         if (isBlank(responsibleName)){
-            Specification.unrestricted();
+            return Specification.unrestricted();
         }
 
         String pattern = containsIgnoreCase(responsibleName);
 
         return (root, query, criteriaBuilder) -> {
-            Join<CrBranch, Cr> crJoin =
-                    root.join("cr", JoinType.LEFT);
+            Join<CrBranch, User> responsibleUserJoin =
+                    root.join("responsibleUser", JoinType.LEFT);
 
-            Expression<String> name = crJoin.get("responsibleUser");
+            Expression<String> name = responsibleUserJoin.get("name");
 
             return  criteriaBuilder.like(
                     criteriaBuilder.lower(name),

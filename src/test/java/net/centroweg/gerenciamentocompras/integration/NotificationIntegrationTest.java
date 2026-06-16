@@ -108,6 +108,7 @@ public class NotificationIntegrationTest {
         crBranchRepository.deleteAll();
         statusRepository.deleteAll();
         crRepository.deleteAll();
+        sectorRepository.deleteAll();
         branchRepository.deleteAll();
         userRepository.deleteAll();
 
@@ -132,6 +133,7 @@ public class NotificationIntegrationTest {
         crBranchRepository.deleteAll();
         statusRepository.deleteAll();
         crRepository.deleteAll();
+        sectorRepository.deleteAll();
         branchRepository.deleteAll();
         userRepository.deleteAll();
     }

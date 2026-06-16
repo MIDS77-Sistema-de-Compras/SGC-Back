@@ -81,9 +81,8 @@ class SecurityFilterTest {
     @Test
     @DisplayName("Should authenticate request when token is valid")
     void shouldAuthenticateWithValidToken() throws Exception {
-        // Because of .replace("Bearer", ""), "Bearer my-token" becomes " my-token"
         when(request.getHeader("Authorization")).thenReturn("Bearer my-token");
-        when(jwtService.validateToken(" my-token")).thenReturn("maria@gmail.com");
+        when(jwtService.validateToken("my-token")).thenReturn("maria@gmail.com");
 
         UserDetails mockUserDetails = mock(UserDetails.class);
         when(customUserDetailsService.loadUserByUsername("maria@gmail.com")).thenReturn(mockUserDetails);
@@ -100,7 +99,7 @@ class SecurityFilterTest {
     @DisplayName("Should delegate to exception resolver when token is invalid")
     void shouldThrowExceptionWhenTokenIsInvalid() throws Exception {
         when(request.getHeader("Authorization")).thenReturn("Bearer invalid-token");
-        when(jwtService.validateToken(" invalid-token")).thenReturn(null);
+        when(jwtService.validateToken("invalid-token")).thenReturn(null);
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
@@ -113,7 +112,7 @@ class SecurityFilterTest {
     @DisplayName("Should delegate to exception resolver when general exception occurs")
     void shouldResolveGeneralException() throws Exception {
         when(request.getHeader("Authorization")).thenReturn("Bearer some-token");
-        when(jwtService.validateToken(" some-token")).thenThrow(new RuntimeException("Database down"));
+        when(jwtService.validateToken("some-token")).thenThrow(new RuntimeException("Database down"));
 
         securityFilter.doFilterInternal(request, response, filterChain);
 

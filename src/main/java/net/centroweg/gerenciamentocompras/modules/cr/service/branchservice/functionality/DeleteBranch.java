@@ -13,7 +13,7 @@ public class DeleteBranch {
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
 
-    public MessageDTO delete(long id){
+    public MessageDTO delete(Long id){
         branchRepository.deleteById(id);
         return new MessageDTO("Error");
     }

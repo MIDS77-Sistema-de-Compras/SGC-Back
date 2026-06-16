@@ -13,7 +13,7 @@ public class DeleteCr {
     private final CrRepository crRepository;
     private final CrMapper crMapper;
 
-    public MessageDTO delete(long id){
+    public MessageDTO delete(Long id){
         if (!crRepository.existsById(id)) {
             throw new CrNotFoundException(id);
         }

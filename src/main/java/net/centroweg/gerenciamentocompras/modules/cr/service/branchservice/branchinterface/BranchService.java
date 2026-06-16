@@ -10,7 +10,7 @@ public interface BranchService {
 
     BranchResponse create(BranchRequest branchRequest);
     List<BranchResponse> findAll();
-    BranchResponse update(long id, BranchRequest branchRequest);
-    BranchResponse findById(long id);
-    MessageDTO delete(long id);
+    BranchResponse update(Long id, BranchRequest branchRequest);
+    BranchResponse findById(Long id);
+    MessageDTO delete(Long id);
 }

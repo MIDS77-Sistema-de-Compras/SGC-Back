@@ -12,9 +12,9 @@ public interface CrService {
 
     List<CrCompoundResponse> listAll();
 
-    CrCompoundResponse listById(long id);
+    CrCompoundResponse listById(Long id);
 
-    CrCompoundResponse update(long id, CrRequest dto);
+    CrCompoundResponse update(Long id, CrRequest dto);
 
-    MessageDTO delete(long id);
+    MessageDTO delete(Long id);
 }

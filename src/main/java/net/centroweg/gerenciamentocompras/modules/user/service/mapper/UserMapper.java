@@ -17,7 +17,8 @@ public class UserMapper {
                 user.email(),
                 user.password(),
                 user.extensionNumber(),
-                user.active());
+                user.active(),
+                user.profilePicture());
     }
 
     public UserResponse toDTO(User user){
@@ -29,7 +30,8 @@ public class UserMapper {
                 user.getExtensionNumber(),
                 user.isActive(),
                 user.getCreatedAt(),
-                user.getUpdatedAt());
+                user.getUpdatedAt(),
+                user.getProfilePicture());
     }
 
     public List<UserResponse> toDTOList(List<User> users){

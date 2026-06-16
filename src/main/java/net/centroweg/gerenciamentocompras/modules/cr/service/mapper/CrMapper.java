@@ -29,8 +29,8 @@ public class CrMapper {
                 cr.getId(),
                 cr.getName(),
                 cr.getCode(),
-                cr.isMaster(),
-                cr.getSector().getName()
+                cr.getMaster(),
+                cr.getSector() != null ? cr.getSector().getName() : null
         );
     }
 }

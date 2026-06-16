@@ -77,7 +77,8 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "1234",
                 true,
-                "COMPRADOR"
+                "COMPRADOR",
+                null
         );
 
         String response = mockMvc.perform(post("/users")
@@ -102,7 +103,8 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "1234",
                 true,
-                "COMPRADOR"
+                "COMPRADOR",
+                null
         );
 
         mockMvc.perform(post("/users")
@@ -176,7 +178,8 @@ public class UserIntegrationTest {
                 "Senha@123",
                 "9999",
                 true,
-                "COMPRADOR"
+                "COMPRADOR",
+                null
         );
 
         mockMvc.perform(put("/users/userId/{id}", id)

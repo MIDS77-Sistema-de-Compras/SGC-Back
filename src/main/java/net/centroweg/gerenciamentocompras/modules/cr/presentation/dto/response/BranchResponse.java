@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response;
 
 public record BranchResponse (
-        long id,
+        Long id,
         String name
 ){
 }

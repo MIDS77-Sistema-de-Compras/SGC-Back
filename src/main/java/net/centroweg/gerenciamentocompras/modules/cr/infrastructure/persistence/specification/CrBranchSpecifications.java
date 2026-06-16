@@ -29,8 +29,8 @@ public final class CrBranchSpecifications {
             Expression<String> code = crJoin.get("code");
 
             return criteriaBuilder.like(
-              code,
-              pattern
+                    criteriaBuilder.lower(code),
+                    pattern
             );
         };
     }

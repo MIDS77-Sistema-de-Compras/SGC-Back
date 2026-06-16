@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crimpl;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.functionality.*;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
@@ -21,27 +21,27 @@ public class CrServiceImpl implements CrService {
     private final DeleteCr deleteCr;
 
     @Override
-    public CrResponse create(CrRequest dto) {
+    public CrCompoundResponse create(CrRequest dto) {
         return createCr.create(dto);
     }
 
     @Override
-    public List<CrResponse> listAll(){
+    public List<CrCompoundResponse> listAll(){
         return findAllCr.listAll();
     }
 
     @Override
-    public CrResponse listById(long id){
+    public CrCompoundResponse listById(Long id){
         return findById.listById(id);
     }
 
     @Override
-    public CrResponse update(long id, CrRequest dto){
+    public CrCompoundResponse update(Long id, CrRequest dto){
         return updateCr.update(id, dto);
     }
 
     @Override
-    public MessageDTO delete(long id){
+    public MessageDTO delete(Long id){
         return deleteCr.delete(id);
     }
 }

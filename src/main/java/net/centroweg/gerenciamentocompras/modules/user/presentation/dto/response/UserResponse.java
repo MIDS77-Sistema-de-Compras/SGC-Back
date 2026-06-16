@@ -8,7 +8,7 @@ public record UserResponse(
         String cpf,
         String email,
         String extensionNumber,
-        boolean active,
+        Boolean active,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         String userProfile

@@ -53,14 +53,13 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    public User(String name, String cpf, String email, String password, String extensionNumber, Boolean active, String profilePicture) {
+    public User(String name, String cpf, String email, String password, String extensionNumber, Boolean active) {
         this.name = name;
         this.cpf = cpf;
         this.email = email;
         this.password = password;
         this.extensionNumber = extensionNumber;
         this.active = active;
-        this.profilePicture=profilePicture;
     }
 
     @PrePersist

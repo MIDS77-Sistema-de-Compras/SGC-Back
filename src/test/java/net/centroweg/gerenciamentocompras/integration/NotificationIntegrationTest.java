@@ -113,7 +113,7 @@ public class NotificationIntegrationTest {
         userRepository.deleteAll();
 
         user = userRepository.save(
-                new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true, null)
+                new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true)
         );
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));

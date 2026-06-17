@@ -36,14 +36,14 @@ jobs:
           name: spring-boot-app
           path: target/*.jar
 
-deploy:
-  needs: build-and-test
-  runs-on: ubuntu-latest
-  if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    deploy:
+      needs: build-and-test
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
 
-  steps:
-    - name: Disparar Deploy no Render
-      run: |
-        echo "Iniciando deploy no Render para a branch develop..."
-        curl -f "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
-        echo "Deploy solicitado com sucesso!"
+      steps:
+        - name: Disparar Deploy no Render
+          run: |
+            echo "Iniciando deploy no Render para a branch develop..."
+            curl -f "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+            echo "Deploy solicitado com sucesso!"

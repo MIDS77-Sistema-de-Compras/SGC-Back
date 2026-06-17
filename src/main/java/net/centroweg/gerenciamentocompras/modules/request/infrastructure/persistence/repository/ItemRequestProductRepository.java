@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence;
+package net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository;
 
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import org.springframework.data.jpa.repository.JpaRepository;

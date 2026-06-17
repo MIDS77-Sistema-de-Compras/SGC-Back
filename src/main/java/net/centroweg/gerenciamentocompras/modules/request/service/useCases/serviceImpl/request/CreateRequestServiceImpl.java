@@ -9,8 +9,8 @@ import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;

@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.SectorRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email.NotificationEmailService;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.controller.NotificationController;
@@ -17,6 +18,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProvisionController;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -91,6 +93,7 @@ public class NotificationIntegrationTest {
     private static final String CPF_VALIDO = "52998224725";
 
     private User user;
+    private UserPrincipal userPrincipal;
     private CrBranch crBranch;
     private Status waitingStatus;
     private Request request;
@@ -112,9 +115,10 @@ public class NotificationIntegrationTest {
         branchRepository.deleteAll();
         userRepository.deleteAll();
 
-        user = userRepository.save(
-                new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true, null)
-        );
+        User newUser = new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true, null);
+        newUser.setRole(new Role("ROLE_ADMIN"));
+        user = userRepository.save(newUser);
+        userPrincipal = new UserPrincipal(user);
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Sector sector = sectorRepository.save(new Sector("Aprendizagem Industrial"));
@@ -197,10 +201,10 @@ public class NotificationIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     @DisplayName("[Integração] Deve gerar notificação ao criar uma solicitação (RN-NOT02)")
     void deveGerarNotificacaoAoCriarSolicitacao() throws Exception {
         mockMvc.perform(post("/requests")
+                        .with(user(userPrincipal))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -214,12 +218,12 @@ public class NotificationIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     @DisplayName("[Integração] Deve gerar notificação ao mudar o status de uma solicitação (RN-NOT01)")
     void deveGerarNotificacaoAoMudarStatus() throws Exception {
         statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
 
         String response = mockMvc.perform(post("/requests")
+                        .with(user(userPrincipal))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -235,6 +239,7 @@ public class NotificationIntegrationTest {
         Long requestId = objectMapper.readTree(response).get("id").asLong();
 
         mockMvc.perform(put("/requests/{id}", requestId)
+                        .with(user(userPrincipal))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

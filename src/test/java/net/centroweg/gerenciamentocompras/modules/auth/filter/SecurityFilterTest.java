@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.auth.filter;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.exception.InvalidTokenException;
@@ -55,9 +56,9 @@ class SecurityFilterTest {
     }
 
     @Test
-    @DisplayName("Should proceed with request when no Authorization header is present")
+    @DisplayName("Should proceed with request when no cookie is present")
     void shouldProceedWithoutToken() throws Exception {
-        when(request.getHeader("Authorization")).thenReturn(null);
+        when(request.getCookies()).thenReturn(null);
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
@@ -67,9 +68,9 @@ class SecurityFilterTest {
     }
 
     @Test
-    @DisplayName("Should proceed with request when Authorization header does not start with Bearer")
-    void shouldProceedWithInvalidHeaderPrefix() throws Exception {
-        when(request.getHeader("Authorization")).thenReturn("Basic dXNlcjpwYXNz");
+    @DisplayName("Should proceed with request when cookie array is empty")
+    void shouldProceedWithEmptyCookies() throws Exception {
+        when(request.getCookies()).thenReturn(new Cookie[]{});
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
@@ -79,9 +80,10 @@ class SecurityFilterTest {
     }
 
     @Test
-    @DisplayName("Should authenticate request when token is valid")
+    @DisplayName("Should authenticate request when jwt cookie is valid")
     void shouldAuthenticateWithValidToken() throws Exception {
-        when(request.getHeader("Authorization")).thenReturn("Bearer my-token");
+        Cookie jwtCookie = new Cookie("jwt", "my-token");
+        when(request.getCookies()).thenReturn(new Cookie[]{jwtCookie});
         when(jwtService.validateToken("my-token")).thenReturn("maria@gmail.com");
 
         UserDetails mockUserDetails = mock(UserDetails.class);
@@ -98,7 +100,8 @@ class SecurityFilterTest {
     @Test
     @DisplayName("Should delegate to exception resolver when token is invalid")
     void shouldThrowExceptionWhenTokenIsInvalid() throws Exception {
-        when(request.getHeader("Authorization")).thenReturn("Bearer invalid-token");
+        Cookie jwtCookie = new Cookie("jwt", "invalid-token");
+        when(request.getCookies()).thenReturn(new Cookie[]{jwtCookie});
         when(jwtService.validateToken("invalid-token")).thenReturn(null);
 
         securityFilter.doFilterInternal(request, response, filterChain);
@@ -111,7 +114,8 @@ class SecurityFilterTest {
     @Test
     @DisplayName("Should delegate to exception resolver when general exception occurs")
     void shouldResolveGeneralException() throws Exception {
-        when(request.getHeader("Authorization")).thenReturn("Bearer some-token");
+        Cookie jwtCookie = new Cookie("jwt", "some-token");
+        when(request.getCookies()).thenReturn(new Cookie[]{jwtCookie});
         when(jwtService.validateToken("some-token")).thenThrow(new RuntimeException("Database down"));
 
         securityFilter.doFilterInternal(request, response, filterChain);

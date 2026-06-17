@@ -9,7 +9,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -118,7 +117,7 @@ public final class RequestSpecification {
             if(startDate != null){
                 LocalDateTime startDateTime = startDate.atStartOfDay();
 
-                criteriaBuilder.greaterThanOrEqualTo(
+                return criteriaBuilder.greaterThanOrEqualTo(
                         requestDate,
                         startDateTime
                 );

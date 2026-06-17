@@ -41,7 +41,7 @@ public class Request {
     @Column(nullable = false)
     private Boolean active = true;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "request_users",
             joinColumns = @JoinColumn(name = "request_id"),

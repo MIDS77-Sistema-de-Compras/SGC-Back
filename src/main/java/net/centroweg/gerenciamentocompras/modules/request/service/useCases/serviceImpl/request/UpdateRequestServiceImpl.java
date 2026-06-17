@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
@@ -8,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyApprovedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
@@ -16,6 +18,8 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,7 +34,9 @@ public class UpdateRequestServiceImpl {
     private final RequestMapper requestMapper;
     private final NotificationService notificationService;
 
-    public RequestResponse updateRequest(RequestRequest requestDTO, Long id){
+    public RequestResponse updateRequest(RequestRequest requestDTO, Long id, UserPrincipal userPrincipal){
+        boolean isOwner = false;
+
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
 
@@ -39,6 +45,16 @@ public class UpdateRequestServiceImpl {
 
         CrBranch crBranch = crBranchRepository.findById(requestDTO.crBranchId())
                         .orElseThrow(() -> new CrBranchNotFoundException(requestDTO.crBranchId()));
+
+        for(User u: request.getCreatedByUsers()){
+            if(u.getEmail().equals(userPrincipal.getUsername())){
+                isOwner=true;
+                break;
+            }
+        }
+        if(!isOwner){
+            throw new AcessDeniedException();
+        }
 
         if(status.getName().equalsIgnoreCase("Aprovado")) {
             throw new RequestAlreadyApprovedException();

@@ -4,12 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,26 +32,26 @@ public class RequestController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos Request")
     @GetMapping
-    public ResponseEntity<List<RequestResponse>> findAllRequest(){
-        return ResponseEntity.ok(requestService.findAllRequest());
+    public ResponseEntity<List<RequestResponse>> findAllRequest(@AuthenticationPrincipal UserPrincipal userPrincipal){
+        return ResponseEntity.ok(requestService.findAllRequest(userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de Request por id")
     @GetMapping("/{id}")
-    public ResponseEntity<RequestResponse> findRequestById(@PathVariable Long id){
-        return ResponseEntity.ok(requestService.findRequestById(id));
+    public ResponseEntity<RequestResponse> findRequestById(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        return ResponseEntity.ok(requestService.findRequestById(id, userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pela atualização de Request")
     @PutMapping("/{id}")
-    public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody RequestRequest request, @PathVariable Long id){
-        return ResponseEntity.ok(requestService.updateRequest(request, id));
+    public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody RequestRequest request, @PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        return ResponseEntity.ok(requestService.updateRequest(request, id, userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pelo delete de Request")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRequest(@PathVariable Long id){
-        requestService.deleteRequest(id);
+    public ResponseEntity<Void> deleteRequest(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        requestService.deleteRequest(id, userPrincipal);
         return ResponseEntity.noContent().build();
     }
 

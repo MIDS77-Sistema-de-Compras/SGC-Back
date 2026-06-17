@@ -53,4 +53,8 @@ public class UserPrincipal implements UserDetails {
     public String getCpf(){
         return userEntity.getCpf();
     }
+
+    public User getUser() {
+        return userEntity;
+    }
 }

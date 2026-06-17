@@ -18,9 +18,9 @@ public class DeleteRequestServiceImpl {
     private final RequestRepository repository;
 
 
-    public void deleteRequest(Long id){
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public void deleteRequest(Long id, UserPrincipal userPrincipal){
         boolean isOwner = false;
+
         Request request = repository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
 

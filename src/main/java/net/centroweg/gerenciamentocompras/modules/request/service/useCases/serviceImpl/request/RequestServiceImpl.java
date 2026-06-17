@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
@@ -24,20 +25,20 @@ public class RequestServiceImpl implements RequestService {
         return createRequestService.createRequest(request);
     }
 
-    public List<RequestResponse> findAllRequest() {
-        return findAllRequestService.findAllRequest();
+    public List<RequestResponse> findAllRequest(UserPrincipal userPrincipal) {
+        return findAllRequestService.findAllRequest(userPrincipal);
     }
 
-    public RequestResponse findRequestById(Long id) {
-        return findRequestByIdService.findRequestById(id);
+    public RequestResponse findRequestById(Long id, UserPrincipal userPrincipal) {
+        return findRequestByIdService.findRequestById(id, userPrincipal);
     }
 
-    public RequestResponse updateRequest(RequestRequest request, Long id){
-        return updateRequestService.updateRequest(request, id);
+    public RequestResponse updateRequest(RequestRequest request, Long id, UserPrincipal userPrincipal){
+        return updateRequestService.updateRequest(request, id,  userPrincipal);
     }
 
-    public void deleteRequest(Long id){
-        deleteRequestService.deleteRequest(id);
+    public void deleteRequest(Long id, UserPrincipal userPrincipal){
+        deleteRequestService.deleteRequest(id, userPrincipal);
     }
 
     public RequestResponse updateFeedback(UpdateFeedback feedback, Long id){

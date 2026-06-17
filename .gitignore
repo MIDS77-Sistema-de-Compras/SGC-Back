@@ -29,6 +29,9 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+.env
 
 ### VS Code ###
 .vscode/
+.history/
+.env

@@ -32,7 +32,7 @@ public class FindUserByIdImplTest {
     void shouldReturnUserWhenIdExists() {
         Long id = 1L;
         User user = new User();
-        UserResponse expectedResponse = new UserResponse(id, "Teste", "000", "e@e.com", "123", true, null, null);
+        UserResponse expectedResponse = new UserResponse(id, "Teste", "000", "e@e.com", "123", true, null, null, null);
 
         when(repository.findById(id)).thenReturn(Optional.of(user));
         when(mapper.toDTO(user)).thenReturn(expectedResponse);

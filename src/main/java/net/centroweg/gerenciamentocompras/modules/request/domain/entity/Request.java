@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 import java.time.LocalDateTime;
@@ -39,7 +39,7 @@ public class Request {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private boolean active = true;
+    private Boolean active = true;
 
     @ManyToMany
     @JoinTable(
@@ -53,6 +53,9 @@ public class Request {
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemRequestProvision> itemRequestProvisions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemRequestProduct> itemRequestProducts = new ArrayList<>();
 
     public Request(CrBranch crBranch, Status status) {
         this.crBranch = crBranch;

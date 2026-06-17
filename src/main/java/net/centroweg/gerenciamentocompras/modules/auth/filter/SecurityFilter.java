@@ -50,8 +50,8 @@ public class SecurityFilter extends OncePerRequestFilter {
 
                 UserDetails user = customUserDetailsService.loadUserByUsername(tokenValidated);
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
             }
 
             filterChain.doFilter(request, response);
@@ -67,6 +67,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (jwtHeader == null || !jwtHeader.startsWith("Bearer ")) return null;
 
-        return jwtHeader.replace("Bearer", "");
+        return jwtHeader.substring(7);
     }
 }

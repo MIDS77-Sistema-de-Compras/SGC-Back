@@ -1,20 +1,20 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface;
 
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
 import java.util.List;
 
 public interface CrService {
 
-    CrResponse create(CrRequest dto);
+    CrCompoundResponse create(CrRequest dto);
 
-    List<CrResponse> listAll();
+    List<CrCompoundResponse> listAll();
 
-    CrResponse listById(long id);
+    CrCompoundResponse listById(Long id);
 
-    CrResponse update(long id, CrRequest dto);
+    CrCompoundResponse update(Long id, CrRequest dto);
 
-    MessageDTO delete(long id);
+    MessageDTO delete(Long id);
 }

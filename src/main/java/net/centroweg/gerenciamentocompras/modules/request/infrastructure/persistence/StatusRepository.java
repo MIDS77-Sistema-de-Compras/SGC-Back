@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface StatusRepository extends JpaRepository<Status, Long> {
 
-    boolean existsByName (String name);
+    Boolean existsByName (String name);
     Optional<Status> findByNameIgnoreCase(String name);
 
 }

@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.auth.service;
 
+import net.centroweg.gerenciamentocompras.config.security.CpfHasher;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.auth.service.api.AuthPublicApi;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
@@ -26,6 +27,9 @@ class CustomUserDetailsServiceTest {
     @Mock
     private AuthPublicApi authPublicApi;
 
+    @Mock
+    private CpfHasher cpfHasher;
+
     @InjectMocks
     private CustomUserDetailsService customUserDetailsService;
 
@@ -40,7 +44,7 @@ class CustomUserDetailsServiceTest {
         user.setId(1L);
         user.setName("Maria Eduarda");
         user.setEmail("maria@gmail.com");
-        user.setCpf("12345678900");
+        user.setCpf("hashedCpf123");
         user.setPassword("encryptedPassword");
         user.setExtensionNumber("1234");
         user.setActive(true);
@@ -50,7 +54,7 @@ class CustomUserDetailsServiceTest {
     @Test
     @DisplayName("Should load user by email successfully")
     void shouldLoadUserByEmailSuccessfully() {
-        when(authPublicApi.findByEmailOrCpf("maria@gmail.com", "mariagmailcom"))
+        when(authPublicApi.findByEmailOrCpf("maria@gmail.com", ""))
                 .thenReturn(Optional.of(user));
 
         UserDetails result = customUserDetailsService.loadUserByUsername("maria@gmail.com");
@@ -59,13 +63,15 @@ class CustomUserDetailsServiceTest {
         assertInstanceOf(UserPrincipal.class, result);
         assertEquals("maria@gmail.com", result.getUsername());
         assertEquals("encryptedPassword", result.getPassword());
-        verify(authPublicApi).findByEmailOrCpf("maria@gmail.com", "mariagmailcom");
+        verify(authPublicApi).findByEmailOrCpf("maria@gmail.com", "");
+        verifyNoInteractions(cpfHasher);
     }
 
     @Test
     @DisplayName("Should load user by CPF successfully")
     void shouldLoadUserByCpfSuccessfully() {
-        when(authPublicApi.findByEmailOrCpf("12345678900", "12345678900"))
+        when(cpfHasher.hash("12345678900")).thenReturn("hashedCpf123");
+        when(authPublicApi.findByEmailOrCpf("12345678900", "hashedCpf123"))
                 .thenReturn(Optional.of(user));
 
         UserDetails result = customUserDetailsService.loadUserByUsername("12345678900");
@@ -73,31 +79,34 @@ class CustomUserDetailsServiceTest {
         assertNotNull(result);
         assertInstanceOf(UserPrincipal.class, result);
         assertEquals("maria@gmail.com", result.getUsername());
-        verify(authPublicApi).findByEmailOrCpf("12345678900", "12345678900");
+        verify(cpfHasher).hash("12345678900");
+        verify(authPublicApi).findByEmailOrCpf("12345678900", "hashedCpf123");
     }
 
     @Test
     @DisplayName("Should load user by formatted CPF successfully")
     void shouldLoadUserByFormattedCpfSuccessfully() {
-        when(authPublicApi.findByEmailOrCpf("123.456.789-00", "12345678900"))
+        when(cpfHasher.hash("12345678900")).thenReturn("hashedCpf123");
+        when(authPublicApi.findByEmailOrCpf("123.456.789-00", "hashedCpf123"))
                 .thenReturn(Optional.of(user));
 
         UserDetails result = customUserDetailsService.loadUserByUsername("123.456.789-00");
 
         assertNotNull(result);
-        verify(authPublicApi).findByEmailOrCpf("123.456.789-00", "12345678900");
+        verify(cpfHasher).hash("12345678900");
+        verify(authPublicApi).findByEmailOrCpf("123.456.789-00", "hashedCpf123");
     }
 
     @Test
     @DisplayName("Should trim login input before searching")
     void shouldTrimLoginBeforeSearching() {
-        when(authPublicApi.findByEmailOrCpf("maria@gmail.com", "mariagmailcom"))
+        when(authPublicApi.findByEmailOrCpf("maria@gmail.com", ""))
                 .thenReturn(Optional.of(user));
 
         UserDetails result = customUserDetailsService.loadUserByUsername("  maria@gmail.com  ");
 
         assertNotNull(result);
-        verify(authPublicApi).findByEmailOrCpf("maria@gmail.com", "mariagmailcom");
+        verify(authPublicApi).findByEmailOrCpf("maria@gmail.com", "");
     }
 
     @Test

@@ -5,7 +5,6 @@ import net.centroweg.gerenciamentocompras.config.security.CpfHasher;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.RoleNotAllowedException;
-import net.centroweg.gerenciamentocompras.modules.user.domain.exception.RoleNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
@@ -31,11 +30,11 @@ public class CreateUserImpl {
         String encryptedPassword = passwordEncoder.encode(user.password());
         String hashedCpf = cpfHasher.hash(user.cpf());
 
-        Role role = roleRepository.findByNameIgnoringCase(user.nameRole())
+        Role role = roleRepository.findByNameIgnoreCase(user.nameRole())
                 .orElseThrow(() -> new UserNotFoundException(user.nameRole()));
 
         CreateUser userWithEncryptedPassword = new CreateUser(
-                user.name(), user.email(), hashedCpf, encryptedPassword, user.extensionNumber(), user.active(), user.nameRole()
+                user.name(), user.email(), hashedCpf, encryptedPassword, user.extensionNumber(), user.active(), user.nameRole(), user.profilePicture()
         );
 
         if(userWithEncryptedPassword.nameRole().equals("ADMIN")){

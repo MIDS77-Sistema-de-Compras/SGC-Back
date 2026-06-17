@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Positive;
 public record ItemRequestProductRequest(
         @NotNull
         @Positive
-        long requestId,
+        Long requestId,
 
         @NotBlank
         String productName,
@@ -16,7 +16,7 @@ public record ItemRequestProductRequest(
         String measurementUnit,
 
         @NotNull
-        double quantity,
+        Double quantity,
 
         @NotBlank
         String statusName,

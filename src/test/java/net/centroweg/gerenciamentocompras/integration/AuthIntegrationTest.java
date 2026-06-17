@@ -1,10 +1,12 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.config.security.CpfHasher;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,6 +47,9 @@ public class AuthIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CpfHasher cpfHasher;
+
     private static final String EMAIL = "maria@gmail.com";
     private static final String CPF = "52998224725";
     private static final String PASSWORD = "Senha@123";
@@ -60,13 +65,19 @@ public class AuthIntegrationTest {
         User user = new User();
         user.setName("Maria Eduarda");
         user.setEmail(EMAIL);
-        user.setCpf(CPF);
+        user.setCpf(cpfHasher.hash(CPF));
         user.setPassword(passwordEncoder.encode(PASSWORD));
         user.setExtensionNumber("1234");
         user.setActive(true);
         user.setRole(role);
 
         userRepository.save(user);
+    }
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     @Test

@@ -38,8 +38,8 @@ class ListUserImplTest {
         User user2 = new User();
         List<User> mockUsers = List.of(user1, user2);
 
-        UserResponse resp1 = new UserResponse(1L, "User 1", "...", "...", "...", true, null, null);
-        UserResponse resp2 = new UserResponse(2L, "User 2", "...", "...", "...", true, null, null);
+        UserResponse resp1 = new UserResponse(1L, "User 1", "...", "...", "...", true, null, null, null);
+        UserResponse resp2 = new UserResponse(2L, "User 2", "...", "...", "...", true, null, null, null);
         List<UserResponse> expectedResponse = List.of(resp1, resp2);
 
         // Quando o repository for chamado, retorna a lista de entidades

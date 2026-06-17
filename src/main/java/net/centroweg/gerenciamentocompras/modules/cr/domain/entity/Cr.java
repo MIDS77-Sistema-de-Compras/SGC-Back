@@ -31,4 +31,11 @@ public class Cr {
         this.code = code;
         this.master = master;
     }
+
+    public Cr(String name, String code, Boolean master, Sector sector) {
+        this.name = name;
+        this.code = code;
+        this.master = master;
+        this.sector = sector;
+    }
 }

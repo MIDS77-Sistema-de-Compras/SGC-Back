@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.function
 
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
 import org.springframework.stereotype.Service;

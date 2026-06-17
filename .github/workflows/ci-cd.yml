@@ -1,0 +1,46 @@
+name: SGS CI/CD
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+jobs:
+
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar o JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Executar Suítes de Testes (Unitários e Integração)
+        run: mvn test -Dtest=AllUnitTestsSuite,AllIntegrationTestsSuite
+
+      - name: Compilar o pacote JAR
+        run: mvn clean package -DskipTests
+
+      - name: Salvar o artefato JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-boot-app
+          path: target/*.jar
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Disparar Deploy no Render
+        run: |
+          echo "Iniciando deploy no Render para a branch main..."
+          curl -f "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+          echo "Deploy solicitado com sucesso!"

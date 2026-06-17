@@ -33,7 +33,7 @@ public class AuthenticationController {
 
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
-        // depois botar o setSecure pra true
+        // depois botar o setSecure pra true 🐌💪👉👈
         cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(4000);

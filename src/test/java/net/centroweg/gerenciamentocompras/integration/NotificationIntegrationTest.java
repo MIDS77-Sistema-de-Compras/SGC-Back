@@ -13,8 +13,8 @@ import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.em
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.AfterEach;

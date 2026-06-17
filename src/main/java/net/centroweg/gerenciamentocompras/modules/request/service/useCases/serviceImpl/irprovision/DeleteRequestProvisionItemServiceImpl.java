@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestProvisionItemNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.ItemRequestProvisionRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
 
 @Service
 @RequiredArgsConstructor

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrInstructorNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrInstructorRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrInstructorRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructorMapper;
 

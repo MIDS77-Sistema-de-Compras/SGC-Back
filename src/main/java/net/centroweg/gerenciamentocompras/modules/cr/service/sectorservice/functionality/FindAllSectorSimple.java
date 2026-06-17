@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.sectorservice.functionality;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.SectorRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.SectorRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.SectorSimpleResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.SectorMapper;
 import org.springframework.stereotype.Service;

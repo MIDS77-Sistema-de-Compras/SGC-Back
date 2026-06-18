@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
@@ -24,8 +25,8 @@ public class RequestServiceImpl implements RequestService {
         return createRequestService.createRequest(request);
     }
 
-    public List<RequestResponse> findAllRequest() {
-        return findAllRequestService.findAllRequest();
+    public List<RequestResponse> findAllRequest(RequestFilterRequest filter) {
+        return findAllRequestService.findAllRequest(filter);
     }
 
     public RequestResponse findRequestById(Long id) {

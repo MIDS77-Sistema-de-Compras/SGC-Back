@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class DefaultEmail{
-
+    @NonNull
     private String subject;
 
     @NonNull

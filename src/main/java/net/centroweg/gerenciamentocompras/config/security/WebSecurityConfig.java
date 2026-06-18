@@ -37,7 +37,7 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests
-                            .requestMatchers(HttpMethod.POST, "/users", "/auth/login").permitAll();
+                            .requestMatchers(HttpMethod.POST, "/users", "/auth/**").permitAll();
 
                     if (Arrays.asList(env.getActiveProfiles()).contains("dev")) {
                         authorizeRequests.requestMatchers(

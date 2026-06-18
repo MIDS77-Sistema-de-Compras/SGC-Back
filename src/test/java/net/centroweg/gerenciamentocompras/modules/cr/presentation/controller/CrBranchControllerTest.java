@@ -1,11 +1,11 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Branch;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.Cr;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

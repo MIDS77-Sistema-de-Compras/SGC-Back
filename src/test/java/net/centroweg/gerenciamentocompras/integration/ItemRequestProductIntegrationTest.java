@@ -1,7 +1,8 @@
 package net.centroweg.gerenciamentocompras.integration;
 
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProduct;
+import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProductController;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProductService;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -26,7 +28,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ItemRequestProduct.class)
+@WebMvcTest(ItemRequestProductController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ItemRequestProductIntegrationTest {
 
     @Autowired
@@ -37,6 +40,9 @@ class ItemRequestProductIntegrationTest {
 
     @MockitoBean
     private ItemRequestProductService itemRequestProductService;
+
+    @MockitoBean
+    private SecurityFilter securityFilter;
 
     private ItemRequestProductRequest validRequest;
     private ItemRequestProductResponse mockResponse;

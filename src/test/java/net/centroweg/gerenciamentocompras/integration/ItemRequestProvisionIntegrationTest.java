@@ -1,30 +1,47 @@
 package net.centroweg.gerenciamentocompras.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
+import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
+import net.centroweg.gerenciamentocompras.config.security.WebSecurityConfig;
+import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -35,7 +52,21 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProvisionService;
 import tools.jackson.databind.ObjectMapper;
 
-@WebMvcTest(ItemRequestProvisionController.class)
+// 1. Explicitly isolate the web slice to ONLY load your targeted controller type
+@WebMvcTest(
+        controllers = ItemRequestProvisionController.class,
+        excludeAutoConfiguration = {SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class}
+)
+@AutoConfigureMockMvc(addFilters = false)
+// 2. Override default scanning to strictly include ONLY this controller, bypassing all others
+@ComponentScan(
+        basePackageClasses = ItemRequestProvisionController.class,
+        useDefaultFilters = false, // Stop automatic package parsing
+        includeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = ItemRequestProvisionController.class
+        )
+)
 class ItemRequestProvisionIntegrationTest {
 
     @Autowired
@@ -43,6 +74,12 @@ class ItemRequestProvisionIntegrationTest {
 
     @MockitoBean
     private ItemRequestProvisionService itemRequestProvisionService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private SecurityFilter securityFilter;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -53,6 +90,7 @@ class ItemRequestProvisionIntegrationTest {
     private Provision mockProvision;
     private Status mockStatus;
     private ItemRequestProvision mockItemRequestProvision;
+    private CrBranch crBranch;
 
     @BeforeEach
     void setUp() {
@@ -63,7 +101,7 @@ class ItemRequestProvisionIntegrationTest {
         mockRequest.setId(1L);
         mockRequest.setRequestDate(LocalDateTime.now());
         // Set required relationships (would normally come from DB)
-        mockRequest.setCrBranch(new net.centroweg.gerenciamentocompras.modules.cr.domain.CrBranch());
+        mockRequest.setCrBranch(crBranch);
         mockRequest.setStatus(new Status()); // This is the Request's status, different from ItemRequestProvision's status
 
         // Setup Provision with required fields
@@ -90,9 +128,9 @@ class ItemRequestProvisionIntegrationTest {
         // Setup the response DTO (matches your record structure)
         validResponse = new ItemRequestProvisionResponse(
             1000L,           // id
-            mockRequest,     // request (full object)
-            mockProvision,   // provision (full object)
-            mockStatus,      // status (full object)
+            mockRequest.getId(),     // request (full object)
+            mockProvision.getId(),   // provision (full object)
+            mockStatus.getName(),      // status (full object)
             "Test info"      // additionalInformation
         );
 
@@ -117,9 +155,9 @@ class ItemRequestProvisionIntegrationTest {
                 .content(objectMapper.writeValueAsString(validRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1000L))
-                .andExpect(jsonPath("$.request.id").value(1L))
-                .andExpect(jsonPath("$.provision.id").value(10L))
-                .andExpect(jsonPath("$.status.id").value(100L))
+                .andExpect(jsonPath("$.requestId").value(1L))
+                .andExpect(jsonPath("$.provisionId").value(10L))
+                .andExpect(jsonPath("$.statusName").value("PENDING"))
                 .andExpect(jsonPath("$.additionalInformation").value("Test info"));
 
         // Verify service was called
@@ -139,9 +177,9 @@ class ItemRequestProvisionIntegrationTest {
         mockMvc.perform(get("/item-provision-requests/request/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1000L))
-                .andExpect(jsonPath("$[0].request.id").value(1L))
-                .andExpect(jsonPath("$[0].provision.id").value(10L))
-                .andExpect(jsonPath("$[0].status.id").value(100L))
+                .andExpect(jsonPath("$[0].requestId").value(1L))
+                .andExpect(jsonPath("$[0].provisionId").value(10L))
+                .andExpect(jsonPath("$[0].statusName").value("PENDING"))
                 .andExpect(jsonPath("$[0].additionalInformation").value("Test info"));
 
         // Verify service was called
@@ -160,9 +198,9 @@ class ItemRequestProvisionIntegrationTest {
         mockMvc.perform(get("/item-provision-requests/request/1/1000"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1000L))
-                .andExpect(jsonPath("$.request.id").value(1L))
-                .andExpect(jsonPath("$.provision.id").value(10L))
-                .andExpect(jsonPath("$.status.id").value(100L))
+                .andExpect(jsonPath("$.requestId").value(1L))
+                .andExpect(jsonPath("$.provisionId").value(10L))
+                .andExpect(jsonPath("$.statusName").value("PENDING"))
                 .andExpect(jsonPath("$.additionalInformation").value("Test info"));
 
         // Verify service was called
@@ -189,9 +227,9 @@ class ItemRequestProvisionIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1000L))
-                .andExpect(jsonPath("$.request.id").value(1L))
-                .andExpect(jsonPath("$.provision.id").value(10L))
-                .andExpect(jsonPath("$.status.id").value(100L))
+                .andExpect(jsonPath("$.requestId").value(1L))
+                .andExpect(jsonPath("$.provisionId").value(10L))
+                .andExpect(jsonPath("$.statusName").value("PENDING"))
                 .andExpect(jsonPath("$.additionalInformation").value("Test info"));
 
         verify(itemRequestProvisionService, times(1))

@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serv
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -57,6 +57,7 @@ class ItemRequestProductServiceTest {
 
         assertNotNull(result);
         assertEquals(1L, result.itemRequestProduct());
+        assertEquals(1L, result.requestId());
         assertEquals("Parafuso", result.productName());
         assertEquals(10.0, result.quantity());
         verify(createRequestProductService, times(1)).create(request);
@@ -112,6 +113,7 @@ class ItemRequestProductServiceTest {
 
         assertNotNull(result);
         assertEquals(1L, result.itemRequestProduct());
+        assertEquals(1L, result.requestId());
         assertEquals("Parafuso", result.productName());
         verify(findRequestProductByIdService, times(1)).findById(1L);
     }
@@ -146,6 +148,7 @@ class ItemRequestProductServiceTest {
         ItemRequestProductResponse result = itemRequestProductService.updateRequestProduct(updateRequest, 1L);
 
         assertNotNull(result);
+        assertEquals(1L, result.requestId());
         assertEquals("Parafuso Atualizado", result.productName());
         assertEquals(20.0, result.quantity());
         assertEquals("CONCLUIDO", result.statusName());

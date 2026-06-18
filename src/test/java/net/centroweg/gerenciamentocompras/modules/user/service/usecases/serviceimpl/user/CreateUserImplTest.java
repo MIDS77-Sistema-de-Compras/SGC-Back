@@ -43,7 +43,7 @@ public class CreateUserImplTest {
     void deveCriarUsuarioComSucesso() {
         CreateUser dto = new CreateUser(
                 "Maria Eduarda", "maria@gmail.com", "12345678900",
-                "Senha@123", "1234", true, "COMPRADOR"
+                "Senha@123", "1234", true, "COMPRADOR", null
         );
 
         User entity = new User();
@@ -51,12 +51,12 @@ public class CreateUserImplTest {
 
         UserResponse response = new UserResponse(
                 1L, "Maria Eduarda", "12345678900", "maria@gmail.com",
-                "1234", true, LocalDateTime.now(), LocalDateTime.now()
+                "1234", true, LocalDateTime.now(), LocalDateTime.now(), null
         );
 
         when(passwordEncoder.encode(any())).thenReturn("hashed-password");
         when(cpfHasher.hash(any())).thenReturn("hashed-cpf");
-        when(roleRepository.findByNameIgnoringCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
+        when(roleRepository.findByNameIgnoreCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
         when(mapper.toEntity(any())).thenReturn(entity);
         when(repository.save(any())).thenReturn(entity);
         when(mapper.toDTO(any())).thenReturn(response);
@@ -74,7 +74,7 @@ public class CreateUserImplTest {
     void deveVerificarSeDadosEstaoSendoPassadosCorretamente() {
         CreateUser request = new CreateUser(
                 "João Silva", "joao@email.com", "12345678901",
-                "Senha@123", "4321", true, "COMPRADOR"
+                "Senha@123", "4321", true, "COMPRADOR", null
         );
 
         User userMapeado = new User();
@@ -86,7 +86,7 @@ public class CreateUserImplTest {
 
         when(passwordEncoder.encode(any())).thenReturn("hashed-password");
         when(cpfHasher.hash(any())).thenReturn("hashed-cpf");
-        when(roleRepository.findByNameIgnoringCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
+        when(roleRepository.findByNameIgnoreCase("COMPRADOR")).thenReturn(Optional.of(new Role("COMPRADOR")));
         when(mapper.toEntity(any(CreateUser.class))).thenReturn(userMapeado);
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
 

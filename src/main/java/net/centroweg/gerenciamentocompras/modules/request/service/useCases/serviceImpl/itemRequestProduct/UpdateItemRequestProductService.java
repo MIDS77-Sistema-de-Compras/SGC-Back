@@ -5,17 +5,15 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit
 import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.MeasurementUnitNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.MeasurementUnitRepository;
-import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.ItemRequestProductRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
@@ -61,7 +59,7 @@ public class UpdateItemRequestProductService {
         itemRequestProduct.setMeasurementUnit(measurementUnit);
         itemRequestProduct.setQuantity(dto.quantity());
         itemRequestProduct.setStatus_id(status);
-        itemRequestProduct.setAdditionalInformations(itemRequestProduct.getAdditionalInformations());
+        itemRequestProduct.setAdditionalInformations(dto.additionalInformations());
 
         return itemRequestProductMapper.toResponse(itemRequestProductRepository.save(itemRequestProduct));
     }

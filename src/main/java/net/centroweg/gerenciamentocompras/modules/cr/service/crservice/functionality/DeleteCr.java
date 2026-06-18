@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.function
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ public class DeleteCr {
     private final CrRepository crRepository;
     private final CrMapper crMapper;
 
-    public MessageDTO delete(long id){
+    public MessageDTO delete(Long id){
         if (!crRepository.existsById(id)) {
             throw new CrNotFoundException(id);
         }

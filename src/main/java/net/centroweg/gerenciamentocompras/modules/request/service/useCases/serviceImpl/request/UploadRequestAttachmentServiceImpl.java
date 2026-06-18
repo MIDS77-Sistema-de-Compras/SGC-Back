@@ -33,6 +33,7 @@ public class UploadRequestAttachmentServiceImpl {
             "application/pdf",
             "image/png",
             "image/jpeg",
+            "image/webp",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );

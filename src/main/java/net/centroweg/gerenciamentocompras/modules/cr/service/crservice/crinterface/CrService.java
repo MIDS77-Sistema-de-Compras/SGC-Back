@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface;
 
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public interface CrService {
 
-    CrCompoundResponse create(CrRequest dto);
+    CrCompoundResponse create(CrRequest dto, UserPrincipal userPrincipal);
 
     List<CrCompoundResponse> listAll();
 

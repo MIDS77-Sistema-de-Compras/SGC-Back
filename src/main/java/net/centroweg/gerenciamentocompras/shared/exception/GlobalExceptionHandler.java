@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import org.springframework.security.core.AuthenticationException;
+
+import jakarta.mail.MessagingException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
@@ -84,6 +86,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BranchNotFoundException.class)
     public ResponseEntity<ApiError> handleBranchNotFound(BranchNotFoundException exception) {
         return buildResponse(exception.getHttpStatus(), exception.getMessage(), null);
+    }
+
+    // should I?
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<ApiError> handleMessagingException(MessagingException exception){
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), null);
     }
 
 }

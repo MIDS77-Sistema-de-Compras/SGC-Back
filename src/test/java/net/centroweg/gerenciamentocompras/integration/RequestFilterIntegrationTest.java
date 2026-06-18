@@ -100,8 +100,7 @@ class RequestFilterIntegrationTest {
                 "joao@teste.com",
                 "Senha@123",
                 "1234",
-                true,
-                null
+                true
         ));
         User maria = userRepository.save(new User(
                 "Maria Souza",
@@ -109,8 +108,7 @@ class RequestFilterIntegrationTest {
                 "maria@teste.com",
                 "Senha@123",
                 "4321",
-                true,
-                null
+                true
         ));
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));

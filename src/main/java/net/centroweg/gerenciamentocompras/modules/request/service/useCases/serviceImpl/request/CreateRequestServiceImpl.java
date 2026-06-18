@@ -3,14 +3,14 @@ package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serv
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;

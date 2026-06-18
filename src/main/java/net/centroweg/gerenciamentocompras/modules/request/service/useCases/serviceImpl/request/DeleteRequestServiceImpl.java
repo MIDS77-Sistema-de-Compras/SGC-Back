@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Reque
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.security.core.context.SecurityContextHolder;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
 @Service

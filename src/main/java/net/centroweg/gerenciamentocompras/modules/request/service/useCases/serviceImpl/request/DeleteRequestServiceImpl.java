@@ -6,7 +6,6 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyApprovedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;

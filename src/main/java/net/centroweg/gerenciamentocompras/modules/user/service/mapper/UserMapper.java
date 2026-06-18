@@ -17,8 +17,8 @@ public class UserMapper {
                 user.email(),
                 user.password(),
                 user.extensionNumber(),
-                user.active(),
-                user.profilePicture());
+                user.active()
+        );
     }
 
     public UserResponse toDTO(User user){

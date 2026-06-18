@@ -89,7 +89,7 @@ class RequestControllerTest {
         waitingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Solicitação aguardando aprovação"));
         approvedStatus = statusRepository.save(new Status("Aprovado", "Solicitação aprovada pelo supervisor"));
 
-        User newUser = new User("Test User", "52998224725", "test@test.com", "Password@1", "1234", true, null);
+        User newUser = new User("Test User", "52998224725", "test@test.com", "Password@1", "1234", true);
         newUser.setRole(new Role("USER"));
         testUser = userRepository.save(newUser);
         userPrincipal = new UserPrincipal(testUser);

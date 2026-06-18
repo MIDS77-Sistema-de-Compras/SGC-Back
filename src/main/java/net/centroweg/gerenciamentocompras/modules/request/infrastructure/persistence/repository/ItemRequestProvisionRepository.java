@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence;
+package net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository;
 
 import java.util.List;
 import java.util.Optional;

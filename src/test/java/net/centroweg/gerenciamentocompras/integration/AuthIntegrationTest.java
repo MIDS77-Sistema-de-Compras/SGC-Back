@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.Cookie;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -81,7 +83,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integration] Should authenticate user with valid email and return JWT token")
+    @DisplayName("[Integration] Should authenticate user with valid email and return JWT token in cookie")
     void shouldAuthenticateWithValidEmailAndPassword() throws Exception {
         LogIn loginDto = new LogIn(EMAIL, PASSWORD);
 
@@ -89,12 +91,12 @@ public class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value(notNullValue()))
-                .andExpect(jsonPath("$.text").value(startsWith("eyJ")));
+                .andExpect(cookie().value("jwt", notNullValue()))
+                .andExpect(cookie().value("jwt", startsWith("eyJ")));
     }
 
     @Test
-    @DisplayName("[Integration] Should authenticate user with valid CPF and return JWT token")
+    @DisplayName("[Integration] Should authenticate user with valid CPF and return JWT token in cookie")
     void shouldAuthenticateWithValidCpfAndPassword() throws Exception {
         LogIn loginDto = new LogIn(CPF, PASSWORD);
 
@@ -102,8 +104,8 @@ public class AuthIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value(notNullValue()))
-                .andExpect(jsonPath("$.text").value(startsWith("eyJ")));
+                .andExpect(cookie().value("jwt", notNullValue()))
+                .andExpect(cookie().value("jwt", startsWith("eyJ")));
     }
 
     @Test
@@ -111,16 +113,14 @@ public class AuthIntegrationTest {
     void shouldAllowAccessToProtectedRouteWithValidJwtToken() throws Exception {
         LogIn loginDto = new LogIn(EMAIL, PASSWORD);
 
-        String responseContent = mockMvc.perform(post("/auth/login")
+        Cookie jwtCookie = mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-
-        String token = objectMapper.readTree(responseContent).get("text").asText();
+                .andReturn().getResponse().getCookie("jwt");
 
         mockMvc.perform(get("/users")
-                        .header("Authorization", "Bearer " + token))
+                        .cookie(jwtCookie))
                 .andExpect(status().isOk());
     }
 
@@ -128,7 +128,7 @@ public class AuthIntegrationTest {
     @DisplayName("[Integration] Should deny access to protected route with invalid JWT token")
     void shouldDenyAccessToProtectedRouteWithInvalidJwtToken() throws Exception {
         mockMvc.perform(get("/users")
-                        .header("Authorization", "Bearer invalidtoken"))
+                        .cookie(new Cookie("jwt", "invalidtoken")))
                 .andExpect(status().isUnauthorized());
     }
 

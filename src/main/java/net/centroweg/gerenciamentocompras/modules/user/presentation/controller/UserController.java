@@ -59,7 +59,7 @@ public class UserController {
         user.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
-
+    @Operation(description = "ENDPOINT responsável pela edição de foto de perfil")
     @PatchMapping("/userId/{id}")
     public ResponseEntity<UserResponse> updateProfilePicture(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.status(200).body(user.uploadProfilePicture(id, file));

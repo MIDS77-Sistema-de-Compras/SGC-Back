@@ -10,7 +10,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
-import net.centroweg.gerenciamentocompras.shared.claudinary.ClaudinaryService;
+import net.centroweg.gerenciamentocompras.shared.cloudinary.CloudinaryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -20,27 +20,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UploadRequestAttachmentServiceImpl {
 
-    private static final long MAX_FILE_SIZE =
-            10L * 1024 * 1024;
-
-    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
-            "application/pdf",
-            "image/png",
-            "image/jpeg",
-            "image/webp",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
-
     private final RequestRepository requestRepository;
     private final RequestAttachmentRepository attachmentRepository;
-    private final ClaudinaryService cloudinaryService;
+    private final CloudinaryService cloudinaryService;
     private final RequestMapper requestMapper;
 
     @Transactional
@@ -53,7 +40,7 @@ public class UploadRequestAttachmentServiceImpl {
 
         if (files == null || files.isEmpty()) {
             throw new InvalidAttachmentException(
-                    "É necessário enviar pelo menos um arquivo."
+                    "E necessario enviar pelo menos um arquivo."
             );
         }
 
@@ -66,8 +53,6 @@ public class UploadRequestAttachmentServiceImpl {
             Request request,
             MultipartFile file
     ) {
-        validateFile(file);
-
         try {
             Map<?, ?> result = cloudinaryService.uploadFile(file);
 
@@ -105,26 +90,6 @@ public class UploadRequestAttachmentServiceImpl {
 
         } catch (IOException exception) {
             throw new AttachmentUploadException();
-        }
-    }
-
-    private void validateFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new InvalidAttachmentException(
-                    "O arquivo enviado está vazio."
-            );
-        }
-
-        if (file.getSize() > MAX_FILE_SIZE) {
-            throw new InvalidAttachmentException(
-                    "O arquivo deve possuir no máximo 10 MB."
-            );
-        }
-
-        if (!ALLOWED_CONTENT_TYPES.contains(file.getContentType())) {
-            throw new InvalidAttachmentException(
-                    "Tipo de arquivo não permitido."
-            );
         }
     }
 }

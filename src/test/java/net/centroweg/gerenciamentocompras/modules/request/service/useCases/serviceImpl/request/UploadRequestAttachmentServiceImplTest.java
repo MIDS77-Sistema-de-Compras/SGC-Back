@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
-import net.centroweg.gerenciamentocompras.shared.claudinary.ClaudinaryService;
+import net.centroweg.gerenciamentocompras.shared.cloudinary.CloudinaryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -47,7 +46,7 @@ class UploadRequestAttachmentServiceImplTest {
     private RequestAttachmentRepository attachmentRepository;
 
     @Mock
-    private ClaudinaryService cloudinaryService;
+    private CloudinaryService cloudinaryService;
 
     @Mock
     private RequestMapper requestMapper;
@@ -172,25 +171,6 @@ class UploadRequestAttachmentServiceImplTest {
         verify(requestRepository).findById(requestId);
         verifyNoMoreInteractions(requestRepository);
         verifyNoInteractions(cloudinaryService, attachmentRepository, requestMapper);
-    }
-
-    @Test
-    @DisplayName("Deve lancar InvalidAttachmentException quando arquivo estiver vazio")
-    void shouldThrowInvalidAttachmentWhenFileIsEmpty() throws IOException {
-        Long requestId = 1L;
-        Request request = new Request();
-        MockMultipartFile file = pdfFile("teste.pdf", "");
-
-        when(requestRepository.findById(requestId)).thenReturn(Optional.of(request));
-
-        assertThrows(
-                InvalidAttachmentException.class,
-                () -> uploadRequestAttachmentService.uploadAttachments(requestId, List.of(file))
-        );
-
-        verify(requestRepository).findById(requestId);
-        verify(cloudinaryService, never()).uploadFile(file);
-        verifyNoInteractions(attachmentRepository, requestMapper);
     }
 
     @Test

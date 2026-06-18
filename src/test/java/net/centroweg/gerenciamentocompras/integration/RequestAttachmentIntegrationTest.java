@@ -12,7 +12,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestAttachmentRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
-import net.centroweg.gerenciamentocompras.shared.claudinary.ClaudinaryService;
+import net.centroweg.gerenciamentocompras.shared.cloudinary.CloudinaryService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -68,7 +68,7 @@ class RequestAttachmentIntegrationTest {
     private CrRepository crRepository;
 
     @MockitoBean
-    private ClaudinaryService cloudinaryService;
+    private CloudinaryService cloudinaryService;
 
     @MockitoBean
     private NotificationEmailService notificationEmailService;

@@ -19,5 +19,15 @@ public class ClaudinaryService {
         return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
     }
 
-
+    public Map<?, ?> uploadFile(MultipartFile file) throws IOException {
+        return cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap(
+                        "resource_type", "auto",
+                        "folder", "request-attachments",
+                        "use_filename", true,
+                        "unique_filename", true
+                )
+        );
+    }
 }

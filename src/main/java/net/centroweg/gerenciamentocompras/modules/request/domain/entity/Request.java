@@ -57,6 +57,10 @@ public class Request {
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemRequestProduct> itemRequestProducts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RequestAttachment> attachments = new ArrayList<>();
+
+
     public Request(CrBranch crBranch, Status status) {
         this.crBranch = crBranch;
         this.status = status;

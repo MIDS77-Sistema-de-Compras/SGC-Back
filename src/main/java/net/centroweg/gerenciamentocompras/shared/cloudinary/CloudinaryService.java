@@ -3,19 +3,13 @@ package net.centroweg.gerenciamentocompras.shared.cloudinary;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.InvalidAttachmentException;
-import net.centroweg.gerenciamentocompras.shared.exception.InvalidFileTypeException;
+import net.centroweg.gerenciamentocompras.shared.exception.InvalidFileException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -24,21 +18,28 @@ import java.util.zip.ZipInputStream;
 public class CloudinaryService {
 
     private static final long MAX_FILE_SIZE = 10L * 1024 * 1024;
+    private static final String JPEG_CONTENT_TYPE = "image/jpeg";
+    private static final String PNG_CONTENT_TYPE = "image/png";
+    private static final String WEBP_CONTENT_TYPE = "image/webp";
+    private static final String PDF_CONTENT_TYPE = "application/pdf";
+    private static final String DOCX_CONTENT_TYPE =
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    private static final String XLSX_CONTENT_TYPE =
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     private final Cloudinary cloudinary;
 
     public Map upload(MultipartFile file) throws IOException {
-        byte[] bytes = validateAndRead(
-                file,
-                EnumSet.of(FileType.JPEG, FileType.PNG, FileType.WEBP),
-                true
-        );
+        byte[] bytes = validateAndRead(file);
+        if (!isImageContentType(file.getContentType())) {
+            throw new InvalidFileException("Tipo de arquivo nao permitido.");
+        }
 
         return cloudinary.uploader().upload(bytes, ObjectUtils.emptyMap());
     }
 
     public Map<?, ?> uploadFile(MultipartFile file) throws IOException {
-        byte[] bytes = validateAndRead(file, EnumSet.allOf(FileType.class), false);
+        byte[] bytes = validateAndRead(file);
 
         return cloudinary.uploader().upload(
                 bytes,
@@ -51,72 +52,73 @@ public class CloudinaryService {
         );
     }
 
-    private byte[] validateAndRead(
-            MultipartFile file,
-            Set<FileType> allowedFileTypes,
-            boolean profilePictureUpload
-    ) throws IOException {
-        if (file == null || file.isEmpty()) {
-            throwInvalidFile(profilePictureUpload, "O arquivo enviado esta vazio.");
+    private byte[] validateAndRead(MultipartFile file) throws IOException {
+        if (file == null) {
+            throw new InvalidFileException("O arquivo enviado nao pode ser nulo.");
+        }
+
+        if (file.isEmpty()) {
+            throw new InvalidFileException("O arquivo enviado esta vazio.");
         }
 
         if (file.getSize() > MAX_FILE_SIZE) {
-            throwInvalidFile(profilePictureUpload, "O arquivo deve possuir no maximo 10 MB.");
+            throw new InvalidFileException("O arquivo deve possuir no maximo 10 MB.");
         }
 
         String contentType = file.getContentType();
-        FileType contentTypeFileType = FileType.fromContentType(contentType);
-        if (contentTypeFileType == null || !allowedFileTypes.contains(contentTypeFileType)) {
-            throwInvalidFile(profilePictureUpload, "Tipo de arquivo nao permitido.");
-        }
-
-        if (!contentTypeFileType.matchesExtension(file.getOriginalFilename())) {
-            throwInvalidFile(profilePictureUpload, "Extensao de arquivo nao permitida.");
+        if (!isAllowedContentType(contentType)) {
+            throw new InvalidFileException("Tipo de arquivo nao permitido.");
         }
 
         byte[] bytes = file.getBytes();
         if (bytes.length == 0) {
-            throwInvalidFile(profilePictureUpload, "O arquivo enviado esta vazio.");
+            throw new InvalidFileException("O arquivo enviado esta vazio.");
         }
 
         if (bytes.length > MAX_FILE_SIZE) {
-            throwInvalidFile(profilePictureUpload, "O arquivo deve possuir no maximo 10 MB.");
+            throw new InvalidFileException("O arquivo deve possuir no maximo 10 MB.");
         }
 
-        FileType realFileType = detectFileType(bytes);
-        if (realFileType == null || realFileType != contentTypeFileType) {
-            throwInvalidFile(profilePictureUpload, "Tipo de arquivo nao permitido.");
+        if (!isValidBytesForContentType(bytes, contentType)) {
+            throw new InvalidFileException("Tipo de arquivo nao permitido.");
         }
 
         return bytes;
     }
 
-    private FileType detectFileType(byte[] bytes) {
-        if (startsWith(bytes, (byte) 0xFF, (byte) 0xD8, (byte) 0xFF)) {
-            return FileType.JPEG;
-        }
+    private boolean isAllowedContentType(String contentType) {
+        return JPEG_CONTENT_TYPE.equals(contentType)
+                || PNG_CONTENT_TYPE.equals(contentType)
+                || WEBP_CONTENT_TYPE.equals(contentType)
+                || PDF_CONTENT_TYPE.equals(contentType)
+                || DOCX_CONTENT_TYPE.equals(contentType)
+                || XLSX_CONTENT_TYPE.equals(contentType);
+    }
 
-        if (startsWith(bytes, (byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47)) {
-            return FileType.PNG;
-        }
+    private boolean isImageContentType(String contentType) {
+        return JPEG_CONTENT_TYPE.equals(contentType)
+                || PNG_CONTENT_TYPE.equals(contentType)
+                || WEBP_CONTENT_TYPE.equals(contentType);
+    }
 
-        if (isWebp(bytes)) {
-            return FileType.WEBP;
-        }
+    private boolean isValidBytesForContentType(byte[] bytes, String contentType) {
+        return switch (contentType) {
+            case JPEG_CONTENT_TYPE -> isJpeg(bytes);
+            case PNG_CONTENT_TYPE -> isPng(bytes);
+            case WEBP_CONTENT_TYPE -> isWebp(bytes);
+            case PDF_CONTENT_TYPE -> isPdf(bytes);
+            case DOCX_CONTENT_TYPE -> isDocx(bytes);
+            case XLSX_CONTENT_TYPE -> isXlsx(bytes);
+            default -> false;
+        };
+    }
 
-        if (startsWith(bytes, (byte) 0x25, (byte) 0x50, (byte) 0x44, (byte) 0x46, (byte) 0x2D)) {
-            return FileType.PDF;
-        }
+    private boolean isJpeg(byte[] bytes) {
+        return startsWith(bytes, (byte) 0xFF, (byte) 0xD8, (byte) 0xFF);
+    }
 
-        if (isOfficeDocument(bytes, "word/")) {
-            return FileType.DOCX;
-        }
-
-        if (isOfficeDocument(bytes, "xl/")) {
-            return FileType.XLSX;
-        }
-
-        return null;
+    private boolean isPng(byte[] bytes) {
+        return startsWith(bytes, (byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47);
     }
 
     private boolean startsWith(byte[] bytes, byte... expectedBytes) {
@@ -136,13 +138,29 @@ public class CloudinaryService {
     private boolean isWebp(byte[] bytes) {
         return bytes.length >= 12
                 && startsWith(bytes, (byte) 0x52, (byte) 0x49, (byte) 0x46, (byte) 0x46)
-                && Arrays.equals(
-                Arrays.copyOfRange(bytes, 8, 12),
-                new byte[]{(byte) 0x57, (byte) 0x45, (byte) 0x42, (byte) 0x50}
-        );
+                && bytes[8] == (byte) 0x57
+                && bytes[9] == (byte) 0x45
+                && bytes[10] == (byte) 0x42
+                && bytes[11] == (byte) 0x50;
+    }
+
+    private boolean isPdf(byte[] bytes) {
+        return startsWith(bytes, (byte) 0x25, (byte) 0x50, (byte) 0x44, (byte) 0x46, (byte) 0x2D);
+    }
+
+    private boolean isDocx(byte[] bytes) {
+        return isOfficeDocument(bytes, "word/");
+    }
+
+    private boolean isXlsx(byte[] bytes) {
+        return isOfficeDocument(bytes, "xl/");
     }
 
     private boolean isOfficeDocument(byte[] bytes, String requiredFolder) {
+        if (!isZip(bytes)) {
+            return false;
+        }
+
         boolean hasContentTypes = false;
         boolean hasRequiredFolder = false;
 
@@ -170,41 +188,7 @@ public class CloudinaryService {
         return false;
     }
 
-    private void throwInvalidFile(boolean profilePictureUpload, String message) {
-        if (profilePictureUpload) {
-            throw new InvalidFileTypeException();
-        }
-
-        throw new InvalidAttachmentException(message);
-    }
-
-    private enum FileType {
-        JPEG("image/jpeg", Set.of("jpg", "jpeg")),
-        PNG("image/png", Set.of("png")),
-        WEBP("image/webp", Set.of("webp")),
-        PDF("application/pdf", Set.of("pdf")),
-        DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document", Set.of("docx")),
-        XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", Set.of("xlsx"));
-
-        private final String contentType;
-        private final Set<String> extensions;
-
-        FileType(String contentType, Set<String> extensions) {
-            this.contentType = contentType;
-            this.extensions = extensions;
-        }
-
-        private static FileType fromContentType(String contentType) {
-            return Arrays.stream(values())
-                    .filter(fileType -> fileType.contentType.equals(contentType))
-                    .findFirst()
-                    .orElse(null);
-        }
-
-        private boolean matchesExtension(String filename) {
-            String extension = StringUtils.getFilenameExtension(filename);
-            return extension != null
-                    && extensions.contains(extension.toLowerCase(Locale.ROOT));
-        }
+    private boolean isZip(byte[] bytes) {
+        return startsWith(bytes, (byte) 0x50, (byte) 0x4B, (byte) 0x03, (byte) 0x04);
     }
 }

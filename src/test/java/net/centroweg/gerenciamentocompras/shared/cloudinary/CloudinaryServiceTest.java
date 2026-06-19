@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.shared.cloudinary;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.InvalidAttachmentException;
-import net.centroweg.gerenciamentocompras.shared.exception.InvalidFileTypeException;
+import net.centroweg.gerenciamentocompras.shared.exception.InvalidFileException;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +19,7 @@ class CloudinaryServiceTest {
     @Test
     void shouldRejectNullAttachment() {
         assertThrows(
-                InvalidAttachmentException.class,
+                InvalidFileException.class,
                 () -> cloudinaryService.uploadFile(null)
         );
     }
@@ -35,7 +34,7 @@ class CloudinaryServiceTest {
         );
 
         assertThrows(
-                InvalidAttachmentException.class,
+                InvalidFileException.class,
                 () -> cloudinaryService.uploadFile(file)
         );
     }
@@ -50,7 +49,7 @@ class CloudinaryServiceTest {
         );
 
         assertThrows(
-                InvalidAttachmentException.class,
+                InvalidFileException.class,
                 () -> cloudinaryService.uploadFile(file)
         );
     }
@@ -65,22 +64,7 @@ class CloudinaryServiceTest {
         );
 
         assertThrows(
-                InvalidAttachmentException.class,
-                () -> cloudinaryService.uploadFile(file)
-        );
-    }
-
-    @Test
-    void shouldRejectAttachmentWhenExtensionDoesNotMatchContentType() {
-        MultipartFile file = new MockMultipartFile(
-                "files",
-                "fake.png",
-                "application/pdf",
-                "%PDF-1.7".getBytes()
-        );
-
-        assertThrows(
-                InvalidAttachmentException.class,
+                InvalidFileException.class,
                 () -> cloudinaryService.uploadFile(file)
         );
     }
@@ -95,7 +79,7 @@ class CloudinaryServiceTest {
         );
 
         assertThrows(
-                InvalidAttachmentException.class,
+                InvalidFileException.class,
                 () -> cloudinaryService.uploadFile(file)
         );
     }
@@ -110,7 +94,7 @@ class CloudinaryServiceTest {
         );
 
         assertThrows(
-                InvalidFileTypeException.class,
+                InvalidFileException.class,
                 () -> cloudinaryService.upload(file)
         );
     }

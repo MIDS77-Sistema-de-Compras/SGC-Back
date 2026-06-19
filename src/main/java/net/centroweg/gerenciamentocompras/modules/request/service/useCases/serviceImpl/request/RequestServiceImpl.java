@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
@@ -22,6 +23,9 @@ public class RequestServiceImpl implements RequestService {
     private final FindAllRequestServiceImpl findAllRequestService;
     private final FindRequestByIdServiceImpl findRequestByIdService;
     private final UpdateFeedbackServiceImpl updateFeedbackService;
+    private final FindAllByUser findAllByUser;
+
+
     private final UploadRequestAttachmentServiceImpl uploadRequestAttachmentService;
 
     @Override
@@ -42,6 +46,11 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestResponse updateRequest(RequestRequest request, Long id){
         return updateRequestService.updateRequest(request, id);
+    }
+
+    @Override
+    public List<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal) {
+        return findAllByUser.findAllByUser(filter, userPrincipal);
     }
 
     @Override

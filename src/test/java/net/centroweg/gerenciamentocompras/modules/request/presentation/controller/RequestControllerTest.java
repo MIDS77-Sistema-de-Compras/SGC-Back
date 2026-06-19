@@ -99,6 +99,7 @@ class RequestControllerTest {
     void shouldCreateRequest() throws Exception {
         mockMvc.perform(post("/requests")
                         .with(csrf())
+                        .with(user(userPrincipal))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

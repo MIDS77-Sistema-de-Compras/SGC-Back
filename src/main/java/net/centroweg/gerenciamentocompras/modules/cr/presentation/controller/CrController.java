@@ -3,7 +3,9 @@ package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
@@ -24,9 +26,9 @@ public class CrController {
 
     @Operation(description = "ENDPOINT responsável pela criação de CR")
     @PostMapping
-    public ResponseEntity<CrCompoundResponse> create(@RequestBody CrRequest dto){
+    public ResponseEntity<CrCompoundResponse> create(@RequestBody CrRequest dto, @AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(crService.create(dto));
+                .body(crService.create(dto, userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos CR")

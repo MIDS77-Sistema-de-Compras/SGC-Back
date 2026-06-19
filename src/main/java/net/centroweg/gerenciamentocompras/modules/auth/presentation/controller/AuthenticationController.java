@@ -1,22 +1,25 @@
 package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.service.usecase.interfaces.AuthenticationService;
 import net.centroweg.gerenciamentocompras.modules.auth.service.usecase.interfaces.PasswordRecoveryService;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.NewPassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.Recovery;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "ENDPOINTS de autenticação")
 @RestController
@@ -48,7 +51,7 @@ public class AuthenticationController {
                 .body(new MessageDTO("login realizado com sucesso"));
     }
 
-    @PostMapping("/password-recovery")
+    @PostMapping("/recovery")
     public ResponseEntity<Void> sendEmailWithToken(@Valid @RequestBody Recovery recoveryDto){
         try{
             passwordRecoveryService.validateAndGenerateRecoveryToken(recoveryDto);
@@ -58,4 +61,11 @@ public class AuthenticationController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PostMapping("/recovery/new")
+    public ResponseEntity<MessageDTO> validateAndChangePassword(@Valid @RequestBody NewPassword newPasswordDto, @RequestParam String token){
+        passwordRecoveryService.changePasswordWhenValidToken(newPasswordDto, token);
+        return ResponseEntity.ok().body(new MessageDTO("senha atualizada com sucesso"));
+    }
+
 }

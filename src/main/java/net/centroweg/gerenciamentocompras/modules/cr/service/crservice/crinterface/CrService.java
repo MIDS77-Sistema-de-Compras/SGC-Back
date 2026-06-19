@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface;
 
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
@@ -17,7 +18,7 @@ public interface CrService {
      * @param dto dados do CR a ser criado
      * @return {@link CrCompoundResponse} com os dados persistidos
      */
-    CrCompoundResponse create(CrRequest dto);
+    CrCompoundResponse create(CrRequest dto, UserPrincipal userPrincipal);
 
     /**
      * Retorna todos os Centros de Resultado cadastrados.

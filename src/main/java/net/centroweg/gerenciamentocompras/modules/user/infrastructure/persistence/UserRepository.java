@@ -14,13 +14,14 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    Optional<User> findByEmail(String email);
+
     /**
      * Consulta personalizada que busca o usuário por e-mail ou CPF.
      * @param email endereço de email do usuário
      * @param cpf cpf do usuário
      * @return Opcional o retorno de um usuário, só retorna se encontrar.
      */
-
     Optional<User> findByEmailOrCpf(String email, String cpf);
 
     /**
@@ -28,7 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param name nome do usuário
      * @return uma lista de usuário dos quais o nome correspondem a pesquisa.
      */
-
     List<User> findByNameIgnoringCase(String name);
     Boolean existsByEmail(String email);
     Boolean existsByCpf(String cpf);

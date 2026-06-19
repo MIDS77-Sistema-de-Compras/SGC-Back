@@ -38,8 +38,7 @@ public class ItemRequestProduct {
     @JoinColumn(nullable = false)
     private Status status_id;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String additionalInformations;
 
 

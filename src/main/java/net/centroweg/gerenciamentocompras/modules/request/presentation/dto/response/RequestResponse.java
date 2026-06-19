@@ -10,5 +10,6 @@ public record RequestResponse(
         LocalDateTime updatedAt,
         Long crBranchId,
         String statusName,
-        String feedback
+        String feedback,
+        List<RequestAttachmentResponse> attachments
 ) {}

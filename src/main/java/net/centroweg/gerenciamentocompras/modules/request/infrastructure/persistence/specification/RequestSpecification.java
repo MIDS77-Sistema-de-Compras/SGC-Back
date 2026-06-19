@@ -18,6 +18,18 @@ import java.util.Locale;
 @NoArgsConstructor
 public final class RequestSpecification {
 
+    public static Specification<Request> createdByUser(String email) {
+        if (isBlank(email)) {
+            return Specification.unrestricted();
+        }
+
+        return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            Join<Request, User> userJoin =
+                    root.join("createdByUsers", JoinType.INNER);
+            return criteriaBuilder.equal(userJoin.get("email"), email);
+        };
+    }
 
     public static Specification<Request> crCodeContain(String crCode){
         if(isBlank(crCode)){

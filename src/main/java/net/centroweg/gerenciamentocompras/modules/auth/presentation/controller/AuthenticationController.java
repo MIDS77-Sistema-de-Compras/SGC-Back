@@ -48,7 +48,7 @@ public class AuthenticationController {
         response.addCookie(cookie);
 
         return  ResponseEntity.status(200)
-                .body(new MessageDTO("login realizado com sucesso"));
+                .body(new MessageDTO(token));
     }
 
     @PostMapping("/recovery")

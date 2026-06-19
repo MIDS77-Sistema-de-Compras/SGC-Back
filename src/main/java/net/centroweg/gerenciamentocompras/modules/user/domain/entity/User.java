@@ -69,7 +69,7 @@ public class User {
      */
 
     @Column(nullable = false)
-    private boolean active;
+    private Boolean active;
 
     /**
      * Horário de criação do usuário, não pode ser nulo e nem editado.
@@ -106,7 +106,7 @@ public class User {
      * @param extensionNumber ramal para contato interno do usuário
      * @param active atividade do usuário
      */
-    public User(String name, String cpf, String email, String password, String extensionNumber, boolean active) {
+    public User(String name, String cpf, String email, String password, String extensionNumber, Boolean active) {
         this.name = name;
         this.cpf = cpf;
         this.email = email;

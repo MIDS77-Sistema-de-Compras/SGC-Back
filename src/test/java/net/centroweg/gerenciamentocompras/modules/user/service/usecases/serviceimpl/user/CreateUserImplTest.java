@@ -101,6 +101,6 @@ public class CreateUserImplTest {
         assertEquals(request.email(), userEnviadoParaOBanco.getEmail(), "O email foi mandado errado!");
         assertEquals(request.cpf(), userEnviadoParaOBanco.getCpf(), "O CPF foi mandado errado!");
         assertEquals(request.extensionNumber(), userEnviadoParaOBanco.getExtensionNumber(), "O ramal foi mandado errado!");
-        assertEquals(request.active(), userEnviadoParaOBanco.isActive(), "O status ativo foi mandado errado!");
+        assertEquals(request.active(), userEnviadoParaOBanco.getActive(), "O status ativo foi mandado errado!");
     }
 }

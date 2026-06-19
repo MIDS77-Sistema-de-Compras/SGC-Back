@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crimpl;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Implementação de {@link CrService} que delega cada operação
+ * ao seu caso de uso específico.
+ */
 @RequiredArgsConstructor
 @Component
 public class CrServiceImpl implements CrService {
@@ -21,8 +26,8 @@ public class CrServiceImpl implements CrService {
     private final DeleteCr deleteCr;
 
     @Override
-    public CrCompoundResponse create(CrRequest dto) {
-        return createCr.create(dto);
+    public CrCompoundResponse create(CrRequest dto, UserPrincipal userPrincipal) {
+        return createCr.create(dto, userPrincipal);
     }
 
     @Override

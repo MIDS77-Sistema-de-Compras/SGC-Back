@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.integration;
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.SectorRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.SectorRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.SectorRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

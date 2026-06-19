@@ -21,7 +21,6 @@ public record ItemRequestProductRequest(
         @NotBlank
         String statusName,
 
-        @NotBlank
         String additionalInformations
 ) {
 }

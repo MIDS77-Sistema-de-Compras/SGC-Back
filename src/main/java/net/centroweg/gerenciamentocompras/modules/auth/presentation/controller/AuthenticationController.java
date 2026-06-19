@@ -2,6 +2,8 @@ package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.service.usecase.interfaces.AuthenticationService;
@@ -23,10 +25,22 @@ public class AuthenticationController {
 
     @Operation(description = "ENDPOINT responsável pela autenticação de usuário")
     @PostMapping("/login")
-    public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto){
+    public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto,
+                                            HttpServletResponse response){
 
+        // gera o token
+        String token = authenticationService.login(loginDto);
+
+        Cookie cookie = new Cookie("jwt", token);
+        cookie.setHttpOnly(true);
+        // depois botar o setSecure pra true 🐌💪👉👈
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(4000);
+
+        response.addCookie(cookie);
 
         return  ResponseEntity.status(200)
-                .body(new MessageDTO(authenticationService.login(loginDto)));
+                .body(new MessageDTO("login realizado com sucesso"));
     }
 }

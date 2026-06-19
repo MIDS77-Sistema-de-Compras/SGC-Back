@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
+/**
+ * Representa o vínculo entre um Centro de Responsabilidade (CR) e uma filial (Branch).
+ */
+
 @Entity
 @Table(name = "cr_branch")
 @AllArgsConstructor
@@ -37,6 +41,13 @@ public class CrBranch {
     @JoinColumn(name = "responsible_user_id", nullable = true)
     private User responsibleUser;
 
+    /**
+     * Cria um vínculo entre CR e Filial, opcionamlente com um responsável
+     *
+     * @param branch filial associada
+     * @param cr CR associado
+     * @param responsibleUser usuário responsável (pode ser nulo)
+     */
     public CrBranch(Branch branch, Cr cr, User responsibleUser) {
         this.branch = branch;
         this.cr = cr;

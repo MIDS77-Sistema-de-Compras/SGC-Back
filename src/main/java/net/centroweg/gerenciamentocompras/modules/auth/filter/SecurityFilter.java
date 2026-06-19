@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.auth.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -63,10 +64,16 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private String extractJwt(HttpServletRequest request) {
-        String jwtHeader = request.getHeader("Authorization");
+        Cookie [] cookies = request.getCookies();
 
-        if (jwtHeader == null || !jwtHeader.startsWith("Bearer ")) return null;
+        if (cookies == null) return null;
 
-        return jwtHeader.substring(7);
+        for(Cookie cookie: cookies){
+            if("jwt".equals(cookie.getName())){
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 }

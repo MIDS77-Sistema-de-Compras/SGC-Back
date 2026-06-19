@@ -93,18 +93,18 @@ class ItemRequestProductIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integração] Deve retornar 400 ao criar item com additionalInformations em branco")
-    void createItemRequestProduct_shouldReturn400_whenAdditionalInformationsIsBlank() throws Exception {
-        ItemRequestProductRequest invalidRequest = new ItemRequestProductRequest(
+    @DisplayName("[Integração] Deve criar item com additionalInformations em branco")
+    void createItemRequestProduct_shouldReturn201_whenAdditionalInformationsIsBlank() throws Exception {
+        ItemRequestProductRequest validRequest = new ItemRequestProductRequest(
                 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", ""
         );
 
         mockMvc.perform(post("/item-request-products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest());
+                        .content(objectMapper.writeValueAsString(validRequest)))
+                .andExpect(status().isCreated()); // ou isOk(), conforme o que o endpoint retorna
 
-        verify(itemRequestProductService, never()).createRequestProduct(any());
+        verify(itemRequestProductService, times(1)).createRequestProduct(any());
     }
 
     // ─────────────────────────── GET /item-request-products ────────────────────────────

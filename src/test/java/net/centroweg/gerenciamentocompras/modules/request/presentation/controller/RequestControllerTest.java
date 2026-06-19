@@ -1,15 +1,19 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.controller;
 
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -52,11 +57,16 @@ class RequestControllerTest {
     @Autowired
     private CrRepository crRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private MockMvc mockMvc;
 
     private CrBranch crBranch;
     private Status waitingStatus;
     private Status approvedStatus;
+    private User testUser;
+    private UserPrincipal userPrincipal;
 
     @BeforeEach
     void setUp() {
@@ -70,6 +80,7 @@ class RequestControllerTest {
         statusRepository.deleteAll();
         crRepository.deleteAll();
         branchRepository.deleteAll();
+        userRepository.deleteAll();
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
@@ -77,12 +88,18 @@ class RequestControllerTest {
 
         waitingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Solicitação aguardando aprovação"));
         approvedStatus = statusRepository.save(new Status("Aprovado", "Solicitação aprovada pelo supervisor"));
+
+        User newUser = new User("Test User", "52998224725", "test@test.com", "Password@1", "1234", true);
+        newUser.setRole(new Role("USER"));
+        testUser = userRepository.save(newUser);
+        userPrincipal = new UserPrincipal(testUser);
     }
 
     @Test
     void shouldCreateRequest() throws Exception {
         mockMvc.perform(post("/requests")
                         .with(csrf())
+                        .with(user(userPrincipal))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -141,9 +158,12 @@ class RequestControllerTest {
     @Test
     void shouldInactivateRequestOnDelete() throws Exception {
         Request saved = requestRepository.save(buildRequest(waitingStatus));
+        saved.getCreatedByUsers().add(testUser);
+        requestRepository.save(saved);
 
         mockMvc.perform(delete("/requests/{id}", saved.getId())
-                        .with(csrf()))
+                        .with(csrf())
+                        .with(user(userPrincipal)))
                 .andExpect(status().isNoContent());
 
         Request inactivated = requestRepository.findById(saved.getId()).orElseThrow();
@@ -153,9 +173,12 @@ class RequestControllerTest {
     @Test
     void shouldNotDeleteApprovedRequest() throws Exception {
         Request saved = requestRepository.save(buildRequest(approvedStatus));
+        saved.getCreatedByUsers().add(testUser);
+        requestRepository.save(saved);
 
         mockMvc.perform(delete("/requests/{id}", saved.getId())
-                        .with(csrf()))
+                        .with(csrf())
+                        .with(user(userPrincipal)))
                 .andExpect(status().isConflict());
     }
 

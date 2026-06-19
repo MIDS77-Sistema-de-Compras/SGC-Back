@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyApprovedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
@@ -16,7 +17,11 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -30,7 +35,9 @@ public class UpdateRequestServiceImpl {
     private final RequestMapper requestMapper;
     private final NotificationService notificationService;
 
+    @Transactional
     public RequestResponse updateRequest(RequestRequest requestDTO, Long id){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
 
@@ -44,7 +51,18 @@ public class UpdateRequestServiceImpl {
             throw new RequestAlreadyApprovedException();
         }
 
+        Boolean isEmAndamento = request.getStatus().getName().equalsIgnoreCase("Em andamento");
+        Boolean crBranchMudou = !request.getCrBranch().getId().equals(requestDTO.crBranchId());
+
         boolean statusChange = !request.getStatus().getId().equals(status.getId());
+
+                                                                                //ugo
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().contains("ADMIN"));
+
+        if (isEmAndamento && crBranchMudou && !isAdmin) {
+            throw new AcessDeniedException();
+        }
 
         request.setStatus(status);
         request.setCrBranch(crBranch);
@@ -60,6 +78,7 @@ public class UpdateRequestServiceImpl {
                     savedRequest.getId()
             ));
         }
+
 
         return requestMapper.toDTO(savedRequest);
 

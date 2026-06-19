@@ -23,6 +23,7 @@ public class UpdateFeedbackServiceImpl {
         if (!request.getStatus().getName().equalsIgnoreCase("recusado")){
             throw new RequestNotRefusedException();
         }
+
         request.setFeedback(feedback.feedback());
         return mapper.toDTO(repository.save(request));
     }

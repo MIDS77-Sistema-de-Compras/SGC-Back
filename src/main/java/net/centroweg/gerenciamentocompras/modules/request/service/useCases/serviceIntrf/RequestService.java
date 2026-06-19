@@ -5,7 +5,9 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,4 +20,8 @@ public interface RequestService {
     RequestResponse updateRequest(RequestRequest request, Long id);
     void deleteRequest(Long id);
     RequestResponse updateFeedback(UpdateFeedback feedback, Long id);
+    List<RequestAttachmentResponse> uploadAttachments(
+            Long requestId,
+            List<MultipartFile> files
+    );
 }

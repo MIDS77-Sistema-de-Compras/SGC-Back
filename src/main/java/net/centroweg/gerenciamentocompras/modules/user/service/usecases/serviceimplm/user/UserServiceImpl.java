@@ -5,7 +5,9 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserIntrf {
     private final FindUserByNameImpl findUserByName;
     private final UpdateUserAllImpl updateUserAll;
     private final DeleteUserImpl deleteUser;
+    private final UploadProfilePicture uploadProfilePicture;
 
     /**
      * Implementa inteface de criação do usuário
@@ -84,5 +87,10 @@ public class UserServiceImpl implements UserIntrf {
     @Override
     public void deleteUser(Long id){
         deleteUser.deleteUser(id);
+    }
+
+    @Override
+    public UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException {
+        return uploadProfilePicture.uploadProfilePicture(id, file);
     }
 }

@@ -43,7 +43,7 @@ public class GetProvisionService {
     public ProvisionResponse getProvisionById(Long id){
         return provisionMapper.toResponse(
             provisionRepository.findById(id).orElseThrow(() -> 
-                new ProvisionNotFoundException("Serviço não encontrado.")
+                new ProvisionNotFoundException()
             )
         );
     }

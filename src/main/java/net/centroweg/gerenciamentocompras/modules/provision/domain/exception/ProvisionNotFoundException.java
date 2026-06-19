@@ -10,9 +10,8 @@ import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 public class ProvisionNotFoundException extends BusinessException {
     /**
      * Recebe tanto a mensagem, quanto o status HTTP 404 (Not Found).
-     * @param message Mensagem de retorno da exceção.
      */
-    public ProvisionNotFoundException(String message){
-        super(message, HttpStatus.NOT_FOUND);
+    public ProvisionNotFoundException(){
+        super("Serviço não encontrado!", HttpStatus.NOT_FOUND);
     }
 }

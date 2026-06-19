@@ -33,7 +33,7 @@ public class UpdateProvisionService {
      */
     public ProvisionResponse updateProvision(Long id, ProvisionRequest request){
         Provision provision = provisionRepository.findById(id).orElseThrow(() -> 
-            new ProvisionNotFoundException("Serviço não encontrado.")
+            new ProvisionNotFoundException()
         );
 
         provision.setName(request.name());

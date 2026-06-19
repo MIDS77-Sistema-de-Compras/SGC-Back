@@ -36,8 +36,7 @@ public interface BranchService {
      * @return a branch com os dados atualizados
      * @throws net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException se o id não for encontrado
      */
-    BranchResponse update(long id, BranchRequest branchRequest);
-
+    BranchResponse update(Long id, BranchRequest branchRequest);
     /**
      * Busca uma branch pelo seu identificador.
      *
@@ -45,13 +44,12 @@ public interface BranchService {
      * @return a branch encontrada
      * @throws net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException se o id não for encontrado
      */
-    BranchResponse findById(long id);
-
+    BranchResponse findById(Long id);
     /**
      * Remove uma branch pelo seu identificador.
      *
      * @param id identificador da branch a ser removida
      * @return mensagem de confirmação da operação
      */
-    MessageDTO delete(long id);
+    MessageDTO delete(Long id);
 }

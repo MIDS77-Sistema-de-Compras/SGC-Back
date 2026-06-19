@@ -30,4 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
 
     List<User> findByNameIgnoringCase(String name);
+    Boolean existsByEmail(String email);
+    Boolean existsByCpf(String cpf);
+
 }

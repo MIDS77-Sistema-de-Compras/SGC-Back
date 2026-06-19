@@ -2,8 +2,8 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.function
 
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +21,12 @@ public class FindAllCr {
     /**
      * Retorna todos os CRs persistidos, convertidos para o DTO de resposta.
      *
-     * @return lista de {@link CrResponse}
+     * @return lista de {@link CrCompoundResponse}
      */
-    public List<CrResponse> listAll(){
+    public List<CrCompoundResponse> listAll(){
         return crRepository.findAll()
                 .stream()
-                .map(crMapper::toResponse)
+                .map(crMapper::toCrCompoundResponse)
                 .toList();
     }
 

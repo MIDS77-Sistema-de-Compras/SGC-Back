@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.product.presentation.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
@@ -11,11 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 /**
  * Controller REST responsável pelos endpoints de gerenciamento de produtos.
  *
  * <p>Expõe operações de criação, listagem, busca, atualização e remoção para a entidade
- * {@link net.centroweg.gerenciamentocompras.modules.product.domain.Product},
+ * {@link Product},
  * acessíveis sob o caminho base {@code /products}.</p>
  *
  * <p>As requisições de escrita utilizam {@link CreateProductRequest} e
@@ -27,6 +30,8 @@ import java.util.List;
  * @since 1.0
  * @see IProductService
  */
+
+@Tag(name = "ENDPOINTS da entidade PRODUCT")
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -39,6 +44,7 @@ public class ProductController {
      * ({@code @RequiredArgsConstructor}).</p>
      */
     private final IProductService productService;
+
     /**
      * Cria um novo produto.
      *
@@ -53,10 +59,12 @@ public class ProductController {
      * @return {@link ResponseEntity} com status {@code 201 Created} e o
      *         {@link ProductResponse} do produto criado no corpo
      */
+    @Operation(description = "ENDPOINT responsável pela criação de Product")
     @PostMapping
     public ResponseEntity<ProductResponse> create(@RequestBody @Valid CreateProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request));
     }
+
     /**
      * Busca um produto pelo seu identificador único.
      *
@@ -70,10 +78,12 @@ public class ProductController {
      * @return {@link ResponseEntity} com status {@code 200 OK} e o
      *         {@link ProductResponse} correspondente no corpo
      */
+    @Operation(description = "ENDPOINT responsável pela listagem de Product por id")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));
     }
+
     /**
      * Busca um produto pelo seu identificador único.
      *
@@ -87,6 +97,7 @@ public class ProductController {
      * @return {@link ResponseEntity} com status {@code 200 OK} e o
      *         {@link ProductResponse} correspondente no corpo
      */
+    @Operation(description = "ENDPOINT responsável pela listagem de todos Product")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));
@@ -115,6 +126,7 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> findAll(@RequestParam(required = false) String name) {
         return ResponseEntity.ok(productService.findAll(name));
     }
+
     /**
      * Atualiza os dados de um produto existente.
      *
@@ -132,12 +144,14 @@ public class ProductController {
      * @return {@link ResponseEntity} com status {@code 200 OK} e o
      *         {@link ProductResponse} atualizado no corpo
      */
+    @Operation(description = "ENDPOINT responsável pela atualização de Product")
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(
             @PathVariable Long id,
             @RequestBody @Valid UpdateProductRequest request) {
         return ResponseEntity.ok(productService.update(id, request));
     }
+
     /**
      * Remove um produto pelo seu identificador único.
      *
@@ -150,6 +164,7 @@ public class ProductController {
      * @param id identificador único do produto a ser removido; não deve ser {@code null}
      * @return {@link ResponseEntity} com status {@code 204 No Content} e corpo vazio
      */
+    @Operation(description = "ENDPOINT responsável pelo delete de Product")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);

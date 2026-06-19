@@ -37,17 +37,17 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
-    public BranchResponse update(long id, BranchRequest branchRequest){
+    public BranchResponse update(Long id, BranchRequest branchRequest){
         return updateBranch.update(id, branchRequest);
     }
 
     @Override
-    public BranchResponse findById(long id){
+    public BranchResponse findById(Long id){
         return findById.findById(id);
     }
 
     @Override
-    public MessageDTO delete(long id){
+    public MessageDTO delete(Long id){
         deleteBranch.delete(id);
         return new MessageDTO("Deletado");
     }

@@ -9,4 +9,8 @@ public class ProductNotFoundException extends BusinessException {
         super("Produto não encontrado com id: " + id, HttpStatus.NOT_FOUND);
     }
 
+    public ProductNotFoundException() {
+        super("Produto não encontrado!", HttpStatus.NOT_FOUND);
+    }
+
 }

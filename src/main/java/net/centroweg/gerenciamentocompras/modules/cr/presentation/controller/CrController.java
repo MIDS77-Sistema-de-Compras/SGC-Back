@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.http.HttpStatus;
@@ -36,7 +36,7 @@ public class CrController {
      */
     @Operation(description = "ENDPOINT responsável pela criação de CR")
     @PostMapping
-    public ResponseEntity<CrResponse> create(@RequestBody CrRequest dto){
+    public ResponseEntity<CrCompoundResponse> create(@RequestBody CrRequest dto){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(crService.create(dto));
     }
@@ -48,7 +48,7 @@ public class CrController {
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todos CR")
     @GetMapping
-    public ResponseEntity<List<CrResponse>> listAll(){
+    public ResponseEntity<List<CrCompoundResponse>> listAll(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.listAll());
     }
@@ -61,7 +61,7 @@ public class CrController {
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR por id")
     @GetMapping("{id}")
-    public ResponseEntity<CrResponse> listById(@PathVariable long id){
+    public ResponseEntity<CrCompoundResponse> listById(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.listById(id));
     }
@@ -75,7 +75,7 @@ public class CrController {
      */
     @Operation(description = "ENDPOINT responsável pela atualização de CR")
     @PutMapping("{id}")
-    public ResponseEntity<CrResponse> update(@PathVariable long id, @RequestBody CrRequest dto){
+    public ResponseEntity<CrCompoundResponse> update(@PathVariable Long id, @RequestBody CrRequest dto){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.update(id, dto));
     }
@@ -88,7 +88,7 @@ public class CrController {
      */
     @Operation(description = "ENDPOINT responsável pelo delete de CR")
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageDTO> delete(@PathVariable long id){
+    public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.delete(id));
     }

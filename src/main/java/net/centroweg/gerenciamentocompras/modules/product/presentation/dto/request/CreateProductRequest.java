@@ -34,18 +34,18 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateProductRequest(
 
-                @NotBlank
-                String name,
+            @NotBlank
+            String name,
 
-                String description,
+            String description,
 
-                @NotNull
-                Double price,
+            @NotNull
+            Double price,
 
-                @NotBlank
-                String type,
+            @NotBlank
+            String type,
 
-                @NotBlank
-                String code
+            @NotBlank
+            String code
 
 ) {}

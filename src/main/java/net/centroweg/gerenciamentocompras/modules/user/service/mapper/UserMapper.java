@@ -27,7 +27,8 @@ public class UserMapper {
                 user.email(),
                 user.password(),
                 user.extensionNumber(),
-                user.active());
+                user.active()
+        );
     }
 
     /**
@@ -45,7 +46,8 @@ public class UserMapper {
                 user.getExtensionNumber(),
                 user.isActive(),
                 user.getCreatedAt(),
-                user.getUpdatedAt());
+                user.getUpdatedAt(),
+                user.getProfilePicture());
     }
 
     /**

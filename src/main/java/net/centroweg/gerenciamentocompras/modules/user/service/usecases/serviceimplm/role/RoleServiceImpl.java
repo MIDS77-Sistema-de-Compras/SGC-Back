@@ -60,7 +60,7 @@ public class RoleServiceImpl implements RoleIntrf {
      * @see FindRoleByNameImpl#findRoleByName(String) 
      */
     @Override
-    public List<RoleResponse> findRoleByName(String name){
+    public RoleResponse findRoleByName(String name){
         return findRoleByName.findRoleByName(name);
     }
 

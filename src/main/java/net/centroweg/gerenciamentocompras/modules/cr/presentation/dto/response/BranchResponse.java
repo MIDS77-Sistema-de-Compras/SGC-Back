@@ -8,7 +8,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response;
  * @author Leandro
  */
 public record BranchResponse (
-        long id,
+        Long id,
         String name
 ){
 }

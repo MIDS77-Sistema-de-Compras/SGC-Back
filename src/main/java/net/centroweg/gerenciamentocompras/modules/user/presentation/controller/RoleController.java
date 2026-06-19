@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.user.presentation.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateRole;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /** Endpoints relacionados aos niveis de acesso do usuário */
-
+@Tag(name = "ENDPOINTS da entidade ROLE")
 @RestController
 @RequestMapping("/role")
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class RoleController {
      * @see CreateRole
      * @see RoleResponse
      */
+    @Operation(description = "ENDPOINT responsável pela criação de Role")
     @PostMapping
     public ResponseEntity<RoleResponse> createRole(@Valid @RequestBody CreateRole roleRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(role.createRole(roleRequest));
@@ -37,6 +40,7 @@ public class RoleController {
      * @return uma lista com todas as roles
      * @see RoleResponse
      */
+    @Operation(description = "ENDPOINT responsável pela listagem de todos Role")
     @GetMapping
     public ResponseEntity<List<RoleResponse>> listRole(){
         return ResponseEntity.ok(role.listRole());
@@ -48,6 +52,7 @@ public class RoleController {
      * @return role com o ID correspondente
      * @see RoleResponse
      */
+    @Operation(description = "ENDPOINT responsável pela listagem de Role por id")
     @GetMapping("/RoleId/{RoleId}")
     public ResponseEntity<RoleResponse> findRoleById(@PathVariable Long RoleId){
         return ResponseEntity.ok(role.findRoleById(RoleId));
@@ -59,8 +64,9 @@ public class RoleController {
      * @return uma lista com todos os nomes correspondentes
      * @see RoleResponse
      */
+    @Operation(description = "ENDPOINT responsável pela listagem de Role por nome")
     @GetMapping("/RoleName/{RoleName}")
-    public ResponseEntity<List<RoleResponse>> findRoleByName(@PathVariable String RoleName){
+    public ResponseEntity<RoleResponse> findRoleByName(@PathVariable String RoleName){
         return ResponseEntity.ok(role.findRoleByName(RoleName));
     }
 
@@ -72,6 +78,7 @@ public class RoleController {
      * @see RoleResponse
      * @see CreateRole
      */
+    @Operation(description = "ENDPOINT responsável pela atualização de Role")
     @PutMapping("/RoleId/{RoleId}")
     public ResponseEntity<RoleResponse> updateRole(@Valid @RequestBody CreateRole roleRequest, @PathVariable Long RoleId){
         return ResponseEntity.ok(role.updateRole(RoleId, roleRequest));
@@ -82,6 +89,7 @@ public class RoleController {
      * @param RoleId ID da role a ser excluída
      * @return status 204
      */
+    @Operation(description = "ENDPOINT responsável pelo delete de Role")
     @DeleteMapping("/RoleId/{RoleId}")
     public ResponseEntity<Void> deleteRole(@PathVariable Long RoleId){
         role.deleteRole(RoleId);

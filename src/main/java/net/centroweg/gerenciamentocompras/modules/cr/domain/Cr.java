@@ -2,6 +2,8 @@ package net.centroweg.gerenciamentocompras.modules.cr.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 
 /**
  * Entidade que representa um Centro de Resultado (CR).

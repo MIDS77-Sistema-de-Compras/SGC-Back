@@ -29,7 +29,7 @@ public record UserResponse(
         /**
          * Atividade do usuário
          */
-        boolean active,
+        Boolean active,
         /**
          * Data de criação do usuário
          */
@@ -37,6 +37,8 @@ public record UserResponse(
         /**
          * Data de atualização do usuário
          */
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        String userProfile
+
 ) {
 }

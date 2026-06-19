@@ -10,13 +10,13 @@ public record LogIn(
         /**
          * Nome de usuário que seria e-mail ou CPF
          */
-        @NotBlank
+        @NotBlank(message = "O Email ou CPF é obrigatório")
         String userName,
 
         /**
          * Senha de acesso do usuário
          */
-        @NotBlank
+        @NotBlank(message = "A senha é obrigatória")
         String password
 ) {
 }

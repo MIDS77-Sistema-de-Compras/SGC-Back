@@ -23,6 +23,4 @@ public interface StatusIntrf {
      * @return descrição do status
      */
     String getDescription();
-
-
 }

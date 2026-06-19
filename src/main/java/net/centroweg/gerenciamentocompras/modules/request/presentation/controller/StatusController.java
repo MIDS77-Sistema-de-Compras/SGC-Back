@@ -66,6 +66,14 @@ public class StatusController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(statusService.findStatusById(id));
     }
+
+    @Operation(description = "ENDPOINT responsável por encontrar Status por id")
+    @GetMapping("/statusName/{statusName}")
+    public ResponseEntity<StatusResponse> findStatusByName(@PathVariable String statusName){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statusService.findStatusByName(statusName));
+    }
+
     /**
      * Atualiza os dados de um status existente.
      *

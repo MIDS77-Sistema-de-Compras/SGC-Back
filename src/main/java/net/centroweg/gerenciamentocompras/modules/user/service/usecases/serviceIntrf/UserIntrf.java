@@ -3,7 +3,9 @@ package net.centroweg.gerenciamentocompras.modules.user.service.usecases.service
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -48,4 +50,5 @@ public interface UserIntrf {
      * @return vazio/nulo
      */
     void deleteUser(Long id);
+    UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException;
 }

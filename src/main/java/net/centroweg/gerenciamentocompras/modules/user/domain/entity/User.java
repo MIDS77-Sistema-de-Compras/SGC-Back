@@ -90,9 +90,13 @@ public class User {
      *
      * @see Role
      */
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     @ManyToOne
-    private Role role;
+    @Column(nullable = true)
+    private String profilePicture;
 
     /**
      * Cria um novo usuário com os dados obrigatórios.
@@ -103,7 +107,6 @@ public class User {
      * @param extensionNumber ramal para contato interno do usuário
      * @param active atividade do usuário
      */
-
     public User(String name, String cpf, String email, String password, String extensionNumber, boolean active) {
         this.name = name;
         this.cpf = cpf;

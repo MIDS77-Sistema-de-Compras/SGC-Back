@@ -1,4 +1,3 @@
-
 package net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response;
 
 /**
@@ -37,11 +36,11 @@ package net.centroweg.gerenciamentocompras.modules.product.presentation.dto.resp
 public record ProductResponse(
 
             Long id,
-                String name,
-                String description,
-                Double price,
-                String type,
-                String code
+            String name,
+            String description,
+            Double price,
+            String type,
+            String code
 
 ) {}
 

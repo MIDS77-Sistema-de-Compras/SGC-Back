@@ -94,7 +94,6 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @ManyToOne
     @Column(nullable = true)
     private String profilePicture;
 

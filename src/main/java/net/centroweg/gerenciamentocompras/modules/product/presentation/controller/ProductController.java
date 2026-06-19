@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.UpdateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
@@ -84,24 +85,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.findById(id));
     }
 
-    /**
-     * Busca um produto pelo seu identificador único.
-     *
-     * <p><b>HTTP:</b> {@code GET /products/{id}}</p>
-     *
-     * <p>Caso nenhum produto seja encontrado para o {@code id} informado,
-     * o serviço deve lançar uma exceção adequada, resultando em
-     * {@code 404 Not Found}.</p>
-     *
-     * @param id identificador único do produto; não deve ser {@code null}
-     * @return {@link ResponseEntity} com status {@code 200 OK} e o
-     *         {@link ProductResponse} correspondente no corpo
-     */
-    @Operation(description = "ENDPOINT responsável pela listagem de todos Product")
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.findById(id));
-    }
     /**
      * Lista todos os produtos cadastrados, com filtro opcional por nome.
      *

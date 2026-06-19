@@ -39,7 +39,12 @@ public class ItemRequestProvision {
     @NonNull
     private Status status;
 
-    @NonNull
     private String additionalInformation;
 
+    public ItemRequestProvision(@NonNull Request request, @NonNull Provision provision, @NonNull Status status, String additionalInformation) {
+        this.request = request;
+        this.provision = provision;
+        this.status = status;
+        this.additionalInformation = additionalInformation;
+    }
 }

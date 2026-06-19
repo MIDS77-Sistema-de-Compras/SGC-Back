@@ -7,8 +7,17 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrSimpleResponse;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mapper responsável pela conversão entre a entidade {@link Cr} e seus DTOs.
+ */
 @Component
 public class CrMapper {
+    /**
+     * Converte um {@link CrRequest} para a entidade {@link Cr}.
+     *
+     * @param dto DTO de entrada com os dados do CR
+     * @return entidade {@link Cr} pronta para persistência
+     */
     public Cr toEntity(CrRequest dto, Sector sector){
         Cr crSave = new Cr();
         crSave.setName(dto.name());
@@ -23,6 +32,12 @@ public class CrMapper {
                 cr.getName()
         );
     }
+    /**
+     * Converte uma entidade {@link net.centroweg.gerenciamentocompras.modules.cr.domain.Cr} para o DTO de resposta {@link CrResponse}.
+     *
+     * @param cr entidade a ser convertida
+     * @return {@link CrCompoundResponse} com os dados do CR
+     */
 
     public CrCompoundResponse toCrCompoundResponse(Cr cr){
         return new CrCompoundResponse(

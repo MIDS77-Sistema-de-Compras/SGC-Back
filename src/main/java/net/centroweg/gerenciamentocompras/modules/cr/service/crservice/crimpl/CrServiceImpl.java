@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Implementação de {@link CrService} que delega cada operação
+ * ao seu caso de uso específico.
+ */
 @RequiredArgsConstructor
 @Component
 public class CrServiceImpl implements CrService {

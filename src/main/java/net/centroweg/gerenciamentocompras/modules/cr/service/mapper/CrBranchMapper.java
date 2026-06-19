@@ -7,6 +7,12 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.stereotype.Component;
 
+/**
+ * Conversor entre a entidade {@link CrBranch} e seus objetos de transferência (DTOs).
+ *
+ * <p>Responsável por montar a entidade a partir das suas associações e por
+ * transformar a entidade na resposta exposta pela API.</p>
+ */
 @Component
 public class CrBranchMapper {
 

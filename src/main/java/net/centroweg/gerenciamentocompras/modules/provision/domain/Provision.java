@@ -18,6 +18,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 
+/**
+ * Classe representante do módulo serviço, mapeada diretamente com o banco de dados.
+ * <p>
+ * Detém dados para persistencia.
+ * @author gabrielEFagundes
+ * @version 0.1.0
+ */
 @Entity
 @Table(name="provision")
 @AllArgsConstructor

@@ -3,10 +3,12 @@ package net.centroweg.gerenciamentocompras.modules.notification.presentation.con
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +26,13 @@ public class NotificationController {
     public ResponseEntity<List<NotificationResponse>> findByUser(@PathVariable Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.findNotificationsByUser(userId));
+    }
+
+    @Operation(description = "ENDPOINT responsável pela listagem de Notification por usuário")
+    @GetMapping("/me")
+    public ResponseEntity<List<NotificationResponse>> findByOwnUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(notificationService.findByOwnUser(userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável por marcar Notification como visualizada")

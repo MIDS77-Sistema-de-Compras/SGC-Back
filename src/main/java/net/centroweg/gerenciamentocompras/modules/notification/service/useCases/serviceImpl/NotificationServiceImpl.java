@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceImpl;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
@@ -16,6 +17,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final FindNotificationsByUserServiceImpl findNotificationsByUserService;
     private final FindUnviewedNotificationsByUserServiceImpl findUnviewedNotificationsByUserService;
     private final MarkAsViewedServiceImpl markAsViewedService;
+    private final FindNotificationByOwnUser findNotificationByOwnUser;
 
     @Override
     public NotificationResponse createNotification(NotificationRequest request) {
@@ -37,4 +39,8 @@ public class NotificationServiceImpl implements NotificationService {
         return markAsViewedService.markAsViewed(id);
     }
 
+    @Override
+    public List<NotificationResponse> findByOwnUser(UserPrincipal userPrincipal){
+        return findNotificationByOwnUser.findNotificationsByOwnUser(userPrincipal);
+    }
 }

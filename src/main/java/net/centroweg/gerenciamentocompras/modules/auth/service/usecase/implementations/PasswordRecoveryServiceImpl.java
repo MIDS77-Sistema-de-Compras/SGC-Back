@@ -57,7 +57,7 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
                 new EmailTitle("Recuperação de Senha"),
                 new EmailParagraph("Foi solicitada uma mudança de senha para a sua conta (" + recovery.email() + ").", "#666666", 14),
                 new EmailParagraph("Clique no botão abaixo para recuperar sua conta.", "#666666", 14),
-                new EmailButton("https://sgc-front-nine.vercel.app/nova-senha?token=" + token, "Recuperar Conta"),
+                new EmailButton("http://localhost:3000/nova-senha?token=" + token, "Recuperar Conta"),
                 new EmailFooter()
             )
         );
@@ -73,7 +73,7 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
         String validToken = jwtService.validateToken(token);
 
         if(validToken == null){
-            throw new InvalidTokenException("Token de identificação inválido ou inexistente.");
+            throw new InvalidTokenException("Token de identificação inválido ou inexistente, certifique-se de acessar a página pelo link enviado pelo E-mail.");
         }
 
         UserPrincipal details = (UserPrincipal) userDetailsService.loadUserByUsername(validToken);

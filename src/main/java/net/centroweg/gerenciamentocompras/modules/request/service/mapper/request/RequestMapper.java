@@ -11,6 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import org.springframework.stereotype.Component;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.RequestAttachment;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 import java.util.List;
 
@@ -35,6 +36,10 @@ public class RequestMapper {
                         .map(this::toAttachmentDTO)
                         .toList();
 
+        User requester = request.getCreatedByUsers().isEmpty()
+                ? null
+                : request.getCreatedByUsers().get(0);
+
         return new RequestResponse(
                 request.getId(),
                 request.getRequestDate(),
@@ -42,6 +47,8 @@ public class RequestMapper {
                 request.getCrBranch().getId(),
                 request.getStatus().getName(),
                 request.getFeedback(),
+                requester != null ? requester.getName() : null,
+                requester != null ? requester.getExtensionNumber() : null,
                 attachments
         );
     }

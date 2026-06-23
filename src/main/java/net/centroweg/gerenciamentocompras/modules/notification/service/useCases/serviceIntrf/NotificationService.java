@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf;
 
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 
@@ -11,4 +12,5 @@ public interface NotificationService {
     List<NotificationResponse> findNotificationsByUser(Long userId);
     List<NotificationResponse> findUnviewedNotificationsByUser(Long userId);
     NotificationResponse markAsViewed(Long id);
+    List<NotificationResponse> findByOwnUser (UserPrincipal userPrincipal);
 }

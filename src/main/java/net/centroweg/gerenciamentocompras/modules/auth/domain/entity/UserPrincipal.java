@@ -50,6 +50,10 @@ public class UserPrincipal implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
+    public Long getId() {
+        return userEntity.getId();
+    }
+
     public String getCpf(){
         return userEntity.getCpf();
     }

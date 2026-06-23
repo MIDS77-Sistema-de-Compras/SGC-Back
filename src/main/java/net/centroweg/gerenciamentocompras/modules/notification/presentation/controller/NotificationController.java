@@ -28,7 +28,7 @@ public class NotificationController {
                 .body(notificationService.findNotificationsByUser(userId));
     }
 
-    @Operation(description = "ENDPOINT responsável pela listagem de Notification por usuário")
+    @Operation(description = "ENDPOINT responsável pela listagem de Notification do próprio usuário logado")
     @GetMapping("/me")
     public ResponseEntity<List<NotificationResponse>> findByOwnUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.status(HttpStatus.OK)

@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
@@ -7,6 +8,8 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,18 +37,25 @@ class CrServiceIntegrationTest {
     @Autowired
     private SectorRepository sectorRepository;
 
+    private UserPrincipal coordenador;
+
     @BeforeEach
     void setUp() {
         crRepository.deleteAll();
         sectorRepository.deleteAll();
         sectorRepository.save(new Sector("Setor Teste"));
+
+        Role role = new Role("COORDENADOR");
+        User user = new User();
+        user.setRole(role);
+        coordenador = new UserPrincipal(user);
     }
 
     @Test
     void shouldCreateCr() {
         CrRequest request = new CrRequest("CR Compras", "1001L", true, "Setor Teste");
 
-        CrCompoundResponse response = crService.create(request);
+        CrCompoundResponse response = crService.create(request, coordenador);
 
         assertThat(response.id()).isPositive();
         assertThat(response.name()).isEqualTo("CR Compras");
@@ -56,8 +66,8 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldListAllCrs() {
-        CrCompoundResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
-        CrCompoundResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false, "Setor Teste"));
+        CrCompoundResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
+        CrCompoundResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false, "Setor Teste"), coordenador);
 
         List<CrCompoundResponse> responses = crService.listAll();
 
@@ -69,7 +79,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldFindCrById() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
 
         CrCompoundResponse response = crService.listById(createdCr.id());
 
@@ -81,7 +91,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldUpdateCr() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
         CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false, null);
 
         CrCompoundResponse response = crService.update(createdCr.id(), updateRequest);
@@ -99,7 +109,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldDeleteCr() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"));
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
 
         MessageDTO response = crService.delete(createdCr.id());
 

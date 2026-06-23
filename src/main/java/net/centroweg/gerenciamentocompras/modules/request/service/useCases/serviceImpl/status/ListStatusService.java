@@ -8,14 +8,23 @@ import net.centroweg.gerenciamentocompras.modules.request.service.mapper.status.
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/**
+ * Serviço responsável pela listagem de status.
+ *
+ * @author André
+ * @since 1.0
+ */
 @Service
 @RequiredArgsConstructor
 public class ListStatusService {
 
     private final StatusRepository statusRepository;
     private final IStatusMapper statusMapper;
-
+    /**
+     * Retorna todos os status cadastrados.
+     *
+     * @return lista de status
+     */
     public List<StatusResponse> listStatus () {
         List<Status> list = statusRepository.findAll();
         return list

@@ -113,7 +113,10 @@ class FindAllRequestServiceImplTest {
                 dateTime,
                 id,
                 statusName,
-                null
+                null,
+                null,
+                null,
+                List.of()
         );
     }
 

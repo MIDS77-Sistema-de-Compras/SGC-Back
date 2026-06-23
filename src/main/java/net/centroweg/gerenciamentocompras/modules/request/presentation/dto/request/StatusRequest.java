@@ -2,7 +2,19 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.requ
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
+/**
+ * DTO responsável por receber os dados de criação
+ * e atualização de um status.
+ *
+ * <p>Contém validações para garantir a integridade
+ * das informações recebidas na requisição.</p>
+ *
+ * @param name nome do status
+ * @param description descrição do status
+ *
+ * @author André
+ * @since 1.0
+ */
 public record StatusRequest(
 
         @NotBlank(message = "O nome não pode ser nulo.")

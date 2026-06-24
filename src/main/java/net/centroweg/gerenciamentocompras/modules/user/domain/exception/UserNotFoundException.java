@@ -22,4 +22,8 @@ public class UserNotFoundException extends BusinessException {
         super("Usuário não encontrado com nome: " + nome, HttpStatus.NOT_FOUND);
     }
 
+    public UserNotFoundException() {
+        super("Usuário não encontrado.", HttpStatus.NOT_FOUND);
+    }
+
 }

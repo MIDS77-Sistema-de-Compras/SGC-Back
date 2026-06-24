@@ -1,6 +1,8 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
@@ -197,5 +199,22 @@ public class UserIntegrationTest {
                 .andExpect(status().isNoContent());
 
         assertEquals(0, userRepository.count());
+    }
+
+    @Test
+    @DisplayName("[Integração] Deve buscar o usuário logado com sucesso")
+    void deveBuscarUsuarioLogado() throws Exception {
+        Long id = criarUsuarioEObterIdRetornado();
+
+        User userEntity = userRepository.findById(id).orElseThrow();
+        UserPrincipal userPrincipal = new UserPrincipal(userEntity);
+
+        mockMvc.perform(get("/users/me")
+                        .with(user(userPrincipal))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.name").value("Admin Teste"))
+                .andExpect(jsonPath("$.email").value("admin@teste.com"));
     }
 }

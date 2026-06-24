@@ -173,6 +173,7 @@ class CrBranchControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = "ADMIN")
     void shouldAssignResponsible() throws Exception {
         CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, null));
 
@@ -183,6 +184,7 @@ class CrBranchControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = "ADMIN")
     void shouldRemoveResponsible() throws Exception {
         CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, user));
 
@@ -190,5 +192,23 @@ class CrBranchControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responsibleUserName").isEmpty());
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenNonAdminAssignsResponsible() throws Exception {
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, null));
+
+        mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), user.getId())
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenNonAdminRemovesResponsible() throws Exception {
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, user));
+
+        mockMvc.perform(delete("/cr-branches/{crBranchId}/responsible", saved.getId())
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
     }
 }

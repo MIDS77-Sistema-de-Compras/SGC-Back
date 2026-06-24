@@ -60,6 +60,10 @@ public class WebSecurityConfig {
                         ).permitAll();
                     }
 
+                    authorizeRequests
+                            .requestMatchers(HttpMethod.PUT, "/cr-branches/*/responsible/*").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/cr-branches/*/responsible").hasAuthority("ADMIN");
+
                     authorizeRequests.anyRequest().authenticated();
                 })
                 .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

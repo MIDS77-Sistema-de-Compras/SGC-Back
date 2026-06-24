@@ -48,13 +48,15 @@ public class CreateRequestServiceImpl {
 
         Request savedRequest = requestRepository.save(requestToSave);
 
-        if (crBranch.getResponsibleUser() != null) {
-            notificationService.createNotification(new NotificationRequest(
-                    "Nova solicitação",
-                    "Há uma nova solicitação vinculada ao seu CR " + crBranch.getCr().getName() + ".",
-                    crBranch.getResponsibleUser().getId(),
-                    savedRequest.getId()
-            ));
+        if (crBranch.getResponsibleUsers() != null) {
+            for (User responsible : crBranch.getResponsibleUsers()) {
+                notificationService.createNotification(new NotificationRequest(
+                        "Nova solicitação",
+                        "Há uma nova solicitação vinculada ao seu CR " + crBranch.getCr().getName() + ".",
+                        responsible.getId(),
+                        savedRequest.getId()
+                ));
+            }
         }
         return requestMapper.toDTO(savedRequest);
     }

@@ -58,7 +58,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
-        } catch (ServletException | IOException | InvalidTokenException | UsernameNotFoundException | DisabledException e) {
+        } catch (Exception e) {
             resolver.resolveException(request, response, null, e);
         }
 

@@ -4,11 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -102,6 +104,12 @@ public class UserController {
     @PatchMapping("/userId/{id}")
     public ResponseEntity<UserResponse> updateProfilePicture(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.status(200).body(user.uploadProfilePicture(id, file));
+    }
+
+    @Operation(description = "ENDPOINT responsável por listar usuário logado")
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> findLoggedUser(@AuthenticationPrincipal UserPrincipal userPrincipal){
+        return ResponseEntity.status(200).body(user.findLoggedUser(userPrincipal));
     }
 
 }

@@ -242,6 +242,7 @@ public class NotificationIntegrationTest {
         Long requestId = objectMapper.readTree(response).get("id").asLong();
 
         mockMvc.perform(put("/requests/{id}", requestId)
+                        .with(authentication(authAs(user)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

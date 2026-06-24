@@ -141,9 +141,12 @@ class RequestControllerTest {
     @Test
     void shouldUpdateRequest() throws Exception {
         Request saved = requestRepository.save(buildRequest(waitingStatus));
+        saved.getCreatedByUsers().add(testUser);
+        requestRepository.save(saved);
 
         mockMvc.perform(put("/requests/{id}", saved.getId())
                         .with(csrf())
+                        .with(user(userPrincipal))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -179,7 +182,7 @@ class RequestControllerTest {
         mockMvc.perform(delete("/requests/{id}", saved.getId())
                         .with(csrf())
                         .with(user(userPrincipal)))
-                .andExpect(status().isConflict());
+                .andExpect(status().isUnprocessableContent());
     }
 
     private Request buildRequest(Status status) {

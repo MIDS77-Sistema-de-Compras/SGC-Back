@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf;
 
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
@@ -51,4 +52,5 @@ public interface UserIntrf {
      */
     void deleteUser(Long id);
     UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException;
+    UserResponse findLoggedUser(UserPrincipal userPrincipal);
 }

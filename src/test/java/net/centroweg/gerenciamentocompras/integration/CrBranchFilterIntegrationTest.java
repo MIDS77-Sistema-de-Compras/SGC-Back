@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -73,8 +74,8 @@ class CrBranchFilterIntegrationTest {
         User ana = userRepository.save(createUser("Ana Silva", "11111111111", "ana.silva@centroweg.com.br"));
         User bruno = userRepository.save(createUser("Bruno Costa", "22222222222", "bruno.costa@centroweg.com.br"));
 
-        matchingCrBranch = crBranchRepository.save(new CrBranch(branch, matchingCr, ana));
-        nonMatchingCrBranch = crBranchRepository.save(new CrBranch(anotherBranch, nonMatchingCr, bruno));
+        matchingCrBranch = crBranchRepository.save(new CrBranch(branch, matchingCr, List.of(ana)));
+        nonMatchingCrBranch = crBranchRepository.save(new CrBranch(anotherBranch, nonMatchingCr, List.of(bruno)));
         withoutResponsibleCrBranch = crBranchRepository.save(new CrBranch(branch, withoutResponsibleCr, null));
     }
 
@@ -126,7 +127,7 @@ class CrBranchFilterIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(matchingCrBranch.getId()))
-                .andExpect(jsonPath("$[0].responsibleUserName").value("Ana Silva"));
+                .andExpect(jsonPath("$[0].responsibleUsersName[0]").value("Ana Silva"));
     }
 
     @Test
@@ -164,7 +165,7 @@ class CrBranchFilterIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(withoutResponsibleCrBranch.getId()))
-                .andExpect(jsonPath("$[0].responsibleUserName").isEmpty());
+                .andExpect(jsonPath("$[0].responsibleUsersName").isEmpty());
     }
 
     private User createUser(String name, String cpf, String email) {

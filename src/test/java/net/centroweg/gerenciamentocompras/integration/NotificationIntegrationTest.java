@@ -116,7 +116,7 @@ public class NotificationIntegrationTest {
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Sector sector = sectorRepository.save(new Sector("Aprendizagem Industrial"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
-        crBranch = crBranchRepository.save(new CrBranch(branch, cr, user));
+        crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
 
         waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
         statusRepository.save(new Status("EM_ANDAMENTO", "Solicitação em andamento"));
@@ -243,6 +243,7 @@ public class NotificationIntegrationTest {
         Long requestId = objectMapper.readTree(response).get("id").asLong();
 
         mockMvc.perform(put("/requests/{id}", requestId)
+                        .with(authentication(authAs(user)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

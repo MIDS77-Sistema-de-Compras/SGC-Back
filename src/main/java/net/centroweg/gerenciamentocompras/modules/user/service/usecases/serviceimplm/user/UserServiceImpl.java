@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserIntrf {
     private final UpdateUserAllImpl updateUserAll;
     private final DeleteUserImpl deleteUser;
     private final UploadProfilePicture uploadProfilePicture;
+    private final FindLoggedUser findLoggedUser;
 
     /**
      * Implementa inteface de criação do usuário
@@ -92,5 +94,10 @@ public class UserServiceImpl implements UserIntrf {
     @Override
     public UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException {
         return uploadProfilePicture.uploadProfilePicture(id, file);
+    }
+
+    @Override
+    public UserResponse findLoggedUser(UserPrincipal userPrincipal) {
+        return findLoggedUser.findLoggedUser(userPrincipal);
     }
 }

@@ -8,10 +8,10 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResumeDTO;
 import org.springframework.stereotype.Component;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.RequestAttachment;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 import java.util.List;
 
@@ -36,14 +36,9 @@ public class RequestMapper {
                         .map(this::toAttachmentDTO)
                         .toList();
 
-        List<RequestResumeDTO> users = request.getCreatedByUsers().stream()
-                .map(u -> new RequestResumeDTO(
-                        u.getName(),
-                        u.getCpf(),
-                        u.getEmail(),
-                        u.getExtensionNumber()
-                ))
-                .toList();
+        User requester = request.getCreatedByUsers().isEmpty()
+                ? null
+                : request.getCreatedByUsers().get(0);
 
         return new RequestResponse(
                 request.getId(),
@@ -52,8 +47,9 @@ public class RequestMapper {
                 request.getCrBranch().getId(),
                 request.getStatus().getName(),
                 request.getFeedback(),
-                attachments,
-                users
+                requester != null ? requester.getName() : null,
+                requester != null ? requester.getExtensionNumber() : null,
+                attachments
         );
     }
 

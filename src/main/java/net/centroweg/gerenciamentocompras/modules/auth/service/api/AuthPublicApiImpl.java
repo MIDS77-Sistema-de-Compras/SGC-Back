@@ -17,4 +17,9 @@ public class AuthPublicApiImpl implements AuthPublicApi{
     public Optional<User> findByEmailOrCpf(String email, String cpf) {
         return userRepository.findByEmailOrCpf(email, cpf);
     }
+
+    @Override 
+    public Boolean existsByEmail(String email){
+        return userRepository.existsByEmail(email);
+    }
 }

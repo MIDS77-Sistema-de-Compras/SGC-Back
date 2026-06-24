@@ -7,6 +7,8 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Conversor entre a entidade {@link CrBranch} e seus objetos de transferência (DTOs).
  *
@@ -16,21 +18,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class CrBranchMapper {
 
-    public CrBranch toEntity(Branch branch, Cr cr, User responsibleUser) {
+    public CrBranch toEntity(Branch branch, Cr cr, List<User> responsibleUsers) {
         return new CrBranch(
                 branch,
                 cr,
-                responsibleUser
+                responsibleUsers
         );
     }
 
     public CrBranchResponse toResponse(CrBranch crBranch) {
+        List<String> responsibleUsers = crBranch.getResponsibleUsers() != null
+                ? crBranch.getResponsibleUsers().stream().map(User::getName).toList()
+                : List.of();
         return new CrBranchResponse(
                 crBranch.getId(),
                 crBranch.getBranch().getName(),
                 crBranch.getCr().getName(),
                 crBranch.getCr().getCode(),
-                crBranch.getResponsibleUser() != null ? crBranch.getResponsibleUser().getName() : null
+                responsibleUsers
         );
+    }
+
+    public List<CrBranchResponse> toResponseList(List<CrBranch> crBranches){
+        return crBranches
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 }

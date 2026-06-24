@@ -18,6 +18,8 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Caso de uso responsável por atualizar um vínculo entre CR e filial.
  *
@@ -58,15 +60,14 @@ public class UpdateCrBranch {
         Cr cr = crRepository.findById(request.crId())
                 .orElseThrow(() -> new CrNotFoundException(request.crId()));
 
-        User user = null;
-        if (request.responsibleUserId() != null) {
-            user = userRepository.findById(request.responsibleUserId())
-                    .orElseThrow(() -> new UsernameNotFoundException("Usuario não encontrado"));
+        List<User> user = null;
+        if (request.responsibleUsersId() != null) {
+            user = userRepository.findAllById(request.responsibleUsersId());
         }
 
         crBranch.setBranch(branch);
         crBranch.setCr(cr);
-        crBranch.setResponsibleUser(user);
+        crBranch.setResponsibleUsers(user);
 
         crBranchRepository.save(crBranch);
         return crBranchMapper.toResponse(crBranch);

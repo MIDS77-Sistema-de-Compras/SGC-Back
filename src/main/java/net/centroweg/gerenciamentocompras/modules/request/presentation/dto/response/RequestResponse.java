@@ -11,6 +11,7 @@ public record RequestResponse(
         Long crBranchId,
         String statusName,
         String feedback,
-        List<RequestAttachmentResponse> attachments,
-        List<RequestResumeDTO> user
+        String requesterName,
+        String requesterExtension,
+        List<RequestAttachmentResponse> attachments
 ) {}

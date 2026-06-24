@@ -15,9 +15,13 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,43 +30,48 @@ public class CreateRequestServiceImpl {
     private final RequestRepository requestRepository;
     private final CrBranchRepository crBranchRepository;
     private final StatusRepository statusRepository;
+    private final UserRepository userRepository;
     private final RequestMapper requestMapper;
     private final NotificationService notificationService;
-    private final UserRepository userRepository;
 
     public RequestResponse createRequest(RequestRequest request){
-        Status status = statusRepository.findByNameIgnoreCase("EM_ANDAMENTO")
+        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                 .orElseThrow(() -> new StatusNotFoundException());
 
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
-        Request requestEntity = requestMapper.toEntity(request, crBranch, status);
+        User requester = getLoggedUser();
 
-        UserPrincipal principal = (UserPrincipal) SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal();
+        Request requestToSave = requestMapper.toEntity(request, crBranch, status);
+        requestToSave.setCreatedByUsers(List.of(requester));
 
-        userRepository.findByEmail(principal.getUsername())
-                .ifPresent(user -> requestEntity.getCreatedByUsers().add(user));
+        Request savedRequest = requestRepository.save(requestToSave);
 
         if (request.userIds() != null) {
             request.userIds().forEach(userId ->
                     userRepository.findById(userId)
-                            .ifPresent(user -> requestEntity.getCreatedByUsers().add(user))
+                            .ifPresent(user -> savedRequest.getCreatedByUsers().add(user))
             );
         }
 
-        Request savedRequest = requestRepository.save(requestEntity);
-
-
-        if (crBranch.getResponsibleUser() != null) {
-            notificationService.createNotification(new NotificationRequest(
-                    "Nova solicitação",
-                    "Há uma nova solicitação vinculada ao seu CR " + crBranch.getCr().getName() + ".",
-                    crBranch.getResponsibleUser().getId(),
-                    savedRequest.getId()
-            ));
+        if (crBranch.getResponsibleUsers() != null) {
+            for (User responsible : crBranch.getResponsibleUsers()) {
+                notificationService.createNotification(new NotificationRequest(
+                        "Nova solicitação",
+                        "Há uma nova solicitação vinculada ao seu CR " + crBranch.getCr().getName() + ".",
+                        responsible.getId(),
+                        savedRequest.getId()
+                ));
+            }
         }
         return requestMapper.toDTO(savedRequest);
+    }
+
+    private User getLoggedUser() {
+        UserPrincipal userPrincipal =
+                (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByEmail(userPrincipal.getUsername())
+                .orElseThrow(() -> new UserNotFoundException(userPrincipal.getUsername()));
     }
 }

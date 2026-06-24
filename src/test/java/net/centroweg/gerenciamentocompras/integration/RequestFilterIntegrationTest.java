@@ -118,10 +118,10 @@ class RequestFilterIntegrationTest {
         Cr cr7999 = crRepository.save(new Cr("CR Qualidade", "7999", false));
         Cr cr7900 = crRepository.save(new Cr("CR Sem Responsavel", "7900", false));
 
-        CrBranch joao7940 = crBranchRepository.save(new CrBranch(branch, cr7940, joao));
-        CrBranch joao1234 = crBranchRepository.save(new CrBranch(branch, cr1234, joao));
-        CrBranch maria7940 = crBranchRepository.save(new CrBranch(branch, cr7940, maria));
-        CrBranch joao7999 = crBranchRepository.save(new CrBranch(branch, cr7999, joao));
+        CrBranch joao7940 = crBranchRepository.save(new CrBranch(branch, cr7940, List.of(joao)));
+        CrBranch joao1234 = crBranchRepository.save(new CrBranch(branch, cr1234, List.of(joao)));
+        CrBranch maria7940 = crBranchRepository.save(new CrBranch(branch, cr7940, List.of(maria)));
+        CrBranch joao7999 = crBranchRepository.save(new CrBranch(branch, cr7999, List.of(joao)));
         CrBranch noSupervisor7900 = crBranchRepository.save(new CrBranch(branch, cr7900, null));
 
         Status approved = statusRepository.save(new Status("Aprovado", "Solicitação aprovada"));

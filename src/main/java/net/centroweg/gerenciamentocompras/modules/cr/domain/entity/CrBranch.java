@@ -1,17 +1,13 @@
 package net.centroweg.gerenciamentocompras.modules.cr.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+
+import java.util.List;
 
 /**
  * Representa o vínculo entre um Centro de Responsabilidade (CR) e uma filial (Branch).
@@ -37,20 +33,23 @@ public class CrBranch {
     @JoinColumn(name = "cr_id")
     private Cr cr;
 
-    @ManyToOne
-    @JoinColumn(name = "responsible_user_id", nullable = true)
-    private User responsibleUser;
+    @ManyToMany
+    @JoinTable(
+            name = "cr_branch_responsible_users",
+            joinColumns = @JoinColumn(name = "cr_branch_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> responsibleUsers;
 
     /**
      * Cria um vínculo entre CR e Filial, opcionamlente com um responsável
      *
      * @param branch filial associada
      * @param cr CR associado
-     * @param responsibleUser usuário responsável (pode ser nulo)
+     * @param responsibleUsers usuário/usuários responsável (pode ser nulo)
      */
-    public CrBranch(Branch branch, Cr cr, User responsibleUser) {
+    public CrBranch(Branch branch, Cr cr, List<User> responsibleUsers) {
         this.branch = branch;
         this.cr = cr;
-        this.responsibleUser = responsibleUser;
+        this.responsibleUsers = responsibleUsers;
     }
 }

@@ -31,10 +31,8 @@ public class CreateRequestServiceImpl {
     private final UserRepository userRepository;
 
     public RequestResponse createRequest(RequestRequest request){
-        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
+        Status status = statusRepository.findByNameIgnoreCase("EM_ANDAMENTO")
                 .orElseThrow(() -> new StatusNotFoundException());
-
-        status.setName("EM_ANDAMENTO");
 
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
@@ -46,6 +44,13 @@ public class CreateRequestServiceImpl {
 
         userRepository.findByEmail(principal.getUsername())
                 .ifPresent(user -> requestEntity.getCreatedByUsers().add(user));
+
+        if (request.userIds() != null) {
+            request.userIds().forEach(userId ->
+                    userRepository.findById(userId)
+                            .ifPresent(user -> requestEntity.getCreatedByUsers().add(user))
+            );
+        }
 
         Request savedRequest = requestRepository.save(requestEntity);
 

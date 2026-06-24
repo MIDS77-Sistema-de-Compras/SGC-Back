@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResumeDTO;
 import org.springframework.stereotype.Component;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.RequestAttachment;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
@@ -35,6 +36,15 @@ public class RequestMapper {
                         .map(this::toAttachmentDTO)
                         .toList();
 
+        List<RequestResumeDTO> users = request.getCreatedByUsers().stream()
+                .map(u -> new RequestResumeDTO(
+                        u.getName(),
+                        u.getCpf(),
+                        u.getEmail(),
+                        u.getExtensionNumber()
+                ))
+                .toList();
+
         return new RequestResponse(
                 request.getId(),
                 request.getRequestDate(),
@@ -42,7 +52,8 @@ public class RequestMapper {
                 request.getCrBranch().getId(),
                 request.getStatus().getName(),
                 request.getFeedback(),
-                attachments
+                attachments,
+                users
         );
     }
 

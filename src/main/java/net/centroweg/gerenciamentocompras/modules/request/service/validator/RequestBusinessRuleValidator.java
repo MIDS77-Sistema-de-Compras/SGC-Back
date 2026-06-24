@@ -80,5 +80,24 @@ public class RequestBusinessRuleValidator {
         return value.trim().toLowerCase();
     }
 
+    public void validateCanUpdateStatus(Request request, User currentUser) {
+        validateRequestIsActive(request);
+        validateUserIsResponsibleForCr(request, currentUser);
+    }
+
+    private void validateUserIsResponsibleForCr(Request request, User currentUser) {
+        if (request.getCrBranch().getResponsibleUsers() == null) {
+            throw new AcessDeniedException();
+        }
+
+        boolean isResponsible = request.getCrBranch()
+                .getResponsibleUsers()
+                .stream()
+                .anyMatch(user -> user.getId().equals(currentUser.getId()));
+
+        if (!isResponsible) {
+            throw new AcessDeniedException();
+        }
+    }
 
 }

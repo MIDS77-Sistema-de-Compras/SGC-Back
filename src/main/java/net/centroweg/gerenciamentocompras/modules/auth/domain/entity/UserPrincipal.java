@@ -55,10 +55,6 @@ public class UserPrincipal implements UserDetails {
         return userEntity.getId();
     }
 
-    public Long getId() {
-        return userEntity.getId();
-    }
-
     public String getCpf(){
         return userEntity.getCpf();
     }

@@ -11,6 +11,8 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Caso de uso responsável por atribuir um usuário responsável a um vínculo CR-filial.
  *
@@ -35,18 +37,17 @@ public class AssignCrBranchResponsible {
      * @throws CrBranchNotFoundException se o vínculo não for encontrado
      * @throws UsernameNotFoundException se o usuário não for encontrado
      */
-    public CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId) {
+    public CrBranchResponse assignCrBranchResponsible(Long crBranchId, List<Long> userId) {
         CrBranch crBranch = crBranchRepository.findById(crBranchId)
                 .orElseThrow(() -> new CrBranchNotFoundException(crBranchId));
 
         if (crBranchRepository.findByIdAndResponsibleUserIsNotNull(crBranchId).isPresent()) {
-            crBranch.setResponsibleUser(null);
+            crBranch.setResponsibleUsers(null);
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+        List<User> users = userRepository.findAllById(userId);
 
-        crBranch.setResponsibleUser(user);
+        crBranch.setResponsibleUsers(users);
         crBranchRepository.save(crBranch);
         return crBranchMapper.toResponse(crBranch);
     }

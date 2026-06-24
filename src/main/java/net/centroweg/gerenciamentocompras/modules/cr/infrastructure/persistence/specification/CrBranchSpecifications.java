@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.Locale;
 
 
@@ -55,24 +56,17 @@ public final class CrBranchSpecifications {
         };
     }
 
-    public static Specification<CrBranch> crResponsibleNameContain(String responsibleName){
+    public static Specification<CrBranch> crResponsibleNameIn(List<String> responsibleNames){
 
-        if (isBlank(responsibleName)){
+        if (responsibleNames == null || responsibleNames.isEmpty()){
             return Specification.unrestricted();
         }
-
-        String pattern = containsIgnoreCase(responsibleName);
 
         return (root, query, criteriaBuilder) -> {
             Join<CrBranch, User> responsibleUserJoin =
                     root.join("responsibleUser", JoinType.LEFT);
 
-            Expression<String> name = responsibleUserJoin.get("name");
-
-            return  criteriaBuilder.like(
-                    criteriaBuilder.lower(name),
-                    pattern
-            );
+            return responsibleUserJoin.get("name").in(responsibleNames);
         };
     };
 

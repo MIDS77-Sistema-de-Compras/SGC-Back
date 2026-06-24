@@ -49,7 +49,7 @@ public class CrBranchController {
     public ResponseEntity<List<CrBranchResponse>> findAll(
             @RequestParam(required = false) String crCode,
             @RequestParam(required = false) String crName,
-            @RequestParam(required = false) String responsibleName
+            @RequestParam(required = false) List<String> responsibleName
     ) {
         CrBranchFilterRequest filter =
                 new CrBranchFilterRequest(

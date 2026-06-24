@@ -43,6 +43,7 @@ public class JwtService {
                 .setIssuer("sgs-api")
                 .setSubject(principal.getUsername())
                 .claim("role", role)
+                .claim("nome", principal.getName())
                 .claim("cpf", cpf)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)

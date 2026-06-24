@@ -1,14 +1,15 @@
 package net.centroweg.gerenciamentocompras.modules.auth.domain.entity;
 
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import java.util.Collection;
+import java.util.List;
+
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 @RequiredArgsConstructor
 public class UserPrincipal implements UserDetails {
@@ -47,7 +48,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return userEntity.getActive();
     }
 
     public Long getId() {

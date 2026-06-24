@@ -16,6 +16,9 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,10 +32,16 @@ public class UpdateRequestServiceImpl {
     private final CrBranchRepository crBranchRepository;
     private final RequestMapper requestMapper;
     private final NotificationService notificationService;
+    private final CurrentUserService currentUserService;
+    private final RequestBusinessRuleValidator validator;
 
     public RequestResponse updateRequest(RequestRequest requestDTO, Long id){
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
+
+
+        User currentUser = currentUserService.getCurrentUser();
+        validator.validateCanEdit(request, currentUser);
 
         Status status = statusRepository.findByNameIgnoreCase(requestDTO.statusName())
                         .orElseThrow(() -> new StatusNotFoundException());

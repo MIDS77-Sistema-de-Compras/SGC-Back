@@ -1,8 +1,5 @@
 package net.centroweg.gerenciamentocompras.shared.email.service;
 
-
-import java.util.List;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;

@@ -64,11 +64,25 @@ public final class CrBranchSpecifications {
 
         return (root, query, criteriaBuilder) -> {
             Join<CrBranch, User> responsibleUserJoin =
-                    root.join("responsibleUser", JoinType.LEFT);
+                    root.join("responsibleUsers", JoinType.LEFT);
 
-            return responsibleUserJoin.get("name").in(responsibleNames);
+            query.distinct(true);
+
+            jakarta.persistence.criteria.Predicate[] predicates = responsibleNames.stream()
+                    .filter(name -> name != null && !name.isBlank())
+                    .map(name -> criteriaBuilder.like(
+                            criteriaBuilder.lower(responsibleUserJoin.get("name")),
+                            "%" + name.trim().toLowerCase(Locale.ROOT) + "%"
+                    ))
+                    .toArray(jakarta.persistence.criteria.Predicate[]::new);
+
+            if (predicates.length == 0) {
+                return criteriaBuilder.conjunction();
+            }
+
+            return criteriaBuilder.or(predicates);
         };
-    };
+    }
 
 
 

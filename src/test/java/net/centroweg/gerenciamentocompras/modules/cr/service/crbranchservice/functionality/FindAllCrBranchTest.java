@@ -40,8 +40,8 @@ class FindAllCrBranchTest {
     void shouldSendSpecificationToRepositoryAndMapResults() {
         CrBranch firstCrBranch = new CrBranch();
         CrBranch secondCrBranch = new CrBranch();
-        CrBranchResponse firstResponse = new CrBranchResponse(1L, "Filial Centro", "Compras", "123456", "Ana Silva");
-        CrBranchResponse secondResponse = new CrBranchResponse(2L, "Filial Norte", "Engenharia", "987654", null);
+        CrBranchResponse firstResponse = new CrBranchResponse(1L, "Filial Centro", "Compras", "123456", List.of("Ana Silva"));
+        CrBranchResponse secondResponse = new CrBranchResponse(2L, "Filial Norte", "Engenharia", "987654", List.of());
 
         when(crBranchRepository.findAll(any(Specification.class)))
                 .thenReturn(List.of(firstCrBranch, secondCrBranch));
@@ -49,7 +49,7 @@ class FindAllCrBranchTest {
         when(crBranchMapper.toResponse(secondCrBranch)).thenReturn(secondResponse);
 
         List<CrBranchResponse> responses = findAllCrBranch.findAll(
-                new CrBranchFilterRequest("123", "compras", "ana")
+                new CrBranchFilterRequest("123", "compras", List.of("ana"))
         );
 
         ArgumentCaptor<Specification<CrBranch>> specificationCaptor =
@@ -69,7 +69,7 @@ class FindAllCrBranchTest {
                 .thenReturn(List.of());
 
         List<CrBranchResponse> emptyFieldsResponse = findAllCrBranch.findAll(
-                new CrBranchFilterRequest(null, "", " ")
+                new CrBranchFilterRequest(null, "", List.of(" "))
         );
         List<CrBranchResponse> nullFilterResponse = findAllCrBranch.findAll(null);
 

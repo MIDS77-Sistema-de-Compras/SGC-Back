@@ -87,7 +87,7 @@ public final class RequestSpecification {
                     root.join("crBranch", JoinType.INNER);
 
             Join<CrBranch, User> supervisorJoin =
-                    crBranchJoin.join("responsibleUser", JoinType.LEFT);
+                    crBranchJoin.join("responsibleUsers", JoinType.LEFT);
 
             Path<String> name = supervisorJoin.get("name");
 

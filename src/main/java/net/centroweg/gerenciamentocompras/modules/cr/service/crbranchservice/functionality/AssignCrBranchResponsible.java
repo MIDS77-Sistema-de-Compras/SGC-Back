@@ -41,7 +41,7 @@ public class AssignCrBranchResponsible {
         CrBranch crBranch = crBranchRepository.findById(crBranchId)
                 .orElseThrow(() -> new CrBranchNotFoundException(crBranchId));
 
-        if (crBranchRepository.findByIdAndResponsibleUserIsNotNull(crBranchId).isPresent()) {
+        if (crBranch.getResponsibleUsers() != null && !crBranch.getResponsibleUsers().isEmpty()) {
             crBranch.setResponsibleUsers(null);
         }
 

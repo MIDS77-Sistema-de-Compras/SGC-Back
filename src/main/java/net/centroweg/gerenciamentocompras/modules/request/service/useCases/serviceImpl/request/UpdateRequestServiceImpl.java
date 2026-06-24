@@ -16,6 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -52,13 +53,15 @@ public class UpdateRequestServiceImpl {
 
         Request savedRequest = requestRepository.save(request);
 
-        if (statusChange && crBranch.getResponsibleUser() != null) {
-            notificationService.createNotification(new NotificationRequest(
-                    "Status da solicitação atualizado",
-                    "A solicitação #" + savedRequest.getId() + " teve o status alterado para " + status.getName() + ".",
-                    crBranch.getResponsibleUser().getId(),
-                    savedRequest.getId()
-            ));
+        if (statusChange && crBranch.getResponsibleUsers() != null) {
+            for (User responsible : crBranch.getResponsibleUsers()) {
+                notificationService.createNotification(new NotificationRequest(
+                        "Status da solicitação atualizado",
+                        "A solicitação #" + savedRequest.getId() + " teve o status alterado para " + status.getName() + ".",
+                        responsible.getId(),
+                        savedRequest.getId()
+                ));
+            }
         }
 
         return requestMapper.toDTO(savedRequest);

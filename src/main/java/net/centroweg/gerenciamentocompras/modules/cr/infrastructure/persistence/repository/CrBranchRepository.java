@@ -35,11 +35,4 @@ public interface CrBranchRepository extends JpaRepository<CrBranch, Long>, JpaSp
      */
     Optional<CrBranch> findByCrIdAndBranchId(Long crId, Long branchId);
 
-    /**
-     * Busca um vínculo pelo seu identificador, apenas quando houver um usuário responsável definido.
-     *
-     * @param id
-     * @return um {@link Optional} com o vínculo, caso exista e possua responsável
-     */
-    Optional<CrBranch> findByIdAndResponsibleUserIsNotNull(Long id);
 }

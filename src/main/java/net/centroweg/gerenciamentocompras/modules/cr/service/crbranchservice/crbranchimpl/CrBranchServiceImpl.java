@@ -106,7 +106,7 @@ public class CrBranchServiceImpl implements CrBranchService {
      */
     @Override
     public CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId) {
-        return assignCrBranchResponsible.assignCrBranchResponsible(crBranchId, userId);
+        return assignCrBranchResponsible.assignCrBranchResponsible(crBranchId, List.of(userId));
     }
 
     /**

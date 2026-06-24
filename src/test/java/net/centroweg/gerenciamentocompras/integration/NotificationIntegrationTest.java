@@ -119,6 +119,7 @@ public class NotificationIntegrationTest {
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, user));
 
         waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
+        statusRepository.save(new Status("EM_ANDAMENTO", "Solicitação em andamento"));
 
         request = requestRepository.save(new Request(crBranch, waitingStatus));
     }

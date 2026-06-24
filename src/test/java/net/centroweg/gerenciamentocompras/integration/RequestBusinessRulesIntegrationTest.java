@@ -61,13 +61,13 @@ class RequestBusinessRulesIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
         cleanDatabase();
         creator = saveUser("Criador", "criador@teste.com", "52998224725");
-        anotherUser = saveUser("Outro usuÃ¡rio", "outro@teste.com", "12345678909");
+        anotherUser = saveUser("Outro usuário", "outro@teste.com", "12345678909");
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
-        pending = statusRepository.save(new Status("Pendente", "SolicitaÃ§Ã£o pendente"));
-        approved = statusRepository.save(new Status("Aprovado", "SolicitaÃ§Ã£o aprovada"));
-        inService = statusRepository.save(new Status("Em atendimento", "SolicitaÃ§Ã£o em atendimento"));
+        pending = statusRepository.save(new Status("Pendente", "solicitação pendente"));
+        approved = statusRepository.save(new Status("Aprovado", "solicitação aprovada"));
+        inService = statusRepository.save(new Status("Em atendimento", "solicitação em atendimento"));
     }
 
     @AfterEach
@@ -75,7 +75,7 @@ class RequestBusinessRulesIntegrationTest {
         cleanDatabase();
     }
     @Test
-    @DisplayName("[IntegraÃ§Ã£o] Deve inativar solicitaÃ§Ã£o ativa do prÃ³prio criador e persistir active como falso")
+    @DisplayName("[Integração] Deve inativar solicitação ativa do próprio criador e persistir active como falso")
     void shouldInactivateActiveRequestCreatedByAuthenticatedUser() throws Exception {
         Request request = saveRequest(pending, creator, true);
 
@@ -86,7 +86,7 @@ class RequestBusinessRulesIntegrationTest {
     }
 
     @Test
-    @DisplayName("[IntegraÃ§Ã£o] Deve bloquear inativaÃ§Ã£o de solicitaÃ§Ã£o aprovada")
+    @DisplayName("[Integração] Deve bloquear inativação de solicitação aprovada")
     void shouldBlockInactivationWhenRequestIsApproved() throws Exception {
         Request request = saveRequest(approved, creator, true);
 
@@ -95,7 +95,7 @@ class RequestBusinessRulesIntegrationTest {
     }
 
     @Test
-    @DisplayName("[IntegraÃ§Ã£o] Deve bloquear inativaÃ§Ã£o de solicitaÃ§Ã£o em atendimento")
+    @DisplayName("[Integração] Deve bloquear inativação de solicitação em atendimento")
     void shouldBlockInactivationWhenRequestIsInService() throws Exception {
         Request request = saveRequest(inService, creator, true);
 
@@ -104,7 +104,7 @@ class RequestBusinessRulesIntegrationTest {
     }
 
     @Test
-    @DisplayName("[IntegraÃ§Ã£o] Deve bloquear inativaÃ§Ã£o por usuÃ¡rio que nÃ£o criou a solicitaÃ§Ã£o")
+    @DisplayName("[Integração] Deve bloquear inativação por usuário que não criou a solicitação")
     void shouldBlockInactivationWhenAuthenticatedUserIsNotCreator() throws Exception {
         Request request = saveRequest(pending, creator, true);
 
@@ -113,7 +113,7 @@ class RequestBusinessRulesIntegrationTest {
     }
 
     @Test
-    @DisplayName("[IntegraÃ§Ã£o] Deve editar solicitaÃ§Ã£o ativa do prÃ³prio criador antes da etapa operacional")
+    @DisplayName("[Integração] Deve editar solicitação ativa do próprio criador antes da etapa operacional")
     void shouldEditActiveRequestCreatedByAuthenticatedUser() throws Exception {
         Request request = saveRequest(pending, creator, true);
 
@@ -125,7 +125,7 @@ class RequestBusinessRulesIntegrationTest {
                 .andExpect(jsonPath("$.statusName").value("Pendente"));
     }
     @Test
-    @DisplayName("[IntegraÃ§Ã£o] Deve bloquear ediÃ§Ã£o de solicitaÃ§Ã£o em atendimento")
+    @DisplayName("[Integração] Deve bloquear edição de solicitação em atendimento")
     void shouldBlockEditWhenRequestIsInService() throws Exception {
         Request request = saveRequest(inService, creator, true);
 
@@ -137,7 +137,7 @@ class RequestBusinessRulesIntegrationTest {
     }
 
     @Test
-    @DisplayName("[IntegraÃ§Ã£o] Deve bloquear ediÃ§Ã£o por usuÃ¡rio que nÃ£o criou a solicitaÃ§Ã£o")
+    @DisplayName("[Integração] Deve bloquear edição por usuário que não criou a solicitação")
     void shouldBlockEditWhenAuthenticatedUserIsNotCreator() throws Exception {
         Request request = saveRequest(pending, creator, true);
 
@@ -149,7 +149,7 @@ class RequestBusinessRulesIntegrationTest {
     }
 
     @Test
-    @DisplayName("[IntegraÃ§Ã£o] Deve bloquear ediÃ§Ã£o de solicitaÃ§Ã£o inativa")
+    @DisplayName("[Integração] Deve bloquear edição de solicitação inativa")
     void shouldBlockEditWhenRequestIsInactive() throws Exception {
         Request request = saveRequest(pending, creator, false);
 

@@ -18,7 +18,7 @@ class RequestBusinessRuleValidatorTest {
     private final RequestBusinessRuleValidator validator = new RequestBusinessRuleValidator();
 
     @Test
-    @DisplayName("Deve permitir editar solicitaÃ§Ã£o ativa pelo prÃ³prio criador antes da etapa operacional")
+    @DisplayName("Deve permitir editar solicitação ativa pelo próprio criador antes da etapa operacional")
     void shouldAllowEditWhenRequestIsActiveCreatorAndStatusAllowsIt() {
         User creator = user(1L);
         Request request = request("Pendente", true, creator);
@@ -26,7 +26,7 @@ class RequestBusinessRuleValidatorTest {
         assertDoesNotThrow(() -> validator.validateCanEdit(request, creator));
     }
     @Test
-    @DisplayName("Deve bloquear ediÃ§Ã£o quando a solicitaÃ§Ã£o estiver em atendimento")
+    @DisplayName("Deve bloquear edição quando a solicitação estiver em atendimento")
     void shouldBlockEditWhenRequestIsInService() {
         User creator = user(1L);
         Request request = request("Em atendimento", true, creator);
@@ -35,7 +35,7 @@ class RequestBusinessRuleValidatorTest {
     }
 
     @Test
-    @DisplayName("Deve bloquear ediÃ§Ã£o quando o usuÃ¡rio nÃ£o for o criador")
+    @DisplayName("Deve bloquear edição quando o usuário não for o criador")
     void shouldBlockEditWhenCurrentUserIsNotCreator() {
         Request request = request("Pendente", true, user(1L));
 
@@ -43,7 +43,7 @@ class RequestBusinessRuleValidatorTest {
     }
 
     @Test
-    @DisplayName("Deve bloquear ediÃ§Ã£o quando a solicitaÃ§Ã£o estiver inativa")
+    @DisplayName("Deve bloquear edição quando a solicitação estiver inativa")
     void shouldBlockEditWhenRequestIsInactive() {
         User creator = user(1L);
         Request request = request("Pendente", false, creator);
@@ -52,7 +52,7 @@ class RequestBusinessRuleValidatorTest {
     }
 
     @Test
-    @DisplayName("Deve permitir inativar solicitaÃ§Ã£o ativa pelo prÃ³prio criador antes da aprovaÃ§Ã£o")
+    @DisplayName("Deve permitir inativar solicitação ativa pelo próprio criador antes da aprovação")
     void shouldAllowInactivationWhenRequestIsActiveCreatorAndNotApproved() {
         User creator = user(1L);
         Request request = request("Pendente", true, creator);
@@ -61,7 +61,7 @@ class RequestBusinessRuleValidatorTest {
     }
 
     @Test
-    @DisplayName("Deve bloquear inativaÃ§Ã£o quando a solicitaÃ§Ã£o estiver aprovada")
+    @DisplayName("Deve bloquear inativação quando a solicitação estiver aprovada")
     void shouldBlockInactivationWhenRequestIsApproved() {
         User creator = user(1L);
         Request request = request("Aprovado", true, creator);
@@ -69,7 +69,7 @@ class RequestBusinessRuleValidatorTest {
         assertThrows(RequestCannotBeInactivatedException.class, () -> validator.validateCanInactivate(request, creator));
     }
     @Test
-    @DisplayName("Deve bloquear inativaÃ§Ã£o quando a solicitaÃ§Ã£o estiver em atendimento")
+    @DisplayName("Deve bloquear inativação quando a solicitação estiver em atendimento")
     void shouldBlockInactivationWhenRequestIsInService() {
         User creator = user(1L);
         Request request = request("Em atendimento", true, creator);
@@ -78,7 +78,7 @@ class RequestBusinessRuleValidatorTest {
     }
 
     @Test
-    @DisplayName("Deve bloquear inativaÃ§Ã£o quando o usuÃ¡rio nÃ£o for o criador")
+    @DisplayName("Deve bloquear inativação quando o usuário não for o criador")
     void shouldBlockInactivationWhenCurrentUserIsNotCreator() {
         Request request = request("Pendente", true, user(1L));
 
@@ -86,7 +86,7 @@ class RequestBusinessRuleValidatorTest {
     }
 
     @Test
-    @DisplayName("Deve bloquear nova inativaÃ§Ã£o quando a solicitaÃ§Ã£o jÃ¡ estiver inativa")
+    @DisplayName("Deve bloquear nova inativação quando a solicitação já estiver inativa")
     void shouldBlockInactivationWhenRequestIsInactive() {
         User creator = user(1L);
         Request request = request("Pendente", false, creator);

@@ -119,6 +119,7 @@ public class NotificationIntegrationTest {
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
 
         waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
+        statusRepository.save(new Status("EM_ANDAMENTO", "Solicitação em andamento"));
 
         request = requestRepository.save(new Request(crBranch, waitingStatus));
     }
@@ -211,7 +212,8 @@ public class NotificationIntegrationTest {
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "Aguardando aprovação"
+                                    "statusName": "Aguardando aprovação",
+                                    "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isCreated());
@@ -231,7 +233,8 @@ public class NotificationIntegrationTest {
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "Aguardando aprovação"
+                                    "statusName": "Aguardando aprovação",
+                                    "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isCreated())
@@ -247,7 +250,8 @@ public class NotificationIntegrationTest {
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "Em atendimento"
+                                    "statusName": "Em atendimento",
+                                    "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isOk());

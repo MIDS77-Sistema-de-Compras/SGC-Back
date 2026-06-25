@@ -32,8 +32,8 @@ public class RequestController {
 
     @Operation(description = "ENDPOINT responsável pela criação de Request")
     @PostMapping
-    public ResponseEntity<RequestResponse> createRequest(@Valid @RequestBody RequestRequest request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request));
+    public ResponseEntity<RequestResponse> createRequest(@Valid @RequestBody RequestRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request, userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos Request")

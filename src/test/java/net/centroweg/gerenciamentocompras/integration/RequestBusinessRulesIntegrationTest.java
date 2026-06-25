@@ -180,7 +180,7 @@ class RequestBusinessRulesIntegrationTest {
     }
 
     private String updateBody() {
-        return "{\"crBranchId\": %d, \"statusName\": \"Pendente\"}".formatted(crBranch.getId());
+        return "{\"crBranchId\": %d, \"statusName\": \"Pendente\", \"userIds\": []}".formatted(crBranch.getId());
     }
 
     private void cleanDatabase() {

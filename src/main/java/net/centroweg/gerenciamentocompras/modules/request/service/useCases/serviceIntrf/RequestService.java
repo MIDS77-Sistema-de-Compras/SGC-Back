@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface RequestService {
 
-    RequestResponse createRequest(RequestRequest request);
+    RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal);
     List<RequestResponse> findAllRequest(RequestFilterRequest filter);
     RequestResponse findRequestById(Long id);
     List<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal);

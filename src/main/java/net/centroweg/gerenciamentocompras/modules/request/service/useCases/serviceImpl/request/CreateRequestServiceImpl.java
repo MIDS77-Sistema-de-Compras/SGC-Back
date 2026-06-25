@@ -34,26 +34,26 @@ public class CreateRequestServiceImpl {
     private final RequestMapper requestMapper;
     private final NotificationService notificationService;
 
-    public RequestResponse createRequest(RequestRequest request){
+    public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
         Status status = statusRepository.findByNameIgnoreCase(request.statusName())
                 .orElseThrow(() -> new StatusNotFoundException());
 
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
-        User requester = getLoggedUser();
+        User requester = userRepository.findByEmail(userPrincipal.getUsername())
+                .orElseThrow(() -> new UserNotFoundException());
 
         Request requestToSave = requestMapper.toEntity(request, crBranch, status);
         requestToSave.setCreatedByUsers(List.of(requester));
 
         Request savedRequest = requestRepository.save(requestToSave);
 
-        if (request.userIds() != null) {
-            request.userIds().forEach(userId ->
-                    userRepository.findById(userId)
-                            .ifPresent(user -> savedRequest.getCreatedByUsers().add(user))
-            );
-        }
+        request.userIds().forEach(userId ->
+                userRepository.findById(userId)
+                        .ifPresent(user -> savedRequest.getCreatedByUsers().add(user))
+        );
+
 
         if (crBranch.getResponsibleUsers() != null) {
             for (User responsible : crBranch.getResponsibleUsers()) {
@@ -68,10 +68,4 @@ public class CreateRequestServiceImpl {
         return requestMapper.toDTO(savedRequest);
     }
 
-    private User getLoggedUser() {
-        UserPrincipal userPrincipal =
-                (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByEmail(userPrincipal.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(userPrincipal.getUsername()));
-    }
 }

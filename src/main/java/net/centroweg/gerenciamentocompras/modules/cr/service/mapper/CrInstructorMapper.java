@@ -18,14 +18,14 @@ public class CrInstructorMapper {
 
     private final UserMapper userMapper;
 
-    public CrInstructor toEntity(User user, CrBranch crBranch){
+    public CrInstructor toEntity(List<User> user, CrBranch crBranch){
         return new CrInstructor(user, crBranch);
     }
 
     public CrInstructorResponse toResponse(CrInstructor instructor){
         return new CrInstructorResponse(
                 instructor.getId(),
-                userMapper.toDTO(instructor.getInstructor()),
+                userMapper.toDTOList(instructor.getInstructors()),
                 instructor.getCrBranch().getId()
         );
     }

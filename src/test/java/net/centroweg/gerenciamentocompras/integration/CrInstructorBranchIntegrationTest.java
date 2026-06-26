@@ -32,6 +32,8 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
@@ -48,7 +50,7 @@ class CrInstructorBranchIntegrationTest {
     @Autowired private UserRepository userRepository;
     @Autowired private CrBranchRepository crBranchRepository;
 
-    private Long userId;
+    private List<Long> userId;
     private Long crBranchId;
     private MockMvc mockMvc;
 
@@ -74,7 +76,7 @@ class CrInstructorBranchIntegrationTest {
         user.setActive(true);
 
         user = userRepository.save(user);
-        userId = user.getId();
+        userId = List.of(user.getId());
 
         // Initialize CrBranch relationship fixture
         CrBranch crBranch = new CrBranch();
@@ -130,7 +132,7 @@ class CrInstructorBranchIntegrationTest {
     @Test
     @DisplayName("POST /cr-instructors → 400 when instructorId is negative or zero")
     void create_invalidInstructorIdValue_returns400() throws Exception {
-        var request = new CrInstructorRequest(0L, crBranchId);
+        var request = new CrInstructorRequest(List.of(0L), crBranchId);
 
         mockMvc.perform(post("/cr-instructors")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -165,7 +167,7 @@ class CrInstructorBranchIntegrationTest {
         secondUser.setActive(true);
         secondUser = userRepository.save(secondUser);
 
-        createInstructorViaApi(secondUser.getId(), crBranchId);
+        createInstructorViaApi(List.of(secondUser.getId()), crBranchId);
 
         mockMvc.perform(get("/cr-instructors"))
                 .andExpect(status().isOk())
@@ -212,7 +214,7 @@ class CrInstructorBranchIntegrationTest {
         anotherUser.setActive(true);
         anotherUser = userRepository.save(anotherUser);
 
-        var updateRequest = new CrInstructorRequest(anotherUser.getId(), crBranchId);
+        var updateRequest = new CrInstructorRequest(List.of(anotherUser.getId()), crBranchId);
 
         mockMvc.perform(put("/cr-instructors/{id}", createdId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -260,7 +262,7 @@ class CrInstructorBranchIntegrationTest {
     // Helper Execution Methods
     // =========================================================================
 
-    private Long createInstructorViaApi(Long instructorId, Long branchId) throws Exception {
+    private Long createInstructorViaApi(List<Long> instructorId, Long branchId) throws Exception {
         var request = new CrInstructorRequest(instructorId, branchId);
 
         String responseBody = mockMvc.perform(post("/cr-instructors")

@@ -1,10 +1,11 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response;
 
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import java.util.List;
+
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 
 public record CrInstructorResponse(
     Long id,
-    UserResponse user,
+    List<UserResponse> user,
     Long crBranchId
 ) {}

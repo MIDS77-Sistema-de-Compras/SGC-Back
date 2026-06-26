@@ -39,18 +39,22 @@ public class UpdateRequestServiceImpl {
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
 
-
         User currentUser = currentUserService.getCurrentUser();
         validator.validateCanEdit(request, currentUser);
 
         Status status = statusRepository.findByNameIgnoreCase(requestDTO.statusName())
-                        .orElseThrow(() -> new StatusNotFoundException());
+                .orElseThrow(() -> new StatusNotFoundException());
 
         CrBranch crBranch = crBranchRepository.findById(requestDTO.crBranchId())
-                        .orElseThrow(() -> new CrBranchNotFoundException(requestDTO.crBranchId()));
+                .orElseThrow(() -> new CrBranchNotFoundException(requestDTO.crBranchId()));
 
-        if(status.getName().equalsIgnoreCase("Aprovado")) {
+        if (status.getName().equalsIgnoreCase("Aprovado")) {
             throw new RequestAlreadyApprovedException();
+        }
+
+        boolean crBranchChanging = !request.getCrBranch().getId().equals(crBranch.getId());
+        if (crBranchChanging) {
+            validator.validateCrCanBeChanged(request, currentUser);
         }
 
         boolean statusChange = !request.getStatus().getId().equals(status.getId());
@@ -73,6 +77,5 @@ public class UpdateRequestServiceImpl {
         }
 
         return requestMapper.toDTO(savedRequest);
-
     }
 }

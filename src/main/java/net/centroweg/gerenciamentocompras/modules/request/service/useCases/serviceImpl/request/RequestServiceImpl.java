@@ -6,6 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class RequestServiceImpl implements RequestService {
     private final DeleteRequestByOwnUser deleteRequestByOwnUser;
     private final UpdateRequestByOwnUser updateRequestByOwnUser;
     private final FindRequestByIdOwnUser findRequestByIdOwnUser;
+    private final UpdateRequestStatusServiceImpl updateRequestStatusService;
 
 
     private final UploadRequestAttachmentServiceImpl uploadRequestAttachmentService;
@@ -91,6 +93,11 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestResponse findRequestByIdOwnUser(Long id, UserPrincipal userPrincipal){
         return this.findRequestByIdOwnUser.findRequestByIdOwnUser(id, userPrincipal);
+    }
+
+    @Override
+    public RequestResponse updateStatus(Long id, UpdateRequestStatus request) {
+        return updateRequestStatusService.updateStatus(id, request);
     }
 
 }

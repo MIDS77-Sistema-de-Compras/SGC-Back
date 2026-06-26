@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
@@ -86,6 +87,15 @@ public class RequestController {
     @PatchMapping("/{id}")
     public ResponseEntity<RequestResponse> updateFeedback(@Valid @RequestBody UpdateFeedback feedback, @PathVariable Long id){
         return ResponseEntity.ok(requestService.updateFeedback(feedback, id));
+    }
+
+    @Operation(description = "ENDPOINT responsável pela atualização do status de Request")
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<RequestResponse> updateStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateRequestStatus request
+    ) {
+        return ResponseEntity.ok(requestService.updateStatus(id, request));
     }
 
     @GetMapping("/me")

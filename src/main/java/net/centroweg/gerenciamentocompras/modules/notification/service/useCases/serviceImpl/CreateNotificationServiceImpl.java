@@ -35,7 +35,12 @@ public class CreateNotificationServiceImpl {
         Notification notification = notificationMapper.toEntity(request.title(), request.message(), user, relatedRequest);
         Notification saved = notificationRepository.save(notification);
 
-        notificationEmailService.sendNotificationEmail(user.getEmail(), notification.getTitle(), notification.getMessage());
+        notificationEmailService.sendNotificationEmail(
+                user,
+                notification.getTitle(),
+                notification.getMessage(),
+                relatedRequest
+        );
 
         return notificationMapper.toResponse(saved);
     }

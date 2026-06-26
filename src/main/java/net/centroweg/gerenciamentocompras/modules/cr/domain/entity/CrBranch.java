@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * Representa o vínculo entre um Centro de Responsabilidade (CR) e uma filial (Branch).
  */
 
+@BatchSize(size = 30)
 @Entity
 @Table(name = "cr_branch")
 @AllArgsConstructor
@@ -25,14 +27,15 @@ public class CrBranch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cr_id")
     private Cr cr;
 
+    @BatchSize(size = 30)
     @ManyToMany
     @JoinTable(
             name = "cr_branch_responsible_users",

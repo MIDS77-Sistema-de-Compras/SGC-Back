@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapper;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +31,7 @@ public class FindAllCrBranch {
      *
      * @return a lista de vínculos (vazia se não houver nenhum)
      */
+    @Transactional(readOnly = true)
     public List<CrBranchResponse> findAll(
             CrBranchFilterRequest filter
     ) {

@@ -12,29 +12,54 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+/**
+ * Controller responsável pelo gerenciamento dos endpoints
+ * relacionados à entidade Status.
+ *
+ * <p>Disponibiliza operações de cadastro, listagem,
+ * busca, atualização e remoção de status.</p>
+ *
+ * @author André
+ * @since 1.0
+ */
 @Tag(name = "ENDPOINTS da entidade STATUS")
 @RequestMapping("/status")
 @RestController
 @RequiredArgsConstructor
 public class StatusController {
-
+    /**
+     * Serviço responsável pelas regras de negócio da entidade Status.
+     */
     private final StatusService statusService;
-
+    /**
+     * Realiza o cadastro de um novo status.
+     *
+     * @param statusRequest dados do status a ser cadastrado
+     * @return status criado
+     */
     @Operation(description = "ENDPOINT responsável pela criação de Status")
     @PostMapping
     public ResponseEntity<StatusResponse> addStatus(@Valid @RequestBody StatusRequest statusRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(statusService.createStatus(statusRequest));
     }
-
+    /**
+     * Lista todos os status cadastrados.
+     *
+     * @return lista de status
+     */
     @Operation(description = "ENDPOINT responsável pela listagem de todos Status")
     @GetMapping
     public ResponseEntity<List<StatusResponse>> listStatus () {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(statusService.findAllStatus());
     }
-
+    /**
+     * Busca um status pelo identificador.
+     *
+     * @param id identificador do status
+     * @return status encontrado
+     */
     @Operation(description = "ENDPOINT responsável pela listagem de Status por id")
     @GetMapping("/{id}")
     public ResponseEntity<StatusResponse> findStatusById (@PathVariable Long id) {
@@ -49,13 +74,25 @@ public class StatusController {
                 .body(statusService.findStatusByName(statusName));
     }
 
+    /**
+     * Atualiza os dados de um status existente.
+     *
+     * @param id identificador do status
+     * @param statusRequest novos dados do status
+     * @return status atualizado
+     */
     @Operation(description = "ENDPOINT responsável pela atualização de Status")
     @PutMapping("/{id}")
     public ResponseEntity<StatusResponse> editStatus (@PathVariable Long id, @Valid @RequestBody StatusRequest statusRequest) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(statusService.editStatus(id, statusRequest));
     }
-
+    /**
+     * Remove um status pelo identificador.
+     *
+     * @param id identificador do status
+     * @return resposta sem conteúdo
+     */
     @Operation(description = "ENDPOINT responsável pelo delete de Status")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStatus (@PathVariable Long id) {

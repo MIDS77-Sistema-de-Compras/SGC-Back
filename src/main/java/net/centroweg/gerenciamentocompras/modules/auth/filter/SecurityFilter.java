@@ -1,14 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.auth.filter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.auth.domain.exception.InvalidTokenException;
-import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
-import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +10,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import java.io.IOException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.exception.InvalidTokenException;
+import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
+import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -63,10 +63,16 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private String extractJwt(HttpServletRequest request) {
-        String jwtHeader = request.getHeader("Authorization");
+        Cookie [] cookies = request.getCookies();
 
-        if (jwtHeader == null || !jwtHeader.startsWith("Bearer ")) return null;
+        if (cookies == null) return null;
 
-        return jwtHeader.substring(7);
+        for(Cookie cookie: cookies){
+            if("jwt".equals(cookie.getName())){
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 }

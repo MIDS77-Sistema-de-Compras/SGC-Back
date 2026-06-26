@@ -10,16 +10,31 @@ import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.MeasurementUnitResponse;
 import net.centroweg.gerenciamentocompras.modules.product.service.mapper.MeasurementUnitMapper;
 
+/**
+ * Caso de uso responsável pela listagem de unidades de medida.
+ *
+ * @author Ana Beatriz de Oliveira Ribeiro
+ * @since 2026
+ */
 @Service
 @RequiredArgsConstructor
 public class ReadMeasurementUnit {
-    
+
     private final MeasurementUnitRepository measurementUnitRepository;
     private final MeasurementUnitMapper measurementUnitMapper;
 
-    public List<MeasurementUnitResponse> readMeasurementUnit(){
-        List<MeasurementUnit> measurementUnits = measurementUnitRepository.findAll();
-        return measurementUnits.stream().map(measurementUnitMapper::toResponse).toList();
-    }
+    /**
+     * Recupera todas as unidades de medida cadastradas.
+     *
+     * @return Lista contendo todas as unidades de medida encontradas.
+     */
+    public List<MeasurementUnitResponse> readMeasurementUnit() {
 
+        List<MeasurementUnit> measurementUnits =
+            measurementUnitRepository.findAll();
+
+        return measurementUnits.stream()
+            .map(measurementUnitMapper::toResponse)
+            .toList();
+    }
 }

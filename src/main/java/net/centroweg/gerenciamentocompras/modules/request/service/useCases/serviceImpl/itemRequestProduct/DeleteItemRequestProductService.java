@@ -3,9 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serv
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.ItemRequestProductRepository;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
 import org.springframework.stereotype.Service;
 
 @Service

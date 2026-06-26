@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface AuthPublicApi {
 
     Optional<User> findByEmailOrCpf(String email, String cpf);
+    Boolean existsByEmail(String email);
 }

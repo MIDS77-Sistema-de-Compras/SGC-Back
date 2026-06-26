@@ -4,19 +4,17 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.SectorRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.SectorRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email.NotificationEmailService;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
-import net.centroweg.gerenciamentocompras.modules.notification.presentation.controller.NotificationController;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.StatusRepository;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProvisionController;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -24,25 +22,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
-import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -113,15 +110,16 @@ public class NotificationIntegrationTest {
         userRepository.deleteAll();
 
         user = userRepository.save(
-                new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true, null)
+                new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true)
         );
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Sector sector = sectorRepository.save(new Sector("Aprendizagem Industrial"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
-        crBranch = crBranchRepository.save(new CrBranch(branch, cr, user));
+        crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
 
         waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
+        statusRepository.save(new Status("EM_ANDAMENTO", "Solicitação em andamento"));
 
         request = requestRepository.save(new Request(crBranch, waitingStatus));
     }
@@ -136,6 +134,14 @@ public class NotificationIntegrationTest {
         sectorRepository.deleteAll();
         branchRepository.deleteAll();
         userRepository.deleteAll();
+    }
+
+    private UsernamePasswordAuthenticationToken authAs(User u) {
+        return new UsernamePasswordAuthenticationToken(
+                new net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal(u),
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+        );
     }
 
     private Notification criarNotificacao(String title, String message) {
@@ -201,11 +207,13 @@ public class NotificationIntegrationTest {
     @DisplayName("[Integração] Deve gerar notificação ao criar uma solicitação (RN-NOT02)")
     void deveGerarNotificacaoAoCriarSolicitacao() throws Exception {
         mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(user)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "Aguardando aprovação"
+                                    "statusName": "Aguardando aprovação",
+                                    "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isCreated());
@@ -220,11 +228,13 @@ public class NotificationIntegrationTest {
         statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
 
         String response = mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(user)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "Aguardando aprovação"
+                                    "statusName": "Aguardando aprovação",
+                                    "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isCreated())
@@ -235,11 +245,13 @@ public class NotificationIntegrationTest {
         Long requestId = objectMapper.readTree(response).get("id").asLong();
 
         mockMvc.perform(put("/requests/{id}", requestId)
+                        .with(authentication(authAs(user)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "Em atendimento"
+                                    "statusName": "Em atendimento",
+                                    "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isOk());

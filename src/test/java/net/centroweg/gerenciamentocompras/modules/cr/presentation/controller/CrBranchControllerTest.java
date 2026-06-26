@@ -3,9 +3,9 @@ package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrBranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -179,16 +180,16 @@ class CrBranchControllerTest {
         mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), user.getId())
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.responsibleUserName").value("João"));
+                .andExpect(jsonPath("$.responsibleUsersName[0]").value("João"));
     }
 
     @Test
     void shouldRemoveResponsible() throws Exception {
-        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, user));
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
 
         mockMvc.perform(delete("/cr-branches/{crBranchId}/responsible", saved.getId())
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.responsibleUserName").isEmpty());
+                .andExpect(jsonPath("$.responsibleUsersName").isEmpty());
     }
 }

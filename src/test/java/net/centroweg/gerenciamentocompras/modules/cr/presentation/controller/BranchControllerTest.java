@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.BranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ class BranchControllerTest {
 
     @Test
     void shouldCreateBranch() throws Exception {
-        mockMvc.perform(post("/branchs")
+        mockMvc.perform(post("/branches")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"Filial Centro\"}"))
@@ -57,7 +57,7 @@ class BranchControllerTest {
         branchRepository.save(new Branch("Filial Norte"));
         branchRepository.save(new Branch("Filial Sul"));
 
-        mockMvc.perform(get("/branchs"))
+        mockMvc.perform(get("/branches"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
     }
@@ -66,7 +66,7 @@ class BranchControllerTest {
     void shouldFindBranchById() throws Exception {
         Branch saved = branchRepository.save(new Branch("Filial Leste"));
 
-        mockMvc.perform(get("/branchs/{id}", saved.getId()))
+        mockMvc.perform(get("/branches/{id}", saved.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(saved.getId()))
                 .andExpect(jsonPath("$.name").value("Filial Leste"));
@@ -76,7 +76,7 @@ class BranchControllerTest {
     void shouldUpdateBranch() throws Exception {
         Branch saved = branchRepository.save(new Branch("Filial Antiga"));
 
-        mockMvc.perform(put("/branchs/{id}", saved.getId())
+        mockMvc.perform(put("/branches/{id}", saved.getId())
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"Filial Nova\"}"))
@@ -89,7 +89,7 @@ class BranchControllerTest {
     void shouldDeleteBranch() throws Exception {
         Branch saved = branchRepository.save(new Branch("Filial a Deletar"));
 
-        mockMvc.perform(delete("/branchs/{id}", saved.getId())
+        mockMvc.perform(delete("/branches/{id}", saved.getId())
                         .with(csrf()))
                 .andExpect(status().isNoContent());
 

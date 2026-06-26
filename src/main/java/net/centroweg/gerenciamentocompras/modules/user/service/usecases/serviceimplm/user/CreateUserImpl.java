@@ -14,6 +14,10 @@ import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Criação dos usuários
+ */
+
 @Service
 @RequiredArgsConstructor
 public class CreateUserImpl {
@@ -21,9 +25,17 @@ public class CreateUserImpl {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UserMapper mapper;
+    private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final CpfHasher cpfHasher;
     private final UniquenessValidator uniquenessValidator;
+
+    /**
+     * Método que cria o usuário
+     * @param user DTO que traz as informações do usuário
+     * @return usuário já criado
+     */
 
     public UserResponse createUser(CreateUser user){
         uniquenessValidator.checkInfo(user);
@@ -34,7 +46,7 @@ public class CreateUserImpl {
                 .orElseThrow(() -> new UserNotFoundException(user.nameRole()));
 
         CreateUser userWithEncryptedPassword = new CreateUser(
-                user.name(), user.email(), hashedCpf, encryptedPassword, user.extensionNumber(), user.active(), user.nameRole(), user.profilePicture()
+                user.name(), user.email(), hashedCpf, encryptedPassword, user.extensionNumber(), user.active(), user.nameRole()
         );
 
         if(userWithEncryptedPassword.nameRole().equals("ADMIN")){

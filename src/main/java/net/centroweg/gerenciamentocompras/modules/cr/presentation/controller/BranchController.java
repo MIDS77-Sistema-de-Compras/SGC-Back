@@ -12,15 +12,28 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST responsável pelos endpoints de gerenciamento de
+ * {@link net.centroweg.gerenciamentocompras.modules.cr.domain.Branch}.
+ *
+ * <p>Todas as rotas são prefixadas com {@code /branchs}.</p>
+ *
+ * @author Leandro
+ */
 @Tag(name = "ENDPOINTS da entidade BRANCH")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/branchs")
+@RequestMapping("/branches")
 public class BranchController {
 
     private final BranchService branchService;
 
-
+    /**
+     * Cria uma nova branch.
+     *
+     * @param branchRequest corpo da requisição com os dados da branch
+     * @return HTTP 201 com a branch criada no corpo da resposta
+     */
     @Operation(description = "ENDPOINT responsável pela criação de Branch")
     @PostMapping
     public ResponseEntity<BranchResponse> create(@RequestBody BranchRequest branchRequest){
@@ -28,6 +41,11 @@ public class BranchController {
                 .body(branchService.create(branchRequest));
     }
 
+    /**
+     * Lista todas as branches cadastradas.
+     *
+     * @return HTTP 200 com a lista de branches no corpo da resposta
+     */
     @Operation(description = "ENDPOINT responsável pela listagem de todos Branch")
     @GetMapping
     public ResponseEntity<List<BranchResponse>> listAll(){
@@ -35,7 +53,12 @@ public class BranchController {
                 .body(branchService.findAll());
     }
 
-
+    /**
+     * Busca uma branch pelo seu identificador.
+     *
+     * @param id identificador da branch
+     * @return HTTP 200 com a branch encontrada no corpo da resposta
+     */
     @Operation(description = "ENDPOINT responsável pela listagem de Branch por id")
     @GetMapping("/{id}")
     public ResponseEntity<BranchResponse> findById(@PathVariable Long id){
@@ -43,7 +66,13 @@ public class BranchController {
                 .body(branchService.findById(id));
     }
 
-
+    /**
+     * Atualiza os dados de uma branch existente.
+     *
+     * @param id            identificador da branch a ser atualizada
+     * @param branchRequest corpo da requisição com os novos dados
+     * @return HTTP 200 com a branch atualizada no corpo da resposta
+     */
     @Operation(description = "ENDPOINT responsável pela atualização de Branch")
     @PutMapping("/{id}")
     public ResponseEntity<BranchResponse> update(@PathVariable Long id, @RequestBody BranchRequest branchRequest){
@@ -51,7 +80,12 @@ public class BranchController {
                 .body(branchService.update(id,branchRequest));
     }
 
-
+    /**
+     * Remove uma branch pelo seu identificador.
+     *
+     * @param id identificador da branch a ser removida
+     * @return HTTP 204 com mensagem de confirmação no corpo da resposta
+     */
     @Operation(description = "ENDPOINT responsável pelo delete de Branch")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id){

@@ -116,7 +116,7 @@ class FindAllRequestServiceImplTest {
                 null,
                 null,
                 null,
-                List.of()
+                null
         );
     }
 

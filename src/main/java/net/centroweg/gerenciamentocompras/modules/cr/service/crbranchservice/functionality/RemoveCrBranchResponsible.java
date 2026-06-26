@@ -29,7 +29,7 @@ public class RemoveCrBranchResponsible {
         CrBranch crBranch = crBranchRepository.findById(crBranchId)
                 .orElseThrow(() -> new CrBranchNotFoundException(crBranchId));
 
-        crBranch.setResponsibleUser(null);
+        crBranch.setResponsibleUsers(null);
         crBranchRepository.save(crBranch);
         return crBranchMapper.toResponse(crBranch);
     }

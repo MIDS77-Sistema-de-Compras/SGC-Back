@@ -9,6 +9,8 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapp
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.*;
@@ -33,13 +35,13 @@ public class FindAllCrBranch {
     ) {
         CrBranchFilterRequest safeFilter = filter != null
                 ? filter
-                : new CrBranchFilterRequest(null, null, null);
+                : new CrBranchFilterRequest(null, null, Collections.emptyList());
 
         Specification<CrBranch> specification =
                 Specification.allOf(
                         crCodeContain(safeFilter.crCode()),
                         crNameContain(safeFilter.crName()),
-                        crResponsibleNameContain(safeFilter.responsibleName())
+                        crResponsibleNameIn(safeFilter.responsibleName())
                 );
 
         return crBranchRepository.findAll(specification)

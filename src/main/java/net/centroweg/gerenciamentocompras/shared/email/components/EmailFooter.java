@@ -2,6 +2,16 @@ package net.centroweg.gerenciamentocompras.shared.email.components;
 
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 
+/**
+ * @deprecated O componente será implementado diretamente no corpo padrão do email assim que possível.
+ * 
+ * Contém o HTML necessário para criação do footer estilizado
+ * 
+ * Deve sempre ser utilizado por questões de padronização
+ * 
+ * @author gabrielEFagundes
+ * @version 0.1.0
+ */
 public record EmailFooter() implements EmailBuilder {
     @Override
     public String render(){

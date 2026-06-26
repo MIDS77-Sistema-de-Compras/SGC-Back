@@ -104,7 +104,8 @@ class RequestControllerTest {
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "EM_ANDAMENTO"
+                                    "statusName": "EM_ANDAMENTO",
+                                    "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isCreated())
@@ -151,7 +152,8 @@ class RequestControllerTest {
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "EM_ANDAMENTO"
+                                    "statusName": "EM_ANDAMENTO",
+                                    "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isOk())

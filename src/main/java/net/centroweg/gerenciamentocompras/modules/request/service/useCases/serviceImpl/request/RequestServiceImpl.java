@@ -29,8 +29,8 @@ public class RequestServiceImpl implements RequestService {
     private final UploadRequestAttachmentServiceImpl uploadRequestAttachmentService;
 
     @Override
-    public RequestResponse createRequest(RequestRequest request){
-        return createRequestService.createRequest(request);
+    public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
+        return createRequestService.createRequest(request, userPrincipal);
     }
 
     @Override

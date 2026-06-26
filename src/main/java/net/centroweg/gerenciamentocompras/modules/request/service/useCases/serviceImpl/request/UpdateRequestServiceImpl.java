@@ -13,7 +13,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Reque
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
@@ -35,7 +35,7 @@ public class UpdateRequestServiceImpl {
     private final CurrentUserService currentUserService;
     private final RequestBusinessRuleValidator validator;
 
-    public RequestResponse updateRequest(RequestRequest requestDTO, Long id) {
+    public RequestResponse updateRequest(UpdateRequestRequest requestDTO, Long id){
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
 

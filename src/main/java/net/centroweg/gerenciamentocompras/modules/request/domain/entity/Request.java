@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,12 +28,10 @@ public class Request {
     @Column(nullable = false, updatable = false)
     private LocalDateTime requestDate;
 
-    @ManyToOne
-    @JoinColumn(name = "cr_branch_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private CrBranch crBranch;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Status status;
 
     @Column(nullable = false)
@@ -41,6 +40,7 @@ public class Request {
     @Column(nullable = false)
     private Boolean active = true;
 
+    @BatchSize(size = 30)
     @ManyToMany
     @JoinTable(
             name = "request_users",
@@ -57,6 +57,7 @@ public class Request {
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemRequestProduct> itemRequestProducts = new ArrayList<>();
 
+    @BatchSize(size = 30)
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RequestAttachment> attachments = new ArrayList<>();
 

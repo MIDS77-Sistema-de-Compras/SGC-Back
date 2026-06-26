@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -22,6 +23,7 @@ public class FindAllByUser {
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
 
+    @Transactional(readOnly = true)
     public List<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal) {
         Specification<Request> specification = Specification
                 .where(createdByUser(userPrincipal.getUsername()))

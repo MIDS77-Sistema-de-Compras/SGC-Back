@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
@@ -20,6 +21,7 @@ public class FindAllRequestServiceImpl {
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
 
+    @Transactional(readOnly = true)
     public List<RequestResponse> findAllRequest(RequestFilterRequest filter) {
         Specification<Request> specification = Specification.allOf(
                 crCodeContain(filter.crCode()),

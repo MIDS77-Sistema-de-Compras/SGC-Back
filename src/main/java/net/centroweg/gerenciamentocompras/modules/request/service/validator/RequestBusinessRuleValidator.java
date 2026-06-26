@@ -1,10 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.validator;
 
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyInactiveException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestCannotBeInactivatedException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotEditableException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.*;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +23,8 @@ public class RequestBusinessRuleValidator {
             "cancelado"
     );
 
+    private static final String ADMIN_ROLE = "Administrador";
+
     public void validateCanInactivate(Request request, User currentUser) {
         validateRequestIsActive(request);
         validateUserIsCreator(request, currentUser);
@@ -42,6 +41,22 @@ public class RequestBusinessRuleValidator {
         if (isOperationalApprovedOrAfter(request)) {
             throw new RequestNotEditableException();
         }
+    }
+
+    public void validateCrCanBeChanged(Request request, User currentUser) {
+        if (normalize(request.getStatus().getName()).equals("em analise")) {
+            return;
+        }
+
+        String roleName = currentUser.getRole() != null
+                ? normalize(currentUser.getRole().getName())
+                : "";
+
+        if (roleName.equals(normalize(ADMIN_ROLE))) {
+            return;
+        }
+
+        throw new CrNotEditableException();
     }
 
     private void validateRequestIsActive(Request request) {
@@ -62,13 +77,11 @@ public class RequestBusinessRuleValidator {
 
     private boolean isSupervisorApprovedOrAfter(Request request) {
         String statusName = normalize(request.getStatus().getName());
-
         return SUPERVISOR_APPROVED_OR_AFTER.contains(statusName);
     }
 
     private boolean isOperationalApprovedOrAfter(Request request) {
         String statusName = normalize(request.getStatus().getName());
-
         return OPERATIONAL_APPROVED_OR_AFTER.contains(statusName);
     }
 
@@ -76,7 +89,6 @@ public class RequestBusinessRuleValidator {
         if (value == null) {
             return "";
         }
-
         return value.trim().toLowerCase();
     }
 

@@ -9,7 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.request.domain.intfr.StatusIntrf;
+import org.hibernate.annotations.BatchSize;
 
+
+
+@BatchSize(size = 30)
 @Entity
 @Table(name = "status")
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor

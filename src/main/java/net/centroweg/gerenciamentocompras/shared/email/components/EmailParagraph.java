@@ -2,7 +2,16 @@ package net.centroweg.gerenciamentocompras.shared.email.components;
 
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 
-// I've made this a generic so you can parse strings, numbers, whatever you want to format into the email
+/**
+ * Contém o HTML necessário para criação de um parágrafo no email.
+ * 
+ * @param content Conteúdo do email
+ * @param hexColor Cor do parágrafo
+ * @param fontSize Tamanho da fonte do parágrafo
+ * 
+ * @author gabrielEFagundes
+ * @version 0.1.0
+ */
 public record EmailParagraph(String content, String hexColor, int fontSize) implements EmailBuilder {
 
     @Override

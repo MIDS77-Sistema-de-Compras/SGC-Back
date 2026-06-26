@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 /**
  * Entidade que representa uma filial (branch) no sistema de gerenciamento de compras.
@@ -13,6 +14,7 @@ import lombok.*;
  */
 @Setter
 @Getter
+@BatchSize(size = 30)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

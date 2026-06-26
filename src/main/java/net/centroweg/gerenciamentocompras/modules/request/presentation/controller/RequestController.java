@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
@@ -33,8 +34,8 @@ public class RequestController {
 
     @Operation(description = "ENDPOINT responsável pela criação de Request")
     @PostMapping
-    public ResponseEntity<RequestResponse> createRequest(@Valid @RequestBody RequestRequest request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request));
+    public ResponseEntity<RequestResponse> createRequest(@Valid @RequestBody RequestRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request, userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos Request")
@@ -71,7 +72,7 @@ public class RequestController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de Request")
     @PutMapping("/{id}")
-    public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody RequestRequest request, @PathVariable Long id){
+    public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody UpdateRequestRequest request, @PathVariable Long id){
         return ResponseEntity.ok(requestService.updateRequest(request, id));
     }
 
@@ -117,4 +118,23 @@ public class RequestController {
                 .status(HttpStatus.CREATED)
                 .body(requestService.uploadAttachments(id, files));
     }
+
+    @GetMapping("/me/{id}")
+    public ResponseEntity<RequestResponse> findRequestByIdOwnUser(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        return ResponseEntity.ok(requestService.findRequestByIdOwnUser(id, userPrincipal));
+    }
+
+    @PutMapping("/me/{id}")
+    public ResponseEntity<RequestResponse> updateRequestByOwnUser(@Valid @RequestBody RequestRequest request, @PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        return ResponseEntity.ok(requestService.updateRequestByOwnUser(request, id, userPrincipal));
+    }
+
+    @DeleteMapping("/me/{id}")
+    public ResponseEntity<Void> delete(@PathVariable long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        requestService.deleteRequestByOwnUser(id, userPrincipal);
+        return ResponseEntity.status(204).build();
+    }
+
+
+
 }

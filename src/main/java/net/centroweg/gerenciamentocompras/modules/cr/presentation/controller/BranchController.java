@@ -23,7 +23,7 @@ import java.util.List;
 @Tag(name = "ENDPOINTS da entidade BRANCH")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/branchs")
+@RequestMapping("/branches")
 public class BranchController {
 
     private final BranchService branchService;

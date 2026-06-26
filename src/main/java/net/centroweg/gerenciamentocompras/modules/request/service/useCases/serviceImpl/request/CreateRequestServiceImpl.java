@@ -21,6 +21,7 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,17 +35,25 @@ public class CreateRequestServiceImpl {
     private final RequestMapper requestMapper;
     private final NotificationService notificationService;
 
-    public RequestResponse createRequest(RequestRequest request){
-        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
-                .orElseThrow(() -> new StatusNotFoundException());
+    public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
+
+        Status status = statusRepository.findByNameIgnoreCase("EM_ANDAMENTO")
+                .orElseThrow(StatusNotFoundException::new);
 
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
-        User requester = getLoggedUser();
+        User requester = userRepository.findByEmail(userPrincipal.getUsername())
+                .orElseThrow(UserNotFoundException::new);
+
+        List<User> assignedUsers = new ArrayList<>();
+        assignedUsers.add(requester);
+        request.userIds().forEach(userId ->
+                userRepository.findById(userId).ifPresent(assignedUsers::add)
+        );
 
         Request requestToSave = requestMapper.toEntity(request, crBranch, status);
-        requestToSave.setCreatedByUsers(List.of(requester));
+        requestToSave.setCreatedByUsers(assignedUsers);
 
         Request savedRequest = requestRepository.save(requestToSave);
 
@@ -61,10 +70,4 @@ public class CreateRequestServiceImpl {
         return requestMapper.toDTO(savedRequest);
     }
 
-    private User getLoggedUser() {
-        UserPrincipal userPrincipal =
-                (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByEmail(userPrincipal.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(userPrincipal.getUsername()));
-    }
 }

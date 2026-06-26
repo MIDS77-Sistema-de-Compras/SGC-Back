@@ -5,6 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class RequestServiceImpl implements RequestService {
     private final FindRequestByIdServiceImpl findRequestByIdService;
     private final UpdateFeedbackServiceImpl updateFeedbackService;
     private final FindAllByUser findAllByUser;
+    private final DeleteRequestByOwnUser deleteRequestByOwnUser;
+    private final UpdateRequestByOwnUser updateRequestByOwnUser;
+    private final FindRequestByIdOwnUser findRequestByIdOwnUser;
 
 
     private final UploadRequestAttachmentServiceImpl uploadRequestAttachmentService;
@@ -44,7 +48,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public RequestResponse updateRequest(RequestRequest request, Long id){
+    public RequestResponse updateRequest(UpdateRequestRequest request, Long id){
         return updateRequestService.updateRequest(request, id);
     }
 
@@ -72,6 +76,21 @@ public class RequestServiceImpl implements RequestService {
                 requestId,
                 files
         );
+    }
+
+    @Override
+    public void deleteRequestByOwnUser(long id, UserPrincipal userPrincipal){
+        this.deleteRequestByOwnUser.deleteRequestByOwnUser(id, userPrincipal);
+    }
+
+    @Override
+    public RequestResponse updateRequestByOwnUser(RequestRequest request, Long id, UserPrincipal userPrincipal){
+        return this.updateRequestByOwnUser.updateRequest(request, id, userPrincipal);
+    }
+
+    @Override
+    public RequestResponse findRequestByIdOwnUser(Long id, UserPrincipal userPrincipal){
+        return this.findRequestByIdOwnUser.findRequestByIdOwnUser(id, userPrincipal);
     }
 
 }

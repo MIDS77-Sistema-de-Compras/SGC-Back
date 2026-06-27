@@ -12,10 +12,17 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 import java.util.Locale;
 
-
+/**
+ * Classe utilitária responsável por fornecer Specifications utilizadas na construção dinâmica de consultas da entidade {@link CrBranch}.
+ */
 @NoArgsConstructor
 public final class CrBranchSpecifications {
 
+    /**
+     * Cria uma Specification para filtrar Branch de CR pelo código do CR.
+     * @param crCode código do CR utilizado na pesquisa.
+     * @return Specification correspondente ao filtro informado ou unrestricted caso o parâmetro seja nulo ou vazio.
+     */
     public static Specification<CrBranch> crCodeContain(String crCode){
         if(isBlank(crCode)){
             return Specification.unrestricted();
@@ -36,6 +43,11 @@ public final class CrBranchSpecifications {
         };
     }
 
+    /**
+     * Cria uma Specification para filtrar Branch de CR pelo nome do CR.
+     * @param crName nome do CR utilizado na pesquisa.
+     * @return Specification correspondente ao filtro informado ou unrestricted caso o parâmetro seja nulo ou vazio.
+     */
     public static Specification<CrBranch> crNameContain(String crName){
         if(isBlank(crName)){
             return Specification.unrestricted();
@@ -56,6 +68,11 @@ public final class CrBranchSpecifications {
         };
     }
 
+    /**
+     * Cria uma Specification para filtrar Branch de CR pelos responsáveis.
+     * @param responsibleNames lista de nomes dos responsáveis.
+     * @return Specification correspondente ao filtro informado ou unrestricted caso a lista seja nulo ou vazio.
+     */
     public static Specification<CrBranch> crResponsibleNameIn(List<String> responsibleNames){
 
         if (responsibleNames == null || responsibleNames.isEmpty()){
@@ -84,12 +101,20 @@ public final class CrBranchSpecifications {
         };
     }
 
-
-
+    /**
+     * Verifica se a String é nula ou contém apenas espaços em branco.
+     * @param value valor a ser verificado.
+     * @return booleano, caso seja vazio ou nulo(true) e se tiver algo escrito(false).
+     */
     private static boolean isBlank(String value) {
         return value == null || value.isBlank();
     }
 
+    /**
+     * Converte um texto para o padrão utilizado em consultas do tipo {@code LIKE}, ignorando diferenças em relação ao tamanho das letras.
+     * @param value texto informado pelo usuário.
+     * @return texto formatado para pesquisas utilizando o {@code LIKE}.
+     */
     private static String containsIgnoreCase(String value) {
         return "%" + value.trim().toLowerCase(Locale.ROOT) + "%";
     }

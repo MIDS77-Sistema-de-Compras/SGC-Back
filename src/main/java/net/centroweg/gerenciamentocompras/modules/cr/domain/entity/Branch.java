@@ -5,12 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 /**
- * Entidade que representa uma filial (branch) no sistema de gerenciamento de compras.
- *
- * <p>Uma branch é uma unidade organizacional que pode ser associada a um ou mais
- * Centros de Resultado (CR) por meio da entidade {@code CrBranch}.</p>
- *
- * @author Leandro
+ * Entidade que representa uma Branch(Filial) no sistema de gerenciamento de compras.
  */
 @Setter
 @Getter
@@ -21,22 +16,21 @@ import org.hibernate.annotations.BatchSize;
 public class Branch {
 
     /**
-     * Identificador único da branch, gerado automaticamente pelo banco de dados.
+     * Identificador único da Branch, gerado automaticamente pelo banco de dados.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Nome da branch. Não pode ser nulo.
+     * Nome da Branch, não pode ser nulo.
      */
     @Column(nullable = false)
     private String name;
 
     /**
-     * Construtor utilizado para criar uma nova branch informando apenas o nome.
-     *
-     * @param name nome da branch
+     * Construtor utilizado para criar uma nova Branch informando apenas o nome.
+     * @param name nome da branch.
      */
     public Branch(String name) {
         this.name = name;

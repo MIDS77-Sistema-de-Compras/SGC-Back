@@ -15,12 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 /**
- * Controller REST responsável pelos endpoints de gerenciamento de Centros de Resultado (CR).
- * <p>
- * Expostos sob o caminho base {@code /cr}.
- * </p>
+ * Controlador REST responsável pelos endpoints de gerenciamento de Centros de Responsabilidade(CR).
  */
 @Tag(name = "ENDPOINTS da entidade CR")
 @RestController
@@ -31,10 +27,9 @@ public class CrController {
     private final CrService crService;
 
     /**
-     * Cria um novo Centro de Resultado.
-     *
-     * @param dto dados do CR a ser criado
-     * @return {@link CrResponse} com os dados do CR criado e status HTTP 201
+     * Criar um novo CR.
+     * @param dto corpo da requisição com os dados de criação.
+     * @return status HTTP 201 e CR criado no corpo da resposta.
      */
     @Operation(description = "ENDPOINT responsável pela criação de CR")
     @PostMapping
@@ -44,9 +39,8 @@ public class CrController {
     }
 
     /**
-     * Lista todos os Centros de Resultado cadastrados.
-     *
-     * @return lista de {@link CrResponse} e status HTTP 200
+     * Listar todos os CRs cadastrados.
+     * @return status HTTP 200 e uma lista de todos os CRs encontrados no corpo da resposta.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todos CR")
     @GetMapping
@@ -56,10 +50,9 @@ public class CrController {
     }
 
     /**
-     * Busca um Centro de Resultado pelo seu identificador.
-     *
-     * @param id identificador do CR
-     * @return {@link CrResponse} com os dados do CR e status HTTP 200
+     * Buscar um CR pelo seu identificador.
+     * @param id identificador do CR para pesquisa.
+     * @return status HTTP 200 e CR encontrado no corpo da resposta.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR por id")
     @GetMapping("{id}")
@@ -69,11 +62,10 @@ public class CrController {
     }
 
     /**
-     * Atualiza os dados de um Centro de Resultado existente.
-     *
-     * @param id  identificador do CR a ser atualizado
-     * @param dto novos dados do CR
-     * @return {@link CrResponse} com os dados atualizados e status HTTP 200
+     * Atualizar os dados de um CR existente.
+     * @param id  identificador do CR a ser atualizado.
+     * @param dto requisição com novos dados.
+     * @return status HTTP 200 e CR com dados atualizados no corpo da resposta.
      */
     @Operation(description = "ENDPOINT responsável pela atualização de CR")
     @PutMapping("{id}")
@@ -83,10 +75,9 @@ public class CrController {
     }
 
     /**
-     * Remove um Centro de Resultado pelo seu identificador.
-     *
-     * @param id identificador do CR a ser removido
-     * @return {@link MessageDTO} com mensagem de confirmação e status HTTP 200
+     * Remover um CR pelo seu identificador.
+     * @param id identificador do CR a ser removido.
+     * @return status HTTP 200 e mesagem de confirmação no corpo da resposta.
      */
     @Operation(description = "ENDPOINT responsável pelo delete de CR")
     @DeleteMapping("{id}")

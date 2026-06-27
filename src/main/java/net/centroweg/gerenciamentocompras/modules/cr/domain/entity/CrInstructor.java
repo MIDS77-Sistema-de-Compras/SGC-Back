@@ -25,17 +25,30 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 @NoArgsConstructor
 @Setter
 @Getter
+
+/**
+ * Enidade que víncula um docente a uma CR-Branch.
+ */
 public class CrInstructor {
-    
+
+    /**
+     * Identificador único da CR-Instructor.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    /**
+     * Relacionamento com Usuários, vários usuários pertencem a um CR-Branch.
+     */
     @OneToMany
     @JoinColumn(name="instructor_cr_branch_id")
     @NonNull
     private List<User> instructors;
 
+    /**
+     * Relacionamento com CR-Branch, uma CR-Branch tem vários docentes.
+     */
     @ManyToOne
     @JoinColumn(name="cr_branch")
     @NonNull

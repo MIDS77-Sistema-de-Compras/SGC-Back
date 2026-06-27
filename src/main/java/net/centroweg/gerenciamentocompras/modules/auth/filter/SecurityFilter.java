@@ -1,15 +1,5 @@
 package net.centroweg.gerenciamentocompras.modules.auth.filter;
 
-import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -18,12 +8,35 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.exception.InvalidTokenException;
 import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
 import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import java.io.IOException;
+
+/**
+ * Essa classe é o filtro JWT da aplicação, interceptando todas as requisições antes de chegarem ao sistema e verificando a permissão do usuário.
+ */
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
+    /**
+     * Serviço responsável por validar tokens.
+     */
     private final JwtService jwtService;
+
+    /**
+     * Serviço responsável por recuperar os dados do usuário autenticado.
+     */
     private final CustomUserDetailsService customUserDetailsService;
+
+    /**
+     * Tratamento de excessões lançadas durante o processo de autenticação.
+     */
     private final HandlerExceptionResolver resolver;
 
     public SecurityFilter(
@@ -35,6 +48,14 @@ public class SecurityFilter extends OncePerRequestFilter {
         this.resolver = resolver;
     }
 
+    /**
+     * Método que executa o processo de autenticação antes de cada requisição HTTP.
+     * @param request requisição HTTP recebida.
+     * @param response resposta HTTP que será enviada ao cliente.
+     * @param filterChain filtros responsáveis por dar continuidade ao processamento da requisição.
+     * @throws ServletException caso ocorra algum erro relacionado ao processamento do servlet.
+     * @throws IOException caso ocorra algum erro de entrada ou saída.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -62,6 +83,11 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     }
 
+    /**
+     * Procura o cookie com o nome JWT na requisição HTTP e retorna seu valor.
+     * @param request requisição HTTP recebida.
+     * @return token JWT encontrado no cookie ou {@code null} caso o cookie não exista.
+     */
     private String extractJwt(HttpServletRequest request) {
         Cookie [] cookies = request.getCookies();
 

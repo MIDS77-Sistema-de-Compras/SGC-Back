@@ -6,8 +6,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repositório de acesso a dados da entidade {@link Sector}.
+ */
 @Repository
 public interface SectorRepository extends JpaRepository<Sector, Long> {
 
+    /**
+     * Busca um Sector pelo nome.
+     * @param name nome do sector.
+     * @return {@link Optional} com o sector encontrado, caso exista.
+     */
     Optional<Sector> findByName(String name);
 }

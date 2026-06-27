@@ -4,9 +4,7 @@ import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
 /**
- * Lançada ao tentar vincular um CR a uma filial quando esse vínculo já existe.
- *
- * <p>Resulta em uma resposta HTTP 409 (Conflict).</p>
+ * Excessão lançada ao tentar vincular um CR a uma filial quando esse vínculo já existe.
  */
 public class CrBranchAlreadyExistsException extends BusinessException {
     public CrBranchAlreadyExistsException() {

@@ -4,9 +4,7 @@ import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
 /**
- * Lançada quando um vínculo CR-filial não é encontrado pelo seu identificador.
- *
- * <p>Resulta em uma resposta HTTP 404 (Not Found).</p>
+ * Excessão lançada quando um vínculo CR-Branch não é encontrado pelo seu identificador.
  */
 public class CrBranchNotFoundException extends BusinessException {
     public CrBranchNotFoundException(Long id) {

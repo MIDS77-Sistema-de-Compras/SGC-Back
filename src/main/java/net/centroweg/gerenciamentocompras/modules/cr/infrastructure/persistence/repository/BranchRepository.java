@@ -5,12 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repositório JPA para a entidade {@link Branch}.
- *
- * <p>Fornece operações CRUD padrão herdadas de {@link JpaRepository},
- * como {@code save}, {@code findById}, {@code findAll} e {@code deleteById}.</p>
- *
- * @author Leandro
+ * Repositório de acesso a dados para a entidade {@link Branch}.
  */
 @Repository
 public interface BranchRepository extends JpaRepository<Branch, Long> {

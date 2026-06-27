@@ -10,28 +10,23 @@ import java.util.Optional;
 
 /**
  * Repositório de acesso a dados para a entidade {@link CrBranch}.
- *
- * <p>Estende {@link JpaRepository}, herdando as operações de CRUD padrão,
- * e define consultas derivadas específicas para os vínculos entre CR e filial.</p>
  */
 
 @Repository
 public interface CrBranchRepository extends JpaRepository<CrBranch, Long>, JpaSpecificationExecutor<CrBranch> {
 
     /**
-     * Busca todos os vínculos CR-filial pertencentes a uma filial.
-     *
-     * @param branchId
-     * @return a lista de vínculos encontrados (vazia se não houver nenhum)
+     * Busca todos os vínculos CR-Branch pertencentes a uma Branch.
+     * @param branchId ID da Branch vinculada ao CR-Branch.
+     * @return a lista de vínculos encontrados, caso não tenha volta nula.
      */
     List<CrBranch> findByBranchId(Long branchId);
 
     /**
-     * Busca um vínculo específico pela combinação de CR e filial.
-     *
-     * @param crId
-     * @param branchId
-     * @return um {@link Optional} com o vínculo, caso exista
+     * Busca um vínculo específico pela combinação de CR e Branch.
+     * @param crId ID da CR vinculada ao CR-Branch.
+     * @param branchId ID da Branch vinculada ao CR-Branch.
+     * @return {@link Optional} com o vínculo, caso exista
      */
     Optional<CrBranch> findByCrIdAndBranchId(Long crId, Long branchId);
 

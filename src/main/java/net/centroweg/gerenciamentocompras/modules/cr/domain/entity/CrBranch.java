@@ -11,7 +11,7 @@ import org.hibernate.annotations.BatchSize;
 import java.util.List;
 
 /**
- * Representa o vínculo entre um Centro de Responsabilidade (CR) e uma filial (Branch).
+ * Entidade que representa o vínculo entre um Centro de Responsabilidade(CR) e uma filial(Branch).
  */
 
 @BatchSize(size = 30)
@@ -23,18 +23,30 @@ import java.util.List;
 @Setter
 public class CrBranch {
 
+    /**
+     * Identificador único da CR-Branch, gerado automaticamente pelo banco de dados.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Relacionamento com a entidade Branch, uma Branch pode ter vários CR-Branch.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
+    /**
+     * Relacionamento com a entidade CR, uma CR pode ter vários CR-Branch.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cr_id")
     private Cr cr;
 
+    /**
+     * Relacionamento com a entidade Usuário, vários usuários podem ter vários CR-Branch.
+     */
     @BatchSize(size = 30)
     @ManyToMany
     @JoinTable(
@@ -44,11 +56,10 @@ public class CrBranch {
     private List<User> responsibleUsers;
 
     /**
-     * Cria um vínculo entre CR e Filial, opcionamlente com um responsável
-     *
-     * @param branch filial associada
-     * @param cr CR associado
-     * @param responsibleUsers usuário/usuários responsável (pode ser nulo)
+     * Construtor utilizado para criar um novo CR-Branch, integrando com os relacionamentos.
+     * @param branch filial associada.
+     * @param cr CR associado.
+     * @param responsibleUsers usuário/os responsável, podendo ser nulo também.
      */
     public CrBranch(Branch branch, Cr cr, List<User> responsibleUsers) {
         this.branch = branch;

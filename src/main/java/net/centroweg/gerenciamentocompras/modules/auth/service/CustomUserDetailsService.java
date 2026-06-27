@@ -11,13 +11,29 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.auth.service.api.AuthPublicApi;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
+/**
+ * Implementação do {@link UserDetailsService} responsável por carregar os dados do usuário durante o processo de autenticação.
+ */
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
+    /**
+     * API responsável pela consulta de usuários.
+     */
     private final AuthPublicApi authPublicApi;
+
+    /**
+     * Componente responsável por gerar o hash do CPF utilizado nas consultas.
+     */
     private final CpfHasher cpfHasher;
 
+    /**
+     * Carrega os dados do usuário a partir do login informado.
+     *  @param login e-mail ou CPF informado pelo usuário.
+     * @return objeto contendo os dados do usuário autenticado.
+     * @throws UsernameNotFoundException caso nenhum usuário seja encontrado.
+     */
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 

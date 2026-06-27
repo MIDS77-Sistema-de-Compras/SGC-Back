@@ -22,6 +22,9 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.cr.service.crinstructor.crinstructorinterface.CrInstructorService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
+/**
+ * Controlador REST responsável pelos endpoints de gerenciamento de CR-Instructors.
+ */
 @RestController
 @RequestMapping("/cr-instructors")
 @RequiredArgsConstructor
@@ -30,6 +33,11 @@ public class CrInstructorController {
     
     private final CrInstructorService crInstructorService;
 
+    /**
+     * Criar um novo CR-Instructor.
+     * @param request corpo da requisição com dados de criação do CR-Instructor.
+     * @return status HTTP 201 e CR-Instructor criado no corpo da resposta.
+     */
     @Operation(description = "ENDPOINT responsável pela criação de CR Instrutor")
     @PostMapping
     public ResponseEntity<CrInstructorResponse> create(@Valid @RequestBody CrInstructorRequest request){
@@ -37,6 +45,10 @@ public class CrInstructorController {
             .body(crInstructorService.create(request));
     }
 
+    /**
+     * Listar CR-Instructors cadastrados.
+     * @return status HTTP 200 e uma lista com todos os CR-Instructor encontrados no corpo da resposta.
+     */
     @Operation(description = "ENDPOINT responsável pela listagem de todos CR Instructor")
     @GetMapping
     public ResponseEntity<List<CrInstructorResponse>> findAll(){
@@ -44,6 +56,11 @@ public class CrInstructorController {
             .body(crInstructorService.findAll());
     }
 
+    /**
+     * Buscar CR-Instructor por identificador único.
+     * @param id identificador do CR-Instructor para pesquisa.
+     * @return status HTTP 200 com CR-Instructor encontrado no corpo da resposta.
+     */
     @Operation(description = "ENDPOINT responsável pela listagem de CR Instructor por id")
     @GetMapping("/{id}")
     public ResponseEntity<CrInstructorResponse> findById(@PathVariable("id") Long id){
@@ -51,6 +68,12 @@ public class CrInstructorController {
             .body(crInstructorService.findById(id));
     }
 
+    /**
+     * Atualizar CR-Instructor pelo identificador único.
+     * @param id identificador do CR-Instructor para atualização.
+     * @param request corpo de requisição com novos dados.
+     * @return status HTTP 200 com CR-Instructor atualizado no corpo da resposta.
+     */
     @Operation(description = "ENDPOINT responsável pela atualização de CR Instructor")
     @PutMapping("/{id}")
     public ResponseEntity<CrInstructorResponse> update(@PathVariable("id") Long id, @Valid @RequestBody CrInstructorRequest request){
@@ -58,6 +81,11 @@ public class CrInstructorController {
             .body(crInstructorService.update(id, request));
     }
 
+    /**
+     * Remover CR-Instructor pelo identificador único.
+     * @param id identificador do CR-Instructor para remoção.
+     * @return status HTTP 200 e mesagem de confirmação no corpo da resposta.
+     */
     @Operation(description = "ENDPOINT responsável pelo delete de CR Instructor")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable("id") Long id){

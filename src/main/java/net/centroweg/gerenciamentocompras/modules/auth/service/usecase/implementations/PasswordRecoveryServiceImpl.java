@@ -25,20 +25,47 @@ import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
 
+/**
+ * Implementação do serviço responsável pelo processo de recuperação de senha.
+ */
 @Service
 @RequiredArgsConstructor
 public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
-    
+
+    /**
+     * Serviço responsável pela geração e validação de tokens JWT.
+     */
     private final JwtService jwtService;
+
+    /**
+     * API utilizada para consulta de informações do usuário.
+     */
     private final AuthPublicApi authPublicApi;
+
+    /**
+     * Serviço responsável pelo envio de e-mails.
+     */
     private final EmailSenderService mailSender;
+
+    /**
+     * Serviço responsável por pegar os dados de autenticação do usuário.
+     */
     private final CustomUserDetailsService userDetailsService;
+
+    /**
+     * Responsável pela criptografia de senha.
+     */
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Valida a existência do usuário e gera um token de recuperação de senha.
+     * @param recovery objeto contendo o e-mail informado para recuperação.
+     * @throws MessagingException caso ocorra algum erro durante o envio de e-mail.
+     */
     @Override
     public void validateAndGenerateRecoveryToken(Recovery recovery) throws MessagingException{
         if(!authPublicApi.existsByEmail(recovery.email())){
-            prepareAndSendEmail(recovery, null); // send anyways to prevent invaders from detecting valid emails
+            prepareAndSendEmail(recovery, null);
             return;
         }
 
@@ -50,6 +77,12 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
         prepareAndSendEmail(recovery, token);
     }
 
+    /**
+     * Monta o conteúdo do e-mail de recuperação de senha e realiza seu envio.
+     * @param recovery dados do usuário que solicitou a recuperação.
+     * @param token token de recuperação utilizado na redefinição e senha.
+     * @throws MessagingException caso ocorra algum erro durante o envio de e-mail.
+     */
     @Override
     public void prepareAndSendEmail(Recovery recovery, String token) throws MessagingException{
         EmailLayout layout = new EmailLayout("Recuperação de Senha",
@@ -67,6 +100,12 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
         mailSender.sendEmail(new DefaultEmail("Recuperação de Senha", recovery.email()), text);
     }
 
+    /**
+     * Atualiza a senha do usuáro após validar o token de recuperação.
+     * @param newPassword objeto contendo a nova senha.
+     * @param token token de recuperação enviado ao usuário.
+     * @throws InvalidTokenException caso o token seja inválido ou expirado.
+     */
     @Override
     @Transactional
     public void changePasswordWhenValidToken(NewPassword newPassword, String token){

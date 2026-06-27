@@ -31,25 +31,25 @@ public class CreateRequestProductService {
 
     public ItemRequestProductResponse create(ItemRequestProductRequest dto) {
 
-        Request request = requestRepository.findById(dto.requestId()).orElseThrow(()-> new RequestNotFoundException());
+        Request request = requestRepository.findById(dto.requestId())
+                .orElseThrow(RequestNotFoundException::new);
 
-        Product product = requestPublicApi.findProuctByNameIgnoreCase(dto.productName()).orElseThrow(()-> new ProductNotFoundException());
+        Product product = requestPublicApi.findProuctByNameIgnoreCase(dto.productName())
+                .orElseThrow(ProductNotFoundException::new);
 
-        MeasurementUnit measurementUnit =
-                requestPublicApi.findMeasurementByNameIgnoreCase(dto.measurementUnit())
-                        .orElseThrow(()-> new MeasurementUnitNotFoundException());
+        MeasurementUnit measurementUnit = requestPublicApi.findMeasurementByNameIgnoreCase(dto.measurementUnit())
+                .orElseThrow(MeasurementUnitNotFoundException::new);
 
         Status status = statusRepository.findByNameIgnoreCase(dto.statusName())
-                .orElseThrow(()-> new StatusNotFoundException());
+                .orElseThrow(StatusNotFoundException::new);
 
-        ItemRequestProduct itemRequestProduct =
-                itemRequestProductMapper.toEntity(
-                        dto,
-                        request,
-                        product,
-                        measurementUnit,
-                        status
-                );
+        ItemRequestProduct itemRequestProduct = itemRequestProductMapper.toEntity(
+                dto,
+                request,
+                product,
+                measurementUnit,
+                status
+        );
 
         return itemRequestProductMapper.toResponse(itemRequestProductRepository.save(itemRequestProduct));
     }

@@ -44,7 +44,7 @@ class FindAllRequestServiceImplTest {
     private ArgumentCaptor<Specification<Request>> specificationCaptor;
 
     @Test
-    @DisplayName("Deve buscar solicitações usando Specification e mapear o resultado")
+    @DisplayName("Deve buscar solicitaÃƒÂ§ÃƒÂµes usando Specification e mapear o resultado")
     void shouldFindAllUsingSpecificationAndMapResults() {
         Request firstRequest = new Request();
         Request secondRequest = new Request();
@@ -116,7 +116,9 @@ class FindAllRequestServiceImplTest {
                 null,
                 null,
                 null,
-                null
+                List.of(),
+                List.of(),
+                List.of()
         );
     }
 

@@ -3,17 +3,19 @@ package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 
 /**
- * Dados de entrada para criar ou atualizar um vínculo entre CR e filial.
- *
- * @param branchId identificador da filial (obrigatório)
- * @param crId identificador do Centro de Responsabilidade (obrigatório)
- * @param responsibleUsersId identificador do usuário responsável (opcional)
+ * DTO de entrada para criar ou atualizar um vínculo entre CR e Branch na {@link CrBranch}.
+ * @param branchId identificador da branch, não deve ser nulo e nem vazio.
+ * @param crId identificador do CR, não deve ser nulo e nem vazio.
+ * @param responsibleUsersId identificador do usuário responsável(opcional).
  */
 public record CrBranchRequest(
-        @NotNull Long branchId,
-        @NotNull Long crId,
+        @NotNull(message = "O ID da branch não deve ser nulo e nem vazio!")
+        Long branchId,
+        @NotNull(message = "O ID do CR não deve ser nulo e nem vazio!")
+        Long crId,
         List<Long> responsibleUsersId
 ) {
 }

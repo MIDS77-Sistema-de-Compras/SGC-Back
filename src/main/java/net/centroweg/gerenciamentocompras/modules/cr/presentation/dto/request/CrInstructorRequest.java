@@ -4,12 +4,18 @@ import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
+/**
+ * DTO de entrada para criar um vínculo entre CR e professor na {@link CrInstructor}.
+ * @param instructorIds lista de identificadores dos professores, não deve ser nula e nem vazia e o identificador deve ser positivo.
+ * @param crBranchId identificador do CR-Branch, não deve ser nulo e nem vazio, devendo ser positivo.
+ */
 public record CrInstructorRequest(
     @NotNull(message = "O ID do professor não deve ser nulo.")
     List<@Positive(message = "O ID do professor não pode ser menor que 1.") Long> instructorIds,
 
-    @NotNull(message = "O ID da filial não deve ser nulo.")
-    @Positive(message = "O ID da filial não pode ser menor que 1.")
+    @NotNull(message = "O ID da branch não deve ser nulo.")
+    @Positive(message = "O ID da branch não pode ser menor que 1.")
     Long crBranchId
 ) {}

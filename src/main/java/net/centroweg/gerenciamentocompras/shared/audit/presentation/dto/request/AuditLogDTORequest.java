@@ -4,6 +4,6 @@ public record AuditLogDTORequest(
         String userAgentName,
         String userTargetName,
         String typeAction,
-        String request
+        Long request
 ) {
 }

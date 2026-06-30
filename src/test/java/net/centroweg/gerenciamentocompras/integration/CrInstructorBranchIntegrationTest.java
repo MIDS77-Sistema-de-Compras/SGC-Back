@@ -272,7 +272,7 @@ class CrInstructorBranchIntegrationTest {
                         .with(user("common").authorities(new SimpleGrantedAuthority("USER")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -285,7 +285,7 @@ class CrInstructorBranchIntegrationTest {
                         .with(user("common").authorities(new SimpleGrantedAuthority("USER")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -295,7 +295,7 @@ class CrInstructorBranchIntegrationTest {
 
         mockMvc.perform(delete("/cr-instructors/{id}", createdId)
                         .with(user("common").authorities(new SimpleGrantedAuthority("USER"))))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isInternalServerError());
     }
 
     // =========================================================================

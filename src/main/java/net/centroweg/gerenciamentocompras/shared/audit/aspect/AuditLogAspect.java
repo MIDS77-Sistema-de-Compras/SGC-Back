@@ -37,14 +37,17 @@ public class AuditLogAspect {
         if(auth==null) return;
 
         User agent = auditLogPublicApi.findByUserEmail(auth.getName());
+        if(agent == null) return;
 
         Long requestId = extractIdByAnnotation(joinPoint, "request");
         Long targetUserId = extractIdByAnnotation(joinPoint, "user");
 
-        Request requestSearched = auditLogPublicApi.findByRequestId(requestId);
-        User targetUserSearched = auditLogPublicApi.findByUserId(targetUserId);
+        Request requestSearched = (requestId != null) ? auditLogPublicApi.findByRequestId(requestId) : null;
+        User targetUserSearched = (targetUserId != null) ? auditLogPublicApi.findByUserId(targetUserId) : null;
 
-        AuditLog auditLog = new AuditLog(agent, targetUserSearched, auditable.action(), requestSearched);
+        AuditLog auditLog = new AuditLog(agent, auditable.action());
+        auditLog.setRequest(requestSearched);
+        auditLog.setUserTarget(targetUserSearched);
 
         auditLogRepository.save(auditLog);
 
@@ -61,9 +64,9 @@ public class AuditLogAspect {
                     AuditParam auditParam = parameters[i].getAnnotation(AuditParam.class);
                     return auditParam != null && targetName.equals(auditParam.value());
                 })
-                .filter(i -> args[i] instanceof Long) // Segurança: garante que é um Long
-                .mapToObj(i -> (Long) args[i])        // Converte o objeto para Long
-                .findFirst()                          // Pega o primeiro que encontrar
+                .filter(i -> args[i] instanceof Long)
+                .mapToObj(i -> (Long) args[i])
+                .findFirst()
                 .orElse(null);
 
     }

@@ -44,4 +44,11 @@ public class AuditLog {
         this.typeAction = typeAction;
         this.request = request;
     }
+
+    public AuditLog(User userAgent, String typeAction) {
+        this.userAgent = userAgent;
+        this.typeAction = typeAction;
+    }
+
+
 }

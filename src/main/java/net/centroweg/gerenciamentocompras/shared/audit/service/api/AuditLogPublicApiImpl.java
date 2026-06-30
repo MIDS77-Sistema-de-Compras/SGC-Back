@@ -27,4 +27,16 @@ public class AuditLogPublicApiImpl implements AuditLogPublicApi{
         return requestRepository.findById(id)
                 .orElseThrow(RequestNotFoundException::new);
     }
+
+    @Override
+    public User findByUserEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public User findByUserId(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+    }
 }

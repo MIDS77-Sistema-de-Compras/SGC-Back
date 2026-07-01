@@ -9,9 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.BranchMapper
 import org.springframework.stereotype.Service;
 
 /**
- * Caso de uso responsável pela busca de uma {@link net.centroweg.gerenciamentocompras.modules.cr.domain.Branch} pelo seu identificador.
- *
- * @author Leandro
+ * Caso de uso responsável pela busca de uma {@link Branch} pelo seu identificador.
  */
 @RequiredArgsConstructor
 @Service
@@ -21,11 +19,10 @@ public class FindByIdBranch {
     private final BranchMapper branchMapper;
 
     /**
-     * Busca uma branch pelo id informado.
-     *
-     * @param id identificador da branch
-     * @return {@link BranchResponse} com os dados da branch encontrada
-     * @throws net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException se nenhuma branch for encontrada com o id informado
+     * Busca uma branch pelo ID informado.
+     * @param id identificador da branch.
+     * @return dados da branch encontrada.
+     * @throws BranchNotFoundException se nenhuma branch for encontrada com o ID informado.
      */
     public BranchResponse findById(Long id){
         Branch branch = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException());

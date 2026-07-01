@@ -25,5 +25,6 @@ public interface MeasurementUnitRepository
      */
     Optional<MeasurementUnit> findByAbbreviation(String abbreviation);
     Optional<MeasurementUnit> findByNameIgnoreCase(String name);
+    Optional<MeasurementUnit> findMeasurementByNameIgnoreCaseOrAbbreviationIgnoreCase(String name, String abbreviation);
     
 }

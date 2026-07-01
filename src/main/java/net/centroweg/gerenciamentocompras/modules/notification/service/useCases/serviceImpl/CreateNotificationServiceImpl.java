@@ -36,10 +36,11 @@ public class CreateNotificationServiceImpl {
         Notification saved = notificationRepository.save(notification);
 
         notificationEmailService.sendNotificationEmail(
-                user,
+                user.getName(),
+                user.getEmail(),
                 notification.getTitle(),
                 notification.getMessage(),
-                relatedRequest
+                relatedRequest.getId()
         );
 
         return notificationMapper.toResponse(saved);

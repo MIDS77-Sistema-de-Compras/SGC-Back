@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.user.presentation.controller;
 import java.io.IOException;
 import java.util.List;
 
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -98,7 +99,8 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de User")
     @PutMapping("/userId/{userId}")
-    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody CreateUser userRequest, @PathVariable Long userId){
+    @Auditable(action = "ATUALIZAR_USUARIO")
+    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody CreateUser userRequest, @AuditParam(value = "user") @PathVariable Long userId){
         return ResponseEntity.ok(user.updateUserAll(userId, userRequest));
     }
 
@@ -109,14 +111,16 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pelo delete de User")
     @DeleteMapping("/userId/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
+    @Auditable(action = "DESATIVAR_USUARIO")
+    public ResponseEntity<Void> deleteUser(@AuditParam(value = "user") @PathVariable Long userId){
         user.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(description = "ENDPOINT responsável pela edição de foto de perfil")
     @PatchMapping("/userId/{id}")
-    public ResponseEntity<UserResponse> updateProfilePicture(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+    @Auditable(action = "ATUALIZAR_FOTO_DE_PERFIL")
+    public ResponseEntity<UserResponse> updateProfilePicture(@AuditParam(value = "user") @PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.status(200).body(user.uploadProfilePicture(id, file));
     }
 
@@ -128,7 +132,8 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável por alterar a senha do usuário logado")
     @PostMapping("/me/change-password")
-    public ResponseEntity<MessageDTO> changeUserPassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody ChangePassword changePassword){
+    @Auditable(action = "ATUALIZAR_SENHA")
+    public ResponseEntity<MessageDTO> changeUserPassword(@AuditParam(value = "user") @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody ChangePassword changePassword){
         Long userId = user.findLoggedUser(userPrincipal).id();
         return ResponseEntity.status(200).body(user.updatePwd(userId, changePassword));
     }

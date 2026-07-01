@@ -13,6 +13,8 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +36,8 @@ public class RequestController {
 
     @Operation(description = "ENDPOINT responsável pela criação de Request")
     @PostMapping
-    public ResponseEntity<RequestResponse> createRequest(@Valid @RequestBody RequestRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal){
+    @Auditable(action = "CRIAR_SOLICITACAO")
+    public ResponseEntity<RequestResponse> createRequest(@Valid @AuditParam(value="request") @RequestBody RequestRequest request, @AuditParam("user") @AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request, userPrincipal));
     }
 

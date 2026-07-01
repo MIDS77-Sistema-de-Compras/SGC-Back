@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,9 +32,9 @@ public class NotificationController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de Notification do próprio usuário logado")
     @GetMapping("/me")
-    public ResponseEntity<List<NotificationResponse>> findByOwnUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<Page<NotificationResponse>> findByOwnUser(@AuthenticationPrincipal UserPrincipal userPrincipal, Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(notificationService.findByOwnUser(userPrincipal));
+                .body(notificationService.findByOwnUser(userPrincipal, pageable));
     }
 
     @Operation(description = "ENDPOINT responsável por marcar Notification como visualizada")

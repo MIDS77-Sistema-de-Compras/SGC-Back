@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crinstructor.functionality;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ public class GetAllCrInstructor {
     private final CrInstructorRepository crInstructorRepository;
     private final CrInstructorMapper crInstructorMapper;
 
-    public List<CrInstructorResponse> getAll(){
-        return crInstructorMapper.toResponseList(crInstructorRepository.findAll());
+    public Page<CrInstructorResponse> getAll(Pageable pageable){
+        return crInstructorRepository.findAll(pageable).map(crInstructorMapper::toResponse);
     }
 
 }

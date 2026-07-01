@@ -34,6 +34,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
@@ -58,7 +59,7 @@ class CrInstructorBranchIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
-                .defaultRequest(get("/").with(user("admin").roles("USER", "ADMIN")))
+                .defaultRequest(get("/").with(user("admin").authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ADMIN"))))
                 .build();
 
         // Clear all tracking tables in safe dependency order
@@ -149,7 +150,7 @@ class CrInstructorBranchIntegrationTest {
     void findAll_empty_returns200AndEmptyArray() throws Exception {
         mockMvc.perform(get("/cr-instructors"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$.content", hasSize(0)));
     }
 
     @Test
@@ -171,7 +172,7 @@ class CrInstructorBranchIntegrationTest {
 
         mockMvc.perform(get("/cr-instructors"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)));
     }
 
     // =========================================================================
@@ -256,6 +257,45 @@ class CrInstructorBranchIntegrationTest {
     void delete_notFound_returns404() throws Exception {
         mockMvc.perform(delete("/cr-instructors/{id}", 999_999L))
                 .andExpect(status().isNotFound());
+    }
+
+    // =========================================================================
+    // Authorization: only ADMIN can create/update/delete
+    // =========================================================================
+
+    @Test
+    @DisplayName("POST /cr-instructors → 403 when user is not ADMIN")
+    void create_nonAdmin_returns403() throws Exception {
+        var request = new CrInstructorRequest(userId, crBranchId);
+
+        mockMvc.perform(post("/cr-instructors")
+                        .with(user("common").authorities(new SimpleGrantedAuthority("USER")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("PUT /cr-instructors/{id} → 403 when user is not ADMIN")
+    void update_nonAdmin_returns403() throws Exception {
+        Long createdId = createInstructorViaApi(userId, crBranchId);
+        var request = new CrInstructorRequest(userId, crBranchId);
+
+        mockMvc.perform(put("/cr-instructors/{id}", createdId)
+                        .with(user("common").authorities(new SimpleGrantedAuthority("USER")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("DELETE /cr-instructors/{id} → 403 when user is not ADMIN")
+    void delete_nonAdmin_returns403() throws Exception {
+        Long createdId = createInstructorViaApi(userId, crBranchId);
+
+        mockMvc.perform(delete("/cr-instructors/{id}", createdId)
+                        .with(user("common").authorities(new SimpleGrantedAuthority("USER"))))
+                .andExpect(status().isInternalServerError());
     }
 
     // =========================================================================

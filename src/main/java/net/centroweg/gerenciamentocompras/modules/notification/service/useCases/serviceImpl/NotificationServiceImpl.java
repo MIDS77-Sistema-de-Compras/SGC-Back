@@ -5,6 +5,8 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationResponse> findByOwnUser(UserPrincipal userPrincipal){
-        return findNotificationByOwnUser.findNotificationsByOwnUser(userPrincipal);
+    public Page<NotificationResponse> findByOwnUser(UserPrincipal userPrincipal, Pageable pageable){
+        return findNotificationByOwnUser.findNotificationsByOwnUser(userPrincipal, pageable);
     }
 }

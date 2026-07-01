@@ -15,6 +15,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +51,7 @@ class RequestStatusIntegrationTest {
     @Autowired private BranchRepository branchRepository;
     @Autowired private CrRepository crRepository;
     @Autowired private UserRepository userRepository;
+    @Autowired private RoleRepository roleRepository;
     @Autowired private NotificationRepository notificationRepository;
 
     @MockitoBean
@@ -260,7 +262,7 @@ class RequestStatusIntegrationTest {
 
     private User saveUser(String name, String email, String cpf) {
         User user = new User(name, cpf, email, "Senha@123", "1234", true);
-        user.setRole(new Role("USER"));
+        user.setRole(roleRepository.save(new Role("USER")));
         return userRepository.save(user);
     }
 
@@ -276,5 +278,6 @@ class RequestStatusIntegrationTest {
         crRepository.deleteAll();
         branchRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 }

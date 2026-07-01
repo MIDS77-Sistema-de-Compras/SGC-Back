@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Listar usuários
@@ -28,7 +28,7 @@ public class ListUserImpl {
      * @return lista de usuários
      */
 
-    public List<UserResponse> listUser(){
-        return mapper.toDTOList(repository.findAll());
+    public Page<UserResponse> listUser(Pageable pageable){
+        return repository.findAll(pageable).map(mapper::toDTO);
     }
 }

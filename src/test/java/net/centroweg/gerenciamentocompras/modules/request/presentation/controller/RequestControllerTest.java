@@ -124,7 +124,7 @@ class RequestControllerTest {
 
         mockMvc.perform(get("/requests"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.content.length()").value(1));
     }
 
     @Test

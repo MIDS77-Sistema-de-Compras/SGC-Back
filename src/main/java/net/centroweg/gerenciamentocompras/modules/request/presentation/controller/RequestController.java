@@ -13,6 +13,8 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,7 +42,7 @@ public class RequestController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos Request")
     @GetMapping
-    public ResponseEntity<List<RequestResponse>> findAllRequest(
+    public ResponseEntity<Page<RequestResponse>> findAllRequest(
             @RequestParam(required = false) String crCode,
             @RequestParam(required = false) String statusName,
             @RequestParam(required = false) String supervisorName,
@@ -51,7 +53,7 @@ public class RequestController {
 
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate endDate
+            LocalDate endDate, Pageable pageable
     ){
         RequestFilterRequest filter = new RequestFilterRequest(
                 crCode,
@@ -61,7 +63,7 @@ public class RequestController {
                 endDate
         );
 
-        return ResponseEntity.ok(requestService.findAllRequest(filter));
+        return ResponseEntity.ok(requestService.findAllRequest(filter, pageable));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de Request por id")
@@ -99,16 +101,16 @@ public class RequestController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<RequestResponse>> findAllByUser(
+    public ResponseEntity<Page<RequestResponse>> findAllByUser(
             @RequestParam(required = false) String crCode,
             @RequestParam(required = false) String statusName,
             @RequestParam(required = false) String supervisorName,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
+            @AuthenticationPrincipal UserPrincipal userPrincipal, Pageable pageable
     ) {
         RequestFilterRequest filter = new RequestFilterRequest(crCode, statusName, supervisorName, startDate, endDate);
-        return ResponseEntity.ok(requestService.findAllByUser(filter, userPrincipal));
+        return ResponseEntity.ok(requestService.findAllByUser(filter, userPrincipal, pageable));
     }
 
     @Operation(description = "Adiciona anexos em uma solicitação")

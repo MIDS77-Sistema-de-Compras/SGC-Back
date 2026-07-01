@@ -1,8 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf;
 
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
+import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,4 +57,6 @@ public interface UserIntrf {
     void deleteUser(Long id);
     UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException;
     UserResponse findLoggedUser(UserPrincipal userPrincipal);
+
+    MessageDTO updatePwd(Long id, ChangePassword changePasswordDTO);
 }

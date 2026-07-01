@@ -51,7 +51,7 @@ public class CreateUserImplTest {
 
         UserResponse response = new UserResponse(
                 1L, "Maria Eduarda", "12345678900", "maria@gmail.com",
-                "1234", true, LocalDateTime.now(), LocalDateTime.now(), null
+                "1234", true, LocalDateTime.now(), LocalDateTime.now(), "COMPRADOR", null
         );
 
         when(passwordEncoder.encode(any())).thenReturn("hashed-password");

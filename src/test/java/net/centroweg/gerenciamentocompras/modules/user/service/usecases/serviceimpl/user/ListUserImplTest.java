@@ -39,8 +39,8 @@ class ListUserImplTest {
         User user1 = new User();
         User user2 = new User();
 
-        UserResponse resp1 = new UserResponse(1L, "User 1", "...", "...", "...", true, null, null, null);
-        UserResponse resp2 = new UserResponse(2L, "User 2", "...", "...", "...", true, null, null, null);
+        UserResponse resp1 = new UserResponse(1L, "User 1", "...", "...", "...", true, null, null, "ADMIN", null);
+        UserResponse resp2 = new UserResponse(2L, "User 2", "...", "...", "...", true, null, null, "ADMIN", null);
 
         when(repository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(user1, user2)));
         when(mapper.toDTO(user1)).thenReturn(resp1);

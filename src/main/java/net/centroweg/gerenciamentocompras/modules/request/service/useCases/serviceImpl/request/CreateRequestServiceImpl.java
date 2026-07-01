@@ -12,7 +12,7 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.MeasurementUnitNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
-import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.InsufficientProvisionDataException;
 import net.centroweg.gerenciamentocompras.modules.provision.infrastructure.persistence.ProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
@@ -133,8 +133,7 @@ public class CreateRequestServiceImpl {
         }
 
         for (RequestProvisionItemRequest provisionRequest : request.provisions()) {
-            Provision provision = provisionRepository.findById(provisionRequest.provisionId())
-                    .orElseThrow(ProvisionNotFoundException::new);
+            Provision provision = findOrCreateProvision(provisionRequest);
 
             ItemRequestProvision item = new ItemRequestProvision(
                     requestToSave,
@@ -144,6 +143,39 @@ public class CreateRequestServiceImpl {
             );
             requestToSave.getItemRequestProvisions().add(item);
         }
+    }
+
+    private Provision findOrCreateProvision(RequestProvisionItemRequest provisionRequest) {
+        if (provisionRequest.provisionId() != null) {
+            return provisionRepository.findById(provisionRequest.provisionId())
+                    .orElseGet(() -> createProvision(provisionRequest));
+        }
+
+        return createProvision(provisionRequest);
+    }
+
+    private Provision createProvision(RequestProvisionItemRequest provisionRequest) {
+        if (!hasProvisionCreationData(provisionRequest)) {
+            throw new InsufficientProvisionDataException();
+        }
+
+        Provision provision = new Provision(
+                provisionRequest.name(),
+                provisionRequest.totalValue(),
+                provisionRequest.description()
+        );
+
+        return provisionRepository.save(provision);
+    }
+
+    private boolean hasProvisionCreationData(RequestProvisionItemRequest provisionRequest) {
+        return hasText(provisionRequest.name())
+                && provisionRequest.totalValue() != null
+                && hasText(provisionRequest.description());
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 
 }

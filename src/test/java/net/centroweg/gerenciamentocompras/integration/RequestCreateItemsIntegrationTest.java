@@ -45,6 +45,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -158,6 +161,8 @@ class RequestCreateItemsIntegrationTest {
 
         assertNotNull(requestRepository.findById(requestId).orElseThrow());
         assertEquals(1, itemRequestProvisionRepository.findAllByRequestId(requestId).size());
+        assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
+        verify(notificationEmailService).sendNotificationEmail(anyString(), anyString(), anyString(), anyString(), anyLong());
     }
 
     @Test
@@ -244,13 +249,69 @@ class RequestCreateItemsIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar erro quando servico nao existir")
-    void shouldRejectUnknownProvision() throws Exception {
+    @DisplayName("Deve criar Request e cadastrar servico quando servico nao existir")
+    void shouldCreateRequestAndProvisionWhenProvisionDoesNotExist() throws Exception {
+        String response = mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(requester)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newProvisionRequestJson(99999L)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.products.length()").value(0))
+                .andExpect(jsonPath("$.provisions.length()").value(1))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Long requestId = objectMapper.readTree(response).get("id").asLong();
+        Provision createdProvision = provisionRepository.findAll()
+                .stream()
+                .filter(savedProvision -> "Instalacao eletrica".equals(savedProvision.getName()))
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals(2, provisionRepository.count());
+        assertEquals("Servico de instalacao eletrica", createdProvision.getDescription());
+        assertEquals(1, itemRequestProvisionRepository.findAllByRequestId(requestId).size());
+        assertEquals(createdProvision.getId(), itemRequestProvisionRepository.findAllByRequestId(requestId).get(0).getProvision().getId());
+        assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
+        verify(notificationEmailService).sendNotificationEmail(anyString(), anyString(), anyString(), anyString(), anyLong());
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro quando servico nao existir e dados forem insuficientes")
+    void shouldRejectUnknownProvisionWithoutCreationData() throws Exception {
         mockMvc.perform(post("/requests")
                         .with(authentication(authAs(requester)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(provisionRequestJson(99999L)))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Dados insuficientes para criar o servi\u00E7o."));
+    }
+
+    @Test
+    @DisplayName("Deve criar Request e cadastrar servico novo sem provisionId")
+    void shouldCreateRequestAndProvisionWhenProvisionIdIsNotProvided() throws Exception {
+        String response = mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(requester)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newProvisionRequestJsonWithoutId()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.products.length()").value(0))
+                .andExpect(jsonPath("$.provisions.length()").value(1))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Long requestId = objectMapper.readTree(response).get("id").asLong();
+        Provision createdProvision = provisionRepository.findAll()
+                .stream()
+                .filter(savedProvision -> "Servico de pintura".equals(savedProvision.getName()))
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals(2, provisionRepository.count());
+        assertEquals(1, itemRequestProvisionRepository.findAllByRequestId(requestId).size());
+        assertEquals(createdProvision.getId(), itemRequestProvisionRepository.findAllByRequestId(requestId).get(0).getProvision().getId());
     }
 
     private User saveUser(String name, String cpf, String email, String extension) {
@@ -299,6 +360,43 @@ class RequestCreateItemsIntegrationTest {
                     ]
                 }
                 """.formatted(crBranch.getId(), provisionId);
+    }
+
+    private String newProvisionRequestJson(Long provisionId) {
+        return """
+                {
+                    "crBranchId": %d,
+                    "userIds": [],
+                    "products": null,
+                    "provisions": [
+                        {
+                            "provisionId": %d,
+                            "name": "Instalacao eletrica",
+                            "totalValue": 1500.00,
+                            "description": "Servico de instalacao eletrica",
+                            "additionalInformation": "Servico novo necessario para manutencao"
+                        }
+                    ]
+                }
+                """.formatted(crBranch.getId(), provisionId);
+    }
+
+    private String newProvisionRequestJsonWithoutId() {
+        return """
+                {
+                    "crBranchId": %d,
+                    "userIds": [],
+                    "products": null,
+                    "provisions": [
+                        {
+                            "name": "Servico de pintura",
+                            "totalValue": 800.00,
+                            "description": "Pintura da sala de reuniao",
+                            "additionalInformation": "Servico novo sem ID informado"
+                        }
+                    ]
+                }
+                """.formatted(crBranch.getId());
     }
 
     private void deleteData() {

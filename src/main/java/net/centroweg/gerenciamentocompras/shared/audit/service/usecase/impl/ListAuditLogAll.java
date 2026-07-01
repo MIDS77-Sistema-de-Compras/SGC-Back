@@ -26,12 +26,12 @@ public class ListAuditLogAll {
                 logSpecification.typeActionEquals(filter.typeAction()),
                 logSpecification.agentUserEmailEquals(filter.agentEmail()),
                 logSpecification.auditLogDateBetween(
-                        filter.startDate().toLocalDate(),
-                        filter.endDate().toLocalDate()
+                        (filter.startDate() != null) ? filter.startDate().toLocalDate() : null,
+                        (filter.endDate() != null) ? filter.endDate().toLocalDate() : null
                 )
         );
 
-        return auditLogRepository.findAll().stream()
+        return auditLogRepository.findAll(specification).stream()
                 .map(auditLogMapper::toResponse)
                 .toList();
     }

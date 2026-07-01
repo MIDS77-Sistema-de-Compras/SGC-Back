@@ -7,10 +7,11 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@Service
+@Repository
 public class AuditLogPublicApiImpl implements AuditLogPublicApi{
 
     private final UserRepository userRepository;

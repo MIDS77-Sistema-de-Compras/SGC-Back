@@ -1,9 +1,9 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.controller;
 
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,9 +41,9 @@ public class CrInstructorController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos CR Instructor")
     @GetMapping
-    public ResponseEntity<List<CrInstructorResponse>> findAll(){
+    public ResponseEntity<Page<CrInstructorResponse>> findAll(Pageable pageable){
         return ResponseEntity.status(HttpStatus.OK)
-            .body(crInstructorService.findAll());
+            .body(crInstructorService.findAll(pageable));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de CR Instructor por id")

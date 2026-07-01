@@ -7,6 +7,8 @@ import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.pe
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,10 +22,8 @@ public class FindNotificationByOwnUser {
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
-    public List<NotificationResponse> findNotificationsByOwnUser(UserPrincipal userPrincipal) {
-        return notificationRepository.findByUserId(userPrincipal.getId())
-                .stream()
-                .map(notificationMapper::toResponse)
-                .toList();
+    public Page<NotificationResponse> findNotificationsByOwnUser(UserPrincipal userPrincipal, Pageable pageable) {
+        return notificationRepository.findByUserId(userPrincipal.getId(), pageable)
+                .map(notificationMapper::toResponse);
     }
 }

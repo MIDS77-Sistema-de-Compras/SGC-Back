@@ -90,7 +90,8 @@ public class User {
      *
      * @see Role
      */
-    @ManyToOne(cascade = CascadeType.ALL)
+    // EAGER: role precisa estar disponível fora de sessão, em SecurityFilter/UserPrincipal.getAuthorities()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
 

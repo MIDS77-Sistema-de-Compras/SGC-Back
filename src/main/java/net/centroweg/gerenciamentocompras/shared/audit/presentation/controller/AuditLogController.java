@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.shared.audit.controller;
+package net.centroweg.gerenciamentocompras.shared.audit.presentation.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,9 @@ public class AuditLogController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos os registros")
     @GetMapping
-    public ResponseEntity<List<AuditLogDTOResponse>> findAll(){
+    public ResponseEntity<List<AuditLogDTOResponse>> findAll(
+            
+    ){
         return ResponseEntity.status(200)
                 .body(auditLogService.findAll());
     }

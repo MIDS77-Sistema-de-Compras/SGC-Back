@@ -7,11 +7,13 @@ import lombok.NoArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.audit.domain.entity.AuditLog;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
+@Component
 public class AuditLogSpecification {
 
     public Specification<AuditLog> typeActionEquals(String typeAction){

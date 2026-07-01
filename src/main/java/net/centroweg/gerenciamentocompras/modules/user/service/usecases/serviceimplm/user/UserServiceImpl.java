@@ -5,6 +5,8 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,8 +49,8 @@ public class UserServiceImpl implements UserIntrf {
      * @return lista de usuários
      */
     @Override
-    public List<UserResponse> listUser(){
-        return listUser.listUser();
+    public Page<UserResponse> listUser(Pageable pageable){
+        return listUser.listUser(pageable);
     }
 
     /**

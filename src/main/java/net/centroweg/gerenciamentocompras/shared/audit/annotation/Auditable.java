@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface Auditable {
 
     String action();
+    boolean targetFromReturn() default false;
 }

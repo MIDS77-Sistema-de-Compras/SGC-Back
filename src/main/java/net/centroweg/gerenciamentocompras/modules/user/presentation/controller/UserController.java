@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,6 +41,7 @@ public class UserController {
      */
     @Operation(description = "ENDPOINT responsável pela criação de User")
     @PostMapping
+    @Auditable(action = "CRIAR_USUARIO", targetFromReturn = true)
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUser userRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(user.createUser(userRequest));
     }

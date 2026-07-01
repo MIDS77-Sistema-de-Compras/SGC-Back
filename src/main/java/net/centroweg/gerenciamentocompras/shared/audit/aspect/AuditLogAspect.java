@@ -14,13 +14,16 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Aspect
 @Component
@@ -40,7 +43,8 @@ public class AuditLogAspect {
         if(agent == null) return;
 
         Long requestId = extractIdByAnnotation(joinPoint, "request");
-        Long targetUserId = extractIdByAnnotation(joinPoint, "user");
+        Long targetUserId = Optional.ofNullable(extractIdByAnnotation(joinPoint, "user"))
+                .orElseGet(() -> auditable.targetFromReturn() ? extractIdFromReturnObject(result) : null);
 
         Request requestSearched = (requestId != null) ? auditLogPublicApi.findByRequestId(requestId) : null;
         User targetUserSearched = (targetUserId != null) ? auditLogPublicApi.findByUserId(targetUserId) : null;
@@ -69,6 +73,38 @@ public class AuditLogAspect {
                 .findFirst()
                 .orElse(null);
 
+    }
+
+    private Long extractIdFromReturnObject(Object result){
+        if (result == null) return null;
+
+        Object actualBody = (result instanceof ResponseEntity<?> responseEntity)
+                ? responseEntity.getBody()
+                : result;
+
+        if (actualBody == null) return null;
+
+        Class<?> clazz = actualBody.getClass();
+
+        return Stream.of("id", "getId")
+                .map(methodName -> {
+                    try {
+                        return clazz.getMethod(methodName);
+                    } catch (NoSuchMethodException e) {
+                        return null;
+                    }
+                })
+                .filter(method -> method != null && method.getReturnType().equals(Long.class))
+                .map(method -> {
+                    try {
+                        return (Long) method.invoke(actualBody);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(id -> id != null)
+                .findFirst()
+                .orElse(null);
     }
 
 

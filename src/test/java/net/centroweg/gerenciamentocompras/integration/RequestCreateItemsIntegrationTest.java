@@ -24,6 +24,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
@@ -58,6 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 class RequestCreateItemsIntegrationTest {
 
     private MockMvc mockMvc;
@@ -72,6 +75,7 @@ class RequestCreateItemsIntegrationTest {
     @Autowired private BranchRepository branchRepository;
     @Autowired private CrRepository crRepository;
     @Autowired private UserRepository userRepository;
+    @Autowired private RoleRepository roleRepository;
     @Autowired private ProductRepository productRepository;
     @Autowired private MeasurementUnitRepository measurementUnitRepository;
     @Autowired private ProvisionRepository provisionRepository;
@@ -316,7 +320,7 @@ class RequestCreateItemsIntegrationTest {
 
     private User saveUser(String name, String cpf, String email, String extension) {
         User user = new User(name, cpf, email, "Senha@123", extension, true);
-        user.setRole(new Role("ROLE_ADMIN"));
+        user.setRole(roleRepository.save(new Role("ROLE_ADMIN")));
         return userRepository.save(user);
     }
 
@@ -412,5 +416,6 @@ class RequestCreateItemsIntegrationTest {
         crRepository.deleteAll();
         branchRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 }

@@ -22,6 +22,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,6 +74,7 @@ class NotificationIntegrationTest {
     @Autowired private CrRepository crRepository;
     @Autowired private ProductRepository productRepository;
     @Autowired private MeasurementUnitRepository measurementUnitRepository;
+    @Autowired private RoleRepository roleRepository;
 
     @MockitoBean
     private NotificationEmailService notificationEmailService;
@@ -94,13 +96,13 @@ class NotificationIntegrationTest {
         deleteData();
 
         user = new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true);
-        user.setRole(new Role("ROLE_ADMIN"));
+        user.setRole(roleRepository.save(new Role("ROLE_ADMIN")));
         user = userRepository.save(user);
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Sector sector = sectorRepository.save(new Sector("Aprendizagem Industrial"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
-        crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
+        crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(this.user)));
 
         waitingStatus = statusRepository.save(new Status("Aguardando aprovacao", "Solicitacao aguardando aprovacao"));
         statusRepository.save(new Status("EM_ANDAMENTO", "Solicitacao em andamento"));
@@ -127,6 +129,7 @@ class NotificationIntegrationTest {
         sectorRepository.deleteAll();
         branchRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     private UsernamePasswordAuthenticationToken authAs(User u) {

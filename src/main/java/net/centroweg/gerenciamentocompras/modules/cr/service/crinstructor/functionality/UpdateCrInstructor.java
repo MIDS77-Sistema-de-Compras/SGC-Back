@@ -11,7 +11,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrInstructorRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructorMapper;
-import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 
 @Service
@@ -32,8 +31,8 @@ public class UpdateCrInstructor {
             crBranchRepository.findById(request.crBranchId()).orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()))
         );
 
-        crInstructor.setInstructor(
-            userRepository.findById(request.instructorId()).orElseThrow(() -> new UserNotFoundException(request.instructorId()))
+        crInstructor.setInstructors(
+            userRepository.findAllById(request.instructorIds())
         );
 
         return crInstructorMapper.toResponse(crInstructorRepository.save(crInstructor));

@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -22,7 +24,7 @@ public class FindAllRequestServiceImpl {
     private final RequestMapper requestMapper;
 
     @Transactional(readOnly = true)
-    public List<RequestResponse> findAllRequest(RequestFilterRequest filter) {
+    public Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable) {
         Specification<Request> specification = Specification.allOf(
                 crCodeContain(filter.crCode()),
                 statusNameEquals(filter.statusName()),
@@ -34,10 +36,9 @@ public class FindAllRequestServiceImpl {
 
         );
 
-        return requestRepository.findAll(specification)
-                .stream()
-                .map(requestMapper::toDTO)
-                .toList();
+
+        return requestRepository.findAll(specification, pageable)
+                .map(requestMapper::toDTO);
     }
 }
 

@@ -17,6 +17,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,9 @@ class RequestControllerTest {
     @Autowired private ProductRepository productRepository;
     @Autowired private MeasurementUnitRepository measurementUnitRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     private MockMvc mockMvc;
     private CrBranch crBranch;
     private Status waitingStatus;
@@ -72,6 +76,7 @@ class RequestControllerTest {
         crRepository.deleteAll();
         branchRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
@@ -83,7 +88,7 @@ class RequestControllerTest {
         measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));
 
         User newUser = new User("Test User", "52998224725", "test@test.com", "Password@1", "1234", true);
-        newUser.setRole(new Role("USER"));
+        newUser.setRole(roleRepository.save(new Role("USER")));
         testUser = userRepository.save(newUser);
         userPrincipal = new UserPrincipal(testUser);
     }
@@ -107,7 +112,7 @@ class RequestControllerTest {
 
         mockMvc.perform(get("/requests"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.content.length()").value(1));
     }
 
     @Test

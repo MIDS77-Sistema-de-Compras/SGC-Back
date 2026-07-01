@@ -1,10 +1,20 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user;
 
+import java.io.IOException;
+import java.util.List;
+
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
+import net.centroweg.gerenciamentocompras.shared.MessageDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +41,7 @@ public class UserServiceImpl implements UserIntrf {
     private final DeleteUserImpl deleteUser;
     private final UploadProfilePicture uploadProfilePicture;
     private final FindLoggedUser findLoggedUser;
+    private final ChangeUserPwdImpl changeUserPwd;
 
     /**
      * Implementa inteface de criação do usuário
@@ -47,8 +58,8 @@ public class UserServiceImpl implements UserIntrf {
      * @return lista de usuários
      */
     @Override
-    public List<UserResponse> listUser(){
-        return listUser.listUser();
+    public Page<UserResponse> listUser(Pageable pageable){
+        return listUser.listUser(pageable);
     }
 
     /**
@@ -99,5 +110,10 @@ public class UserServiceImpl implements UserIntrf {
     @Override
     public UserResponse findLoggedUser(UserPrincipal userPrincipal) {
         return findLoggedUser.findLoggedUser(userPrincipal);
+    }
+
+    @Override
+    public MessageDTO updatePwd(Long id, ChangePassword changePasswordDTO) {
+        return changeUserPwd.changePassword(id, changePasswordDTO);
     }
 }

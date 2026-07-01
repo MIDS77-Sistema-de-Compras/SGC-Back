@@ -34,8 +34,8 @@ class FindUserByNameImplTest {
         String name = "João";
         List<User> userList = List.of(new User(), new User());
         List<UserResponse> dtoList = List.of(
-                new UserResponse(1L, "João Silva", "...", "...", "...", true, null, null, null),
-                new UserResponse(2L, "João Paulo", "...", "...", "...", true, null, null, null)
+                new UserResponse(1L, "João Silva", "...", "...", "...", true, null, null, "USER", null),
+                new UserResponse(2L, "João Paulo", "...", "...", "...", true, null, null, "USER", null)
         );
 
         when(repository.findByNameIgnoringCase(name)).thenReturn(userList);

@@ -9,6 +9,8 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -16,9 +18,9 @@ import java.util.List;
 public interface RequestService {
 
     RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal);
-    List<RequestResponse> findAllRequest(RequestFilterRequest filter);
+    Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable);
     RequestResponse findRequestById(Long id);
-    List<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal);
+    Page<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable);
     RequestResponse updateRequest(UpdateRequestRequest request, Long id);
     void deleteRequest(Long id);
     RequestResponse updateFeedback(UpdateFeedback feedback, Long id);

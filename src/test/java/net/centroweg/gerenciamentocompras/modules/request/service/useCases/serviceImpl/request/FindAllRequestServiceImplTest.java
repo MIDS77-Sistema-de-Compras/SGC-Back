@@ -13,20 +13,17 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FindAllRequestServiceImplTest {
@@ -60,16 +57,19 @@ class FindAllRequestServiceImplTest {
                 LocalDate.of(2026, 6, 30)
         );
 
-        when(requestRepository.findAll(anySpecification()))
-                .thenReturn(List.of(firstRequest, secondRequest));
+        Pageable pageable = Pageable.unpaged();
+        Page<Request> requestPage = new PageImpl<>(List.of(firstRequest, secondRequest));
+
+        when(requestRepository.findAll(anySpecification(), any(Pageable.class))).thenReturn(requestPage);
         when(requestMapper.toDTO(firstRequest)).thenReturn(firstResponse);
         when(requestMapper.toDTO(secondRequest)).thenReturn(secondResponse);
 
-        List<RequestResponse> response = findAllRequestService.findAllRequest(filter);
+        Page<RequestResponse> response = findAllRequestService.findAllRequest(filter, pageable);
 
-        assertEquals(List.of(firstResponse, secondResponse), response);
+        assertNotNull(response);
+        assertEquals(2, response.getTotalElements());
 
-        verify(requestRepository).findAll(specificationCaptor.capture());
+        verify(requestRepository).findAll(specificationCaptor.capture(), any(Pageable.class));
         assertNotNull(specificationCaptor.getValue());
 
         verify(requestMapper).toDTO(firstRequest);
@@ -81,24 +81,18 @@ class FindAllRequestServiceImplTest {
     @Test
     @DisplayName("Deve aceitar filtros nulos e continuar usando Specification")
     void shouldAcceptNullFiltersAndKeepUsingSpecification() {
-        RequestFilterRequest filter = new RequestFilterRequest(
-                null,
-                null,
-                null,
-                null,
-                null
+        RequestFilterRequest filter = new RequestFilterRequest(null, null, null, null, null);
+        Pageable pageable = Pageable.unpaged();
+
+        when(requestRepository.findAll(anySpecification(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+
+        Page<RequestResponse> response = assertDoesNotThrow(
+                () -> findAllRequestService.findAllRequest(filter, pageable)
         );
 
-        when(requestRepository.findAll(anySpecification()))
-                .thenReturn(List.of());
+        assertTrue(response.isEmpty());
 
-        List<RequestResponse> response = assertDoesNotThrow(
-                () -> findAllRequestService.findAllRequest(filter)
-        );
-
-        assertEquals(List.of(), response);
-
-        verify(requestRepository).findAll(specificationCaptor.capture());
+        verify(requestRepository).findAll(specificationCaptor.capture(), any(Pageable.class));
         assertNotNull(specificationCaptor.getValue());
         verify(requestRepository, never()).findAll();
         verifyNoMoreInteractions(requestRepository, requestMapper);

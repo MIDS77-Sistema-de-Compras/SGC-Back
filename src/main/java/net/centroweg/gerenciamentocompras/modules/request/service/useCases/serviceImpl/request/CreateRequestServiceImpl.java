@@ -21,6 +21,7 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,25 +36,26 @@ public class CreateRequestServiceImpl {
     private final NotificationService notificationService;
 
     public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
-        Status status = statusRepository.findByNameIgnoreCase(request.statusName())
-                .orElseThrow(() -> new StatusNotFoundException());
+
+        Status status = statusRepository.findByNameIgnoreCase("EM_ANDAMENTO")
+                .orElseThrow(StatusNotFoundException::new);
 
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
         User requester = userRepository.findByEmail(userPrincipal.getUsername())
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
 
-        Request requestToSave = requestMapper.toEntity(request, crBranch, status);
-        requestToSave.setCreatedByUsers(List.of(requester));
-
-        Request savedRequest = requestRepository.save(requestToSave);
-
+        List<User> assignedUsers = new ArrayList<>();
+        assignedUsers.add(requester);
         request.userIds().forEach(userId ->
-                userRepository.findById(userId)
-                        .ifPresent(user -> savedRequest.getCreatedByUsers().add(user))
+                userRepository.findById(userId).ifPresent(assignedUsers::add)
         );
 
+        Request requestToSave = requestMapper.toEntity(request, crBranch, status);
+        requestToSave.setCreatedByUsers(assignedUsers);
+
+        Request savedRequest = requestRepository.save(requestToSave);
 
         if (crBranch.getResponsibleUsers() != null) {
             for (User responsible : crBranch.getResponsibleUsers()) {

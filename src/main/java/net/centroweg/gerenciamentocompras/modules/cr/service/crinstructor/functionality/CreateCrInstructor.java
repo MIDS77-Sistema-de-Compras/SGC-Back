@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crinstructor.functionality;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -11,7 +13,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Cr
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructorMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 
 @Service
@@ -25,7 +26,7 @@ public class CreateCrInstructor {
     private final CrBranchRepository crBranchRepository;
 
     public CrInstructorResponse addCrInstructor(CrInstructorRequest request){
-        User user = userRepository.findById(request.instructorId()).orElseThrow(() -> new UserNotFoundException(request.instructorId()));
+        List<User> user = userRepository.findAllById(request.instructorIds());
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId()).orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
         return crInstructorMapper.toResponse(

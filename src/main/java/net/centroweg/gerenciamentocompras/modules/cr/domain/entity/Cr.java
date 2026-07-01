@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.cr.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
+import org.hibernate.annotations.BatchSize;
 
 /**
  * Entidade que representa um Centro de Responsabilidade (CR).
@@ -11,6 +12,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
  * master, agrupando filiais ({@link Branch}) por meio de {@link CrBranch}.
  * </p>
  */
+@BatchSize(size = 30)
 @Entity
 @Getter
 @Setter
@@ -34,7 +36,7 @@ public class Cr {
     /** Indica se este CR é o CR master da estrutura organizacional. */
     private Boolean master;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Sector sector;
 
     /**

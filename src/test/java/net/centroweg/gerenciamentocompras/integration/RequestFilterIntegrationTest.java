@@ -353,7 +353,7 @@ class RequestFilterIntegrationTest {
     ) throws Exception {
         MvcResult result = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.content").isArray())
                 .andReturn();
 
         List<Long> responseIds = responseIds(result);
@@ -367,7 +367,7 @@ class RequestFilterIntegrationTest {
     private List<Long> responseIds(MvcResult result) throws Exception {
         List<Number> ids = JsonPath.read(
                 result.getResponse().getContentAsString(),
-                "$[*].id"
+                "$.content[*].id"
         );
 
         return ids.stream()

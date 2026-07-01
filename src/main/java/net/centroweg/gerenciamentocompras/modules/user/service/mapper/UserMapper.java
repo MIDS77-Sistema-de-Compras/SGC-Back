@@ -47,7 +47,9 @@ public class UserMapper {
                 user.getActive(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
-                user.getProfilePicture());
+                user.getProfilePicture(),
+                user.getRole() != null ? user.getRole().getName() : null
+        );
     }
 
     /**

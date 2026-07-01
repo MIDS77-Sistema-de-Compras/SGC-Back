@@ -38,7 +38,8 @@ public record UserResponse(
          * Data de atualização do usuário
          */
         LocalDateTime updatedAt,
-        String userProfile
+        String userProfile,
+        String roleName
 
 ) {
 }

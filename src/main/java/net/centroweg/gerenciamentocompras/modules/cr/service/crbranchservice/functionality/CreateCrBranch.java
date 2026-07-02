@@ -17,14 +17,10 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
  * Caso de uso responsável por criar um novo vínculo entre CR e filial.
- *
- * <p>Valida a existência da filial e do CR, impede a criação de vínculos duplicados
- * e, opcionalmente, associa um usuário responsável ao vínculo.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -38,15 +34,12 @@ public class CreateCrBranch {
 
     /**
      * Cria um vínculo entre CR e filial a partir dos dados informados.
-     *
-     * <p>O usuário responsável é opcional; quando informado, deve existir no sistema.</p>
-     *
-     * @param request
-     * @return o vínculo criado
-     * @throws BranchNotFoundException se a filial não for encontrada
-     * @throws CrNotFoundException se o CR não for encontrado
-     * @throws CrBranchAlreadyExistsException se já existir um vínculo entre o CR e a filial
-     * @throws UsernameNotFoundException se o responsável informado não for encontrado
+     * @param request dados do CR-filial informados.
+     * @return o vínculo criado.
+     * @throws BranchNotFoundException se a filial não for encontrada.
+     * @throws CrNotFoundException se o CR não for encontrado.
+     * @throws CrBranchAlreadyExistsException se já existir um vínculo entre o CR e a filial.
+     * @throws UsernameNotFoundException se o responsável informado não for encontrado.
      */
     public CrBranchResponse create(CrBranchRequest request) {
         Branch branch = branchRepository.findById(request.branchId())

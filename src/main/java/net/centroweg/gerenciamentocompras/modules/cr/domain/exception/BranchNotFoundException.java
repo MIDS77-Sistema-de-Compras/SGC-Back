@@ -10,6 +10,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 public class BranchNotFoundException extends BusinessException {
 
     public BranchNotFoundException(){
-        super("Branch não encontrada", HttpStatus.NOT_FOUND);
+        super("Filial não encontrada", HttpStatus.NOT_FOUND);
     }
 }

@@ -6,9 +6,9 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
 /**
  * DTO de saída com dados do {@link CrInstructor}.
- * @param id identificador único do CR-Instructor.
+ * @param id identificador do CR-instrutor.
  * @param user lista com nomes dos usuários que estão associados a uma CR.
- * @param crBranchId identificador único da branch associada.
+ * @param crBranchId identificador da filial associada.
  */
 public record CrInstructorResponse(
     Long id,

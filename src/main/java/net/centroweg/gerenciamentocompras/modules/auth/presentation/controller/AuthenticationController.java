@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
@@ -22,7 +21,7 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
 /**
- * Controller responsável por liberar os endpoints de autenticação e recuperação de senha.
+ * Controlador responsável por liberar os endpoints de autenticação e recuperação de senha.
  */
 @Tag(name = "ENDPOINTS de autenticação")
 @RestController

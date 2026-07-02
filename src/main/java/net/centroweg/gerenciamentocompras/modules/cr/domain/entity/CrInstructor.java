@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.cr.domain.entity;
 
 import java.util.List;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,19 +26,19 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 @Getter
 
 /**
- * Enidade que víncula um docente a uma CR-Branch.
+ * Enidade que víncula um usuário a uma CR-filial, no sistema de gerenciamento de compras.
  */
 public class CrInstructor {
 
     /**
-     * Identificador único da CR-Instructor.
+     * Identificador único da CR-instrutor.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Relacionamento com Usuários, vários usuários pertencem a um CR-Branch.
+     * Relacionamento com usuário, vários usuários pertencem a um CR-filial.
      */
     @OneToMany
     @JoinColumn(name="instructor_cr_branch_id")
@@ -47,7 +46,7 @@ public class CrInstructor {
     private List<User> instructors;
 
     /**
-     * Relacionamento com CR-Branch, uma CR-Branch tem vários docentes.
+     * Relacionamento com CR-filial, uma CR-filial tem vários usuários.
      */
     @ManyToOne
     @JoinColumn(name="cr_branch")

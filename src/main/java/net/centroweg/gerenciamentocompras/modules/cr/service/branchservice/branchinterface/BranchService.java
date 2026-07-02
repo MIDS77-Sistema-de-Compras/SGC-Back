@@ -5,7 +5,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.B
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
-
 import java.util.List;
 
 /**
@@ -14,38 +13,38 @@ import java.util.List;
 public interface BranchService {
 
     /**
-     * Cria uma nova branch.
-     * @param branchRequest dados da branch a ser criada.
-     * @return a branch criada.
+     * Cria uma nova filial.
+     * @param branchRequest dados da filial a ser criada.
+     * @return a filial criada.
      */
     BranchResponse create(BranchRequest branchRequest);
 
     /**
-     * Lista todas as branches cadastradas.
-     * @return lista de branches, vazia se não houver nenhuma.
+     * Lista todas as filiais cadastradas.
+     * @return lista de filiais, vazia se não houver nenhuma.
      */
     List<BranchResponse> findAll();
 
     /**
-     * Atualiza os dados de uma branch existente.
-     * @param id identificador da branch a ser atualizada.
-     * @param branchRequest novos dados da branch.
-     * @return a branch com os dados atualizados.
+     * Atualiza os dados de uma filial existente.
+     * @param id identificador da filial a ser atualizada.
+     * @param branchRequest novos dados da filial.
+     * @return a filial com os dados atualizados.
      * @throws BranchNotFoundException se o ID não for encontrado.
      */
     BranchResponse update(Long id, BranchRequest branchRequest);
 
     /**
-     * Busca uma branch pelo seu identificador.
-     * @param id identificador da branch a ser pesquisada.
-     * @return a branch encontrada.
+     * Busca uma filial pelo seu identificador.
+     * @param id identificador da filial a ser pesquisada.
+     * @return a filial encontrada.
      * @throws BranchNotFoundException se o ID não for encontrado.
      */
     BranchResponse findById(Long id);
 
     /**
-     * Remove uma branch pelo seu identificador.
-     * @param id identificador da branch a ser removida.
+     * Remove uma filial pelo seu identificador.
+     * @param id identificador da filial a ser removida.
      * @return mensagem de confirmação da operação.
      */
     MessageDTO delete(Long id);

@@ -8,7 +8,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.data.jpa.domain.Specification;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -19,7 +18,7 @@ import java.util.Locale;
 public final class CrBranchSpecifications {
 
     /**
-     * Cria uma Specification para filtrar Branch de CR pelo código do CR.
+     * Cria uma Specification para filtrar filial de CR pelo código do CR.
      * @param crCode código do CR utilizado na pesquisa.
      * @return Specification correspondente ao filtro informado ou unrestricted caso o parâmetro seja nulo ou vazio.
      */
@@ -44,7 +43,7 @@ public final class CrBranchSpecifications {
     }
 
     /**
-     * Cria uma Specification para filtrar Branch de CR pelo nome do CR.
+     * Cria uma Specification para filtrar filial de CR pelo nome do CR.
      * @param crName nome do CR utilizado na pesquisa.
      * @return Specification correspondente ao filtro informado ou unrestricted caso o parâmetro seja nulo ou vazio.
      */
@@ -69,7 +68,7 @@ public final class CrBranchSpecifications {
     }
 
     /**
-     * Cria uma Specification para filtrar Branch de CR pelos responsáveis.
+     * Cria uma Specification para filtrar filial de CR pelos responsáveis.
      * @param responsibleNames lista de nomes dos responsáveis.
      * @return Specification correspondente ao filtro informado ou unrestricted caso a lista seja nulo ou vazio.
      */

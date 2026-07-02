@@ -66,7 +66,7 @@ public class WebSecurityConfig {
     }
 
     /**
-     * Método que mostra as configurações do CORS (quem pode fazer a requisição, métodos HTTP permitidos, etc).
+     * Método que mostra as configurações do CORS(quem pode fazer a requisição, métodos HTTP permitidos, etc).
      * @return classe que representa a configuração do CORS e local de aplicação.
      * */
     @Bean
@@ -93,7 +93,6 @@ public class WebSecurityConfig {
 
     /**
      * Expõe o {@link AuthenticationManager} como um bean gerenciado pelo Spring.
-     *
      * @param authenticationConfiguration configuração de autenticação fornecida automaticamente pelo Spring Security.
      * @return instância do {@link AuthenticationManager} configurado.
      * @throws Exception caso ocorra algum erro durante o processo de obter {@link AuthenticationManager}.

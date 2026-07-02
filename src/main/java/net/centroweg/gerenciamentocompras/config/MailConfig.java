@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.config;
 
 import java.util.Properties;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,20 +9,19 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Configuração do cliente de envio de e-mail via JavaMail.
- *
  * @see JavaMailSender
  */
 @Configuration
 public class MailConfig {
 
     /**
-     * Endereço do servidor SMTP (ex: {@code smtp.gmail.com}).
+     * Endereço do servidor SMTP(ex: {@code smtp.gmail.com}).
      */
     @Value("${spring.mail.host}")
     private String host;
 
     /**
-     * Porta do servidor SMTP (ex: {@code 587} para STARTTLS).
+     * Porta do servidor SMTP(ex: {@code 587} para STARTTLS).
      */
     @Value("${spring.mail.port}")
     private int port;
@@ -35,7 +33,7 @@ public class MailConfig {
     private String username;
 
     /**
-     * Senha ou token de aplicação para autenticação (nunca deve ser exposta publicamente).
+     * Senha ou token de aplicação para autenticação(nunca deve ser exposta publicamente).
      */
     @Value("${spring.mail.password}")
     private String password;

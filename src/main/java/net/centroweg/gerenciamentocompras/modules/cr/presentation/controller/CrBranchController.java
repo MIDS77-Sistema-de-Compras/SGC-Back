@@ -12,13 +12,12 @@ import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**
- * Controlador REST responsável pelos endpoints de vínculos entre CR e Branch.
+ * Controlador REST responsável pelos endpoints de vínculos entre CR e filial.
  */
-@Tag(name = "ENDPOINTS da entidade CR-BRANCH")
+@Tag(name = "ENDPOINTS da entidade CR-filial")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cr-branches")
@@ -27,11 +26,11 @@ public class CrBranchController {
     private final CrBranchService crBranchService;
 
     /**
-     * Criar um novo vínculo entre CR e Branch.
+     * Criar um novo vínculo entre CR e filial.
      * @param request corpo da requisição com os dados do vínculo.
      * @return status HTTP 201(Created) com o corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela criação de CR-Branch")
+    @Operation(description = "ENDPOINT responsável pela criação de CR-filial")
     @PostMapping
     public ResponseEntity<CrBranchResponse> create(@Valid @RequestBody CrBranchRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -39,10 +38,10 @@ public class CrBranchController {
     }
 
     /**
-     * Listar todos os vínculos CR-Branch cadastrados.
-     * @return status HTTP 200(OK) com a lista de todas as CR-Branch no corpo da resposta.
+     * Listar todos os vínculos CR-filial cadastrados.
+     * @return status HTTP 200(OK) com a lista de todas as CR-filiais no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de CR-Branch")
+    @Operation(description = "ENDPOINT responsável pela listagem de CR-filiais")
     @GetMapping
     public ResponseEntity<List<CrBranchResponse>> findAll(
             @RequestParam(required = false) String crCode,
@@ -61,11 +60,11 @@ public class CrBranchController {
     }
 
     /**
-     * Buscar um vínculo CR-Branch pelo seu identificador.
-     * @param id identificador do vínculo CR-Branch.
-     * @return status HTTP 200(OK) com a CR-Branch encontrada no corpo da resposta.
+     * Buscar um vínculo CR-filial pelo seu identificador.
+     * @param id identificador do vínculo CR-filial.
+     * @return status HTTP 200(OK) com a CR-filial encontrada no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela busca por ID de CR-Branch")
+    @Operation(description = "ENDPOINT responsável pela busca por ID de CR-filial")
     @GetMapping("/{id}")
     public ResponseEntity<CrBranchResponse> findById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -73,12 +72,12 @@ public class CrBranchController {
     }
 
     /**
-     * Atualizar um vínculo CR-Branch existente.
+     * Atualizar um vínculo CR-filial existente.
      * @param request corpo da requisição com os novos dados.
-     * @param id identificador do vínculo CR-Branch.
-     * @return status HTTP 200(OK) com a CR-Branch atualizada no corpo da resposta.
+     * @param id identificador do vínculo CR-filial.
+     * @return status HTTP 200(OK) com a CR-filial atualizada no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de CR-Branch")
+    @Operation(description = "ENDPOINT responsável pela atualização das CR-filiais")
     @PutMapping("/{id}")
     public ResponseEntity<CrBranchResponse> update(@Valid @RequestBody CrBranchRequest request, @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -86,11 +85,11 @@ public class CrBranchController {
     }
 
     /**
-     * Remover um vínculo CR-Branch pelo seu identificador.
-     * @param id identificador do vínculo CR-Branch.
+     * Remover um vínculo CR-filial pelo seu identificador.
+     * @param id identificador do vínculo CR-filial.
      * @return status HTTP 200(OK)
      */
-    @Operation(description = "ENDPOINT responsável pelo delete de CR-Branch")
+    @Operation(description = "ENDPOINT responsável por deletar as CR-filiais")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id) {
         return ResponseEntity.ok(
@@ -99,11 +98,11 @@ public class CrBranchController {
     }
 
     /**
-     * Listar todos os vínculos CR-Branch pertencentes a uma Branch.
-     * @param branchId identificador da Branch para pesquisa.
-     * @return status HTTP 200 (OK) com as Branches encontradas no corpo da resposta.
+     * Listar todos os vínculos CR-filial pertencentes a uma filial.
+     * @param branchId identificador da filial para pesquisa.
+     * @return status HTTP 200 (OK) com as filiais encontradas no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de CR-Branch por ID de branch")
+    @Operation(description = "ENDPOINT responsável pela listagem de CR-filial por ID da filial")
     @GetMapping("/branch/{branchId}")
     public ResponseEntity<List<CrBranchResponse>> findCrBranchByBranch(@PathVariable Long branchId) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -111,12 +110,12 @@ public class CrBranchController {
     }
 
     /**
-     * Atribuir um usuário responsável a um vínculo CR-Branch.
-     * @param crBranchId identificador da CR-Branch.
+     * Atribuir um usuário responsável a um vínculo CR-filial.
+     * @param crBranchId identificador da CR-filial.
      * @param userId identificador do usuário.
      * @return status HTTP 200 (OK).
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de CR-Branch por ID de CR Branch e ID de usuário")
+    @Operation(description = "ENDPOINT responsável pela atualização de CR-filial por ID de CR-filial e ID de usuário")
     @PutMapping("/{crBranchId}/responsible/{userId}")
     public ResponseEntity<CrBranchResponse> assignCrBranchResponsible(@PathVariable Long crBranchId, @PathVariable Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -124,11 +123,11 @@ public class CrBranchController {
     }
 
     /**
-     * Remover o usuário responsável de um vínculo CR-Branch.
-     * @param crBranchId identificador da CR-Branch.
+     * Remover o usuário responsável de um vínculo CR-filial.
+     * @param crBranchId identificador da CR-filial.
      * @return status HTTP 200 (OK).
      */
-    @Operation(description = "ENDPOINT responsável pelo delete de CR-Branch por ID de CR Branch")
+    @Operation(description = "ENDPOINT responsável por deletar das CR-filiais por ID de CR Branch")
     @DeleteMapping("/{crBranchId}/responsible")
     public ResponseEntity<CrBranchResponse> removeCrBranchResponsible(@PathVariable Long crBranchId) {
         return ResponseEntity.ok(

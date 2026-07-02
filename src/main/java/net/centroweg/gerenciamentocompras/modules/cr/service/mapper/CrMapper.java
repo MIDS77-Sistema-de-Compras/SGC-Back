@@ -23,7 +23,7 @@ public class CrMapper {
         crSave.setName(dto.name());
         crSave.setCode(dto.code());
         crSave.setMaster(dto.master());
-        crSave.setSector(sector);
+        crSave.setBloco(sector);
         return crSave;
     }
 
@@ -45,7 +45,7 @@ public class CrMapper {
                 cr.getName(),
                 cr.getCode(),
                 cr.getMaster(),
-                cr.getSector() != null ? cr.getSector().getName() : null
+                cr.getBloco() != null ? cr.getBloco().getName() : null
         );
     }
 }

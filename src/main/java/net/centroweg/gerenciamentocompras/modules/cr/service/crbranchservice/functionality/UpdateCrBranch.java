@@ -17,14 +17,10 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
  * Caso de uso responsável por atualizar um vínculo entre CR e filial.
- *
- * <p>Valida a existência do vínculo, da filial e do CR informados e, opcionalmente,
- * atualiza o usuário responsável associado.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -38,17 +34,13 @@ public class UpdateCrBranch {
 
     /**
      * Atualiza os dados de um vínculo CR-filial existente.
-     *
-     * <p>O usuário responsável é opcional; quando informado, deve existir no sistema.
-     * Quando ausente, o vínculo fica sem responsável.</p>
-     *
-     * @param id
-     * @param request
-     * @return o vínculo atualizado
-     * @throws CrBranchNotFoundException se o vínculo não for encontrado
-     * @throws BranchNotFoundException se a filial não for encontrada
-     * @throws CrNotFoundException se o CR não for encontrado
-     * @throws UsernameNotFoundException se o responsável informado não for encontrado
+     * @param id identificador do CR-filial.
+     * @param request novos dados do CR-filial.
+     * @return o vínculo atualizado.
+     * @throws CrBranchNotFoundException se o vínculo não for encontrado.
+     * @throws BranchNotFoundException se a filial não for encontrada.
+     * @throws CrNotFoundException se o CR não for encontrado.
+     * @throws UsernameNotFoundException se o responsável informado não for encontrado.
      */
     public CrBranchResponse update(Long id, CrBranchRequest request) {
         CrBranch crBranch = crBranchRepository.findById(id)

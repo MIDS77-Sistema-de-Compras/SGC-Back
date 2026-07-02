@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuração do cliente Cloudinary para upload e gerenciamento de arquivos de mídia.
- *
  * @see com.cloudinary.Cloudinary
  */
 @Configuration

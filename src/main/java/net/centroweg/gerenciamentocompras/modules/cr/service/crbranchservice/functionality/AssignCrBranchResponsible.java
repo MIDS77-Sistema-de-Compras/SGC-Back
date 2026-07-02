@@ -10,13 +10,10 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
  * Caso de uso responsável por atribuir um usuário responsável a um vínculo CR-filial.
- *
- * <p>Caso o vínculo já possua um responsável, ele é substituído pelo novo usuário informado.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -28,14 +25,11 @@ public class AssignCrBranchResponsible {
 
     /**
      * Atribui um usuário como responsável por um vínculo CR-filial.
-     *
-     * <p>Se já existir um responsável definido, ele é removido antes da nova atribuição.</p>
-     *
-     * @param crBranchId
-     * @param userId
-     * @return o vínculo atualizado com o novo responsável
-     * @throws CrBranchNotFoundException se o vínculo não for encontrado
-     * @throws UsernameNotFoundException se o usuário não for encontrado
+     * @param crBranchId identificador da CR-filial.
+     * @param userId identificador do usuário.
+     * @return o vínculo atualizado com o/os responsável/is.
+     * @throws CrBranchNotFoundException se o vínculo não for encontrado.
+     * @throws UsernameNotFoundException se o usuário não for encontrado.
      */
     public CrBranchResponse assignCrBranchResponsible(Long crBranchId, List<Long> userId) {
         CrBranch crBranch = crBranchRepository.findById(crBranchId)

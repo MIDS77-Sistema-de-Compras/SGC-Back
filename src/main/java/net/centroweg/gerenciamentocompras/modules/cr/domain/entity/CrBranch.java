@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.hibernate.annotations.BatchSize;
-
 import java.util.List;
 
 /**
- * Entidade que representa o vínculo entre um Centro de Responsabilidade(CR) e uma filial(Branch).
+ * Entidade que representa o vínculo entre um Centro de Responsabilidade(CR) e uma filial(branch) no sistema de gerenciamento de compras.
  */
 
 @BatchSize(size = 30)
@@ -24,28 +23,28 @@ import java.util.List;
 public class CrBranch {
 
     /**
-     * Identificador único da CR-Branch, gerado automaticamente pelo banco de dados.
+     * Identificador único da CR-filial, gerado automaticamente pelo banco de dados.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Relacionamento com a entidade Branch, uma Branch pode ter vários CR-Branch.
+     * Relacionamento com a entidade filial, uma filial pode ter vários CR-filiais.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
     /**
-     * Relacionamento com a entidade CR, uma CR pode ter vários CR-Branch.
+     * Relacionamento com a entidade CR, uma CR pode ter vários CR-filiais.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cr_id")
     private Cr cr;
 
     /**
-     * Relacionamento com a entidade Usuário, vários usuários podem ter vários CR-Branch.
+     * Relacionamento com a entidade usuário(user), vários usuários podem ter vários CR-filiais.
      */
     @BatchSize(size = 30)
     @ManyToMany
@@ -56,10 +55,10 @@ public class CrBranch {
     private List<User> responsibleUsers;
 
     /**
-     * Construtor utilizado para criar um novo CR-Branch, integrando com os relacionamentos.
+     * Construtor utilizado para criar um novo CR-filial, sem ID definido.
      * @param branch filial associada.
      * @param cr CR associado.
-     * @param responsibleUsers usuário/os responsável, podendo ser nulo também.
+     * @param responsibleUsers usuário/os responsável/is, podendo ser nulo também.
      */
     public CrBranch(Branch branch, Cr cr, List<User> responsibleUsers) {
         this.branch = branch;

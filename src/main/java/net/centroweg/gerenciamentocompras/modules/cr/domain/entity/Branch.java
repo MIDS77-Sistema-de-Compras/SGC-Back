@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 /**
- * Entidade que representa uma Branch(Filial) no sistema de gerenciamento de compras.
+ * Entidade que representa uma filial(branch) no sistema de gerenciamento de compras.
  */
 @Setter
 @Getter
@@ -16,21 +16,21 @@ import org.hibernate.annotations.BatchSize;
 public class Branch {
 
     /**
-     * Identificador único da Branch, gerado automaticamente pelo banco de dados.
+     * Identificador único da filial, gerado automaticamente pelo banco de dados.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Nome da Branch, não pode ser nulo.
+     * Nome da filial, não pode ser nulo.
      */
     @Column(nullable = false)
     private String name;
 
     /**
-     * Construtor utilizado para criar uma nova Branch informando apenas o nome.
-     * @param name nome da branch.
+     * Construtor utilizado para criar uma nova filial informando apenas o nome.
+     * @param name nome da filial.
      */
     public Branch(String name) {
         this.name = name;

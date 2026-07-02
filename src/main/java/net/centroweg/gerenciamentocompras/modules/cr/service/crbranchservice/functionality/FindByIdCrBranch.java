@@ -20,10 +20,9 @@ public class FindByIdCrBranch {
 
     /**
      * Busca um vínculo CR-filial pelo seu identificador.
-     *
-     * @param id
-     * @return o vínculo encontrado
-     * @throws CrBranchNotFoundException se o vínculo não for encontrado
+     * @param id identificador do CR-filial.
+     * @return o vínculo encontrado.
+     * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */
     public CrBranchResponse findById(Long id) {
         CrBranch crBranch = crBranchRepository.findById(id)

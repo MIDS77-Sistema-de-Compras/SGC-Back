@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 /**
- * Entidade que representa um Centro de Responsabilidade(CR).
+ * Entidade que representa um Centro de Responsabilidade(CR) no sistema de gerenciamento de compras.
  */
 @BatchSize(size = 30)
 @Entity
@@ -40,10 +40,10 @@ public class Cr {
     private Boolean master;
 
     /**
-     * Relacionamento com a entidade Setor, um Setor pode ter vários CRs.
+     * Relacionamento com a entidade bloco(sector), um bloco pode ter vários CRs.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    private Sector sector;
+    private Sector bloco;
 
     /**
      * Construtor utilizado para criação de novos CRs, sem ID e relacionamento definido.
@@ -52,7 +52,6 @@ public class Cr {
      * @param master booleano que indica se ele é um CR master(true) ou não(false).
      */
     public Cr(String name, String code, Boolean master) {
-
         this.name = name;
         this.code = code;
         this.master = master;
@@ -63,12 +62,12 @@ public class Cr {
      * @param name nome do CR.
      * @param code código do CR.
      * @param master booleano que indica se ele é um CR master(true) ou não(false).
-     * @param sector relacionamenro com a classe setor.
+     * @param bloco relacionamenro com a classe bloco.
      */
-    public Cr(String name, String code, Boolean master, Sector sector) {
+    public Cr(String name, String code, Boolean master, Sector bloco) {
         this.name = name;
         this.code = code;
         this.master = master;
-        this.sector = sector;
+        this.bloco = bloco;
     }
 }

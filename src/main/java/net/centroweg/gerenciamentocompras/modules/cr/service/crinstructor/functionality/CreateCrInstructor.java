@@ -1,9 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crinstructor.functionality;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
@@ -14,17 +12,25 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructorMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
+/**
+ * Caso de uso responsável pela criação de um novo {@link CrInstructor}.
+ */
 @Service
 @RequiredArgsConstructor
 public class CreateCrInstructor {
     
     private final CrInstructorRepository crInstructorRepository;
     private final CrInstructorMapper crInstructorMapper;
-
     private final UserRepository userRepository;
     private final CrBranchRepository crBranchRepository;
 
+    /**
+     * Cria e persiste um novo vínculo entre CR-filial e usuário, chamado de CR-instrutor no banco de dados.
+     * @param request dados do CR-instrutor.
+     * @return vínculo criado.
+     */
     public CrInstructorResponse addCrInstructor(CrInstructorRequest request){
         List<User> user = userRepository.findAllById(request.instructorIds());
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId()).orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));

@@ -12,7 +12,6 @@ import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**
@@ -63,7 +62,7 @@ public class CrController {
 
     /**
      * Atualizar os dados de um CR existente.
-     * @param id  identificador do CR a ser atualizado.
+     * @param id identificador do CR a ser atualizado.
      * @param dto requisição com novos dados.
      * @return status HTTP 200 e CR com dados atualizados no corpo da resposta.
      */

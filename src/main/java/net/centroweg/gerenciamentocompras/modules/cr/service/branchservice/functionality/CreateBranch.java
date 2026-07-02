@@ -19,9 +19,9 @@ public class CreateBranch {
     private final BranchMapper branchMapper;
 
     /**
-     * Cria e persiste uma nova branch no banco de dados.
-     * @param branchRequest dados da branch a ser criada.
-     * @return branch criada.
+     * Cria e persiste uma nova filial no banco de dados.
+     * @param branchRequest dados da filial a ser criada.
+     * @return filial criada.
      */
     public BranchResponse create(BranchRequest branchRequest){
         Branch branch = branchMapper.toEntity(branchRequest);

@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crinstructor.functionality;
 
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
@@ -13,16 +12,24 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructorMapper;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 
+/**
+ * Caso de uso responsável por atualizar um {@link CrInstructor}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateCrInstructor {
     
     private final CrInstructorRepository crInstructorRepository;
     private final CrInstructorMapper crInstructorMapper;
-
     private final UserRepository userRepository;
     private final CrBranchRepository crBranchRepository;
 
+    /**
+     * Atualiza um CR-instrutor, vínculo entre CR-filial e usuário, existente.
+     * @param id identificador do CR-instrutor.
+     * @param request novos dados do CR-instrutor.
+     * @return vínculo atualizado.
+     */
     public CrInstructorResponse update(Long id, CrInstructorRequest request){
         CrInstructor crInstructor = crInstructorRepository.findById(id).orElseThrow(
             () -> new CrInstructorNotFoundException("Nenhum supervisor vinculado à filial foi encontrado."));

@@ -5,11 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
 
 /**
- * Entidade que representa o Sector(Bloco).
+ * Entidade que representa o bloco(sector) no sistema de gerenciamento de compras.
  */
 @Entity
 @Table(name = "sector")
@@ -20,27 +19,27 @@ import java.util.List;
 public class Sector {
 
     /**
-     * Identificador único do Sector, gerado automaticamente pelo banco de dados.
+     * Identificador único do bloco, gerado automaticamente pelo banco de dados.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     /**
-     * Nome do Sector.
+     * Nome do bloco.
      */
     @Column(nullable = false, unique = true)
     private String name;
 
     /**
-     * Relacionamento com a entidade CR, várias CRs pertencem a um Setor.
+     * Relacionamento com a entidade CR, várias CRs pertencem a um bloco.
      */
-    @OneToMany(mappedBy = "sector")
+    @OneToMany(mappedBy = "bloco")
     private List<Cr> crs;
 
     /**
-     * Construtor utilizado para crir um novo Sector, sem ID e relacionamento definido.
-     * @param name nome do sector.
+     * Construtor utilizado para crir um novo bloco, sem ID e relacionamento definido.
+     * @param name nome do bloco.
      */
     public Sector(String name) {
         this.name = name;

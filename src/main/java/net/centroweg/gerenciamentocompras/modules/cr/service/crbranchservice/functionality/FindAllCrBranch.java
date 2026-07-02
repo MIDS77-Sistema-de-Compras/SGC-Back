@@ -9,11 +9,8 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapp
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.*;
 
 /**
@@ -28,8 +25,7 @@ public class FindAllCrBranch {
 
     /**
      * Lista todos os vínculos CR-filial cadastrados.
-     *
-     * @return a lista de vínculos (vazia se não houver nenhum)
+     * @return a lista de vínculos, vazia se não houver nenhum.
      */
     @Transactional(readOnly = true)
     public List<CrBranchResponse> findAll(

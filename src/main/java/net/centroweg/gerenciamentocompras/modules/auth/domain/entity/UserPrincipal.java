@@ -2,12 +2,10 @@ package net.centroweg.gerenciamentocompras.modules.auth.domain.entity;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
@@ -21,7 +19,7 @@ public class UserPrincipal implements UserDetails {
     private final User userEntity;
 
     /**
-     * Permissões(roles) do usuário.
+     * Permissões do usuário.
      * @return permissão do usuário para verificar acesso e nível de acesso.
      */
     @Override

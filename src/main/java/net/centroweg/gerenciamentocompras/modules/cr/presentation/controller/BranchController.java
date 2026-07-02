@@ -10,13 +10,12 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.branchservice.branc
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**
  * Controlador REST responsável pelos endpoints de gerenciamento de {@link Branch}.
  */
-@Tag(name = "ENDPOINTS da entidade BRANCH")
+@Tag(name = "ENDPOINTS da entidade filial")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/branches")
@@ -25,11 +24,11 @@ public class BranchController {
     private final BranchService branchService;
 
     /**
-     * Criar uma nova Branch.
-     * @param branchRequest corpo da requisição com os dados da branch.
-     * @return HTTP 201 com a branch criada no corpo da resposta.
+     * Criar uma nova filial.
+     * @param branchRequest corpo da requisição com os dados da filial.
+     * @return HTTP 201 com a filial criada no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela criação de Branch")
+    @Operation(description = "ENDPOINT responsável pela criação de filial")
     @PostMapping
     public ResponseEntity<BranchResponse> create(@RequestBody BranchRequest branchRequest){
         return ResponseEntity.status(201)
@@ -37,10 +36,10 @@ public class BranchController {
     }
 
     /**
-     * Listar todas as Branches cadastradas.
-     * @return HTTP 200 com a lista de branches no corpo da resposta.
+     * Listar todas as filiais cadastradas.
+     * @return HTTP 200 com a lista de filiais no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de todos Branch")
+    @Operation(description = "ENDPOINT responsável pela listagem de todas as filiais")
     @GetMapping
     public ResponseEntity<List<BranchResponse>> listAll(){
         return ResponseEntity.status(200)
@@ -48,9 +47,9 @@ public class BranchController {
     }
 
     /**
-     * Busca uma Branch pelo seu identificador.
-     * @param id identificador da branch.
-     * @return HTTP 200 com a branch encontrada no corpo da resposta.
+     * Busca uma filial pelo seu identificador.
+     * @param id identificador da filial.
+     * @return HTTP 200 com a filial encontrada no corpo da resposta.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de Branch por id")
     @GetMapping("/{id}")
@@ -60,12 +59,12 @@ public class BranchController {
     }
 
     /**
-     * Atualizar os dados de uma Branch existente.
-     * @param id identificador da branch a ser atualizada.
-     * @param branchRequest corpo da requisição com os novos dados.
-     * @return HTTP 200 com a branch atualizada no corpo da resposta.
+     * Atualizar os dados de uma filial existente.
+     * @param id identificador da filial a ser atualizada.
+     * @param branchRequest corpo da requisição com os novos dados da filial.
+     * @return HTTP 200 com a filial atualizada no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de Branch")
+    @Operation(description = "ENDPOINT responsável pela atualização de filiais")
     @PutMapping("/{id}")
     public ResponseEntity<BranchResponse> update(@PathVariable Long id, @RequestBody BranchRequest branchRequest){
         return ResponseEntity.status(200)
@@ -73,11 +72,11 @@ public class BranchController {
     }
 
     /**
-     * Remover uma Branch pelo seu identificador.
-     * @param id identificador da branch a ser removida.
+     * Remover uma filial pelo seu identificador.
+     * @param id identificador da filial a ser removida.
      * @return HTTP 204 com mensagem de confirmação no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pelo delete de Branch")
+    @Operation(description = "ENDPOINT responsável por deletar as filiais")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(204)

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 /**

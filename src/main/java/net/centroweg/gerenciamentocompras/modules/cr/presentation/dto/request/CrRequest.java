@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
  * @param name nome do CR, não deve ser nulo e nem vazio.
  * @param code código identificador do CR, não deve ser nulo e nem vazio.
  * @param master booleano que indica se este CR é o master da estrutura organizacional(true) ou não(false).
+ * @param sectorName nome do bloco que o CR pertence.
  */
 public record CrRequest(
         @NotBlank(message = "O nome do CR não deve ser nulo e nem vazio!")
@@ -15,7 +16,7 @@ public record CrRequest(
         @NotBlank(message = "O código do CR não deve ser nulo e nem vazio!")
         String code,
         Boolean master,
-        @NotBlank(message = "O nome do setor não deve ser nulo e nem vazio!")
+        @NotBlank(message = "O nome do bloco não deve ser nulo e nem vazio!")
         String sectorName
 ) {
 }

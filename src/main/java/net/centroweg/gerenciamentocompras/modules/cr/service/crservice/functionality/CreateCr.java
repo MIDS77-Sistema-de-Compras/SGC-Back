@@ -44,7 +44,7 @@ public class CreateCr{
 
         Cr crEntity = crMapper.toEntity(dto, sectorSearched);
 
-        crEntity.setSector(sectorSearched);
+        crEntity.setBloco(sectorSearched);
 
         return crMapper.toCrCompoundResponse(crRepository.save(crEntity));
     }

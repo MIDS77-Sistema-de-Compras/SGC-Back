@@ -6,7 +6,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.BranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.BranchMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +20,8 @@ public class findAllBranch {
     private final BranchMapper branchMapper;
 
     /**
-     * Retorna todas as branches registradas no banco de dados.
-     * @return lista de branches, vazia se não houver nenhuma branch cadastrada.
+     * Retorna todas as filiais registradas no banco de dados.
+     * @return lista de filiais, vazia se não houver nenhuma cadastrada.
      */
     public List<BranchResponse> listAll(){
         List<Branch> branches = branchRepository.findAll();

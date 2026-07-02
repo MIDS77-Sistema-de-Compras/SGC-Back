@@ -18,8 +18,8 @@ public class DeleteBranch {
     private final BranchMapper branchMapper;
 
     /**
-     * Remove a branch com o ID informado do banco de dados.
-     * @param id identificador da branch a ser removida.
+     * Remove a filial com o ID informado do banco de dados.
+     * @param id identificador da filial a ser removida.
      * @return confirmação da operação.
      */
     public MessageDTO delete(Long id){

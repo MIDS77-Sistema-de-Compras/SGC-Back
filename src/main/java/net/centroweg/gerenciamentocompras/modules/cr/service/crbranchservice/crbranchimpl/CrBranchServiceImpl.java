@@ -21,48 +21,48 @@ import java.util.List;
 public class CrBranchServiceImpl implements CrBranchService {
 
     /**
-     * Componente responsável pela criação de {@link CrBranch}.
+     * Componente responsável pela criação de CR-filial.
      */
     private final CreateCrBranch createCrBranch;
 
     /**
-     * Componente responsável pela listagem de {@link CrBranch}.
+     * Componente responsável pela listagem de CR-filial.
      */
     private final FindAllCrBranch findAllCrBranch;
 
     /**
-     * Componente responsável pela busca por ID do {@link CrBranch}.
+     * Componente responsável pela busca por ID do CR-filial.
      */
     private final FindByIdCrBranch findByIdCrBranch;
 
     /**
-     * Componente responsável pela atualização do {@link CrBranch}.
+     * Componente responsável pela atualização do CR-filial.
      */
     private final UpdateCrBranch updateCrBranch;
 
     /**
-     * Componente responsável por deletar um {@link CrBranch}.
+     * Componente responsável por deletar um CR-filial.
      */
     private final DeleteCrBranch deleteCrBranch;
 
     /**
-     * Componente responsável por buscar um {@link CrBranch} pelo ID da branch.
+     * Componente responsável por buscar um CR-filial pelo ID da filial.
      */
     private final FindCrBranchByBranch findCrBranchByBranch;
 
     /**
-     * Componente responsável por adicionar um ou mais responsáveis no {@link CrBranch}.
+     * Componente responsável por adicionar um ou mais responsáveis no CR-filial.
      */
     private final AssignCrBranchResponsible assignCrBranchResponsible;
 
     /**
-     * Componente responsável por remover um ou mais responsáves no {@link CrBranch}.
+     * Componente responsável por remover um ou mais responsáves no CR-filial.
      */
     private final RemoveCrBranchResponsible removeCrBranchResponsible;
 
     /**
-     * Cria um novo vínculo entre CR e branch.
-     * @param request dados do CR-Branch para criação.
+     * Cria um novo vínculo entre CR e filial.
+     * @param request dados do CR-filial para criação.
      * @return o vínculo criado.
      */
     @Override
@@ -71,7 +71,7 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     /**
-     * Lista todos os vínculos CR-Branch cadastrados.
+     * Lista todos os vínculos CR-filial cadastrados.
      * @return a lista de vínculos encontrados.
      */
     @Override
@@ -80,8 +80,8 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     /**
-     * Busca um vínculo CR-Branch pelo seu identificador.
-     * @param id identificador do CR-Branch.
+     * Busca um vínculo CR-filial pelo seu identificador.
+     * @param id identificador do CR-filial.
      * @return o vínculo encontrado.
      */
     @Override
@@ -90,9 +90,9 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     /**
-     * Atualiza um vínculo CR-Branch existente.
-     * @param id identificador do CR-Branch.
-     * @param request novos dados do CR-Branch.
+     * Atualiza um vínculo CR-filial existente.
+     * @param id identificador do CR-filial.
+     * @param request novos dados do CR-filial.
      * @return o vínculo atualizado.
      */
     @Override
@@ -101,8 +101,8 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     /**
-     * Remove um vínculo CR-Branch pelo seu identificador.
-     * @param id identificador do CR-Branch.
+     * Remove um vínculo CR-filial pelo seu identificador.
+     * @param id identificador do CR-filial.
      * @return uma mensagem de confirmação da remoção.
      */
     @Override
@@ -112,9 +112,9 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     /**
-     * Lista todos os vínculos CR-Branch pertencentes a uma branch.
-     * @param branchId identificador do CR-Branch.
-     * @return a lista de vínculos da branch.
+     * Lista todos os vínculos CR-filial pertencentes a uma filial.
+     * @param branchId identificador do CR-filial.
+     * @return a lista de vínculos da filial.
      */
     @Override
     public List<CrBranchResponse> findCrBranchByBranch(Long branchId) {
@@ -122,9 +122,9 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     /**
-     * Atribui um usuário responsável a um vínculo CR-Branch.
-     * @param crBranchId identificador do CR-Branch que receberá um usuário.
-     * @param userId identificador do usuário que será atribuido a CR-Branch.
+     * Atribui um usuário responsável a um vínculo CR-filial.
+     * @param crBranchId identificador do CR-filial que receberá um usuário.
+     * @param userId identificador do usuário que será atribuido ao CR-filial.
      * @return o vínculo atualizado.
      */
     @Override
@@ -133,8 +133,8 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     /**
-     * Remove o usuário responsável de um vínculo CR-Branch.
-     * @param crBranchId identificador do CR-Branch que terá um usuário removido.
+     * Remove o usuário responsável de um vínculo CR-filial.
+     * @param crBranchId identificador do CR-filial que terá um usuário removido.
      * @return o vínculo atualizado sem responsável.
      */
     @Override

@@ -19,10 +19,10 @@ public class FindByIdBranch {
     private final BranchMapper branchMapper;
 
     /**
-     * Busca uma branch pelo ID informado.
-     * @param id identificador da branch.
-     * @return dados da branch encontrada.
-     * @throws BranchNotFoundException se nenhuma branch for encontrada com o ID informado.
+     * Busca uma filial pelo ID informado.
+     * @param id identificador da filial.
+     * @return dados da filial encontrada.
+     * @throws BranchNotFoundException se nenhuma filial for encontrada com o ID informado.
      */
     public BranchResponse findById(Long id){
         Branch branch = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException());

@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request;
 
 import java.util.List;
-
 import jakarta.validation.constraints.NotBlank;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 

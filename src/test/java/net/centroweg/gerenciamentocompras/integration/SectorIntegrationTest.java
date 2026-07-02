@@ -54,7 +54,7 @@ public class SectorIntegrationTest {
     private Long createSectorAndGetId(String name) throws Exception {
         SectorRequest request = new SectorRequest(name);
 
-        String response = mockMvc.perform(post("/sector")
+        String response = mockMvc.perform(post("/bloco")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -70,7 +70,7 @@ public class SectorIntegrationTest {
     void shouldCreateSectorSuccessfully() throws Exception {
         SectorRequest request = new SectorRequest("TI");
 
-        mockMvc.perform(post("/sector")
+        mockMvc.perform(post("/bloco")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -85,7 +85,7 @@ public class SectorIntegrationTest {
     void shouldReturnBadRequestWhenNameIsBlank() throws Exception {
         SectorRequest request = new SectorRequest("");
 
-        mockMvc.perform(post("/sector")
+        mockMvc.perform(post("/bloco")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -97,7 +97,7 @@ public class SectorIntegrationTest {
         createSectorAndGetId("Financeiro");
         createSectorAndGetId("Recursos Humanos");
 
-        mockMvc.perform(get("/sector/simple")
+        mockMvc.perform(get("/bloco/simple")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -111,7 +111,7 @@ public class SectorIntegrationTest {
     void shouldListSectorsCompound() throws Exception {
         createSectorAndGetId("Financeiro");
 
-        mockMvc.perform(get("/sector/compound")
+        mockMvc.perform(get("/bloco/compound")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -125,7 +125,7 @@ public class SectorIntegrationTest {
     void shouldFindSectorByIdSimple() throws Exception {
         Long id = createSectorAndGetId("Logística");
 
-        mockMvc.perform(get("/sector/simple/{id}", id)
+        mockMvc.perform(get("/bloco/simple/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
@@ -137,7 +137,7 @@ public class SectorIntegrationTest {
     void shouldFindSectorByIdCompound() throws Exception {
         Long id = createSectorAndGetId("Logística");
 
-        mockMvc.perform(get("/sector/compound/{id}", id)
+        mockMvc.perform(get("/bloco/compound/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
@@ -148,7 +148,7 @@ public class SectorIntegrationTest {
     @Test
     @DisplayName("[Integração] Deve retornar 404 ao buscar setor inexistente (simples)")
     void shouldReturnNotFoundForNonExistentSectorSimple() throws Exception {
-        mockMvc.perform(get("/sector/simple/{id}", 9999L)
+        mockMvc.perform(get("/bloco/simple/{id}", 9999L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -156,7 +156,7 @@ public class SectorIntegrationTest {
     @Test
     @DisplayName("[Integração] Deve retornar 404 ao buscar setor inexistente (composto)")
     void shouldReturnNotFoundForNonExistentSectorCompound() throws Exception {
-        mockMvc.perform(get("/sector/compound/{id}", 9999L)
+        mockMvc.perform(get("/bloco/compound/{id}", 9999L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -168,7 +168,7 @@ public class SectorIntegrationTest {
 
         SectorRequest updateRequest = new SectorRequest("Comercial");
 
-        mockMvc.perform(put("/sector/{id}", id)
+        mockMvc.perform(put("/bloco/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
@@ -184,7 +184,7 @@ public class SectorIntegrationTest {
     void shouldReturnNotFoundWhenUpdatingNonExistentSector() throws Exception {
         SectorRequest updateRequest = new SectorRequest("Comercial");
 
-        mockMvc.perform(put("/sector/{id}", 9999L)
+        mockMvc.perform(put("/bloco/{id}", 9999L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isNotFound());
@@ -195,7 +195,7 @@ public class SectorIntegrationTest {
     void shouldDeleteSectorSuccessfully() throws Exception {
         Long id = createSectorAndGetId("Marketing");
 
-        mockMvc.perform(delete("/sector/{id}", id)
+        mockMvc.perform(delete("/bloco/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 

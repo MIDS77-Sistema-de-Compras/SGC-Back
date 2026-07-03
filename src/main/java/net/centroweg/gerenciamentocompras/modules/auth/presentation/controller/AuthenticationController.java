@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,16 +33,15 @@ public class AuthenticationController {
 
     @Operation(description = "ENDPOINT responsável pela autenticação de usuário")
     @PostMapping("/login")
+    @Auditable(action = "LOGAR")
     public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto,
                                             HttpServletResponse response){
 
-        // gera o token
         String token = authenticationService.login(loginDto);
 
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
-        // depois botar o setSecure pra true 🐌💪👉👈
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(4000);
 

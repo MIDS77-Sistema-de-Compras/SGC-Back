@@ -107,5 +107,38 @@ public class AuditLogAspect {
                 .orElse(null);
     }
 
+    private String extractUsernameFromReturnObject(Object result){
+        if (result == null) return null;
+
+        Object actualBody = (result instanceof ResponseEntity<?> responseEntity)
+                ? responseEntity.getBody()
+                : result;
+
+        if (actualBody == null) return null;
+
+        Class<?> clazz = actualBody.getClass();
+
+        return Stream.of("userName")
+                .map(methodName -> {
+                    try {
+                        return clazz.getMethod(methodName);
+                    } catch (NoSuchMethodException e) {
+                        return null;
+                    }
+                })
+                .filter(method -> method != null && method.getReturnType().equals(String.class))
+                .map(method -> {
+                    try {
+                        return (String) method.invoke(actualBody);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(userName -> userName != null)
+                .findFirst()
+                .orElse(null);
+    }
+
+
 
 }

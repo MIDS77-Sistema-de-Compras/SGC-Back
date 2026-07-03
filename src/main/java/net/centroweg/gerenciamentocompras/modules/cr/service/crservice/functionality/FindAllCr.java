@@ -1,16 +1,15 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.functionality;
 
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 
 /**
- * Caso de uso responsável por listar todos os Centros de Resultado (CR) cadastrados.
+ * Caso de uso responsável por listar todos os {@link Cr} cadastrados.
  */
 @Service
 @RequiredArgsConstructor
@@ -19,9 +18,8 @@ public class FindAllCr {
     private final CrMapper crMapper;
 
     /**
-     * Retorna todos os CRs persistidos, convertidos para o DTO de resposta.
-     *
-     * @return lista de {@link CrCompoundResponse}
+     * Retorna todos os CRs cadastrados no banco de dados.
+     * @return lista com todos os CRs encontrados.
      */
     public List<CrCompoundResponse> listAll(){
         return crRepository.findAll()

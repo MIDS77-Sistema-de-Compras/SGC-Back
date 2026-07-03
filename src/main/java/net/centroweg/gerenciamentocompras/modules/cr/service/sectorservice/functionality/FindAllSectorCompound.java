@@ -5,9 +5,11 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.SectorCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.SectorMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
+/**
+ * Caso de uso responsável pela busca
+ */
 @Service
 @RequiredArgsConstructor
 public class FindAllSectorCompound {

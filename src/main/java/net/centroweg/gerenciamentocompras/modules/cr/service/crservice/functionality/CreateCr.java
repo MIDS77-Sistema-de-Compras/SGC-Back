@@ -14,7 +14,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Acess
 import org.springframework.stereotype.Service;
 
 /**
- * Responsável pela funcionalidade de criação de Centros de Responsabilidade (CR).
+ * Caso de uso responsável pela criação de um {@link Cr}.
  */
 @Service
 @RequiredArgsConstructor
@@ -25,15 +25,10 @@ public class CreateCr{
     private final CrMapper crMapper;
 
     /**
-     * Realiza a criação de um Centro de Responsabilidade (CR).
-     * Os dados recebidos são convertidos para entidade, persistidos
-     * no banco de dados e retornados como objeto de resposta.
-     *
-     * @param dto Objeto que contem os dados necessarios para a criação do CR
-     * @return {@link CrCompoundResponse} com os dados do CR persistido
-     * */
-
-
+     * Cria e persiste um novo CR no banco de dados.
+     * @param dto dados do CR.
+     * @return CR criado.
+     */
     public CrCompoundResponse create(CrRequest dto, UserPrincipal userPrincipal){
 
         if(!userPrincipal.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("COORDENADOR"))){

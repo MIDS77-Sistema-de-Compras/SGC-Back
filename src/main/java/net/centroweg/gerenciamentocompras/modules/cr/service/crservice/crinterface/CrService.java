@@ -41,9 +41,9 @@ public interface CrService {
     CrCompoundResponse update(Long id, CrRequest dto);
 
     /**
-     * Remove um Centro de Resultado pelo identificador.
-     * @param id identificador do CR a ser removido
-     * @return {@link MessageDTO} com mensagem de confirmação
+     * Remove um CR pelo identificador.
+     * @param id identificador do CR a ser removido.
+     * @return mensagem de confirmação da remoção.
      */
     MessageDTO delete(Long id);
 }

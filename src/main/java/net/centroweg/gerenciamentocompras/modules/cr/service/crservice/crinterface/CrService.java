@@ -4,49 +4,44 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
-
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 
 /**
- * Contrato de serviço para operações sobre Centros de Resultado (CR).
+ * Contrato de serviço para operações de gerenciamento de {@link Cr}.
  */
 public interface CrService {
 
     /**
-     * Cria um novo Centro de Resultado.
-     *
-     * @param dto dados do CR a ser criado
-     * @return {@link CrCompoundResponse} com os dados persistidos
+     * Cria um novo CR.
+     * @param dto dados do CR.
+     * @return o CR criado.
      */
     CrCompoundResponse create(CrRequest dto, UserPrincipal userPrincipal);
 
     /**
-     * Retorna todos os Centros de Resultado cadastrados.
-     *
-     * @return lista de {@link CrCompoundResponse}
+     * Lista todos os CRs cadastrados.
+     * @return lista dos CRs encontrados.
      */
     List<CrCompoundResponse> listAll();
 
     /**
-     * Busca um Centro de Resultado pelo identificador.
-     *
-     * @param id identificador do CR
-     * @return {@link CrCompoundResponse} correspondente
+     * Busca um CR pelo ID.
+     * @param id identificador do CR.
+     * @return CR encontrado na busca.
      */
     CrCompoundResponse listById(Long id);
 
     /**
-     * Atualiza os dados de um Centro de Resultado existente.
-     *
-     * @param id  identificador do CR
-     * @param dto novos dados do CR
-     * @return {@link CrCompoundResponse} com os dados atualizados
+     * Atualiza os dados de um CR existente.
+     * @param id  identificador do CR.
+     * @param dto novos dados do CR.
+     * @return CR com os dados atualizados.
      */
     CrCompoundResponse update(Long id, CrRequest dto);
 
     /**
      * Remove um Centro de Resultado pelo identificador.
-     *
      * @param id identificador do CR a ser removido
      * @return {@link MessageDTO} com mensagem de confirmação
      */

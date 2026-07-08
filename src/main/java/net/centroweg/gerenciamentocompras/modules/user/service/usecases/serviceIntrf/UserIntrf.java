@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.user.service.usecases.service
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
@@ -48,7 +49,7 @@ public interface UserIntrf {
      * @param user nome do usuário
      * @return um DTO com o usuário já atualizado
      */
-    UserResponse updateUserAll(Long id, CreateUser user);
+    UserResponse updateUserAll(Long id, UpdateUser user);
     /**
      * Deleta usuário que tem o identificador único informado.
      * @param id identificador único do usuário

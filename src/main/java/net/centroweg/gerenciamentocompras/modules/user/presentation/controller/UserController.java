@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
 import org.springframework.http.HttpStatus;
@@ -90,7 +91,7 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de User")
     @PutMapping("/userId/{userId}")
-    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody CreateUser userRequest, @PathVariable Long userId){
+    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUser userRequest, @PathVariable Long userId){
         return ResponseEntity.ok(user.updateUserAll(userId, userRequest));
     }
 

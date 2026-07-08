@@ -5,6 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Service;
@@ -34,12 +35,11 @@ public class UpdateUserAllImpl {
      * @return usuário já atualizado
      */
 
-    public UserResponse updateUserAll(Long id, CreateUser user){
+    public UserResponse updateUserAll(Long id, UpdateUser user){
         User userSave = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
         userSave.setName(user.name());
-        userSave.setCpf(user.cpf());
         userSave.setEmail(user.email());
         userSave.setPassword(user.password());
         userSave.setExtensionNumber(user.extensionNumber());

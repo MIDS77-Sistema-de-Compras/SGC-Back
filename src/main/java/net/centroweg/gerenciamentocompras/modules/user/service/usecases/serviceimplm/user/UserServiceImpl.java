@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserIntrf {
      * @return usuário já atualizado
      */
     @Override
-    public UserResponse updateUserAll(Long id, CreateUser user){
+    public UserResponse updateUserAll(Long id, UpdateUser user){
         return updateUserAll.updateUserAll(id, user);
     }
 

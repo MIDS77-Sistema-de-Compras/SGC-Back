@@ -40,7 +40,7 @@ class FindLoggedUserTest {
         UserPrincipal userPrincipal = mock(UserPrincipal.class);
         when(userPrincipal.getUsername()).thenReturn("test@test.com");
         
-        UserResponse expectedResponse = new UserResponse(1L, "Teste", "52998224725", "test@test.com", "...", true, null, null, null);
+        UserResponse expectedResponse = new UserResponse(1L, "Teste", "52998224725", "test@test.com", "...", true, null, null, "USER", null);
         
         when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(userEntity));
         when(userMapper.toDTO(userEntity)).thenReturn(expectedResponse);

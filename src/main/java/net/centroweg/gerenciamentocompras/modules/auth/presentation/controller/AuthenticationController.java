@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,9 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final PasswordRecoveryService passwordRecoveryService;
 
+    @Value("${app.cookies.secure}")
+    private boolean secureCookie;
+
     @Operation(description = "ENDPOINT responsável pela autenticação de usuário")
     @PostMapping("/login")
     public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto,
@@ -41,7 +45,7 @@ public class AuthenticationController {
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
         // depois botar o setSecure pra true 🐌💪👉👈
-        cookie.setSecure(false);
+        cookie.setSecure(secureCookie);
         cookie.setPath("/");
         cookie.setMaxAge(4000);
         cookie.setAttribute("SameSite", "None");

@@ -127,7 +127,7 @@ public class CrBranchController {
      * @param crBranchId identificador da CR-filial.
      * @return status HTTP 200 (OK).
      */
-    @Operation(description = "ENDPOINT responsável por deletar das CR-filiais por ID de CR Branch")
+    @Operation(description = "ENDPOINT responsável por deletar das CR-filiais por ID de CR-filial")
     @DeleteMapping("/{crBranchId}/responsible")
     public ResponseEntity<CrBranchResponse> removeCrBranchResponsible(@PathVariable Long crBranchId) {
         return ResponseEntity.ok(

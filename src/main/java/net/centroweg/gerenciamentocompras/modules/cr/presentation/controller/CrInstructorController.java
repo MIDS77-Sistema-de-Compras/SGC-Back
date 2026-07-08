@@ -47,7 +47,7 @@ public class CrInstructorController {
      * Listar CR-instrutors cadastrados.
      * @return status HTTP 200 e uma lista com todos os CR-instrutor encontrados no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de todos CR-instrutor")
+    @Operation(description = "ENDPOINT responsável pela listagem de todos CR-instrutores")
     @GetMapping
     public ResponseEntity<List<CrInstructorResponse>> findAll(){
         return ResponseEntity.status(HttpStatus.OK)

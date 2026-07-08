@@ -51,7 +51,7 @@ public class BranchController {
      * @param id identificador da filial.
      * @return HTTP 200 com a filial encontrada no corpo da resposta.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de Branch por id")
+    @Operation(description = "ENDPOINT responsável pela listagem de filial por id")
     @GetMapping("/{id}")
     public ResponseEntity<BranchResponse> findById(@PathVariable Long id){
         return ResponseEntity.status(200)

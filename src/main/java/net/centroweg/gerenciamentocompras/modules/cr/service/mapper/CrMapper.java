@@ -8,15 +8,15 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import org.springframework.stereotype.Component;
 
 /**
- * Mapper responsável pela conversão entre a entidade {@link Cr} e seus DTOs.
+ * Componente responsável pela conversão entre a entidade({@link Cr}) e seus DTOs de entrada({@link CrRequest}) e saída({@link CrCompoundResponse}, caso for completa) ou ({@link CrSimpleResponse}, caso for simples).
  */
 @Component
 public class CrMapper {
+
     /**
-     * Converte um {@link CrRequest} para a entidade {@link Cr}.
-     *
-     * @param dto DTO de entrada com os dados do CR
-     * @return entidade {@link Cr} pronta para persistência
+     * Converte um DTO de entrada para uma entidade CR.
+     * @param dto DTO com os dados de entrada do CR.
+     * @return conversão dos dados para uma entidade CR.
      */
     public Cr toEntity(CrRequest dto, Sector sector){
         Cr crSave = new Cr();
@@ -27,18 +27,22 @@ public class CrMapper {
         return crSave;
     }
 
+    /**
+     * Converte uma entidade CR para um DTO de saída do CR.
+     * @param cr entidade com os dados.
+     * @return DTO de saída com os dados já convertidos de forma simples.
+     */
     public CrSimpleResponse toCrSimpleResponse(Cr cr){
         return new CrSimpleResponse(
                 cr.getName()
         );
     }
-    /**
-     * Converte uma entidade {@link net.centroweg.gerenciamentocompras.modules.cr.domain.Cr} para o DTO de resposta {@link CrResponse}.
-     *
-     * @param cr entidade a ser convertida
-     * @return {@link CrCompoundResponse} com os dados do CR
-     */
 
+    /**
+     * Converte uma entidade CR para um DTO de saída do CR.
+     * @param cr entidade com os dados.
+     * @return DTO de saída com os dados já convertidos de forma completa.
+     */
     public CrCompoundResponse toCrCompoundResponse(Cr cr){
         return new CrCompoundResponse(
                 cr.getId(),

@@ -9,6 +9,9 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.S
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.SectorMapper;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável pela atualização de um {@link Sector}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateSector {
@@ -16,6 +19,12 @@ public class UpdateSector {
     private final SectorMapper sectorMapper;
     private final SectorRepository repository;
 
+    /**
+     * Atualiza um bloco existente.
+     * @param id identificador do bloco.
+     * @param sector novos dados do bloco.
+     * @return bloco já atualizado.
+     */
     public SectorSimpleResponse updateSector(Long id, SectorRequest sector){
         Sector sectorSave = repository.findById(id)
                 .orElseThrow(() -> new SectorNotFoundException());

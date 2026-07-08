@@ -10,9 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
+/**
+ * Controlador REST responsável pelos endpoints de gerenciamento de {@link Notification}.
+ */
 @Tag(name = "ENDPOINTS da entidade NOTIFICATION")
 @RequiredArgsConstructor
 @RequestMapping("/notifications")
@@ -21,21 +24,37 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @Operation(description = "ENDPOINT responsável pela listagem de Notification por usuário")
+    /**
+     * Lista todas as notificações pelo identificador do usuário.
+     * @param userId identificador do usuário.
+     * @return lista com as notificações encontradas.
+     */
+    @Operation(description = "ENDPOINT responsável pela listagem de notificações por usuário")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<NotificationResponse>> findByUser(@PathVariable Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.findNotificationsByUser(userId));
     }
 
-    @Operation(description = "ENDPOINT responsável pela listagem de Notification do próprio usuário logado")
+
+    /**
+     * Lista todas as notificações do usuário logado.
+     * @param userPrincipal dados do usuário logado.
+     * @return lista com as notificações encontradas.
+     */
+    @Operation(description = "ENDPOINT responsável pela listagem de notificações do próprio usuário logado")
     @GetMapping("/me")
     public ResponseEntity<List<NotificationResponse>> findByOwnUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.findByOwnUser(userPrincipal));
     }
 
-    @Operation(description = "ENDPOINT responsável por marcar Notification como visualizada")
+    /**
+     * Marca a notificação como visualizada.
+     * @param id identificador dda notificação.
+     * @return
+     */
+    @Operation(description = "ENDPOINT responsável por marcar notificações como visualizada")
     @PatchMapping("/{id}/viewed")
     public ResponseEntity<NotificationResponse> markAsViewed(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)

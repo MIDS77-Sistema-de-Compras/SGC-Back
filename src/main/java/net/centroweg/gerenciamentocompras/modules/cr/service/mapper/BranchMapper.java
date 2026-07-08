@@ -6,19 +6,15 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.B
 import org.springframework.stereotype.Component;
 
 /**
- * Componente responsável pela conversão entre a entidade {@link Branch}
- * e seus DTOs de entrada ({@link BranchRequest}) e saída ({@link BranchResponse}).
- *
- * @author Leandro
+ * Componente responsável pela conversão entre a entidade({@link Branch}) e seus DTOs de entrada({@link BranchRequest}) e saída({@link BranchResponse}).
  */
 @Component
 public class BranchMapper {
 
     /**
-     * Converte um {@link BranchRequest} em uma entidade {@link Branch}.
-     *
-     * @param branchRequest DTO com os dados de entrada
-     * @return entidade {@link Branch} pronta para persistência
+     * Converte um DTO de entrada da filial em uma entidade filial.
+     * @param branchRequest DTO com os dados de entrada da filial.
+     * @return conversão dos dados para uma entidade filial.
      */
     public Branch toEntity(BranchRequest branchRequest){
         return new Branch(
@@ -27,10 +23,9 @@ public class BranchMapper {
     }
 
     /**
-     * Converte uma entidade {@link Branch} em um {@link BranchResponse}.
-     *
-     * @param branch entidade persistida
-     * @return DTO de saída com os dados da branch
+     * Converte uma entidade filial em um DTO de saída da filial.
+     * @param branch entidade com os dados.
+     * @return DTO de saída com os dados da filial já convertidos.
      */
     public BranchResponse toResponse(Branch branch){
         return new BranchResponse(

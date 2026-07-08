@@ -16,9 +16,11 @@ import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderServic
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
+/**
+ * Serviço responsável pela montagem e envio de e-mails de notificações relacionados ás notificações de requisições.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,10 +28,16 @@ public class NotificationEmailService {
 
     private final EmailSenderService emailSenderService;
 
-
     @Value("http://localhost:3000/coordenador/solicitacoes")
     private String frontendUrl;
 
+    /**
+     * Envia um e-mail, de forma assíncrona, de uma notificação contendo um resumo da solicitação para o usuário informado.
+     * @param user destinatário do e-mail.
+     * @param subject assunto do e-mail.
+     * @param message mensagem principal da notificação.
+     * @param request solicitação relacionada a notificação.
+     */
     @Async
     public void sendNotificationEmail(
             User user,
@@ -65,6 +73,11 @@ public class NotificationEmailService {
         }
     }
 
+    /**
+     * Monta o resumo da solicitação em formato HTML para compor o corpo do e-mail.
+     * @param request solicitação utilizada para gerar o resumo.
+     * @return conteúdo HTML contendo as principais informações da solicitação.
+     */
     private String buildRequestSummary(Request request) {
         String requesterName = getRequesterName(request);
         String itemsSummary = buildItemsSummary(request);
@@ -91,6 +104,11 @@ public class NotificationEmailService {
         );
     }
 
+    /**
+     * Gera o resumo dos itens da solicitação, identificando automaticamente se a solicitação possuí itens ou serviços.
+     * @param request solicitação contendo os itens.
+     * @return resumo dos itens em formato HTML.
+     */
     private String buildItemsSummary(Request request) {
         if (request.getItemRequestProducts() != null && !request.getItemRequestProducts().isEmpty()) {
             return buildProductItemsSummary(request);
@@ -103,6 +121,11 @@ public class NotificationEmailService {
         return "<b>Itens:</b><br>Nenhum item informado.";
     }
 
+    /**
+     * Monta o resumo dos produtos da solicitação em formato HTML.
+     * @param request solicitação contendo itens de produto.
+     * @return resumo dos produtos.
+     */
     private String buildProductItemsSummary(Request request) {
         StringBuilder builder = new StringBuilder();
 
@@ -132,6 +155,11 @@ public class NotificationEmailService {
         return builder.toString();
     }
 
+    /**
+     * Monta o resumo dos serviços da solicitação em formato HTML.
+     * @param request solicitação contendo itens de serviço.
+     * @return resumo dos serviços.
+     */
     private String buildProvisionItemsSummary(Request request) {
         StringBuilder builder = new StringBuilder();
 
@@ -159,6 +187,11 @@ public class NotificationEmailService {
         return builder.toString();
     }
 
+    /**
+     * Obtém o nome do usuário que criou a solicitação.
+     * @param request solicitação que possui o nome do solicitante.
+     * @return nome do solicitante ou 'não informado' caso não exista.
+     */
     private String getRequesterName(Request request) {
         if (request.getCreatedByUsers() == null || request.getCreatedByUsers().isEmpty()) {
             return "Não informado";

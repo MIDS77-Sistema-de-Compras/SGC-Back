@@ -6,7 +6,11 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.SectorSimpleResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.SectorMapper;
 import org.springframework.stereotype.Service;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
+/**
+ * Caso de uso responsável por buscar um {@link Sector} de forma simples.
+ */
 @Service
 @RequiredArgsConstructor
 public class FindSectorByIdSimple {
@@ -14,6 +18,11 @@ public class FindSectorByIdSimple {
     private final SectorRepository repository;
     private final SectorMapper sectorMapper;
 
+    /**
+     * Busca um bloco pelo ID de forma simples.
+     * @param id identificador do bloco.
+     * @return bloco encontrado.
+     */
     public SectorSimpleResponse findByIdSimple(Long id){
         return sectorMapper.toResponseSimple(repository.findById(id)
                 .orElseThrow(() -> new SectorNotFoundException()));

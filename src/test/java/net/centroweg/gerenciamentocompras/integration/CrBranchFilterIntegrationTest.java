@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,14 @@ class CrBranchFilterIntegrationTest {
         matchingCrBranch = crBranchRepository.save(new CrBranch(branch, matchingCr, List.of(ana)));
         nonMatchingCrBranch = crBranchRepository.save(new CrBranch(anotherBranch, nonMatchingCr, List.of(bruno)));
         withoutResponsibleCrBranch = crBranchRepository.save(new CrBranch(branch, withoutResponsibleCr, null));
+    }
+
+    @AfterEach
+    void tearDown() {
+        crBranchRepository.deleteAll();
+        userRepository.deleteAll();
+        crRepository.deleteAll();
+        branchRepository.deleteAll();
     }
 
     @Test

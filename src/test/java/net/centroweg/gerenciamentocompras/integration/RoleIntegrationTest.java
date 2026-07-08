@@ -6,6 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateRole;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.RoleIntrf;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,11 @@ class RoleIntegrationTest {
     // Limpa o banco antes de cada teste para garantir isolamento
     @BeforeEach
     void setUp() {
+        roleRepository.deleteAll();
+    }
+
+    @AfterEach
+    void tearDown() {
         roleRepository.deleteAll();
     }
 

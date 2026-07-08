@@ -139,7 +139,7 @@ public class RequestController {
     }
 
     @DeleteMapping("/me/{id}")
-    @Auditable(action = "DELETAR_SOLICITACAO")
+    @Auditable(action = "DESATIVAR_SOLICITACAO")
     public ResponseEntity<Void> delete(@AuditParam(value = "request") @PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
         requestService.deleteRequestByOwnUser(id, userPrincipal);
         return ResponseEntity.status(204).build();

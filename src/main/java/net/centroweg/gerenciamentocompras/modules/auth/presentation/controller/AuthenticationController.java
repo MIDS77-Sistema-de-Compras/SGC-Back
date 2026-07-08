@@ -52,6 +52,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/recovery")
+    @Auditable(action = "SOLICITAR_ALTERACAO_SENHA")
     public ResponseEntity<MessageDTO> sendEmailWithToken(@Valid @RequestBody Recovery recoveryDto){
         try{
             passwordRecoveryService.validateAndGenerateRecoveryToken(recoveryDto);
@@ -63,6 +64,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/recovery/new")
+    @Auditable(action = "ALTERAR_SENHA")
     public ResponseEntity<MessageDTO> validateAndChangePassword(@Valid @RequestBody NewPassword newPasswordDto, @RequestParam String token){
         passwordRecoveryService.changePasswordWhenValidToken(newPasswordDto, token);
         return ResponseEntity.ok().body(new MessageDTO("Senha atualizada com sucesso"));

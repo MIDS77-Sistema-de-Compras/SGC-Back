@@ -86,6 +86,6 @@ public class UpdateUserAllImplTest {
 
         assertEquals("Novo Nome", atualizado.getName());
         assertEquals("novo@email.com", atualizado.getEmail());
-        // Aqui você validaria se o seu userSave.setUpdatedAt(LocalDateTime.now()) foi chamado também
+        assertEquals("S@1", atualizado.getPassword());
     }
 }

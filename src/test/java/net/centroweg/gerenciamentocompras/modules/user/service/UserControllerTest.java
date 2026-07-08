@@ -31,7 +31,7 @@ public class UserControllerTest {
     void deveRetornarUsuarioLogado() {
         // Arrange
         UserPrincipal mockPrincipal = mock(UserPrincipal.class);
-        UserResponse expectedResponse = new UserResponse(1L, "Admin Teste", "admin@teste.com", "...", "...", true, null, null, null);
+        UserResponse expectedResponse = new UserResponse(1L, "Admin Teste", "52998224725", "admin@teste.com", "1234", true, null, null, "ADMIN", null);
         
         when(userIntrf.findLoggedUser(mockPrincipal)).thenReturn(expectedResponse);
 

@@ -150,7 +150,7 @@ class CrInstructorBranchIntegrationTest {
     void findAll_empty_returns200AndEmptyArray() throws Exception {
         mockMvc.perform(get("/cr-instructors"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$.content", hasSize(0)));
     }
 
     @Test
@@ -172,7 +172,7 @@ class CrInstructorBranchIntegrationTest {
 
         mockMvc.perform(get("/cr-instructors"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$.content", hasSize(2)));
     }
 
     // =========================================================================

@@ -1,18 +1,23 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.controller;
 
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
+import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.MeasurementUnitRepository;
+import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,29 +44,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 class RequestControllerTest {
 
-    @Autowired
-    private WebApplicationContext context;
+    @Autowired private WebApplicationContext context;
+    @Autowired private RequestRepository requestRepository;
+    @Autowired private StatusRepository statusRepository;
+    @Autowired private CrBranchRepository crBranchRepository;
+    @Autowired private BranchRepository branchRepository;
+    @Autowired private CrRepository crRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private ProductRepository productRepository;
+    @Autowired private MeasurementUnitRepository measurementUnitRepository;
 
     @Autowired
-    private RequestRepository requestRepository;
-
-    @Autowired
-    private StatusRepository statusRepository;
-
-    @Autowired
-    private CrBranchRepository crBranchRepository;
-
-    @Autowired
-    private BranchRepository branchRepository;
-
-    @Autowired
-    private CrRepository crRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
     private MockMvc mockMvc;
-
     private CrBranch crBranch;
     private Status waitingStatus;
     private Status approvedStatus;
@@ -70,27 +66,29 @@ class RequestControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 
         requestRepository.deleteAll();
+        productRepository.deleteAll();
+        measurementUnitRepository.deleteAll();
         crBranchRepository.deleteAll();
         statusRepository.deleteAll();
         crRepository.deleteAll();
         branchRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
 
-        waitingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Solicitação aguardando aprovação"));
-        approvedStatus = statusRepository.save(new Status("Aprovado", "Solicitação aprovada pelo supervisor"));
+        waitingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Solicitacao aguardando aprovacao"));
+        approvedStatus = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada pelo supervisor"));
+        productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
+        measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));
 
         User newUser = new User("Test User", "52998224725", "test@test.com", "Password@1", "1234", true);
-        newUser.setRole(new Role("USER"));
+        newUser.setRole(roleRepository.save(new Role("USER")));
         testUser = userRepository.save(newUser);
         userPrincipal = new UserPrincipal(testUser);
     }
@@ -101,16 +99,11 @@ class RequestControllerTest {
                         .with(csrf())
                         .with(user(userPrincipal))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "crBranchId": %d,
-                                    "statusName": "EM_ANDAMENTO",
-                                    "userIds": []
-                                }
-                                """.formatted(crBranch.getId())))
+                        .content(createBody()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.crBranchId").value(crBranch.getId()))
-                .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"));
+                .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"))
+                .andExpect(jsonPath("$.products.length()").value(1));
     }
 
     @Test
@@ -119,7 +112,7 @@ class RequestControllerTest {
 
         mockMvc.perform(get("/requests"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.content.length()").value(1));
     }
 
     @Test
@@ -185,6 +178,24 @@ class RequestControllerTest {
                         .with(csrf())
                         .with(user(userPrincipal)))
                 .andExpect(status().isUnprocessableContent());
+    }
+
+    private String createBody() {
+        return """
+                {
+                    "crBranchId": %d,
+                    "userIds": [],
+                    "products": [
+                        {
+                            "productName": "Parafuso",
+                            "measurementUnit": "UN",
+                            "quantity": 10,
+                            "additionalInformations": "Comprar com urgencia"
+                        }
+                    ],
+                    "provisions": null
+                }
+                """.formatted(crBranch.getId());
     }
 
     private Request buildRequest(Status status) {

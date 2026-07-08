@@ -1,10 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email;
 
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailButton;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailFooter;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailLayout;
@@ -16,7 +16,11 @@ import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderServic
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -25,43 +29,48 @@ import java.util.List;
 public class NotificationEmailService {
 
     private final EmailSenderService emailSenderService;
+    private final RequestRepository requestRepository;
 
 
     @Value("http://localhost:3000/coordenador/solicitacoes")
     private String frontendUrl;
 
     @Async
+    @Transactional(readOnly = true)
     public void sendNotificationEmail(
-            User user,
+            String userName,
+            String userEmail,
             String subject,
             String message,
-            Request request
+            Long requestId
     ) {
-
-        EmailLayout layout = new EmailLayout(
-                subject,
-                List.<EmailBuilder>of(
-                        new EmailTitle(subject),
-                        new EmailParagraph("Olá, " + user.getName() + ".", "#666666", 14),
-                        new EmailParagraph(message, "#666666", 14),
-                        new EmailParagraph(buildRequestSummary(request), "#333333", 14),
-                        new EmailParagraph("Clique na opção abaixo para analisar a solicitação.", "#666666", 14),
-                        new EmailButton(frontendUrl, "Acessar solicitação"),
-                        new EmailFooter()
-                )
-        );
-
         try {
+            log.info("NotificationEmailService - Iniciando envio para {}", userEmail);
+
+            Request request = requestRepository.findById(requestId)
+                    .orElseThrow(RequestNotFoundException::new);
+
+            EmailLayout layout = new EmailLayout(
+                    subject,
+                    List.<EmailBuilder>of(
+                            new EmailTitle(subject),
+                            new EmailParagraph("Ol\u00E1, " + userName + ".", "#666666", 14),
+                            new EmailParagraph(message, "#666666", 14),
+                            new EmailParagraph(buildRequestSummary(request), "#333333", 14),
+                            new EmailParagraph("Clique na op\u00E7\u00E3o abaixo para analisar a solicita\u00E7\u00E3o.", "#666666", 14),
+                            new EmailButton(frontendUrl, "Acessar solicita\u00E7\u00E3o"),
+                            new EmailFooter()
+                    )
+            );
+
             emailSenderService.sendEmail(
-                    new DefaultEmail(subject, user.getEmail()),
+                    new DefaultEmail(subject, userEmail),
                     layout.buildHtml()
             );
-        } catch (MessagingException exception) {
-            log.error(
-                    "Erro ao enviar e-mail de notificação para {}",
-                    user.getEmail(),
-                    exception
-            );
+
+            log.info("NotificationEmailService - E-mail enviado com sucesso para {}", userEmail);
+        } catch (Exception exception) {
+            log.error("Erro inesperado ao enviar e-mail de notifica\u00E7\u00E3o para {}", userEmail, exception);
         }
     }
 
@@ -70,7 +79,7 @@ public class NotificationEmailService {
         String itemsSummary = buildItemsSummary(request);
 
         return """
-            <b>Resumo da solicitação</b><br>
+            <b style="color: #333333; font-size: 17px; line-height: 1.6;" >Resumo da solicitação</b><br>
             <b>ID:</b> #%d<br>
             <b>CR:</b> %s<br>
             <b>Código do CR:</b> %s<br>
@@ -84,9 +93,9 @@ public class NotificationEmailService {
                 request.getCrBranch().getCr().getName(),
                 request.getCrBranch().getCr().getCode(),
                 request.getCrBranch().getBranch().getName(),
-                request.getStatus().getName(),
+                formatStatusName(request.getStatus().getName()),
                 requesterName,
-                request.getRequestDate(),
+                formatRequestDate(request.getRequestDate()),
                 itemsSummary
         );
     }
@@ -106,15 +115,18 @@ public class NotificationEmailService {
     private String buildProductItemsSummary(Request request) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("<b>Itens de produto</b><br>");
+        builder.append("<b style='color: #333333; font-size: 17px; line-height: 1.6;' >Itens de produto</b>");
 
         request.getItemRequestProducts().forEach(item -> {
-            builder.append("- ")
+            builder.append("<br><b>- ")
+                    .append(" Name: </b>")
                     .append(item.getProduct().getName())
-                    .append(" | Código: ")
+                    .append("<br>")
+                    .append("<b>- Código: </b>")
                     .append(item.getProduct().getCode())
-                    .append(" | Quantidade: ")
-                    .append(item.getQuantity());
+                    .append("<br>")
+                    .append("<b>- Quantidade: </b>")
+                    .append(formatQuantity(item.getQuantity()));
 
             if (item.getMeasurementUnit() != null) {
                 builder.append(" ")
@@ -122,7 +134,7 @@ public class NotificationEmailService {
             }
 
             if (item.getAdditionalInformations() != null && !item.getAdditionalInformations().isBlank()) {
-                builder.append(" | Info adicional: ")
+                builder.append("<br><b>- Info adicional: </b>")
                         .append(item.getAdditionalInformations());
             }
 
@@ -135,21 +147,22 @@ public class NotificationEmailService {
     private String buildProvisionItemsSummary(Request request) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("<b>Itens de serviço</b><br>");
+        builder.append("<b style='color: #333333; font-size: 17px; line-height: 1.6;'>Itens de serviço</b><br>");
 
         request.getItemRequestProvisions().forEach(item -> {
-            builder.append("- ")
+            builder.append("<br><b> - ")
+                    .append(" Nome: </b>")
                     .append(item.getProvision().getName())
-                    .append(" | Valor total: R$ ")
+                    .append("<br><b> - Valor total:</b> R$ ")
                     .append(item.getProvision().getTotalValue());
 
             if (item.getProvision().getDescription() != null && !item.getProvision().getDescription().isBlank()) {
-                builder.append(" | Descrição: ")
+                builder.append("<br><b> - Descrição: </b>")
                         .append(item.getProvision().getDescription());
             }
 
             if (item.getAdditionalInformation() != null && !item.getAdditionalInformation().isBlank()) {
-                builder.append(" | Info adicional: ")
+                builder.append("<br><b> - Info adicional: </b>")
                         .append(item.getAdditionalInformation());
             }
 
@@ -157,6 +170,39 @@ public class NotificationEmailService {
         });
 
         return builder.toString();
+    }
+
+    private String formatRequestDate(LocalDateTime date) {
+        if (date == null) {
+            return "N\u00E3o informado";
+        }
+
+        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy '\u00E0s' HH:mm"));
+    }
+
+    private String formatStatusName(String statusName) {
+        if (statusName == null || statusName.isBlank()) {
+            return "N\u00E3o informado";
+        }
+
+        String formatted = statusName.replace("_", " ").toLowerCase();
+
+        return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
+    }
+
+    private String formatQuantity(Double quantity) {
+        if (quantity == null) {
+            return "N\u00E3o informado";
+        }
+
+        if (quantity % 1 == 0) {
+            return String.valueOf(quantity.longValue());
+        }
+
+        return BigDecimal.valueOf(quantity)
+                .stripTrailingZeros()
+                .toPlainString()
+                .replace(".", ",");
     }
 
     private String getRequesterName(Request request) {

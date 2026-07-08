@@ -9,6 +9,8 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,8 +42,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestResponse> findAllRequest(RequestFilterRequest filter) {
-        return findAllRequestService.findAllRequest(filter);
+    public Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable) {
+        return findAllRequestService.findAllRequest(filter, pageable);
     }
 
     @Override
@@ -55,8 +57,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal) {
-        return findAllByUser.findAllByUser(filter, userPrincipal);
+    public Page<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable) {
+        return findAllByUser.findAllByUser(filter, userPrincipal, pageable);
     }
 
     @Override

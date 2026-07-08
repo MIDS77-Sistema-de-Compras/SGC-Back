@@ -44,6 +44,7 @@ public class AuthenticationController {
         cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(4000);
+        cookie.setAttribute("SameSite", "None");
 
         response.addCookie(cookie);
 

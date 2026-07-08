@@ -8,6 +8,8 @@ import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -24,15 +26,18 @@ public class AuditLog {
     private Long id;
 
     @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User userAgent;
 
     @ManyToOne(optional = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User userTarget;
 
     @Column(nullable = false)
     private String typeAction;
 
     @ManyToOne(optional = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Request request;
 
     @CreationTimestamp

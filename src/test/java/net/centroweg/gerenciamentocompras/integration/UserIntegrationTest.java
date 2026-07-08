@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -198,7 +199,9 @@ public class UserIntegrationTest {
         mockMvc.perform(delete("/users/userId/{id}", id))
                 .andExpect(status().isNoContent());
 
-        assertEquals(0, userRepository.count());
+        // O delete é lógico (soft delete): o usuário permanece, porém inativo
+        User deletado = userRepository.findById(id).orElseThrow();
+        assertFalse(deletado.getActive());
     }
 
     @Test

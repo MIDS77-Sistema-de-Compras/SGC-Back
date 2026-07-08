@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -39,15 +40,18 @@ public class AuditLogAspect {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth==null) return;
 
-        User agent = auditLogPublicApi.findByUserEmail(auth.getName());
+        // Auditoria é um interesse transversal e best-effort: nunca deve quebrar a
+        // operação de negócio. Sem um agente resolvível (ex.: requisição anônima) não
+        // há a quem atribuir a ação, então apenas ignoramos.
+        User agent = safeLookup(() -> auditLogPublicApi.findByUserEmail(auth.getName()));
         if(agent == null) return;
 
         Long requestId = extractIdByAnnotation(joinPoint, "request");
         Long targetUserId = Optional.ofNullable(extractIdByAnnotation(joinPoint, "user"))
                 .orElseGet(() -> auditable.targetFromReturn() ? extractIdFromReturnObject(result) : null);
 
-        Request requestSearched = (requestId != null) ? auditLogPublicApi.findByRequestId(requestId) : null;
-        User targetUserSearched = (targetUserId != null) ? auditLogPublicApi.findByUserId(targetUserId) : null;
+        Request requestSearched = (requestId != null) ? safeLookup(() -> auditLogPublicApi.findByRequestId(requestId)) : null;
+        User targetUserSearched = (targetUserId != null) ? safeLookup(() -> auditLogPublicApi.findByUserId(targetUserId)) : null;
 
         AuditLog auditLog = new AuditLog(agent, auditable.action());
         auditLog.setRequest(requestSearched);
@@ -55,6 +59,19 @@ public class AuditLogAspect {
 
         auditLogRepository.save(auditLog);
 
+    }
+
+    /**
+     * Executa um lookup de entidade tolerando ausência: se a entidade não existir
+     * (as APIs de auditoria lançam exceção quando não encontram), retorna null em vez
+     * de propagar o erro e derrubar a operação de negócio auditada.
+     */
+    private <T> T safeLookup(Supplier<T> lookup){
+        try {
+            return lookup.get();
+        } catch (RuntimeException exception) {
+            return null;
+        }
     }
 
     private Long extractIdByAnnotation(JoinPoint joinPoint, String targetName){

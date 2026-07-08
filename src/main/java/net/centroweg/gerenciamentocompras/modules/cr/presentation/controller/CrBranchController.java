@@ -118,13 +118,13 @@ public class CrBranchController {
     }
 
     /**
-     * Atribui um usuário responsável a um vínculo CR-filial.
+     * Adiciona um usuário responsável a um vínculo CR-filial.
      *
      * @param crBranchId
      * @param userId
      * @return status HTTP 200 (OK)
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de CR-Branch por ID de CR Branch e ID de usuário")
+    @Operation(description = "ENDPOINT responsável por adicionar um responsável a um CR-Branch por ID de CR Branch e ID de usuário")
     @PutMapping("/{crBranchId}/responsible/{userId}")
     public ResponseEntity<CrBranchResponse> assignCrBranchResponsible(@PathVariable Long crBranchId, @PathVariable Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -132,16 +132,17 @@ public class CrBranchController {
     }
 
     /**
-     * Remove o usuário responsável de um vínculo CR-filial
+     * Remove um usuário responsável de um vínculo CR-filial
      *
      * @param crBranchId
+     * @param userId
      * @return status HTTP 200 (OK)
      */
-    @Operation(description = "ENDPOINT responsável pelo delete de CR-Branch por ID de CR Branch")
-    @DeleteMapping("/{crBranchId}/responsible")
-    public ResponseEntity<CrBranchResponse> removeCrBranchResponsible(@PathVariable Long crBranchId) {
+    @Operation(description = "ENDPOINT responsável por remover um responsável de um CR-Branch por ID de CR Branch e ID de usuário")
+    @DeleteMapping("/{crBranchId}/responsible/{userId}")
+    public ResponseEntity<CrBranchResponse> removeCrBranchResponsible(@PathVariable Long crBranchId, @PathVariable Long userId) {
         return ResponseEntity.ok(
-                crBranchService.removeCrBranchResponsible(crBranchId)
+                crBranchService.removeCrBranchResponsible(crBranchId, userId)
         );
     }
 

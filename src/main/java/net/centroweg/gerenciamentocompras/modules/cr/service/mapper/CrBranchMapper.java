@@ -31,7 +31,7 @@ public class CrBranchMapper {
     }
 
     /**
-     * Converte uma entidade CR-filial para um DTO de saída do CR-filial.
+     * Converte uma entidade CR-filial em um DTO de saída do CR-filial.
      * @param crBranch entidade com os dados.
      * @return DTO de saída com os dados do CR-filial já convertidos.
      */

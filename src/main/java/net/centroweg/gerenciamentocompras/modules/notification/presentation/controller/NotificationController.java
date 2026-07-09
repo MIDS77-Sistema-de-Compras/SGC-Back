@@ -51,8 +51,8 @@ public class NotificationController {
 
     /**
      * Marca a notificação como visualizada.
-     * @param id identificador dda notificação.
-     * @return
+     * @param id identificador da notificação.
+     * @return notificação com a visualização atualizada.
      */
     @Operation(description = "ENDPOINT responsável por marcar notificações como visualizada")
     @PatchMapping("/{id}/viewed")
@@ -61,7 +61,12 @@ public class NotificationController {
                 .body(notificationService.markAsViewed(id));
     }
 
-    @Operation(description = "ENDPOINT responsável pela listagem de Notification não visualizadas por usuário")
+    /**
+     * Lista todas as notificações não visualizadas por usuário.
+     * @param userId identificador do usuário.
+     * @return lista com as notificações encontradas.
+     */
+    @Operation(description = "ENDPOINT responsável pela listagem de notificações não visualizadas por usuário")
     @GetMapping("user/{userId}/unviewed")
     public ResponseEntity<List<NotificationResponse>> findUnviewedByUser(@PathVariable Long userId) {
         return ResponseEntity.status(HttpStatus.OK)

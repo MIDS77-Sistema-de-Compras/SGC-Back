@@ -28,7 +28,7 @@ public class CrMapper {
     }
 
     /**
-     * Converte uma entidade CR para um DTO de saída do CR.
+     * Converte uma entidade CR em um DTO de saída do CR.
      * @param cr entidade com os dados.
      * @return DTO de saída com os dados já convertidos de forma simples.
      */

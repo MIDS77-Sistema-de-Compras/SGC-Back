@@ -15,6 +15,9 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotF
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável pela criação de uma notificação.
+ */
 @Service
 @RequiredArgsConstructor
 public class CreateNotificationServiceImpl {
@@ -25,6 +28,11 @@ public class CreateNotificationServiceImpl {
     private final NotificationMapper notificationMapper;
     private final NotificationEmailService notificationEmailService;
 
+    /**
+     * Cria e persiste uma notificação no banco de dados.
+     * @param request dados da notificação.
+     * @return notificação já criada.
+     */
     public NotificationResponse createNotification(NotificationRequest request) {
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new UserNotFoundException(request.userId()));

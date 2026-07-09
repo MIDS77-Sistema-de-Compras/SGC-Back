@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +32,9 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final PasswordRecoveryService passwordRecoveryService;
 
+    @Value("${app.cookies.secure}")
+    private boolean secureCookie;
+
     @Operation(description = "ENDPOINT responsável pela autenticação de usuário")
     @PostMapping("/login")
     @Auditable(action = "LOGAR")
@@ -44,6 +48,7 @@ public class AuthenticationController {
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(4000);
+        cookie.setAttribute("SameSite", "None");
 
         response.addCookie(cookie);
 

@@ -57,7 +57,7 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
                 new EmailTitle("Recuperação de Senha"),
                 new EmailParagraph("Foi solicitada uma mudança de senha para a sua conta (" + recovery.email() + ").", "#666666", 14),
                 new EmailParagraph("Clique no botão abaixo para recuperar sua conta.", "#666666", 14),
-                new EmailButton("http://localhost:3000/nova-senha?token=" + token, "Recuperar Conta"),
+                new EmailButton("https://sgc-front-nine.vercel.app/nova-senha?token=" + token, "Recuperar Conta"),
                 new EmailFooter()
             )
         );

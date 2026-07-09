@@ -1,11 +1,14 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimpl.user;
 
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.UpdateUserAllImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +32,12 @@ public class UpdateUserAllImplTest {
 
     @Mock
     private UserMapper mapper;
+
+    @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UpdateUserAllImpl updateUserAllImpl;
@@ -70,6 +79,7 @@ public class UpdateUserAllImplTest {
         usuarioExistenteNoBanco.setCpf("cpf-hash-original-nao-deve-mudar");
 
         when(repository.findById(id)).thenReturn(Optional.of(usuarioExistenteNoBanco));
+        when(roleRepository.findByNameIgnoreCase("USER")).thenReturn(java.util.Optional.of(new Role("USER")));
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
 
         updateUserAllImpl.updateUserAll(id, request);

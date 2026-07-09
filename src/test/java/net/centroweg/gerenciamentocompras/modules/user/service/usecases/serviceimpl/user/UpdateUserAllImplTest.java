@@ -79,7 +79,7 @@ public class UpdateUserAllImplTest {
         usuarioExistenteNoBanco.setCpf("cpf-hash-original-nao-deve-mudar");
 
         when(repository.findById(id)).thenReturn(Optional.of(usuarioExistenteNoBanco));
-        when(roleRepository.findByNameIgnoreCase("USER")).thenReturn(java.util.Optional.of(new Role("USER")));
+        when(roleRepository.findByNameIgnoreCase("Supervisor")).thenReturn(java.util.Optional.of(new Role("Supervisor")));
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
 
         updateUserAllImpl.updateUserAll(id, request);
@@ -113,6 +113,7 @@ public class UpdateUserAllImplTest {
 
         when(repository.findById(id)).thenReturn(Optional.of(usuarioExistenteNoBanco));
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(roleRepository.findByNameIgnoreCase("Docente")).thenReturn(java.util.Optional.of(new Role("Docente")));
 
         updateUserAllImpl.updateUserAll(id, request);
 

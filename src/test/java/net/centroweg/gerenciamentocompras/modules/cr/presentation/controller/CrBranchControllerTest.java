@@ -187,9 +187,45 @@ class CrBranchControllerTest {
     void shouldRemoveResponsible() throws Exception {
         CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
 
-        mockMvc.perform(delete("/cr-branches/{crBranchId}/responsible", saved.getId())
+        mockMvc.perform(delete("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), user.getId())
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responsibleUsersName").isEmpty());
+    }
+
+    @Test
+    void shouldAddResponsibleWithoutReplacingExisting() throws Exception {
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
+        User secondUser = createUser("Maria", "98765432100", "maria@centroweg.com.br");
+
+        mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), secondUser.getId())
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responsibleUsersName.length()").value(2));
+    }
+
+    @Test
+    void shouldRemoveOnlyGivenResponsible() throws Exception {
+        User secondUser = createUser("Maria", "98765432100", "maria@centroweg.com.br");
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, List.of(user, secondUser)));
+
+        mockMvc.perform(delete("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), user.getId())
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responsibleUsersName.length()").value(1))
+                .andExpect(jsonPath("$.responsibleUsersName[0]").value("Maria"));
+    }
+
+    private User createUser(String name, String cpf, String email) {
+        User newUser = new User();
+        newUser.setName(name);
+        newUser.setCpf(cpf);
+        newUser.setEmail(email);
+        newUser.setPassword("Senha@123");
+        newUser.setExtensionNumber("4321");
+        newUser.setActive(true);
+        newUser.setCreatedAt(LocalDateTime.now());
+        newUser.setUpdatedAt(LocalDateTime.now());
+        return userRepository.save(newUser);
     }
 }

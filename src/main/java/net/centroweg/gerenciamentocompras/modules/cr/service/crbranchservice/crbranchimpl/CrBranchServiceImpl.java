@@ -98,7 +98,7 @@ public class CrBranchServiceImpl implements CrBranchService {
     }
 
     /**
-     * Atribui um usuário responsável a um vínculo CR-filial.
+     * Adiciona um usuário responsável a um vínculo CR-filial.
      *
      * @param crBranchId
      * @param userId
@@ -106,18 +106,19 @@ public class CrBranchServiceImpl implements CrBranchService {
      */
     @Override
     public CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId) {
-        return assignCrBranchResponsible.assignCrBranchResponsible(crBranchId, List.of(userId));
+        return assignCrBranchResponsible.assignCrBranchResponsible(crBranchId, userId);
     }
 
     /**
-     * Remove o usuário responsável de um vínculo CR-filial.
+     * Remove um usuário responsável de um vínculo CR-filial.
      *
      * @param crBranchId
-     * @return o vínculo atualizado sem responsável
+     * @param userId
+     * @return o vínculo atualizado sem o responsável removido
      */
     @Override
-    public CrBranchResponse removeCrBranchResponsible(Long crBranchId) {
-        return removeCrBranchResponsible.removeCrBranchResponsible(crBranchId);
+    public CrBranchResponse removeCrBranchResponsible(Long crBranchId, Long userId) {
+        return removeCrBranchResponsible.removeCrBranchResponsible(crBranchId, userId);
     }
 
 }

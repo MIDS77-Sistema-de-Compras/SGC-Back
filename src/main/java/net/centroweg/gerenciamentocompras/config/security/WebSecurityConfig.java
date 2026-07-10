@@ -1,16 +1,16 @@
 package net.centroweg.gerenciamentocompras.config.security;
 
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
-import org.springframework.core.env.Environment;
 import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,7 +21,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
 
 /**
  * Classe responsável por fazer a configuração da segurança da API
@@ -81,7 +82,10 @@ public class WebSecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
                 "http://localhost:3001",
-                "http://localhost:3002"
+                "http://localhost:3002",
+
+                "https://localhost:3001",
+                "https://sgc-front-nine.vercel.app"
         ));
 
         configuration.setAllowedMethods(List.of(

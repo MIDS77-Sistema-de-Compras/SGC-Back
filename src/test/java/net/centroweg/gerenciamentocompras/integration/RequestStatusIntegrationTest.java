@@ -70,8 +70,8 @@ class RequestStatusIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
         cleanDatabase();
 
-        requester = saveUser("Solicitante", "solicitante@teste.com", "52998224725");
-        responsible = saveUser("Responsavel", "responsavel@teste.com", "12345678909");
+        requester = saveUser("Solicitante", "solicitante@teste.com", "52998224725", "DOCENTE");
+        responsible = saveUser("Responsavel", "responsavel@teste.com", "12345678909", "SUPERVISOR");
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
@@ -260,9 +260,9 @@ class RequestStatusIntegrationTest {
         return requestRepository.save(request);
     }
 
-    private User saveUser(String name, String email, String cpf) {
+    private User saveUser(String name, String email, String cpf, String roleName) {
         User user = new User(name, cpf, email, "Senha@123", "1234", true);
-        user.setRole(roleRepository.save(new Role("USER")));
+        user.setRole(roleRepository.save(new Role(roleName)));
         return userRepository.save(user);
     }
 

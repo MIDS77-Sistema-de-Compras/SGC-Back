@@ -15,6 +15,9 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanApproveRequest;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanCreateRequest;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanViewReports;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,12 +42,14 @@ public class RequestController {
     @Operation(description = "ENDPOINT responsável pela criação de Request")
     @PostMapping
     @Auditable(action = "CRIAR_SOLICITACAO", targetFromReturn = true)
+    @CanCreateRequest
     public ResponseEntity<RequestResponse> createRequest(@Valid @AuditParam(value="request") @RequestBody RequestRequest request, @AuditParam("user") @AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request, userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos Request")
     @GetMapping
+    @CanViewReports
     public ResponseEntity<Page<RequestResponse>> findAllRequest(
             @RequestParam(required = false) String crCode,
             @RequestParam(required = false) String statusName,
@@ -72,6 +77,7 @@ public class RequestController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de Request por id")
     @GetMapping("/{id}")
+    @CanViewReports
     public ResponseEntity<RequestResponse> findRequestById(@PathVariable Long id){
         return ResponseEntity.ok(requestService.findRequestById(id));
     }
@@ -79,6 +85,7 @@ public class RequestController {
     @Operation(description = "ENDPOINT responsável pela atualização de Request")
     @PutMapping("/{id}")
     @Auditable(action = "ATUALIZAR_SOLICITACAO")
+
     public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody UpdateRequestRequest request, @AuditParam("request") @PathVariable Long id){
         return ResponseEntity.ok(requestService.updateRequest(request, id));
     }
@@ -101,6 +108,7 @@ public class RequestController {
     @Operation(description = "ENDPOINT responsável pela atualização do status de Request")
     @PatchMapping("/{id}/status")
     @Auditable(action = "ATUALIZAR_STATUS_SOLICITACAO")
+    @CanApproveRequest
     public ResponseEntity<RequestResponse> updateStatus(
             @AuditParam(value = "request") @PathVariable Long id,
             @Valid @RequestBody UpdateRequestStatus request

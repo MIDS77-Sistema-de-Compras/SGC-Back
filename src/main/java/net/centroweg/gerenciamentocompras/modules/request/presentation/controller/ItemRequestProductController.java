@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.request.service.useCases.servi
 import jakarta.validation.Valid;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManagePurchaseItems;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class ItemRequestProductController {
 
     @Operation(description = "ENDPOINT responsável pela criação de Item Request Product")
     @PostMapping
+    @CanManagePurchaseItems
     @Auditable(action = "ADICIONAR_ITEM_PRODUTO")
     public ResponseEntity<ItemRequestProductResponse> createItemRequestProduct(@AuditParam("request") @Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
         return ResponseEntity.status(201).body(itemRequestProductService.createRequestProduct(itemRequestProductRequest));
@@ -43,6 +45,7 @@ public class ItemRequestProductController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de Item Request Product")
     @PutMapping("/{id}")
+    @CanManagePurchaseItems
     @Auditable(action = "ATUALIZAR_ITEM_PRODUTO")
     public ResponseEntity<ItemRequestProductResponse> updateItemRequestProduct(@PathVariable Long id, @AuditParam("request")  @Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
         return ResponseEntity.status(200).body(itemRequestProductService.updateRequestProduct(itemRequestProductRequest, id));
@@ -50,6 +53,7 @@ public class ItemRequestProductController {
 
     @Operation(description = "ENDPOINT responsável pelo delete de Item Request Product")
     @DeleteMapping("/{id}")
+    @CanManagePurchaseItems
     @Auditable(action = "REMOVER_ITEM_PRODUTO")
     public ResponseEntity<Void> deleteItemRequestProduct(@PathVariable Long id){
         itemRequestProductService.deleteRequestProduct(id);

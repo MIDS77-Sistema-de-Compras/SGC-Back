@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManageCr;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterface.CrService;
@@ -38,6 +39,7 @@ public class CrController {
      */
     @Operation(description = "ENDPOINT responsável pela criação de CR")
     @PostMapping
+    @CanManageCr
     public ResponseEntity<CrCompoundResponse> create(@RequestBody CrRequest dto, @AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(crService.create(dto, userPrincipal));
@@ -77,6 +79,7 @@ public class CrController {
      */
     @Operation(description = "ENDPOINT responsável pela atualização de CR")
     @PutMapping("{id}")
+    @CanManageCr
     public ResponseEntity<CrCompoundResponse> update(@PathVariable Long id, @RequestBody CrRequest dto){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.update(id, dto));
@@ -90,6 +93,7 @@ public class CrController {
      */
     @Operation(description = "ENDPOINT responsável pelo delete de CR")
     @DeleteMapping("{id}")
+    @CanManageCr
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.delete(id));

@@ -1,9 +1,21 @@
 package net.centroweg.gerenciamentocompras.modules.user.presentation.controller;
 
-import java.io.IOException;
-import java.util.List;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
+import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManageUsers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,30 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
-import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.data.domain.Pageable;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import java.io.IOException;
 import java.util.List;
-import net.centroweg.gerenciamentocompras.shared.MessageDTO;
-import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 
 /**
  * Controller de usuários, gerencia criações, consultas, atualizações e remoção.
@@ -67,6 +57,7 @@ public class UserController {
      */
     @Operation(description = "ENDPOINT responsável pela criação de User")
     @PostMapping
+    @CanManageUsers
     @Auditable(action = "CRIAR_USUARIO", targetFromReturn = true)
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUser userRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(user.createUser(userRequest));
@@ -79,6 +70,7 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos User")
     @GetMapping
+    @CanManageUsers
     public ResponseEntity<Page<UserResponse>> listUser(Pageable pageable){
         return ResponseEntity.ok(user.listUser(pageable));
     }
@@ -90,6 +82,7 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de User por id")
     @GetMapping("/userId/{userId}")
+    @CanManageUsers
     public ResponseEntity<UserResponse> findUserById(@PathVariable Long userId){
         return ResponseEntity.ok(user.findUserById(userId));
     }
@@ -101,6 +94,7 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de User por nome")
     @GetMapping("/userName/{userName}")
+    @CanManageUsers
     public ResponseEntity<List<UserResponse>> findUserByName(@PathVariable String userName){
         return ResponseEntity.ok(user.findUserByName(userName));
     }
@@ -112,6 +106,7 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de User")
     @PutMapping("/userId/{userId}")
+    @CanManageUsers
     @Auditable(action = "ATUALIZAR_USUARIO")
     public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUser userRequest, @AuditParam(value = "user") @PathVariable Long userId){
         return ResponseEntity.ok(user.updateUserAll(userId, userRequest));
@@ -124,6 +119,7 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pelo delete de User")
     @DeleteMapping("/userId/{userId}")
+    @CanManageUsers
     @Auditable(action = "DESATIVAR_USUARIO")
     public ResponseEntity<Void> deleteUser(@AuditParam(value = "user") @PathVariable Long userId){
         user.deleteUser(userId);
@@ -132,6 +128,7 @@ public class UserController {
 
     @Operation(description = "ENDPOINT responsável pela edição de foto de perfil")
     @PatchMapping("/userId/{id}")
+    @CanManageUsers
     @Auditable(action = "ATUALIZAR_FOTO_DE_PERFIL")
     public ResponseEntity<UserResponse> updateProfilePicture(@AuditParam(value = "user") @PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.status(200).body(user.uploadProfilePicture(id, file));

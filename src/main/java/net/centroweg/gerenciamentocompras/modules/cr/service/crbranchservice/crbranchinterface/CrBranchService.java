@@ -22,5 +22,5 @@ public interface CrBranchService {
     MessageDTO delete(Long id);
     List<CrBranchResponse> findCrBranchByBranch(Long branchId);
     CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId);
-    CrBranchResponse removeCrBranchResponsible(Long crBranchId);
+    CrBranchResponse removeCrBranchResponsible(Long crBranchId, Long userId);
 }

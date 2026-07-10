@@ -44,7 +44,7 @@ Registra quem fez qual ação de forma **transversal e best-effort**.
   `AuditLogPublicApi` e salva um `AuditLog` (`userAgent`, `userTarget`, `typeAction`, `request`, `timestamp`).
 - **Princípio importante:** auditoria **nunca pode quebrar a operação de negócio**. Se não há
   usuário resolvível ou o lookup falha, o aspecto simplesmente ignora (`safeLookup` engole a exceção).
-- Consulta dos logs: endpoints `/audit-logs` (com filtro por `Specification`).
+- Consulta dos logs: endpoint `GET /logs` (com filtro por `Specification`).
 
 ### Ao criar um endpoint de escrita
 Adicione `@Auditable` com uma `action` clara em MAIÚSCULAS (ex.: `CRIAR_SOLICITACAO`,

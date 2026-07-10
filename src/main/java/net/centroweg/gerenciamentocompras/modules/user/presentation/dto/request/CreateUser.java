@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
 
 /**
- * DTO de entrada para criação e atualização de usuários.
+ * DTO de entrada para criação de usuários.
  */
 
 public record CreateUser(

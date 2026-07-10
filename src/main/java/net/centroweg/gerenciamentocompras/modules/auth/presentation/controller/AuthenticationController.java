@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,20 +32,23 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final PasswordRecoveryService passwordRecoveryService;
 
+    @Value("${app.cookies.secure}")
+    private boolean secureCookie;
+
     @Operation(description = "ENDPOINT responsável pela autenticação de usuário")
     @PostMapping("/login")
+    @Auditable(action = "LOGAR")
     public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto,
                                             HttpServletResponse response){
 
-        // gera o token
         String token = authenticationService.login(loginDto);
 
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
-        // depois botar o setSecure pra true 🐌💪👉👈
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(4000);
+        cookie.setAttribute("SameSite", "None");
 
         response.addCookie(cookie);
 
@@ -52,6 +57,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/recovery")
+    @Auditable(action = "SOLICITAR_ALTERACAO_SENHA")
     public ResponseEntity<MessageDTO> sendEmailWithToken(@Valid @RequestBody Recovery recoveryDto){
         try{
             passwordRecoveryService.validateAndGenerateRecoveryToken(recoveryDto);
@@ -63,6 +69,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/recovery/new")
+    @Auditable(action = "ALTERAR_SENHA")
     public ResponseEntity<MessageDTO> validateAndChangePassword(@Valid @RequestBody NewPassword newPasswordDto, @RequestParam String token){
         passwordRecoveryService.changePasswordWhenValidToken(newPasswordDto, token);
         return ResponseEntity.ok().body(new MessageDTO("Senha atualizada com sucesso"));

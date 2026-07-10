@@ -3,6 +3,8 @@ package net.centroweg.gerenciamentocompras.modules.user.infrastructure.persisten
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,5 +34,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByNameIgnoringCase(String name);
     Boolean existsByEmail(String email);
     Boolean existsByCpf(String cpf);
+    Optional<User> findByName(String name);
 
 }

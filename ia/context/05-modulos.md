@@ -22,7 +22,7 @@ Login e emissão de JWT; recuperação de senha.
 ## `cr` — Centros de Responsabilidade, Filiais, Setores, Instrutores
 Estrutura organizacional. Entidades: `Cr`, `Branch`, `CrBranch`, `Sector`, `CrInstructor`.
 - Filtros por `Specification` (`CrBranchSpecifications`).
-- Endpoints: `/crs`, `/branches`, `/sectors`, `/cr-branches`, instrutores — CRUD.
+- Endpoints: `/cr`, `/branches`, `/sector` (com `/simple` e `/compound`), `/cr-branches`, `/cr-instructors` — CRUD. Instrutores exigem role **ADMIN** (`@PreAuthorize`).
 - **Nota:** este módulo tem a subdivisão de service mais granular (um subpacote por recurso).
 
 ## `request` — Solicitações de Compra *(domínio central)*
@@ -41,14 +41,14 @@ Solicitação de **serviço** (mão de obra), não de produto. Entidade `Provisi
 
 ## `product` — Produtos e Unidades de Medida
 Entidades `Product` (name, price, type, code único) e `MeasurementUnit` (name, abbreviation).
-Endpoints `/products` e `/measurement-units` (CRUD + busca por abreviação).
+Endpoints `/products` (CRUD + filtro por nome) e `/measurement-unit` (criar/listar/atualizar + `GET /measurement-unit/search?abbreviation=`).
 
 ## `notification` — Notificações
 Notifica usuários sobre eventos das solicitações. Entidade `Notification`.
 - Cria notificação, lista por usuário, lista não-vistas, marca como vista.
 - `infrastructure/email/NotificationEmailService` envia e-mail; `infrastructure/listener`
   reage a eventos de aplicação (processamento assíncrono via `@EnableAsync`).
-- Endpoints `/notifications`.
+- Endpoints `/notifications` (`/me`, `/user/{id}`, `/user/{id}/unviewed`, `PATCH /{id}/viewed`).
 
 ## `report` — Relatórios *(NÃO IMPLEMENTADO)*
 Apenas o esqueleto de pastas existe (`domain/`, `infrastructure/`, `presentation/`, `service/`),
@@ -56,7 +56,7 @@ Apenas o esqueleto de pastas existe (`domain/`, `infrastructure/`, `presentation
 
 ## `shared/` — Código transversal
 - `shared/exception/` — `BusinessException`, `GlobalExceptionHandler`, `ApiError`, `InvalidFileException`.
-- `shared/audit/` — auditoria por AOP (`@Auditable`, `AuditLogAspect`, `AuditLog`, endpoints `/audit-logs`). Ver `07-seguranca.md`.
+- `shared/audit/` — auditoria por AOP (`@Auditable`, `AuditLogAspect`, `AuditLog`, endpoint `GET /logs`). Ver `07-seguranca.md`.
 - `shared/cloudinary/` — `CloudinaryService` (upload, validação de tamanho/máx. 10 MB).
 - `shared/email/` — `EmailSenderService` + componentes de template HTML (título, parágrafo, botão, footer, layout) e logos inline.
 - `shared/security/` — `CurrentUserService` (obtém o usuário autenticado do `SecurityContext`).

@@ -7,3 +7,4 @@ import org.junit.platform.suite.api.Suite;
 @SelectPackages("net.centroweg.gerenciamentocompras.integration")
 public class AllIntegrationTestsSuite {
 }
+

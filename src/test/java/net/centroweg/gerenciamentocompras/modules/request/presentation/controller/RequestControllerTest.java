@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-@WithMockUser
+@WithMockUser(authorities = "ADMIN")
 class RequestControllerTest {
 
     @Autowired private WebApplicationContext context;
@@ -88,7 +88,7 @@ class RequestControllerTest {
         measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));
 
         User newUser = new User("Test User", "52998224725", "test@test.com", "Password@1", "1234", true);
-        newUser.setRole(roleRepository.save(new Role("USER")));
+        newUser.setRole(roleRepository.save(new Role("DOCENTE")));
         testUser = userRepository.save(newUser);
         userPrincipal = new UserPrincipal(testUser);
     }

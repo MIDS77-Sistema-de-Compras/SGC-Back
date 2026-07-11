@@ -4,8 +4,10 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.user.domain.rolelevels.SystemRole;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
+import net.centroweg.gerenciamentocompras.modules.user.service.authorization.UserRoleAuthorizationService;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.UpdateUserAllImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +41,9 @@ public class UpdateUserAllImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private UserRoleAuthorizationService authorizationService;
+
     @InjectMocks
     private UpdateUserAllImpl updateUserAllImpl;
 
@@ -52,7 +57,7 @@ public class UpdateUserAllImplTest {
                 "Senha@123",
                 "1234",
                 true,
-                "Administrador"
+                "ADMIN"
         );
 
         when(repository.findById(id)).thenReturn(Optional.empty());
@@ -72,20 +77,23 @@ public class UpdateUserAllImplTest {
                 "NovaSenha@123",
                 "9999",
                 false,
-                "Supervisor"
+                "SUPERVISOR"
         );
 
         User usuarioExistenteNoBanco = new User();
         usuarioExistenteNoBanco.setCpf("cpf-hash-original-nao-deve-mudar");
+        usuarioExistenteNoBanco.setRole(new Role("DOCENTE"));
 
         when(repository.findById(id)).thenReturn(Optional.of(usuarioExistenteNoBanco));
-        when(roleRepository.findByNameIgnoreCase("Supervisor")).thenReturn(java.util.Optional.of(new Role("Supervisor")));
+        when(roleRepository.findByNameIgnoreCase("SUPERVISOR")).thenReturn(java.util.Optional.of(new Role("SUPERVISOR")));
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
 
         updateUserAllImpl.updateUserAll(id, request);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(repository).save(captor.capture());
+        verify(authorizationService).validateCanEdit(SystemRole.DOCENTE);
+        verify(authorizationService).validateCanCreate(SystemRole.SUPERVISOR);
         User atualizado = captor.getValue();
 
         assertEquals("Novo Nome", atualizado.getName());
@@ -105,20 +113,23 @@ public class UpdateUserAllImplTest {
                 "OutraSenha@123",
                 "1111",
                 true,
-                "Docente"
+                "DOCENTE"
         );
 
         User usuarioExistenteNoBanco = new User();
         usuarioExistenteNoBanco.setCpf("cpf-hash-original-nao-deve-mudar");
+        usuarioExistenteNoBanco.setRole(new Role("DOCENTE"));
 
         when(repository.findById(id)).thenReturn(Optional.of(usuarioExistenteNoBanco));
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
-        when(roleRepository.findByNameIgnoreCase("Docente")).thenReturn(java.util.Optional.of(new Role("Docente")));
+        when(roleRepository.findByNameIgnoreCase("DOCENTE")).thenReturn(java.util.Optional.of(new Role("DOCENTE")));
 
         updateUserAllImpl.updateUserAll(id, request);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(repository).save(captor.capture());
+        verify(authorizationService).validateCanEdit(SystemRole.DOCENTE);
+        verify(authorizationService).validateCanCreate(SystemRole.DOCENTE);
         User atualizado = captor.getValue();
 
         assertEquals("cpf-hash-original-nao-deve-mudar", atualizado.getCpf());

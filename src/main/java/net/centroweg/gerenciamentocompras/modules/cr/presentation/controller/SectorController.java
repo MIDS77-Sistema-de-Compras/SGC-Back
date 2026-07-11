@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Se
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.SectorCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.SectorSimpleResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.sectorservice.sectorinterface.SectorService;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManageCr;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class SectorController {
 
     @Operation(description = "ENDPOINT responsável pela criação de Sector")
     @PostMapping
+    @CanManageCr
     public ResponseEntity<SectorSimpleResponse> createSector(@Valid @RequestBody SectorRequest sector){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createSector(sector));
     }
@@ -54,12 +56,14 @@ public class SectorController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de Sector")
     @PutMapping("/{id}")
+    @CanManageCr
     public ResponseEntity<SectorSimpleResponse> updateSector(@Valid @RequestBody SectorRequest sector, @PathVariable Long id){
         return ResponseEntity.ok(service.updateSector(id, sector));
     }
 
     @Operation(description = "ENDPOINT responsável pelo delete de Sector")
     @DeleteMapping("/{id}")
+    @CanManageCr
     public ResponseEntity<Void> deleteSector(@PathVariable Long id){
         service.deleteSector(id);
         return ResponseEntity.noContent().build();

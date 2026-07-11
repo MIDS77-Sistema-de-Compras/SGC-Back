@@ -93,7 +93,9 @@ class RequestCreateItemsIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
-                .defaultRequest(get("/").with(user("admin").roles("USER", "ADMIN")))
+                .defaultRequest(get("/").with(user("admin").authorities(
+                        new SimpleGrantedAuthority("ADMIN")
+                )))
                 .build();
 
         deleteData();
@@ -320,7 +322,7 @@ class RequestCreateItemsIntegrationTest {
 
     private User saveUser(String name, String cpf, String email, String extension) {
         User user = new User(name, cpf, email, "Senha@123", extension, true);
-        user.setRole(roleRepository.save(new Role("ROLE_ADMIN")));
+        user.setRole(roleRepository.save(new Role("ADMIN")));
         return userRepository.save(user);
     }
 
@@ -328,7 +330,7 @@ class RequestCreateItemsIntegrationTest {
         return new UsernamePasswordAuthenticationToken(
                 new UserPrincipal(user),
                 null,
-                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                List.of(new SimpleGrantedAuthority("ADMIN"))
         );
     }
 

@@ -136,7 +136,7 @@ public class AuthIntegrationTest {
     @DisplayName("[Integration] Should deny access to protected route without JWT token")
     void shouldDenyAccessToProtectedRouteWithoutJwtToken() throws Exception {
         mockMvc.perform(get("/users"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

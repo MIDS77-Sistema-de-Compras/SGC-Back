@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.StatusService;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManageStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,7 @@ public class StatusController {
      */
     @Operation(description = "ENDPOINT responsável pela criação de Status")
     @PostMapping
+    @CanManageStatus
     public ResponseEntity<StatusResponse> addStatus(@Valid @RequestBody StatusRequest statusRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(statusService.createStatus(statusRequest));
@@ -83,6 +85,7 @@ public class StatusController {
      */
     @Operation(description = "ENDPOINT responsável pela atualização de Status")
     @PutMapping("/{id}")
+    @CanManageStatus
     public ResponseEntity<StatusResponse> editStatus (@PathVariable Long id, @Valid @RequestBody StatusRequest statusRequest) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(statusService.editStatus(id, statusRequest));
@@ -95,6 +98,7 @@ public class StatusController {
      */
     @Operation(description = "ENDPOINT responsável pelo delete de Status")
     @DeleteMapping("/{id}")
+    @CanManageStatus
     public ResponseEntity<Void> deleteStatus (@PathVariable Long id) {
         statusService.deleteStatus(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)

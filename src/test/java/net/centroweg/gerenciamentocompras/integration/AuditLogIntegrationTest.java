@@ -190,10 +190,12 @@ class AuditLogIntegrationTest {
         // o resultado da regra de negócio: a criação do usuário-alvo ocorre normalmente (201).
         mockMvc.perform(post("/users")
                         .with(csrf())
-                        .with(user("usuario-sem-email"))
+                        .with(user("usuario-sem-email").authorities(
+                                new org.springframework.security.core.authority.SimpleGrantedAuthority("ADMIN")
+                        ))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isForbidden());
 
         assertThat(auditLogRepository.count())
                 .as("nenhum log é gravado quando o agente não é resolvido")

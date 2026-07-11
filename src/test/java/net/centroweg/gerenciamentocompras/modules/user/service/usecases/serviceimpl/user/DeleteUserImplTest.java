@@ -1,7 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimpl.user;
 
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.domain.rolelevels.SystemRole;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.authorization.UserRoleAuthorizationService;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.DeleteUserImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +27,9 @@ class DeleteUserImplTest {
     @Mock
     private UserRepository repository;
 
+    @Mock
+    private UserRoleAuthorizationService authorizationService;
+
     @InjectMocks
     private DeleteUserImpl deleteUserImpl;
 
@@ -33,6 +39,7 @@ class DeleteUserImplTest {
         Long id = 1L;
         User user = new User();
         user.setActive(true);
+        user.setRole(new Role("DOCENTE"));
 
         when(repository.findById(id)).thenReturn(Optional.of(user));
 
@@ -41,6 +48,7 @@ class DeleteUserImplTest {
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(repository, times(1)).save(captor.capture());
+        verify(authorizationService).validateCanDeactivate(SystemRole.DOCENTE);
         assertFalse(captor.getValue().getActive());
     }
 }

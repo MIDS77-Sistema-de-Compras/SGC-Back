@@ -26,6 +26,21 @@ public record CreateDeliveryRequest(
 
         @NotNull(message = "Os recebedores sao obrigatorios.")
         @Size(min = 2, max = 2, message = "A entrega deve possuir exatamente dois recebedores.")
-        List<@NotNull(message = "O id do recebedor e obrigatorio.") Long> receiverIds
+        List<@NotNull(message = "O id do recebedor e obrigatorio.") Long> receiverIds,
+
+        List<Long> productItemIds,
+
+        List<Long> provisionItemIds
 ) {
+    public CreateDeliveryRequest(
+            Long requestId,
+            Long statusId,
+            LocalDateTime expectedDeliveryAt,
+            String deliveryLocation,
+            String description,
+            String proofUrl,
+            List<Long> receiverIds
+    ) {
+        this(requestId, statusId, expectedDeliveryAt, deliveryLocation, description, proofUrl, receiverIds, null, null);
+    }
 }

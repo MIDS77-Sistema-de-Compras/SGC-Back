@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -18,6 +20,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.hibernate.annotations.BatchSize;
@@ -70,6 +74,24 @@ public class Delivery {
     @BatchSize(size = 30)
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeliveryReceiver> receivers = new ArrayList<>();
+
+    @BatchSize(size = 30)
+    @ManyToMany
+    @JoinTable(
+            name = "delivery_item_request_product",
+            joinColumns = @JoinColumn(name = "delivery_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_request_product_id")
+    )
+    private List<ItemRequestProduct> productItems = new ArrayList<>();
+
+    @BatchSize(size = 30)
+    @ManyToMany
+    @JoinTable(
+            name = "delivery_item_request_service",
+            joinColumns = @JoinColumn(name = "delivery_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_request_service_id")
+    )
+    private List<ItemRequestProvision> provisionItems = new ArrayList<>();
 
     public void addReceiver(User user) {
         DeliveryReceiver receiver = new DeliveryReceiver(this, user);

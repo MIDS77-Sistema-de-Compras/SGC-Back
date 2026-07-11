@@ -32,7 +32,15 @@ public class DeliveryMapper {
                 delivery.getActive(),
                 delivery.getCreatedAt(),
                 delivery.getUpdatedAt(),
-                receivers
+                receivers,
+                delivery.getProductItems()
+                        .stream()
+                        .map(item -> item.getId())
+                        .toList(),
+                delivery.getProvisionItems()
+                        .stream()
+                        .map(item -> item.getId())
+                        .toList()
         );
     }
 

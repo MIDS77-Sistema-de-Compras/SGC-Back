@@ -26,4 +26,12 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
     @Query("select distinct delivery from Delivery delivery join delivery.receivers receiver where receiver.user.id = :receiverId")
     List<Delivery> findByReceiverId(@Param("receiverId") Long receiverId);
+
+    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
+    @Query("select distinct delivery from Delivery delivery join delivery.productItems item where delivery.request.id = :requestId and item.id = :itemId")
+    List<Delivery> findByRequestIdAndProductItemId(@Param("requestId") Long requestId, @Param("itemId") Long itemId);
+
+    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
+    @Query("select distinct delivery from Delivery delivery join delivery.provisionItems item where delivery.request.id = :requestId and item.id = :itemId")
+    List<Delivery> findByRequestIdAndProvisionItemId(@Param("requestId") Long requestId, @Param("itemId") Long itemId);
 }

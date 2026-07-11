@@ -5,7 +5,9 @@ import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Deliver
 import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.request.CreateDeliveryRequest;
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryResponse;
+import net.centroweg.gerenciamentocompras.modules.delivery.service.event.DeliveryCreatedEvent;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
+import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryItemResolver;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryReceiverValidator;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
@@ -14,6 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Statu
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +30,9 @@ public class CreateDeliveryServiceImpl {
     private final RequestRepository requestRepository;
     private final StatusRepository statusRepository;
     private final DeliveryReceiverValidator deliveryReceiverValidator;
+    private final DeliveryItemResolver deliveryItemResolver;
     private final DeliveryMapper deliveryMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public DeliveryResponse create(CreateDeliveryRequest request) {
@@ -46,7 +51,12 @@ public class CreateDeliveryServiceImpl {
         delivery.setProofUrl(request.proofUrl());
 
         receivers.forEach(delivery::addReceiver);
+        delivery.getProductItems().addAll(deliveryItemResolver.resolveProductItems(requestEntity, request.productItemIds()));
+        delivery.getProvisionItems().addAll(deliveryItemResolver.resolveProvisionItems(requestEntity, request.provisionItemIds()));
 
-        return deliveryMapper.toDTO(deliveryRepository.save(delivery));
+        Delivery saved = deliveryRepository.save(delivery);
+        eventPublisher.publishEvent(new DeliveryCreatedEvent(saved.getId(), requestEntity.getId(), saved.getCreatedAt()));
+
+        return deliveryMapper.toDTO(saved);
     }
 }

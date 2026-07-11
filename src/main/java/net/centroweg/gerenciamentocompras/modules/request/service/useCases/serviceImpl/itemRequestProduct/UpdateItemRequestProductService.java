@@ -16,9 +16,16 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +37,9 @@ public class UpdateItemRequestProductService {
     private final RequestPublicApi requestPublicApi;
     private final StatusRepository statusRepository;
     private final ItemRequestProductMapper itemRequestProductMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public ItemRequestProductResponse update(Long id, ItemRequestProductRequest dto) {
 
         ItemRequestProduct itemRequestProduct =
@@ -54,6 +63,9 @@ public class UpdateItemRequestProductService {
                 statusRepository.findByNameIgnoreCase(dto.statusName())
                         .orElseThrow(()-> new StatusNotFoundException());
 
+        Status previousStatus = itemRequestProduct.getStatus_id();
+        boolean statusChanged = previousStatus == null || !Objects.equals(previousStatus.getId(), status.getId());
+
         itemRequestProduct.setRequest(request);
         itemRequestProduct.setProduct(product);
         itemRequestProduct.setMeasurementUnit(measurementUnit);
@@ -61,6 +73,23 @@ public class UpdateItemRequestProductService {
         itemRequestProduct.setStatus_id(status);
         itemRequestProduct.setAdditionalInformations(dto.additionalInformations());
 
-        return itemRequestProductMapper.toResponse(itemRequestProductRepository.save(itemRequestProduct));
+        ItemRequestProduct saved = itemRequestProductRepository.save(itemRequestProduct);
+        if (statusChanged) {
+            eventPublisher.publishEvent(new ItemStatusChangedEvent(
+                    request.getId(),
+                    saved.getId(),
+                    RequestItemType.PRODUCT,
+                    product.getName(),
+                    product.getCode(),
+                    saved.getQuantity(),
+                    measurementUnit.getName(),
+                    previousStatus != null ? previousStatus.getName() : null,
+                    status.getName(),
+                    saved.getAdditionalInformations(),
+                    LocalDateTime.now()
+            ));
+        }
+
+        return itemRequestProductMapper.toResponse(saved);
     }
 }

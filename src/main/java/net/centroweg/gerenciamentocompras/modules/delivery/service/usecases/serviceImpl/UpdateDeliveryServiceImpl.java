@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persis
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.request.UpdateDeliveryRequest;
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryResponse;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
+import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryItemResolver;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryReceiverValidator;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
@@ -28,6 +29,7 @@ public class UpdateDeliveryServiceImpl {
     private final DeliveryRepository deliveryRepository;
     private final StatusRepository statusRepository;
     private final DeliveryReceiverValidator deliveryReceiverValidator;
+    private final DeliveryItemResolver deliveryItemResolver;
     private final DeliveryMapper deliveryMapper;
 
     @Transactional
@@ -47,6 +49,7 @@ public class UpdateDeliveryServiceImpl {
         delivery.setDescription(request.description());
         delivery.setProofUrl(request.proofUrl());
         replaceReceivers(delivery, receivers);
+        replaceItems(delivery, request);
 
         return deliveryMapper.toDTO(deliveryRepository.save(delivery));
     }
@@ -72,5 +75,13 @@ public class UpdateDeliveryServiceImpl {
         newReceivers.stream()
                 .filter(user -> !existingReceiverIds.contains(user.getId()))
                 .forEach(delivery::addReceiver);
+    }
+
+    private void replaceItems(Delivery delivery, UpdateDeliveryRequest request) {
+        delivery.getProductItems().clear();
+        delivery.getProductItems().addAll(deliveryItemResolver.resolveProductItems(delivery.getRequest(), request.productItemIds()));
+
+        delivery.getProvisionItems().clear();
+        delivery.getProvisionItems().addAll(deliveryItemResolver.resolveProvisionItems(delivery.getRequest(), request.provisionItemIds()));
     }
 }

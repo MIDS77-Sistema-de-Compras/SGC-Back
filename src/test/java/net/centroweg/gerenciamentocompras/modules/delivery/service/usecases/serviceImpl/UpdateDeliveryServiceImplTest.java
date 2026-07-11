@@ -4,6 +4,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Deliver
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryAlreadyInactiveException;
 import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
+import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryItemResolver;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryReceiverValidator;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
@@ -28,6 +29,7 @@ import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecas
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +45,9 @@ class UpdateDeliveryServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private DeliveryItemResolver deliveryItemResolver;
+
     private UpdateDeliveryServiceImpl service;
     private Request request;
     private Status status;
@@ -56,6 +61,7 @@ class UpdateDeliveryServiceImplTest {
                 deliveryRepository,
                 statusRepository,
                 new DeliveryReceiverValidator(userRepository),
+                deliveryItemResolver,
                 new DeliveryMapper()
         );
         request = request();
@@ -65,6 +71,8 @@ class UpdateDeliveryServiceImplTest {
         thirdReceiver = user(3L, "Terceiro", true);
 
         lenient().when(deliveryRepository.save(any(Delivery.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        lenient().when(deliveryItemResolver.resolveProductItems(any(Request.class), isNull())).thenReturn(List.of());
+        lenient().when(deliveryItemResolver.resolveProvisionItems(any(Request.class), isNull())).thenReturn(List.of());
     }
 
     @Test

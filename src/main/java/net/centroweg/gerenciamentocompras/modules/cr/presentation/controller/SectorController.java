@@ -27,7 +27,7 @@ public class SectorController {
     /**
      * Criar um novo bloco.
      * @param sector corpo da requisição com dados.
-     * @return status HTTP 201 com bloco criado no corpo da resposta.
+     * @return bloco criado.
      */
     @Operation(description = "ENDPOINT responsável pela criação de bloco")
     @PostMapping
@@ -37,7 +37,7 @@ public class SectorController {
 
     /**
      * Listar todos os blocos de forma simplificada.
-     * @return status HTTP 200 com lista de blocos no corpo da resposta.
+     * @return lista de blocos encontrados.
      */
     @Operation(description = "ENDPOINT responsável pela listagem simplificada de todos blocos")
     @GetMapping("/simple")
@@ -47,7 +47,7 @@ public class SectorController {
 
     /**
      * Listar todos os blocos de forma completa.
-     * @return status HTTP 200 com lista de blocos no corpo da resposta.
+     * @return lista de blocos encontrados.
      */
     @Operation(description = "ENDPOINT responsável pela listagem completa de todos blocos")
     @GetMapping("/compound")
@@ -58,7 +58,7 @@ public class SectorController {
     /**
      * Buscar bloco de forma simplificada por identificador único.
      * @param id identificador do bloco.
-     * @return status HTTP 200 com bloco encontrado no corpo da resposta.
+     * @return bloco encontrado.
      */
     @Operation(description = "ENDPOINT responsável pela listagem simplificada de bloco por id")
     @GetMapping("/simple/{id}")
@@ -69,7 +69,7 @@ public class SectorController {
     /**
      * Buscar bloco de forma completa por identificador único
      * @param id identificador do bloco.
-     * @return status HTTP 200 com bloco encontrado no corpo da resposta.
+     * @return bloco encontrado.
      */
     @Operation(description = "ENDPOINT responsável pela listagem completa de bloco por id")
     @GetMapping("/compound/{id}")
@@ -81,7 +81,7 @@ public class SectorController {
      * Atualizar bloco por identificador único.
      * @param sector corpo da requisição com novos dados.
      * @param id identificador do bloco.
-     * @return status HTTP 200 com bloco atualizado no corpo da resposta.
+     * @return bloco atualizado.
      */
     @Operation(description = "ENDPOINT responsável pela atualização de bloco")
     @PutMapping("/{id}")
@@ -92,7 +92,7 @@ public class SectorController {
     /**
      * Remover bloco por identificador único.
      * @param id identificador do bloco.
-     * @return status HTTP 200 e mensagem de confirmação no corpo da resposta.
+     * @return mensagem de confirmação da remoção.
      */
     @Operation(description = "ENDPOINT responsável por deletar o bloco")
     @DeleteMapping("/{id}")

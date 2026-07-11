@@ -16,7 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import org.springframework.stereotype.Service;
 
 /**
- * Caso de uso responsável pela criação de uma notificação.
+ * Caso de uso responsável pela criação de uma {@link Notification}.
  */
 @Service
 @RequiredArgsConstructor

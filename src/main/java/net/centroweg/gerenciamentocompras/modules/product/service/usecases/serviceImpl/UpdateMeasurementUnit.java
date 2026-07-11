@@ -3,7 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.product.service.usecases.serv
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.MeasurementUnitNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.MeasurementUnitRepository;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.MeasurementUnitRequest;

@@ -1,12 +1,14 @@
 package net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response;
 
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
+
 /**
  * DTO de resposta para operações relacionadas a produtos.
  *
  * <p>Utilizado como corpo da resposta nos endpoints de
  * {@code POST /products}, {@code GET /products}, {@code GET /products/{id}} e
  * {@code PUT /products/{id}}, encapsulando os dados
- * da entidade {@link net.centroweg.gerenciamentocompras.modules.product.domain.Product}
+ * da entidade {@link Product}
  * retornados ao cliente.</p>
  *
  * <p>Exemplo de payload JSON retornado:</p>

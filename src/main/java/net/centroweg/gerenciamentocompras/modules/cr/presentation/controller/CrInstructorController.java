@@ -34,7 +34,7 @@ public class CrInstructorController {
     /**
      * Criar um novo CR-instrutor.
      * @param request corpo da requisição com dados de criação do CR-instrutor.
-     * @return status HTTP 201 e CR-instrutor criado no corpo da resposta.
+     * @return CR-instrutor criado.
      */
     @Operation(description = "ENDPOINT responsável pela criação de CR-instrutor")
     @PostMapping
@@ -45,7 +45,7 @@ public class CrInstructorController {
 
     /**
      * Listar CR-instrutors cadastrados.
-     * @return status HTTP 200 e uma lista com todos os CR-instrutor encontrados no corpo da resposta.
+     * @return lista com todos os CR-instrutor encontrados.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todos CR-instrutores")
     @GetMapping
@@ -57,7 +57,7 @@ public class CrInstructorController {
     /**
      * Buscar CR-instrutor por identificador único.
      * @param id identificador do CR-instrutor para pesquisa.
-     * @return status HTTP 200 com CR-instrutor encontrado no corpo da resposta.
+     * @return CR-instrutor encontrado.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR-instrutor por id")
     @GetMapping("/{id}")
@@ -70,7 +70,7 @@ public class CrInstructorController {
      * Atualizar CR-instrutor pelo identificador único.
      * @param id identificador do CR-instrutor para atualização.
      * @param request corpo de requisição com novos dados.
-     * @return status HTTP 200 com CR-instrutor atualizado no corpo da resposta.
+     * @return CR-instrutor atualizado.
      */
     @Operation(description = "ENDPOINT responsável pela atualização de CR-instrutor")
     @PutMapping("/{id}")
@@ -82,7 +82,7 @@ public class CrInstructorController {
     /**
      * Remover CR-instrutor pelo identificador único.
      * @param id identificador do CR-instrutor para remoção.
-     * @return status HTTP 200 e mensagem de confirmação no corpo da resposta.
+     * @return mensagem de confirmação da remoção.
      */
     @Operation(description = "ENDPOINT responsável por deletar os CR-instrutor")
     @DeleteMapping("/{id}")

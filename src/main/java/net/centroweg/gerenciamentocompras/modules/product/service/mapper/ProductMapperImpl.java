@@ -1,6 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.product.service.mapper;
 
-import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
 import org.springframework.stereotype.Component;
 

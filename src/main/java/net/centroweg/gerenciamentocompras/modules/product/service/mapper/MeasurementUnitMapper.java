@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.product.service.mapper;
 
 import org.springframework.stereotype.Component;
 
-import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.MeasurementUnitRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.MeasurementUnitResponse;
 

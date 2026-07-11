@@ -1,13 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.request.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
-import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 
 @Getter
 @Setter

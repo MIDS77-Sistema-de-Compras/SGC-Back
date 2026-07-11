@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.product.presentation.controller;
 
 import java.util.List;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -14,13 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.MeasurementUnitRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.MeasurementUnitResponse;
 import net.centroweg.gerenciamentocompras.modules.product.service.usecases.serviceIntrf.MeasurementUnitService;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
 
+/**
+ * Controlador REST responsável pelos endpoints de gerenciamento da {@link MeasurementUnit}.
+ */
 @Tag(name = "ENDPOINTS da entidade MEASUREMENT-UNIT")
 @RestController
 @RequestMapping("/measurement-unit")
@@ -29,37 +31,58 @@ public class MeasurementUnitController {
     
     private final MeasurementUnitService measurementUnitService;
 
-    @Operation(description = "ENDPOINT responsável pela criação de Measurement Unit")
+    /**
+     * Criar uma unidade de medida.
+     * @param request corpo da requisicao com os dados da unidade de medida.
+     * @return unidade de medida criada.
+     */
+    @Operation(description = "ENDPOINT responsável pela criação de unidades de medida")
     @PostMapping
     public ResponseEntity<MeasurementUnitResponse> createMeasurementUnit(@Valid @RequestBody MeasurementUnitRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(measurementUnitService.createMeasurementUnit(request));
     }
 
-    
-    @Operation(description = "ENDPOINT responsável pela listagem de todos Measurement Unit")
+    /**
+     * Lista de unidades de medida.
+     * @return lista com todas as unidades de medida encontradas.
+     */
+    @Operation(description = "ENDPOINT responsável pela listagem de todas as unidades de medida")
     @GetMapping
     public ResponseEntity<List<MeasurementUnitResponse>> readMeasurementUnit(){
         return ResponseEntity.ok(measurementUnitService.readMeasurementUnit());
     }
 
-    @Operation(description = "ENDPOINT responsável pela listagem de Measurement Unit por id")
+    /**
+     * Busca uma unidade de medida peo identificador.
+     * @param id identificador da unidade de medida.
+     * @return unidade de medida encontrada, caso exista.
+     */
+    @Operation(description = "ENDPOINT responsável pela busca de unidades de medida por id")
     @GetMapping("/{id}")
     public ResponseEntity<MeasurementUnitResponse> findMeasurementUnitById(@PathVariable Long id){
         return ResponseEntity.ok(measurementUnitService.findMeasurementUnitById(id));
     }
 
-    @Operation(description = "ENDPOINT responsável pela busca de Measurement Unit por abreviação")
+    /**
+     * Busca uma unidade de medida pela abreviação.
+     * @param abbreviation abreviação da unidade de medida.
+     * @return unidade de medida encontrada, caso exista.
+     */
+    @Operation(description = "ENDPOINT responsável pela busca de unidades de medida por abreviação")
     @GetMapping("/search")
     public ResponseEntity<MeasurementUnitResponse> findMeasurementUnitByAbbreviation(@RequestParam String abbreviation){
         return ResponseEntity.ok(measurementUnitService.findMeasurementUnitByAbbreviation(abbreviation));
     }
 
-    @Operation(description = "ENDPOINT responsável pela atualização de Measurement Unit")
+    /**
+     * Atualiza uma unidade de medida existente.
+     * @param id identificador da unidade de medida a ser atualizada.
+     * @param request novos dados da unidade de medida.
+     * @return unidade de medida atualizada.
+     */
+    @Operation(description = "ENDPOINT responsável pela atualização de unidades de medida")
     @PutMapping("/{id}")
     public ResponseEntity<MeasurementUnitResponse> updateMeasurementUnit( @PathVariable Long id, @Valid @RequestBody MeasurementUnitRequest request){
         return ResponseEntity.ok(measurementUnitService.updateMeasurementUnit(id, request));
     }
-
-
-
 }

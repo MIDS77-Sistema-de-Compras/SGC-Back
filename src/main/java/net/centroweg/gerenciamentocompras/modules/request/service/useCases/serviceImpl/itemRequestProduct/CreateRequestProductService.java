@@ -1,8 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
-import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.MeasurementUnitNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;

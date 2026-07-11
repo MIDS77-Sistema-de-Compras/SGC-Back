@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.UpdateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
@@ -12,7 +12,6 @@ import net.centroweg.gerenciamentocompras.modules.product.service.IProductServic
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**

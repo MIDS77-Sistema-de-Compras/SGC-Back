@@ -28,7 +28,7 @@ public class CrBranchController {
     /**
      * Criar um novo vínculo entre CR e filial.
      * @param request corpo da requisição com os dados do vínculo.
-     * @return status HTTP 201(Created) com o corpo da resposta.
+     * @return vínculo criado.
      */
     @Operation(description = "ENDPOINT responsável pela criação de CR-filial")
     @PostMapping
@@ -39,7 +39,7 @@ public class CrBranchController {
 
     /**
      * Listar todos os vínculos CR-filial cadastrados.
-     * @return status HTTP 200(OK) com a lista de todas as CR-filiais no corpo da resposta.
+     * @return lista de todas as CR-filiais encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR-filiais")
     @GetMapping
@@ -62,7 +62,7 @@ public class CrBranchController {
     /**
      * Buscar um vínculo CR-filial pelo seu identificador.
      * @param id identificador do vínculo CR-filial.
-     * @return status HTTP 200(OK) com a CR-filial encontrada no corpo da resposta.
+     * @return CR-filial encontrada.
      */
     @Operation(description = "ENDPOINT responsável pela busca por ID de CR-filial")
     @GetMapping("/{id}")
@@ -75,7 +75,7 @@ public class CrBranchController {
      * Atualizar um vínculo CR-filial existente.
      * @param request corpo da requisição com os novos dados.
      * @param id identificador do vínculo CR-filial.
-     * @return status HTTP 200(OK) com a CR-filial atualizada no corpo da resposta.
+     * @return CR-filial atualizada no corpo da resposta.
      */
     @Operation(description = "ENDPOINT responsável pela atualização das CR-filiais")
     @PutMapping("/{id}")
@@ -87,7 +87,7 @@ public class CrBranchController {
     /**
      * Remover um vínculo CR-filial pelo seu identificador.
      * @param id identificador do vínculo CR-filial.
-     * @return status HTTP 200(OK)
+     * @return mensagem de confirmação da remoção.
      */
     @Operation(description = "ENDPOINT responsável por deletar as CR-filiais")
     @DeleteMapping("/{id}")
@@ -100,7 +100,7 @@ public class CrBranchController {
     /**
      * Listar todos os vínculos CR-filial pertencentes a uma filial.
      * @param branchId identificador da filial para pesquisa.
-     * @return status HTTP 200 (OK) com as filiais encontradas no corpo da resposta.
+     * @return lista com as filiais encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR-filial por ID da filial")
     @GetMapping("/branch/{branchId}")
@@ -113,7 +113,7 @@ public class CrBranchController {
      * Atribuir um usuário responsável a um vínculo CR-filial.
      * @param crBranchId identificador da CR-filial.
      * @param userId identificador do usuário.
-     * @return status HTTP 200 (OK).
+     * @return CR-filial com o usuário atribuido.
      */
     @Operation(description = "ENDPOINT responsável pela atualização de CR-filial por ID de CR-filial e ID de usuário")
     @PutMapping("/{crBranchId}/responsible/{userId}")
@@ -125,7 +125,7 @@ public class CrBranchController {
     /**
      * Remover o usuário responsável de um vínculo CR-filial.
      * @param crBranchId identificador da CR-filial.
-     * @return status HTTP 200 (OK).
+     * @return CR-filial com o usuário removido.
      */
     @Operation(description = "ENDPOINT responsável por deletar das CR-filiais por ID de CR-filial")
     @DeleteMapping("/{crBranchId}/responsible")

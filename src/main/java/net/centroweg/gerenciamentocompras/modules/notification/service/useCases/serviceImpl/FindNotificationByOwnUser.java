@@ -2,24 +2,28 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.useCases
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
-import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
+/**
+ * Caso de uso responsável pela listagem de {@link Notification} pelo usuário responsável pela solicitação.
+ */
 @Service
 @RequiredArgsConstructor
 public class FindNotificationByOwnUser {
 
-
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
+    /**
+     * Lista as notificações encontradas na pesquisa específica no banco de dados.
+     * @param userPrincipal usuário responsável pela solicitação.
+     * @return lista com as notificações encontrados.
+     */
     public List<NotificationResponse> findNotificationsByOwnUser(UserPrincipal userPrincipal) {
         return notificationRepository.findByUserId(userPrincipal.getId())
                 .stream()

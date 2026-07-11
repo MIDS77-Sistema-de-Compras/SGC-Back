@@ -2,7 +2,11 @@ package net.centroweg.gerenciamentocompras.modules.product.domain.exception;
 
 import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 
+/**
+ * Excessão lançada quando um {@link Product} não é encontrado no banco de dados.
+ */
 public class ProductNotFoundException extends BusinessException {
 
     public ProductNotFoundException(Long id) {

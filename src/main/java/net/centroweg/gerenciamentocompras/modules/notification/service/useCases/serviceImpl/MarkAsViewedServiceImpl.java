@@ -8,6 +8,9 @@ import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável por marcar uma {@link Notification} como lida.
+ */
 @Service
 @RequiredArgsConstructor
 public class MarkAsViewedServiceImpl {
@@ -15,6 +18,11 @@ public class MarkAsViewedServiceImpl {
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
+    /**
+     * Marca a notificação como lida e atualiza no banco de dados.
+     * @param id identificador da notificação a ser atualizada.
+     * @return a notificação já atualizada.
+     */
     public NotificationResponse markAsViewed(Long id) {
         Notification notification = notificationRepository.findById(id)
                 .orElseThrow(() -> new NotificationNotFoundException());

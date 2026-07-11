@@ -26,7 +26,7 @@ public class BranchController {
     /**
      * Criar uma nova filial.
      * @param branchRequest corpo da requisição com os dados da filial.
-     * @return HTTP 201 com a filial criada no corpo da resposta.
+     * @return a unidade de medida criada.
      */
     @Operation(description = "ENDPOINT responsável pela criação de filial")
     @PostMapping
@@ -37,7 +37,7 @@ public class BranchController {
 
     /**
      * Listar todas as filiais cadastradas.
-     * @return HTTP 200 com a lista de filiais no corpo da resposta.
+     * @return lista de filiais encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todas as filiais")
     @GetMapping
@@ -49,7 +49,7 @@ public class BranchController {
     /**
      * Busca uma filial pelo seu identificador.
      * @param id identificador da filial.
-     * @return HTTP 200 com a filial encontrada no corpo da resposta.
+     * @return filial encontrada.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de filial por id")
     @GetMapping("/{id}")
@@ -62,7 +62,7 @@ public class BranchController {
      * Atualizar os dados de uma filial existente.
      * @param id identificador da filial a ser atualizada.
      * @param branchRequest corpo da requisição com os novos dados da filial.
-     * @return HTTP 200 com a filial atualizada no corpo da resposta.
+     * @return filial já atualizada.
      */
     @Operation(description = "ENDPOINT responsável pela atualização de filiais")
     @PutMapping("/{id}")
@@ -74,7 +74,7 @@ public class BranchController {
     /**
      * Remover uma filial pelo seu identificador.
      * @param id identificador da filial a ser removida.
-     * @return HTTP 204 com mensagem de confirmação no corpo da resposta.
+     * @return mensagem de confirmação da remoção.
      */
     @Operation(description = "ENDPOINT responsável por deletar as filiais")
     @DeleteMapping("/{id}")

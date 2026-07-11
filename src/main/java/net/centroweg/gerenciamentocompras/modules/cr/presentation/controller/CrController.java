@@ -28,7 +28,7 @@ public class CrController {
     /**
      * Criar um novo CR.
      * @param dto corpo da requisição com os dados de criação.
-     * @return status HTTP 201 e CR criado no corpo da resposta.
+     * @return CR criado.
      */
     @Operation(description = "ENDPOINT responsável pela criação de CR")
     @PostMapping
@@ -39,7 +39,7 @@ public class CrController {
 
     /**
      * Listar todos os CRs cadastrados.
-     * @return status HTTP 200 e uma lista de todos os CRs encontrados no corpo da resposta.
+     * @return lista de todos os CRs encontrados.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todos CR")
     @GetMapping
@@ -51,7 +51,7 @@ public class CrController {
     /**
      * Buscar um CR pelo seu identificador.
      * @param id identificador do CR para pesquisa.
-     * @return status HTTP 200 e CR encontrado no corpo da resposta.
+     * @return CR encontrado.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR por id")
     @GetMapping("{id}")
@@ -64,7 +64,7 @@ public class CrController {
      * Atualizar os dados de um CR existente.
      * @param id identificador do CR a ser atualizado.
      * @param dto requisição com novos dados.
-     * @return status HTTP 200 e CR com dados atualizados no corpo da resposta.
+     * @return CR com dados atualizados.
      */
     @Operation(description = "ENDPOINT responsável pela atualização de CR")
     @PutMapping("{id}")
@@ -76,7 +76,7 @@ public class CrController {
     /**
      * Remover um CR pelo seu identificador.
      * @param id identificador do CR a ser removido.
-     * @return status HTTP 200 e mesagem de confirmação no corpo da resposta.
+     * @return mesagem de confirmação da remoção.
      */
     @Operation(description = "ENDPOINT responsável pelo delete de CR")
     @DeleteMapping("{id}")

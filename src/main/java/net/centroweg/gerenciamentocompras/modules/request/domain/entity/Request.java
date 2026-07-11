@@ -8,6 +8,7 @@ import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,6 +40,11 @@ public class Request {
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    /** Indica se o aviso de "pendente há muito tempo" já foi enviado, para não repetir. */
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    private Boolean pendingReminderSent = false;
 
     @BatchSize(size = 30)
     @ManyToMany

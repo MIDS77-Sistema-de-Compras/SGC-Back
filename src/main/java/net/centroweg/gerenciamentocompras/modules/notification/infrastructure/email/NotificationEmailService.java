@@ -74,6 +74,37 @@ public class NotificationEmailService {
         }
     }
 
+    @Async
+    @Transactional(readOnly = true)
+    public void sendPendingReminderEmail(String supervisorName, String supervisorEmail, Long requestId) {
+        try {
+            Request request = requestRepository.findById(requestId)
+                    .orElseThrow(RequestNotFoundException::new);
+
+            String subject = "Solicitação pendente há mais de uma semana";
+
+            EmailLayout layout = new EmailLayout(
+                    subject,
+                    List.<EmailBuilder>of(
+                            new EmailTitle(subject),
+                            new EmailParagraph("Olá, " + supervisorName + ".", "#666666", 14),
+                            new EmailParagraph(
+                                    "A solicitação abaixo está pendente de análise há mais de 7 dias. "
+                                            + "Por favor, avalie-a o quanto antes.", "#666666", 14),
+                            new EmailParagraph(buildRequestSummary(request), "#333333", 14),
+                            new EmailButton(frontendUrl, "Analisar solicitação"),
+                            new EmailFooter()
+                    )
+            );
+
+            emailSenderService.sendEmail(new DefaultEmail(subject, supervisorEmail), layout.buildHtml());
+            log.info("E-mail de solicitação pendente enviado para {}", supervisorEmail);
+        } catch (Exception exception) {
+            log.error("Erro ao enviar e-mail de solicitação pendente para {}", supervisorEmail, exception);
+        }
+    }
+
+
     private String buildRequestSummary(Request request) {
         String requesterName = getRequesterName(request);
         String itemsSummary = buildItemsSummary(request);

@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service;
 
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.CreateRequestProductService;
@@ -10,17 +11,21 @@ import net.centroweg.gerenciamentocompras.modules.request.service.useCases.servi
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.ItemRequestProductServiceImpl;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.UpdateItemRequestProductService;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ExtendWith(MockitoExtension.class)
 class ItemRequestProductServiceTest {
@@ -39,7 +44,18 @@ class ItemRequestProductServiceTest {
     @InjectMocks
     private ItemRequestProductServiceImpl itemRequestProductService;
 
-    // ───────────────────────────── CREATE ─────────────────────────────
+    @Mock
+    private ItemRequestProductRepository itemRequestProductRepository;
+
+    private MockMvc mockMvc;
+
+
+    @BeforeEach
+    void setup(){
+
+        itemRequestProductRepository.deleteAll();
+
+    }
 
     @Test
     @DisplayName("Deve criar um item de produto com sucesso")

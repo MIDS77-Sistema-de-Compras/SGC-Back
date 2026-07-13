@@ -26,11 +26,13 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,13 +55,16 @@ public class CreateRequestServiceImpl {
     private final NotificationService notificationService;
     private final RequestPublicApi requestPublicApi;
     private final ProvisionRepository provisionRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
 
         User requester = userRepository.findByEmail(userPrincipal.getUsername())
                 .orElseThrow(UserNotFoundException::new);
 
-        Status status = isSupervisor(requester)
+        boolean createdApproved = isSupervisor(requester);
+
+        Status status = createdApproved
                 ? statusRepository.findByNameIgnoreCase(APPROVED_STATUS)
                 .orElseThrow(StatusNotFoundException::new)
                 : statusRepository.findByNameIgnoreCase(INITIAL_STATUS)
@@ -83,6 +88,10 @@ public class CreateRequestServiceImpl {
         addProvisionItems(request, requestToSave, status);
 
         Request savedRequest = requestRepository.save(requestToSave);
+
+        if (createdApproved) {
+            eventPublisher.publishEvent(new RequestApprovedEvent(savedRequest.getId()));
+        }
 
         if (crBranch.getResponsibleUsers() != null) {
             for (User responsible : crBranch.getResponsibleUsers()) {

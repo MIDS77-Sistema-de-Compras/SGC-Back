@@ -14,9 +14,10 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
-import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -26,7 +27,6 @@ public class UpdateRequestStatusServiceImpl {
 
     private static final String REFUSED_STATUS = "recusado";
     private static final String APPROVED_STATUS = "aprovado";
-    private static final String IN_SERVICE_STATUS = "em atendimento";
 
     private final RequestRepository requestRepository;
     private final StatusRepository statusRepository;
@@ -34,6 +34,7 @@ public class UpdateRequestStatusServiceImpl {
     private final CurrentUserService currentUserService;
     private final RequestBusinessRuleValidator validator;
     private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public RequestResponse updateStatus(Long id, UpdateRequestStatus dto) {
         Request request = requestRepository.findById(id)
@@ -48,11 +49,6 @@ public class UpdateRequestStatusServiceImpl {
         boolean isRefused = isStatus(newStatus, REFUSED_STATUS);
         boolean isApproved = isStatus(newStatus, APPROVED_STATUS);
 
-        if (isApproved && isSupervisor(currentUser)) {
-            newStatus = statusRepository.findByNameIgnoreCase(IN_SERVICE_STATUS)
-                    .orElseThrow(StatusNotFoundException::new);
-        }
-
         if (isRefused && !StringUtils.hasText(dto.justification())) {
             throw new RequestRejectionJustificationRequiredException();
         }
@@ -66,6 +62,10 @@ public class UpdateRequestStatusServiceImpl {
         }
 
         Request savedRequest = requestRepository.save(request);
+
+        if (statusChanged && isApproved) {
+            eventPublisher.publishEvent(new RequestApprovedEvent(savedRequest.getId()));
+        }
 
         if (statusChanged && (isApproved || isRefused)) {
             notifyRequester(savedRequest, isApproved, dto.justification());
@@ -92,13 +92,6 @@ public class UpdateRequestStatusServiceImpl {
             ));
         }
     }
-
-    private boolean isSupervisor(User user) {
-        return user.getRole() != null
-                && user.getRole().getName() != null
-                && user.getRole().getName().trim().equalsIgnoreCase(Authorities.SUPERVISOR);
-    }
-
 
     private boolean isStatus(Status status, String expectedStatus) {
         return status.getName() != null

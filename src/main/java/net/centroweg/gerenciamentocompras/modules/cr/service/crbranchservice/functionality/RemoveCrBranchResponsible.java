@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapp
 import org.springframework.stereotype.Service;
 
 /**
- * Caso de uso responsável por remover o usuário responsável de um vínculo CR-filial.
+ * Caso de uso responsável por remover um usuário responsável de um vínculo CR-filial.
  */
 @Service
 @RequiredArgsConstructor
@@ -19,18 +19,28 @@ public class RemoveCrBranchResponsible {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Remove o usuário responsável de um vínculo CR-filial, deixando o campo nulo.
+     * Remove um usuário específico da lista de responsáveis de um vínculo CR-filial.
+     *
+     * <p>Os demais responsáveis do vínculo são mantidos.</p>
      *
      * @param crBranchId
-     * @return o vínculo atualizado sem responsável
+     * @param userId
+     * @return o vínculo atualizado sem o responsável removido
      * @throws CrBranchNotFoundException se o vínculo não for encontrado
      */
-    public CrBranchResponse removeCrBranchResponsible(Long crBranchId) {
+    public CrBranchResponse removeCrBranchResponsible(Long crBranchId, Long userId) {
         CrBranch crBranch = crBranchRepository.findById(crBranchId)
                 .orElseThrow(() -> new CrBranchNotFoundException(crBranchId));
 
-        crBranch.setResponsibleUsers(null);
-        crBranchRepository.save(crBranch);
+        if (crBranch.getResponsibleUsers() != null) {
+            boolean removed = crBranch.getResponsibleUsers()
+                    .removeIf(responsible -> responsible.getId().equals(userId));
+
+            if (removed) {
+                crBranchRepository.save(crBranch);
+            }
+        }
+
         return crBranchMapper.toResponse(crBranch);
     }
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManageMeasurementUnit;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ public class MeasurementUnitController {
 
     @Operation(description = "ENDPOINT responsável pela criação de Measurement Unit")
     @PostMapping
+    @CanManageMeasurementUnit
     public ResponseEntity<MeasurementUnitResponse> createMeasurementUnit(@Valid @RequestBody MeasurementUnitRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(measurementUnitService.createMeasurementUnit(request));
     }
@@ -38,6 +40,7 @@ public class MeasurementUnitController {
     
     @Operation(description = "ENDPOINT responsável pela listagem de todos Measurement Unit")
     @GetMapping
+    @CanManageMeasurementUnit
     public ResponseEntity<List<MeasurementUnitResponse>> readMeasurementUnit(){
         return ResponseEntity.ok(measurementUnitService.readMeasurementUnit());
     }
@@ -56,6 +59,7 @@ public class MeasurementUnitController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de Measurement Unit")
     @PutMapping("/{id}")
+    @CanManageMeasurementUnit
     public ResponseEntity<MeasurementUnitResponse> updateMeasurementUnit( @PathVariable Long id, @Valid @RequestBody MeasurementUnitRequest request){
         return ResponseEntity.ok(measurementUnitService.updateMeasurementUnit(id, request));
     }

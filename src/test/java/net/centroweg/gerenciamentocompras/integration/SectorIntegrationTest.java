@@ -45,7 +45,9 @@ public class SectorIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
-                .defaultRequest(get("/").with(user("test-user").roles("ADMIN")))
+                .defaultRequest(get("/").with(user("test-user").authorities(
+                        new org.springframework.security.core.authority.SimpleGrantedAuthority("ADMIN")
+                )))
                 .build();
 
         sectorRepository.deleteAll();

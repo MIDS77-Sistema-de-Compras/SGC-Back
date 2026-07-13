@@ -111,7 +111,7 @@ class RequestBusinessRulesIntegrationTest {
         Request request = saveRequest(pending, creator, true);
 
         mockMvc.perform(delete("/requests/{id}", request.getId()).with(user(principalOf(anotherUser))))
-                .andExpect(status().isNotAcceptable());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -147,7 +147,7 @@ class RequestBusinessRulesIntegrationTest {
                         .with(user(principalOf(anotherUser)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody()))
-                .andExpect(status().isNotAcceptable());
+                .andExpect(status().isForbidden());
     }
 
     @Test

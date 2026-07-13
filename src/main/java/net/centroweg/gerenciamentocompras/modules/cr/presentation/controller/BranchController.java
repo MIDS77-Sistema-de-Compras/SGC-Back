@@ -7,6 +7,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Br
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.BranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.branchservice.branchinterface.BranchService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManageCr;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,7 @@ public class BranchController {
      */
     @Operation(description = "ENDPOINT responsável pela criação de Branch")
     @PostMapping
+    @CanManageCr
     public ResponseEntity<BranchResponse> create(@RequestBody BranchRequest branchRequest){
         return ResponseEntity.status(201)
                 .body(branchService.create(branchRequest));
@@ -75,6 +77,7 @@ public class BranchController {
      */
     @Operation(description = "ENDPOINT responsável pela atualização de Branch")
     @PutMapping("/{id}")
+    @CanManageCr
     public ResponseEntity<BranchResponse> update(@PathVariable Long id, @RequestBody BranchRequest branchRequest){
         return ResponseEntity.status(200)
                 .body(branchService.update(id,branchRequest));
@@ -88,6 +91,7 @@ public class BranchController {
      */
     @Operation(description = "ENDPOINT responsável pelo delete de Branch")
     @DeleteMapping("/{id}")
+    @CanManageCr
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(204)
                 .body(branchService.delete(id));

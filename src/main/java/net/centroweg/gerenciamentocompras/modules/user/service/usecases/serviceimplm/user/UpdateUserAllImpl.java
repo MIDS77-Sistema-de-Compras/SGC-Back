@@ -5,11 +5,12 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.RoleNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.user.domain.rolelevels.SystemRole;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
+import net.centroweg.gerenciamentocompras.modules.user.service.authorization.UserRoleAuthorizationService;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class UpdateUserAllImpl {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRoleAuthorizationService authorizationService;
 
     /**
      * Método que atualiza usuário com o identificador único
@@ -44,7 +46,13 @@ public class UpdateUserAllImpl {
     public UserResponse updateUserAll(Long id, UpdateUser user){
         User userSave = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        Role role = roleRepository.findByNameIgnoreCase(user.nameRole())
+
+        SystemRole currentTargetRole = SystemRole.from(userSave.getRole().getName());
+        SystemRole newTargetRole = SystemRole.from(user.nameRole());
+        authorizationService.validateCanEdit(currentTargetRole);
+        authorizationService.validateCanCreate(newTargetRole);
+
+        Role role = roleRepository.findByNameIgnoreCase(newTargetRole.name())
                 .orElseThrow(() -> new RoleNotFoundException(user.nameRole()));
         String encryptedPassword = passwordEncoder.encode(user.password());
 

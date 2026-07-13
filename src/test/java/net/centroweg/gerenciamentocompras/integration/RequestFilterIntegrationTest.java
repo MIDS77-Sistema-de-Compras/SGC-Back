@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-@WithMockUser
+@WithMockUser(authorities = "ADMIN")
 class RequestFilterIntegrationTest {
 
     @Autowired
@@ -89,7 +89,9 @@ class RequestFilterIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
-                .defaultRequest(get("/").with(user("admin").roles("USER", "ADMIN")))
+                .defaultRequest(get("/").with(user("admin").authorities(
+                        new org.springframework.security.core.authority.SimpleGrantedAuthority("ADMIN")
+                )))
                 .build();
 
         cleanDatabase();

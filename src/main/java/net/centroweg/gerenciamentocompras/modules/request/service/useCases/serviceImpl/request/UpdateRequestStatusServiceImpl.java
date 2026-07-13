@@ -6,7 +6,6 @@ import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestRejectionJustificationRequiredException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
@@ -49,15 +48,11 @@ public class UpdateRequestStatusServiceImpl {
         boolean isRefused = isStatus(newStatus, REFUSED_STATUS);
         boolean isApproved = isStatus(newStatus, APPROVED_STATUS);
 
-        if (isRefused && !StringUtils.hasText(dto.justification())) {
-            throw new RequestRejectionJustificationRequiredException();
-        }
-
         boolean statusChanged = !request.getStatus().getId().equals(newStatus.getId());
 
         request.setStatus(newStatus);
 
-        if (isRefused) {
+        if (isRefused && StringUtils.hasText(dto.justification())) {
             request.setFeedback(dto.justification().trim());
         }
 
@@ -79,9 +74,15 @@ public class UpdateRequestStatusServiceImpl {
                 ? "Solicitação aprovada"
                 : "Solicitação recusada";
 
-        String message = approved
-                ? "A sua solicitação #" + request.getId() + " foi aprovada."
-                : "A sua solicitação #" + request.getId() + " foi recusada. Justificativa: " + justification;
+        String message;
+        if (approved) {
+            message = "A sua solicitação #" + request.getId() + " foi aprovada.";
+        } else {
+            message = "A sua solicitação #" + request.getId() + " foi recusada.";
+            if (StringUtils.hasText(justification)) {
+                message += " Justificativa: " + justification;
+            }
+        }
 
         for (User requester : request.getCreatedByUsers()) {
             notificationService.createNotification(new NotificationRequest(

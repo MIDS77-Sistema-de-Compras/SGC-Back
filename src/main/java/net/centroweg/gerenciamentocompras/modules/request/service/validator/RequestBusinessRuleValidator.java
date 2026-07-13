@@ -95,7 +95,17 @@ public class RequestBusinessRuleValidator {
 
     public void validateCanUpdateStatus(Request request, User currentUser) {
         validateRequestIsActive(request);
+
+        if (hasRole(currentUser, Authorities.COMPRADOR)) {
+            return;
+        }
+
         validateUserIsResponsibleForCr(request, currentUser);
+    }
+
+    private boolean hasRole(User user, String roleName) {
+        return user.getRole() != null
+                && normalize(user.getRole().getName()).equals(normalize(roleName));
     }
 
     private void validateUserIsResponsibleForCr(Request request, User currentUser) {

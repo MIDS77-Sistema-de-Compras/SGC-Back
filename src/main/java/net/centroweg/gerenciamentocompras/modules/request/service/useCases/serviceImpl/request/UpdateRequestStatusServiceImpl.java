@@ -14,8 +14,10 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -32,6 +34,7 @@ public class UpdateRequestStatusServiceImpl {
     private final CurrentUserService currentUserService;
     private final RequestBusinessRuleValidator validator;
     private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public RequestResponse updateStatus(Long id, UpdateRequestStatus dto) {
         Request request = requestRepository.findById(id)
@@ -59,6 +62,10 @@ public class UpdateRequestStatusServiceImpl {
         }
 
         Request savedRequest = requestRepository.save(request);
+
+        if (statusChanged && isApproved) {
+            eventPublisher.publishEvent(new RequestApprovedEvent(savedRequest.getId()));
+        }
 
         if (statusChanged && (isApproved || isRefused)) {
             notifyRequester(savedRequest, isApproved, dto.justification());

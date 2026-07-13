@@ -32,7 +32,7 @@ public class NotificationEmailService {
     private final RequestRepository requestRepository;
 
 
-    @Value("http://localhost:3000/coordenador/solicitacoes")
+    @Value("${app.frontend.coordinator-requests-url}")
     private String frontendUrl;
 
     @Async

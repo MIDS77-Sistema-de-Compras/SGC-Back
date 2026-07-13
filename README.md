@@ -328,6 +328,12 @@ CLOUDINARY_API_SECRET=<...>
 MAIL_USERNAME=<...>
 MAIL_PASSWORD=<...>
 
+# Rota do frontend usada nos e-mails enviados aos solicitantes
+REQUESTER_REQUEST_URL_TEMPLATE=http://localhost:3000/docente/solicitacoes/{requestId}
+
+# Rota do frontend usada nos e-mails genéricos enviados aos responsáveis/coordenadores
+COORDINATOR_REQUESTS_URL=http://localhost:3000/coordenador/solicitacoes
+
 # Opcional
 PORT=8080
 ```

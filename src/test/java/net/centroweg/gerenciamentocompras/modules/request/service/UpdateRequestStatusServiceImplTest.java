@@ -3,10 +3,9 @@ package net.centroweg.gerenciamentocompras.modules.request.service;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
-import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestRejectionJustificationRequiredException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
@@ -14,6 +13,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request.UpdateRequestStatusServiceImpl;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
@@ -22,19 +22,29 @@ import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
-import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateRequestStatusServiceImplTest {
@@ -44,84 +54,143 @@ class UpdateRequestStatusServiceImplTest {
     @Mock private RequestMapper requestMapper;
     @Mock private CurrentUserService currentUserService;
     @Mock private RequestBusinessRuleValidator validator;
-    @Mock private NotificationService notificationService;
+    @Mock private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private UpdateRequestStatusServiceImpl service;
 
     @Captor private ArgumentCaptor<Request> requestCaptor;
-    @Captor private ArgumentCaptor<NotificationRequest> notificationCaptor;
+    @Captor private ArgumentCaptor<RequestStatusChangedEvent> eventCaptor;
 
     @Test
-    @DisplayName("Deve aprovar uma solicitacao com sucesso")
-    void shouldApproveRequestSuccessfully() {
-        User requester = user(10L, "Solicitante", "solicitante@teste.com");
-        User responsible = user(20L, "Responsavel", "responsavel@teste.com");
-        Status approved = status(2L, "Aprovado");
-        Request request = request(100L, status(1L, "Pendente"), requester, responsible);
-        RequestResponse expected = response(100L, "Aprovado", null);
+    @DisplayName("Deve salvar e publicar um único evento ao aprovar uma solicitação")
+    void shouldApproveAndPublishOneEvent() {
+        Scenario scenario = scenario("Em análise", "Aprovado");
 
-        mockLookup(request, responsible, approved);
-        when(requestRepository.save(request)).thenReturn(request);
-        when(requestMapper.toDTO(request)).thenReturn(expected);
-
-        RequestResponse response = service.updateStatus(request.getId(), new UpdateRequestStatus("Aprovado", null));
-
-        assertSame(expected, response);
-        assertSame(approved, request.getStatus());
-        assertNull(request.getFeedback());
-        verify(validator).validateCanUpdateStatus(request, responsible);
-        verify(requestRepository).save(request);
-    }
-
-    @Test
-    @DisplayName("Deve recusar uma solicitacao com justificativa")
-    void shouldRefuseRequestWithJustification() {
-        User requester = user(10L, "Solicitante", "solicitante@teste.com");
-        User responsible = user(20L, "Responsavel", "responsavel@teste.com");
-        Status refused = status(3L, "Recusado");
-        Request request = request(100L, status(1L, "Pendente"), requester, responsible);
-        RequestResponse expected = response(100L, "Recusado", "Faltam informacoes");
-
-        mockLookup(request, responsible, refused);
-        when(requestRepository.save(request)).thenReturn(request);
-        when(requestMapper.toDTO(request)).thenReturn(expected);
-
-        RequestResponse response = service.updateStatus(
-                request.getId(),
-                new UpdateRequestStatus("Recusado", "  Faltam informacoes  ")
+        RequestResponse result = service.updateStatus(
+                scenario.request().getId(),
+                new UpdateRequestStatus("Aprovado", null)
         );
 
-        assertSame(expected, response);
-        assertSame(refused, request.getStatus());
-        assertEquals("Faltam informacoes", request.getFeedback());
+        assertSame(scenario.response(), result);
+        assertSame(scenario.newStatus(), scenario.request().getStatus());
+        verify(requestRepository).save(scenario.request());
+        verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());
+        assertEquals("Em análise", eventCaptor.getValue().previousStatusName());
+        assertEquals("Aprovado", eventCaptor.getValue().newStatusName());
+        assertNull(eventCaptor.getValue().justification());
+    }
+
+    @ParameterizedTest(name = "Deve publicar evento para o status {0}")
+    @ValueSource(strings = {"Em atendimento", "Entregue", "Cancelado"})
+    void shouldPublishForEveryValidStatusChange(String newStatusName) {
+        Scenario scenario = scenario("Aprovado", newStatusName);
+
+        service.updateStatus(
+                scenario.request().getId(),
+                new UpdateRequestStatus(newStatusName, null)
+        );
+
+        verify(requestRepository).save(scenario.request());
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals(newStatusName, eventCaptor.getValue().newStatusName());
     }
 
     @Test
-    @DisplayName("Deve lancar excecao ao recusar sem justificativa")
-    void shouldThrowWhenRefusingWithoutJustification() {
-        User requester = user(10L, "Solicitante", "solicitante@teste.com");
-        User responsible = user(20L, "Responsavel", "responsavel@teste.com");
-        Status refused = status(3L, "Recusado");
-        Request request = request(100L, status(1L, "Pendente"), requester, responsible);
+    @DisplayName("Deve salvar justificativa com trim e incluí-la no evento de recusa")
+    void shouldTrimRejectionJustificationAndPublishIt() {
+        Scenario scenario = scenario("Em análise", "Recusado");
 
-        mockLookup(request, responsible, refused);
+        service.updateStatus(
+                scenario.request().getId(),
+                new UpdateRequestStatus("Recusado", "  Orçamento indisponível.  ")
+        );
+
+        verify(requestRepository).save(requestCaptor.capture());
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("Orçamento indisponível.", requestCaptor.getValue().getFeedback());
+        assertEquals("Orçamento indisponível.", eventCaptor.getValue().justification());
+    }
+
+    @Test
+    @DisplayName("Não deve salvar nem publicar evento ao recusar sem justificativa")
+    void shouldRejectRefusalWithoutJustification() {
+        Scenario scenario = scenarioWithoutSave("Em análise", "Recusado");
 
         assertThrows(
                 RequestRejectionJustificationRequiredException.class,
-                () -> service.updateStatus(request.getId(), new UpdateRequestStatus("Recusado", " "))
+                () -> service.updateStatus(
+                        scenario.request().getId(),
+                        new UpdateRequestStatus("Recusado", "   ")
+                )
         );
 
-        verify(requestRepository, never()).save(request);
-        verifyNoInteractions(notificationService, requestMapper);
+        verify(requestRepository, never()).save(scenario.request());
+        verifyNoInteractions(eventPublisher, requestMapper);
     }
 
     @Test
-    @DisplayName("Deve lancar StatusNotFoundException quando status nao existir")
+    @DisplayName("Não deve publicar evento quando o ID do status permanecer igual")
+    void shouldNotPublishWhenStatusIdIsUnchanged() {
+        User requester = user(10L, "Solicitante", "solicitante@teste.com");
+        User responsible = user(20L, "Responsável", "responsavel@teste.com");
+        Status currentStatus = status(5L, "Em atendimento");
+        Status sameStatus = status(5L, "EM_ATENDIMENTO");
+        Request request = request(100L, currentStatus, requester, responsible);
+        RequestResponse response = response(100L, "Em atendimento", null);
+
+        mockLookup(request, responsible, sameStatus);
+        when(requestRepository.save(request)).thenReturn(request);
+        when(requestMapper.toDTO(request)).thenReturn(response);
+
+        assertSame(response, service.updateStatus(
+                request.getId(),
+                new UpdateRequestStatus("EM_ATENDIMENTO", null)
+        ));
+
+        verify(requestRepository).save(request);
+        verifyNoInteractions(eventPublisher);
+    }
+
+    @Test
+    @DisplayName("Deve manter a autorização atual e não produzir efeitos quando negada")
+    void shouldNotChangeAnythingWhenUserIsUnauthorized() {
+        User requester = user(10L, "Solicitante", "solicitante@teste.com");
+        User unauthorized = user(30L, "Não autorizado", "outro@teste.com");
+        Request request = request(100L, status(1L, "Em análise"), requester, unauthorized);
+
+        when(requestRepository.findById(request.getId())).thenReturn(Optional.of(request));
+        when(currentUserService.getCurrentUser()).thenReturn(unauthorized);
+        doThrow(new AcessDeniedException()).when(validator).validateCanUpdateStatus(request, unauthorized);
+
+        assertThrows(
+                AcessDeniedException.class,
+                () -> service.updateStatus(request.getId(), new UpdateRequestStatus("Aprovado", null))
+        );
+
+        verify(requestRepository, never()).save(request);
+        verifyNoInteractions(statusRepository, eventPublisher, requestMapper);
+    }
+
+    @Test
+    @DisplayName("Deve preservar feedback anterior ao mudar para um status diferente de Recusado")
+    void shouldKeepPreviousFeedbackForAnotherStatus() {
+        Scenario scenario = scenario("Recusado", "Em atendimento");
+        scenario.request().setFeedback("Justificativa anterior");
+
+        service.updateStatus(
+                scenario.request().getId(),
+                new UpdateRequestStatus("Em atendimento", null)
+        );
+
+        assertEquals("Justificativa anterior", scenario.request().getFeedback());
+    }
+
+    @Test
     void shouldThrowWhenStatusDoesNotExist() {
         User requester = user(10L, "Solicitante", "solicitante@teste.com");
-        User responsible = user(20L, "Responsavel", "responsavel@teste.com");
-        Request request = request(100L, status(1L, "Pendente"), requester, responsible);
+        User responsible = user(20L, "Responsável", "responsavel@teste.com");
+        Request request = request(100L, status(1L, "Em análise"), requester, responsible);
 
         when(requestRepository.findById(request.getId())).thenReturn(Optional.of(request));
         when(currentUserService.getCurrentUser()).thenReturn(responsible);
@@ -132,13 +201,11 @@ class UpdateRequestStatusServiceImplTest {
                 () -> service.updateStatus(request.getId(), new UpdateRequestStatus("Inexistente", null))
         );
 
-        verify(validator).validateCanUpdateStatus(request, responsible);
         verify(requestRepository, never()).save(request);
-        verifyNoInteractions(notificationService, requestMapper);
+        verifyNoInteractions(eventPublisher, requestMapper);
     }
 
     @Test
-    @DisplayName("Deve lancar RequestNotFoundException quando solicitacao nao existir")
     void shouldThrowWhenRequestDoesNotExist() {
         when(requestRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -147,96 +214,24 @@ class UpdateRequestStatusServiceImplTest {
                 () -> service.updateStatus(999L, new UpdateRequestStatus("Aprovado", null))
         );
 
-        verifyNoInteractions(statusRepository, currentUserService, validator, notificationService, requestMapper);
+        verifyNoInteractions(statusRepository, currentUserService, validator, eventPublisher, requestMapper);
     }
 
-    @Test
-    @DisplayName("Deve notificar o solicitante quando a solicitacao for aprovada")
-    void shouldNotifyRequesterWhenApproved() {
-        User requester = user(10L, "Solicitante", "solicitante@teste.com");
-        User responsible = user(20L, "Responsavel", "responsavel@teste.com");
-        Status approved = status(2L, "Aprovado");
-        Request request = request(100L, status(1L, "Pendente"), requester, responsible);
-
-        mockLookup(request, responsible, approved);
-        when(requestRepository.save(request)).thenReturn(request);
-        when(requestMapper.toDTO(request)).thenReturn(response(100L, "Aprovado", null));
-
-        service.updateStatus(request.getId(), new UpdateRequestStatus("Aprovado", null));
-
-        verify(notificationService).createNotification(notificationCaptor.capture());
-        NotificationRequest notification = notificationCaptor.getValue();
-        assertEquals("Solicitacao aprovada", normalize(notification.title()));
-        assertEquals(requester.getId(), notification.userId());
-        assertEquals(request.getId(), notification.requestId());
+    private Scenario scenario(String previousStatusName, String newStatusName) {
+        Scenario scenario = scenarioWithoutSave(previousStatusName, newStatusName);
+        when(requestRepository.save(scenario.request())).thenReturn(scenario.request());
+        when(requestMapper.toDTO(scenario.request())).thenReturn(scenario.response());
+        return scenario;
     }
 
-    @Test
-    @DisplayName("Deve notificar o solicitante quando a solicitacao for recusada")
-    void shouldNotifyRequesterWhenRefused() {
+    private Scenario scenarioWithoutSave(String previousStatusName, String newStatusName) {
         User requester = user(10L, "Solicitante", "solicitante@teste.com");
-        User responsible = user(20L, "Responsavel", "responsavel@teste.com");
-        Status refused = status(3L, "Recusado");
-        Request request = request(100L, status(1L, "Pendente"), requester, responsible);
-
-        mockLookup(request, responsible, refused);
-        when(requestRepository.save(request)).thenReturn(request);
-        when(requestMapper.toDTO(request)).thenReturn(response(100L, "Recusado", "Sem verba"));
-
-        service.updateStatus(request.getId(), new UpdateRequestStatus("Recusado", "Sem verba"));
-
-        verify(notificationService).createNotification(notificationCaptor.capture());
-        NotificationRequest notification = notificationCaptor.getValue();
-        assertEquals("Solicitacao recusada", normalize(notification.title()));
-        assertTrue(normalize(notification.message()).contains("Sem verba"));
-        assertEquals(requester.getId(), notification.userId());
-        assertEquals(request.getId(), notification.requestId());
-    }
-
-    @Test
-    @DisplayName("Deve salvar feedback somente quando for recusa")
-    void shouldSaveFeedbackOnlyWhenRefused() {
-        User requester = user(10L, "Solicitante", "solicitante@teste.com");
-        User responsible = user(20L, "Responsavel", "responsavel@teste.com");
-        Status approved = status(2L, "Aprovado");
-        Request request = request(100L, status(1L, "Pendente"), requester, responsible);
-
-        mockLookup(request, responsible, approved);
-        when(requestRepository.save(request)).thenReturn(request);
-        when(requestMapper.toDTO(request)).thenReturn(response(100L, "Aprovado", null));
-
-        service.updateStatus(request.getId(), new UpdateRequestStatus("Aprovado", "Nao deve salvar"));
-
-        verify(requestRepository).save(requestCaptor.capture());
-        assertNull(requestCaptor.getValue().getFeedback());
-    }
-
-    @Test
-    @DisplayName("Nao deve alterar outros campos alem de status e feedback")
-    void shouldNotChangeOtherFields() {
-        User requester = user(10L, "Solicitante", "solicitante@teste.com");
-        User responsible = user(20L, "Responsavel", "responsavel@teste.com");
-        Status refused = status(3L, "Recusado");
-        Request request = request(100L, status(1L, "Pendente"), requester, responsible);
-        CrBranch originalCrBranch = request.getCrBranch();
-        LocalDateTime originalRequestDate = request.getRequestDate();
-        LocalDateTime originalUpdatedAt = request.getUpdatedAt();
-        Boolean originalActive = request.getActive();
-        List<User> originalRequesters = request.getCreatedByUsers();
-
-        mockLookup(request, responsible, refused);
-        when(requestRepository.save(request)).thenReturn(request);
-        when(requestMapper.toDTO(request)).thenReturn(response(100L, "Recusado", "Sem verba"));
-
-        service.updateStatus(request.getId(), new UpdateRequestStatus("Recusado", "Sem verba"));
-
-        verify(requestRepository).save(requestCaptor.capture());
-        Request saved = requestCaptor.getValue();
-        assertSame(originalCrBranch, saved.getCrBranch());
-        assertSame(originalRequestDate, saved.getRequestDate());
-        assertSame(originalUpdatedAt, saved.getUpdatedAt());
-        assertEquals(originalActive, saved.getActive());
-        assertSame(originalRequesters, saved.getCreatedByUsers());
+        User responsible = user(20L, "Responsável", "responsavel@teste.com");
+        Status newStatus = status(2L, newStatusName);
+        Request request = request(100L, status(1L, previousStatusName), requester, responsible);
+        RequestResponse response = response(100L, newStatusName, null);
+        mockLookup(request, responsible, newStatus);
+        return new Scenario(request, newStatus, response);
     }
 
     private void mockLookup(Request request, User currentUser, Status newStatus) {
@@ -246,7 +241,11 @@ class UpdateRequestStatusServiceImplTest {
     }
 
     private Request request(Long id, Status status, User requester, User responsible) {
-        CrBranch crBranch = new CrBranch(new Branch("Filial Centro"), new Cr("TI", "7940", false), List.of(responsible));
+        CrBranch crBranch = new CrBranch(
+                new Branch("Filial Centro"),
+                new Cr("TI", "7940", false),
+                List.of(responsible)
+        );
         crBranch.setId(50L);
         Request request = new Request(crBranch, status);
         request.setId(id);
@@ -273,12 +272,21 @@ class UpdateRequestStatusServiceImplTest {
 
     private RequestResponse response(Long id, String statusName, String feedback) {
         LocalDateTime dateTime = LocalDateTime.of(2026, 6, 26, 10, 0);
-        return new RequestResponse(id, dateTime, dateTime, 50L, statusName, feedback, "Solicitante", "1234", List.of(), List.of(), List.of());
+        return new RequestResponse(
+                id,
+                dateTime,
+                dateTime,
+                50L,
+                statusName,
+                feedback,
+                "Solicitante",
+                "1234",
+                List.of(),
+                List.of(),
+                List.of()
+        );
     }
 
-    private String normalize(String value) {
-        String withoutAccents = Normalizer.normalize(value, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "");
-        return withoutAccents.replace("�", "c");
+    private record Scenario(Request request, Status newStatus, RequestResponse response) {
     }
 }

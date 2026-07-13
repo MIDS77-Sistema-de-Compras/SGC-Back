@@ -19,4 +19,14 @@ public interface RequestRepository extends JpaRepository<Request, Long> , JpaSpe
     @EntityGraph(attributePaths = {"createdByUsers"})
     @Query("select request from Request request where request.id = :id")
     Optional<Request> findWithRequestersById(@Param("id") Long id);
+
+    @EntityGraph(attributePaths = {
+            "createdByUsers",
+            "crBranch",
+            "crBranch.cr",
+            "crBranch.branch",
+            "status"
+    })
+    @Query("select request from Request request where request.id = :id")
+    Optional<Request> findForStatusNotificationById(@Param("id") Long id);
 }

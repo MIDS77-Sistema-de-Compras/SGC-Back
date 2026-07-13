@@ -9,8 +9,15 @@ import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
 import net.centroweg.gerenciamentocompras.modules.product.service.CreateProductService;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationData;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,6 +27,7 @@ public class RequestPublicApiImpl implements RequestPublicApi {
     private final ProductRepository productRepository;
     private final MeasurementUnitRepository measurementUnitRepository;
     private final CreateProductService createProductService;
+    private final RequestRepository requestRepository;
 
     @Override
     public Optional<Product> findProuctByNameIgnoreCase(String name) {
@@ -39,5 +47,25 @@ public class RequestPublicApiImpl implements RequestPublicApi {
         ProductResponse response = createProductService.execute(request);
         return productRepository.findById(response.id())
                 .orElseThrow(ProductNotFoundException::new);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RequestNotificationData findNotificationDataById(Long requestId) {
+        Request request = requestRepository.findWithRequestersById(requestId)
+                .orElseThrow(RequestNotFoundException::new);
+
+        List<RequestNotificationRecipient> recipients = request.getCreatedByUsers() == null
+                ? List.of()
+                : request.getCreatedByUsers().stream()
+                        .filter(java.util.Objects::nonNull)
+                        .map(user -> new RequestNotificationRecipient(
+                                user.getId(),
+                                user.getName(),
+                                user.getEmail()
+                        ))
+                        .toList();
+
+        return new RequestNotificationData(request.getId(), recipients);
     }
 }

@@ -25,6 +25,7 @@ public class RequestMapper {
 
     private final CrBranchRepository repositoryCR;
     private final StatusRepository repositorySt;
+    private final RequestStatusCategoryResolver statusCategoryResolver;
 
     public Request toEntity(RequestRequest request, CrBranch branch, Status status){
         Request requestSave = new Request();
@@ -60,6 +61,7 @@ public class RequestMapper {
                 request.getUpdatedAt(),
                 request.getCrBranch().getId(),
                 request.getStatus().getName(),
+                statusCategoryResolver.resolve(request.getStatus().getName()),
                 request.getFeedback(),
                 requester != null ? requester.getName() : null,
                 requester != null ? requester.getExtensionNumber() : null,

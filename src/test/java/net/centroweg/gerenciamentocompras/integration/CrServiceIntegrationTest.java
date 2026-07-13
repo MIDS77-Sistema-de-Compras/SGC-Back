@@ -53,7 +53,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldCreateCr() {
-        CrRequest request = new CrRequest("CR Compras", "1001L", true, "Setor Teste");
+        CrRequest request = new CrRequest("CR Compras", "1001L", "descrição teste",true, "Setor Teste");
 
         CrCompoundResponse response = crService.create(request, coordenador);
 
@@ -66,8 +66,8 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldListAllCrs() {
-        CrCompoundResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
-        CrCompoundResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false, "Setor Teste"), coordenador);
+        CrCompoundResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", "descrição teste", true, "Setor Teste"), coordenador);
+        CrCompoundResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", "descrição teste",false, "Setor Teste"), coordenador);
 
         List<CrCompoundResponse> responses = crService.listAll();
 
@@ -79,7 +79,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldFindCrById() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", "descrição teste", true, "Setor Teste"), coordenador);
 
         CrCompoundResponse response = crService.listById(createdCr.id());
 
@@ -91,8 +91,8 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldUpdateCr() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
-        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false, null);
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", "descrição teste", true, "Setor Teste"), coordenador);
+        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L","descrição teste", false, null);
 
         CrCompoundResponse response = crService.update(createdCr.id(), updateRequest);
 
@@ -109,7 +109,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldDeleteCr() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", "descrição teste",true, "Setor Teste"), coordenador);
 
         MessageDTO response = crService.delete(createdCr.id());
 

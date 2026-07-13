@@ -276,7 +276,7 @@ class UpdateRequestStatusServiceImplTest {
 
     private RequestResponse response(Long id, String statusName, String feedback) {
         LocalDateTime dateTime = LocalDateTime.of(2026, 6, 26, 10, 0);
-        return new RequestResponse(id, dateTime, dateTime, 50L, statusName, feedback, "Solicitante", "1234", List.of(), List.of(), List.of());
+        return new RequestResponse(id, dateTime, dateTime, 50L, statusName, null, feedback, "Solicitante", "1234", List.of(), List.of(), List.of());
     }
 
     private String normalize(String value) {

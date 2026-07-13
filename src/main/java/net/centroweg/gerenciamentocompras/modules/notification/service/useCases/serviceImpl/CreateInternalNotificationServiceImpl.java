@@ -2,15 +2,14 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.useCases
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.exception.NotificationRecipientNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserNotificationData;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.CreateInternalNotificationUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,13 +25,14 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
-public class CreateInternalNotificationServiceImpl {
+public class CreateInternalNotificationServiceImpl implements CreateInternalNotificationUseCase {
 
     private final NotificationRepository notificationRepository;
-    private final UserRepository userRepository;
-    private final RequestRepository requestRepository;
+    private final UserPublicApi userPublicApi;
+    private final RequestPublicApi requestPublicApi;
     private final NotificationMapper notificationMapper;
 
+    @Override
     @Transactional
     public Notification createNotification(NotificationRequest notificationRequest) {
         return createNotifications(
@@ -43,6 +43,7 @@ public class CreateInternalNotificationServiceImpl {
         ).getFirst();
     }
 
+    @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<Notification> createNotifications(
             String title,
@@ -50,32 +51,31 @@ public class CreateInternalNotificationServiceImpl {
             Long requestId,
             Collection<Long> userIds
     ) {
-        Request request = requestRepository.findById(requestId)
-                .orElseThrow(RequestNotFoundException::new);
+        requestPublicApi.findNotificationDataById(requestId);
 
         LinkedHashSet<Long> distinctIds = new LinkedHashSet<>(userIds);
         distinctIds.remove(null);
 
-        Map<Long, User> usersById = new LinkedHashMap<>();
-        userRepository.findAllById(distinctIds)
-                .forEach(user -> usersById.put(user.getId(), user));
+        Map<Long, UserNotificationData> usersById = new LinkedHashMap<>();
+        userPublicApi.findNotificationDataByIds(distinctIds)
+                .forEach(user -> usersById.put(user.userId(), user));
 
         List<Notification> notifications = distinctIds.stream()
                 .map(userId -> notificationMapper.toEntity(
                         title,
                         message,
-                        requireUser(usersById, userId),
-                        request
+                        requireUser(usersById, userId).userId(),
+                        requestId
                 ))
                 .toList();
 
         return notificationRepository.saveAll(notifications);
     }
 
-    private User requireUser(Map<Long, User> usersById, Long userId) {
-        User user = usersById.get(userId);
+    private UserNotificationData requireUser(Map<Long, UserNotificationData> usersById, Long userId) {
+        UserNotificationData user = usersById.get(userId);
         if (user == null) {
-            throw new UserNotFoundException(userId);
+            throw new NotificationRecipientNotFoundException(userId);
         }
         return user;
     }

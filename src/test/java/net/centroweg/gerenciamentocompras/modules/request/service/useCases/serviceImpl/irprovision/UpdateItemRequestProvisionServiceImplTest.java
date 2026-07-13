@@ -99,6 +99,34 @@ class UpdateItemRequestProvisionServiceImplTest {
         verify(eventPublisher, never()).publishEvent(any());
     }
 
+    @Test
+    void shouldPreserveAdditionalInformationWhenNull() {
+        arrangeSuccessfulUpdate(previousStatus);
+        service.updateItem(99L, requestDto(1L, null));
+        assertThat(item.getAdditionalInformation()).isEqualTo("Obs");
+    }
+
+    @Test
+    void shouldPreserveAdditionalInformationWhenEmpty() {
+        arrangeSuccessfulUpdate(previousStatus);
+        service.updateItem(99L, requestDto(1L, ""));
+        assertThat(item.getAdditionalInformation()).isEqualTo("Obs");
+    }
+
+    @Test
+    void shouldPreserveAdditionalInformationWhenBlank() {
+        arrangeSuccessfulUpdate(previousStatus);
+        service.updateItem(99L, requestDto(1L, "   "));
+        assertThat(item.getAdditionalInformation()).isEqualTo("Obs");
+    }
+
+    @Test
+    void shouldTrimValidAdditionalInformation() {
+        arrangeSuccessfulUpdate(previousStatus);
+        service.updateItem(99L, requestDto(1L, "  texto valido  "));
+        assertThat(item.getAdditionalInformation()).isEqualTo("texto valido");
+    }
+
     private void arrangeSuccessfulUpdate(Status status) {
         when(itemRepository.findById(99L)).thenReturn(Optional.of(item));
         when(requestRepository.findById(10L)).thenReturn(Optional.of(request));
@@ -110,6 +138,10 @@ class UpdateItemRequestProvisionServiceImplTest {
 
     private ItemRequestProvisionRequest requestDto(Long statusId) {
         return new ItemRequestProvisionRequest(10L, 20L, statusId, "Obs");
+    }
+
+    private ItemRequestProvisionRequest requestDto(Long statusId, String additionalInformation) {
+        return new ItemRequestProvisionRequest(10L, 20L, statusId, additionalInformation);
     }
 
     private Status status(Long id, String name) {

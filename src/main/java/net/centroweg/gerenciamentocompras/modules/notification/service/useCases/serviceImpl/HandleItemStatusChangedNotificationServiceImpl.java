@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.DeliveryPublicApi;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryNotificationData;
-import net.centroweg.gerenciamentocompras.modules.notification.service.api.NotificationPublicApi;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusEmailContent;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusEmailContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusInternalNotificationContent;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusInternalNotificationFactory;
-import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.ItemStatusRecipientDeduplicator;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.CreateInternalNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.HandleItemStatusChangedNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.ItemStatusChangedEmailSender;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
@@ -28,10 +28,10 @@ public class HandleItemStatusChangedNotificationServiceImpl implements HandleIte
 
     private final RequestPublicApi requestPublicApi;
     private final DeliveryPublicApi deliveryPublicApi;
-    private final NotificationPublicApi notificationPublicApi;
+    private final CreateInternalNotificationUseCase createInternalNotificationUseCase;
     private final ItemStatusInternalNotificationFactory internalNotificationFactory;
     private final ItemStatusEmailContentFactory emailContentFactory;
-    private final ItemStatusRecipientDeduplicator recipientDeduplicator;
+    private final RequestNotificationRecipientDeduplicator recipientDeduplicator;
     private final ItemStatusChangedEmailSender emailSender;
 
     @Override
@@ -43,7 +43,7 @@ public class HandleItemStatusChangedNotificationServiceImpl implements HandleIte
         List<Long> userIds = recipientDeduplicator.distinctUserIds(request.recipients());
 
         try {
-            notificationPublicApi.createInternalNotifications(
+            createInternalNotificationUseCase.createNotifications(
                     internalContent.title(),
                     internalContent.message(),
                     event.requestId(),

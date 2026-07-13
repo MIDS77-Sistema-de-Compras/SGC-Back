@@ -32,10 +32,10 @@ class ItemStatusContentFactoriesTest {
         assertThat(content.message())
                 .contains(
                         "Solicitacao atualizada: #10",
-                        "Item atualizado: Parafuso <especial> (PRD-1)",
+                        "Item atualizado: Parafuso &lt;especial&gt; (PRD-1)",
                         "Data de chegada/entrega: 13/07/2026 as 11:30",
-                        "Local de retirada: SENAI <central>",
-                        "Recebedores: Carlos <script>",
+                        "Local de retirada: SENAI &lt;central&gt;",
+                        "Recebedores: Carlos &lt;script&gt;",
                         "- Instalacao"
                 )
                 .doesNotContain("<b>", "<br>", "<div>", "<table>");

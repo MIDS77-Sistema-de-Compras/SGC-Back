@@ -3,7 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.useCases
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusEmailContent;
-import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.ItemStatusRecipientDeduplicator;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.ItemStatusChangedEmailSender;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
@@ -20,7 +20,7 @@ import java.util.List;
 public class SendItemStatusChangedEmailServiceImpl implements ItemStatusChangedEmailSender {
 
     private final EmailSenderService emailSenderService;
-    private final ItemStatusRecipientDeduplicator recipientDeduplicator;
+    private final RequestNotificationRecipientDeduplicator recipientDeduplicator;
 
     @Async
     @Override

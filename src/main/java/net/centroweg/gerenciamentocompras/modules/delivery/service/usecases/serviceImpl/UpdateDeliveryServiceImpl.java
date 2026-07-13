@@ -10,9 +10,8 @@ import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.resp
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryItemResolver;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryReceiverValidator;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
+import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryStatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 public class UpdateDeliveryServiceImpl {
 
     private final DeliveryRepository deliveryRepository;
-    private final StatusRepository statusRepository;
+    private final StatusPublicApi statusPublicApi;
     private final DeliveryReceiverValidator deliveryReceiverValidator;
     private final DeliveryItemResolver deliveryItemResolver;
     private final DeliveryMapper deliveryMapper;
@@ -38,11 +37,11 @@ public class UpdateDeliveryServiceImpl {
                 .orElseThrow(DeliveryNotFoundException::new);
         ensureActive(delivery);
 
-        Status status = statusRepository.findById(request.statusId())
-                .orElseThrow(StatusNotFoundException::new);
+        var status = statusPublicApi.findById(request.statusId())
+                .orElseThrow(DeliveryStatusNotFoundException::new);
         List<User> receivers = deliveryReceiverValidator.validateAndFindReceivers(request.receiverIds());
 
-        delivery.setStatus(status);
+        delivery.setStatusId(status.id());
         delivery.setExpectedDeliveryAt(request.expectedDeliveryAt());
         delivery.setDeliveredAt(request.deliveredAt());
         delivery.setDeliveryLocation(request.deliveryLocation());

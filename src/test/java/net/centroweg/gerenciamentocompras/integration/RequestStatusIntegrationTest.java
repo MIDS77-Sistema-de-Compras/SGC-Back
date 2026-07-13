@@ -239,7 +239,7 @@ class RequestStatusIntegrationTest {
                 .hasSize(1)
                 .first()
                 .satisfies(notification -> {
-                    assertThat(notification.getRequest().getId()).isEqualTo(request.getId());
+                    assertThat(notification.getRequestId()).isEqualTo(request.getId());
                     assertThat(notification.getTitle()).isEqualTo("Status da solicitação atualizado");
                     assertThat(notification.getMessage()).contains("Pendente", "Aprovado");
                 });
@@ -266,7 +266,7 @@ class RequestStatusIntegrationTest {
                 .hasSize(1)
                 .first()
                 .satisfies(notification -> {
-                    assertThat(notification.getRequest().getId()).isEqualTo(request.getId());
+                    assertThat(notification.getRequestId()).isEqualTo(request.getId());
                     assertThat(notification.getTitle()).isEqualTo("Status da solicitação atualizado");
                     assertThat(notification.getMessage()).contains("Sem verba");
                 });

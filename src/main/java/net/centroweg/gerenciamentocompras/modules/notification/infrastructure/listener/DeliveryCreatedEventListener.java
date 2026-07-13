@@ -1,7 +1,8 @@
-package net.centroweg.gerenciamentocompras.modules.delivery.service.notification;
+package net.centroweg.gerenciamentocompras.modules.notification.infrastructure.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.event.DeliveryCreatedEvent;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.HandleDeliveryCreatedNotificationUseCase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -10,12 +11,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class DeliveryCreatedEventListener {
 
-    private final CreateDeliveryCreatedNotificationServiceImpl createNotificationService;
-    private final SendDeliveryCreatedEmailServiceImpl sendEmailService;
+    private final HandleDeliveryCreatedNotificationUseCase useCase;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onDeliveryCreated(DeliveryCreatedEvent event) {
-        createNotificationService.createNotifications(event);
-        sendEmailService.sendEmails(event);
+        useCase.handle(event);
     }
 }

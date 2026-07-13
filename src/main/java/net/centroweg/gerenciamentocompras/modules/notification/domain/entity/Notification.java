@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -34,13 +32,11 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id")
-    private Request request;
+    @Column(name = "request_id")
+    private Long requestId;
 
     @PrePersist
     protected void onCreate() {

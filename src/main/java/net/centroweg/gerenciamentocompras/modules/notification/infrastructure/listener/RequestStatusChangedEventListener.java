@@ -1,6 +1,7 @@
-package net.centroweg.gerenciamentocompras.modules.request.service.notification;
+package net.centroweg.gerenciamentocompras.modules.notification.infrastructure.listener;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.HandleRequestStatusChangedNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -10,12 +11,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class RequestStatusChangedEventListener {
 
-    private final CreateRequestStatusNotificationServiceImpl createNotificationService;
-    private final SendRequestStatusChangedEmailServiceImpl sendEmailService;
+    private final HandleRequestStatusChangedNotificationUseCase useCase;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onRequestStatusChanged(RequestStatusChangedEvent event) {
-        createNotificationService.createNotifications(event);
-        sendEmailService.sendEmails(event);
+        useCase.handle(event);
     }
 }

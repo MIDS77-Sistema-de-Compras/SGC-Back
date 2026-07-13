@@ -2,31 +2,36 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.useCases
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.exception.NotificationRecipientNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email.NotificationEmailService;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.CreateInternalNotificationUseCase;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class CreateNotificationServiceImpl {
 
-    private final CreateInternalNotificationServiceImpl createInternalNotificationService;
+    private final CreateInternalNotificationUseCase createInternalNotificationService;
     private final NotificationMapper notificationMapper;
     private final NotificationEmailService notificationEmailService;
+    private final UserPublicApi userPublicApi;
 
     public NotificationResponse createNotification(NotificationRequest request) {
         Notification saved = createInternalNotificationService.createNotification(request);
-        User user = saved.getUser();
+        var user = userPublicApi.findNotificationDataByIds(java.util.List.of(saved.getUserId())).stream()
+                .findFirst()
+                .orElseThrow(() -> new NotificationRecipientNotFoundException(saved.getUserId()));
 
         notificationEmailService.sendNotificationEmail(
-                user.getName(),
-                user.getEmail(),
+                user.name(),
+                user.email(),
                 saved.getTitle(),
                 saved.getMessage(),
-                saved.getRequest().getId()
+                saved.getRequestId()
         );
 
         return notificationMapper.toResponse(saved);

@@ -2,9 +2,8 @@ package net.centroweg.gerenciamentocompras.modules.notification.infrastructure.e
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestEmailNotificationData;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailButton;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailFooter;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailLayout;
@@ -16,7 +15,7 @@ import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderServic
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,187 +28,113 @@ import java.util.List;
 public class NotificationEmailService {
 
     private final EmailSenderService emailSenderService;
-    private final RequestRepository requestRepository;
-
+    private final RequestPublicApi requestPublicApi;
 
     @Value("${app.frontend.coordinator-requests-url}")
     private String frontendUrl;
 
     @Async
-    @Transactional(readOnly = true)
-    public void sendNotificationEmail(
-            String userName,
-            String userEmail,
-            String subject,
-            String message,
-            Long requestId
-    ) {
+    public void sendNotificationEmail(String userName, String userEmail, String subject, String message, Long requestId) {
         try {
-            log.info("NotificationEmailService - Iniciando envio para {}", userEmail);
-
-            Request request = requestRepository.findById(requestId)
-                    .orElseThrow(RequestNotFoundException::new);
-
+            RequestEmailNotificationData request = requestPublicApi.findEmailNotificationDataById(requestId);
             EmailLayout layout = new EmailLayout(
-                    subject,
+                    escape(subject),
                     List.<EmailBuilder>of(
-                            new EmailTitle(subject),
-                            new EmailParagraph("Ol\u00E1, " + userName + ".", "#666666", 14),
-                            new EmailParagraph(message, "#666666", 14),
+                            new EmailTitle(escape(subject)),
+                            new EmailParagraph("Ol\u00E1, " + escape(userName) + ".", "#666666", 14),
+                            new EmailParagraph(escape(message), "#666666", 14),
                             new EmailParagraph(buildRequestSummary(request), "#333333", 14),
                             new EmailParagraph("Clique na op\u00E7\u00E3o abaixo para analisar a solicita\u00E7\u00E3o.", "#666666", 14),
-                            new EmailButton(frontendUrl, "Acessar solicita\u00E7\u00E3o"),
+                            new EmailButton(HtmlUtils.htmlEscape(frontendUrl), "Acessar solicita\u00E7\u00E3o"),
                             new EmailFooter()
                     )
             );
-
-            emailSenderService.sendEmail(
-                    new DefaultEmail(subject, userEmail),
-                    layout.buildHtml()
-            );
-
-            log.info("NotificationEmailService - E-mail enviado com sucesso para {}", userEmail);
+            emailSenderService.sendEmail(new DefaultEmail(subject, userEmail), layout.buildHtml());
         } catch (Exception exception) {
-            log.error("Erro inesperado ao enviar e-mail de notifica\u00E7\u00E3o para {}", userEmail, exception);
+            log.error("Erro inesperado ao enviar e-mail de notificacao. requestId={}, email={}", requestId, userEmail, exception);
         }
     }
 
-    private String buildRequestSummary(Request request) {
-        String requesterName = getRequesterName(request);
-        String itemsSummary = buildItemsSummary(request);
-
+    private String buildRequestSummary(RequestEmailNotificationData request) {
         return """
-            <b style="color: #333333; font-size: 17px; line-height: 1.6;" >Resumo da solicitação</b><br>
-            <b>ID:</b> #%d<br>
-            <b>CR:</b> %s<br>
-            <b>Código do CR:</b> %s<br>
-            <b>Filial:</b> %s<br>
-            <b>Status:</b> %s<br>
-            <b>Solicitante:</b> %s<br>
-            <b>Data:</b> %s<br><br>
-            %s
-            """.formatted(
-                request.getId(),
-                request.getCrBranch().getCr().getName(),
-                request.getCrBranch().getCr().getCode(),
-                request.getCrBranch().getBranch().getName(),
-                formatStatusName(request.getStatus().getName()),
-                requesterName,
-                formatRequestDate(request.getRequestDate()),
-                itemsSummary
+                <b style="color: #333333; font-size: 17px; line-height: 1.6;">Resumo da solicitacao</b><br>
+                <b>ID:</b> #%d<br>
+                <b>CR:</b> %s<br>
+                <b>Codigo do CR:</b> %s<br>
+                <b>Filial:</b> %s<br>
+                <b>Status:</b> %s<br>
+                <b>Solicitante:</b> %s<br>
+                <b>Data:</b> %s<br><br>
+                %s
+                """.formatted(
+                request.requestId(), escape(request.crName()), escape(request.crCode()), escape(request.branchName()),
+                escape(formatStatusName(request.statusName())), escape(request.requesterName()),
+                formatRequestDate(request.requestDate()), buildItemsSummary(request)
         );
     }
 
-    private String buildItemsSummary(Request request) {
-        if (request.getItemRequestProducts() != null && !request.getItemRequestProducts().isEmpty()) {
-            return buildProductItemsSummary(request);
+    private String buildItemsSummary(RequestEmailNotificationData request) {
+        if (!request.productItems().isEmpty()) {
+            StringBuilder builder = new StringBuilder("<b style='color: #333333; font-size: 17px;'>Itens de produto</b>");
+            request.productItems().forEach(item -> {
+                builder.append("<br><b>- Nome: </b>").append(escape(item.name()))
+                        .append("<br><b>- Codigo: </b>").append(escape(item.code()))
+                        .append("<br><b>- Quantidade: </b>").append(formatQuantity(item.quantity()));
+                if (hasText(item.measurementUnit())) {
+                    builder.append(' ').append(escape(item.measurementUnit()));
+                }
+                if (hasText(item.additionalInformation())) {
+                    builder.append("<br><b>- Info adicional: </b>").append(escape(item.additionalInformation()));
+                }
+                builder.append("<br>");
+            });
+            return builder.toString();
         }
-
-        if (request.getItemRequestProvisions() != null && !request.getItemRequestProvisions().isEmpty()) {
-            return buildProvisionItemsSummary(request);
+        if (!request.provisionItems().isEmpty()) {
+            StringBuilder builder = new StringBuilder("<b style='color: #333333; font-size: 17px;'>Itens de servico</b><br>");
+            request.provisionItems().forEach(item -> {
+                builder.append("<br><b>- Nome: </b>").append(escape(item.name()))
+                        .append("<br><b>- Valor total:</b> R$ ").append(item.totalValue());
+                if (hasText(item.description())) {
+                    builder.append("<br><b>- Descricao: </b>").append(escape(item.description()));
+                }
+                if (hasText(item.additionalInformation())) {
+                    builder.append("<br><b>- Info adicional: </b>").append(escape(item.additionalInformation()));
+                }
+                builder.append("<br>");
+            });
+            return builder.toString();
         }
-
         return "<b>Itens:</b><br>Nenhum item informado.";
     }
 
-    private String buildProductItemsSummary(Request request) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("<b style='color: #333333; font-size: 17px; line-height: 1.6;' >Itens de produto</b>");
-
-        request.getItemRequestProducts().forEach(item -> {
-            builder.append("<br><b>- ")
-                    .append(" Name: </b>")
-                    .append(item.getProduct().getName())
-                    .append("<br>")
-                    .append("<b>- Código: </b>")
-                    .append(item.getProduct().getCode())
-                    .append("<br>")
-                    .append("<b>- Quantidade: </b>")
-                    .append(formatQuantity(item.getQuantity()));
-
-            if (item.getMeasurementUnit() != null) {
-                builder.append(" ")
-                        .append(item.getMeasurementUnit().getName());
-            }
-
-            if (item.getAdditionalInformations() != null && !item.getAdditionalInformations().isBlank()) {
-                builder.append("<br><b>- Info adicional: </b>")
-                        .append(item.getAdditionalInformations());
-            }
-
-            builder.append("<br>");
-        });
-
-        return builder.toString();
-    }
-
-    private String buildProvisionItemsSummary(Request request) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("<b style='color: #333333; font-size: 17px; line-height: 1.6;'>Itens de serviço</b><br>");
-
-        request.getItemRequestProvisions().forEach(item -> {
-            builder.append("<br><b> - ")
-                    .append(" Nome: </b>")
-                    .append(item.getProvision().getName())
-                    .append("<br><b> - Valor total:</b> R$ ")
-                    .append(item.getProvision().getTotalValue());
-
-            if (item.getProvision().getDescription() != null && !item.getProvision().getDescription().isBlank()) {
-                builder.append("<br><b> - Descrição: </b>")
-                        .append(item.getProvision().getDescription());
-            }
-
-            if (item.getAdditionalInformation() != null && !item.getAdditionalInformation().isBlank()) {
-                builder.append("<br><b> - Info adicional: </b>")
-                        .append(item.getAdditionalInformation());
-            }
-
-            builder.append("<br>");
-        });
-
-        return builder.toString();
-    }
-
     private String formatRequestDate(LocalDateTime date) {
-        if (date == null) {
-            return "N\u00E3o informado";
-        }
-
-        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy '\u00E0s' HH:mm"));
+        return date == null ? "Nao informado" : date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'as' HH:mm"));
     }
 
     private String formatStatusName(String statusName) {
-        if (statusName == null || statusName.isBlank()) {
-            return "N\u00E3o informado";
+        if (!hasText(statusName)) {
+            return "Nao informado";
         }
-
         String formatted = statusName.replace("_", " ").toLowerCase();
-
         return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
     }
 
     private String formatQuantity(Double quantity) {
         if (quantity == null) {
-            return "N\u00E3o informado";
+            return "Nao informado";
         }
-
         if (quantity % 1 == 0) {
             return String.valueOf(quantity.longValue());
         }
-
-        return BigDecimal.valueOf(quantity)
-                .stripTrailingZeros()
-                .toPlainString()
-                .replace(".", ",");
+        return BigDecimal.valueOf(quantity).stripTrailingZeros().toPlainString().replace(".", ",");
     }
 
-    private String getRequesterName(Request request) {
-        if (request.getCreatedByUsers() == null || request.getCreatedByUsers().isEmpty()) {
-            return "Não informado";
-        }
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
+    }
 
-        return request.getCreatedByUsers().get(0).getName();
+    private String escape(String value) {
+        return hasText(value) ? HtmlUtils.htmlEscape(value.trim()) : "Nao informado";
     }
 }

@@ -14,6 +14,10 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Reque
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationData;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestStatusNotificationData;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestEmailNotificationData;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestProductEmailData;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestProvisionEmailData;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,5 +71,59 @@ public class RequestPublicApiImpl implements RequestPublicApi {
                         .toList();
 
         return new RequestNotificationData(request.getId(), recipients);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RequestStatusNotificationData findStatusNotificationDataById(Long requestId) {
+        Request request = requestRepository.findForStatusNotificationById(requestId)
+                .orElseThrow(RequestNotFoundException::new);
+        return new RequestStatusNotificationData(
+                request.getId(),
+                request.getCrBranch().getCr().getName(),
+                request.getCrBranch().getCr().getCode(),
+                request.getCrBranch().getBranch().getName(),
+                request.getStatus().getName(),
+                request.getRequestDate(),
+                toRecipients(request)
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RequestEmailNotificationData findEmailNotificationDataById(Long requestId) {
+        Request request = requestRepository.findForEmailNotificationById(requestId)
+                .orElseThrow(RequestNotFoundException::new);
+        return new RequestEmailNotificationData(
+                request.getId(),
+                request.getCrBranch().getCr().getName(),
+                request.getCrBranch().getCr().getCode(),
+                request.getCrBranch().getBranch().getName(),
+                request.getStatus().getName(),
+                request.getCreatedByUsers().isEmpty() ? null : request.getCreatedByUsers().getFirst().getName(),
+                request.getRequestDate(),
+                request.getItemRequestProducts().stream()
+                        .map(item -> new RequestProductEmailData(
+                                item.getProduct().getName(),
+                                item.getProduct().getCode(),
+                                item.getQuantity(),
+                                item.getMeasurementUnit() == null ? null : item.getMeasurementUnit().getName(),
+                                item.getAdditionalInformations()
+                        )).toList(),
+                request.getItemRequestProvisions().stream()
+                        .map(item -> new RequestProvisionEmailData(
+                                item.getProvision().getName(),
+                                item.getProvision().getTotalValue(),
+                                item.getProvision().getDescription(),
+                                item.getAdditionalInformation()
+                        )).toList()
+        );
+    }
+
+    private List<RequestNotificationRecipient> toRecipients(Request request) {
+        return request.getCreatedByUsers() == null ? List.of() : request.getCreatedByUsers().stream()
+                .filter(java.util.Objects::nonNull)
+                .map(user -> new RequestNotificationRecipient(user.getId(), user.getName(), user.getEmail()))
+                .toList();
     }
 }

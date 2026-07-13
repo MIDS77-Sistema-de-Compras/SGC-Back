@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.delivery.service.api;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Delivery;
 import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryProductNotificationData;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.when;
 class DeliveryPublicApiImplTest {
 
     @Mock private DeliveryRepository deliveryRepository;
+    @Mock private StatusPublicApi statusPublicApi;
 
     @Test
     void shouldReturnImmutableNotificationDataForActiveDelivery() {
@@ -35,7 +37,7 @@ class DeliveryPublicApiImplTest {
                 .thenReturn(List.of(new DeliveryProductNotificationData("Parafuso", "P-1", 2.0, "UN")));
         when(deliveryRepository.findProvisionNotificationNames(7L)).thenReturn(List.of("Instalacao"));
 
-        var result = new DeliveryPublicApiImpl(deliveryRepository)
+        var result = new DeliveryPublicApiImpl(deliveryRepository, statusPublicApi)
                 .findActiveDeliveryByProductItem(10L, 99L);
 
         assertThat(result).isPresent();
@@ -48,7 +50,7 @@ class DeliveryPublicApiImplTest {
     void shouldIgnoreInactiveOrMissingDelivery() {
         when(deliveryRepository.findActiveByRequestIdAndProvisionItemId(10L, 99L)).thenReturn(List.of());
 
-        var result = new DeliveryPublicApiImpl(deliveryRepository)
+        var result = new DeliveryPublicApiImpl(deliveryRepository, statusPublicApi)
                 .findActiveDeliveryByProvisionItem(10L, 99L);
 
         assertThat(result).isEmpty();

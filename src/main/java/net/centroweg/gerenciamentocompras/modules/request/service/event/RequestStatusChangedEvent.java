@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
  */
 public record RequestStatusChangedEvent(
         Long requestId,
+        Long previousStatusId,
         String previousStatusName,
+        Long newStatusId,
         String newStatusName,
         String justification,
         Long changedByUserId,

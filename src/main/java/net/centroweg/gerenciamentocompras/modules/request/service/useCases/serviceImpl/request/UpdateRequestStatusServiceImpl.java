@@ -69,7 +69,9 @@ public class UpdateRequestStatusServiceImpl {
         if (statusChanged) {
             eventPublisher.publishEvent(new RequestStatusChangedEvent(
                     savedRequest.getId(),
+                    previousStatusId,
                     previousStatus != null ? previousStatus.getName() : null,
+                    newStatus.getId(),
                     newStatus.getName(),
                     justification,
                     currentUser.getId(),

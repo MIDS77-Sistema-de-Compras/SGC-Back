@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.useCases
 
 import jakarta.mail.MessagingException;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusEmailContent;
-import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.ItemStatusRecipientDeduplicator;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
@@ -32,7 +32,7 @@ class SendItemStatusChangedEmailServiceImplTest {
     void shouldDeduplicateNormalizedEmailsSkipMissingAndContinueAfterFailure() throws Exception {
         SendItemStatusChangedEmailServiceImpl service = new SendItemStatusChangedEmailServiceImpl(
                 emailSenderService,
-                new ItemStatusRecipientDeduplicator()
+                new RequestNotificationRecipientDeduplicator()
         );
         List<RequestNotificationRecipient> recipients = List.of(
                 new RequestNotificationRecipient(1L, "Ana", " ANA@TESTE.COM "),

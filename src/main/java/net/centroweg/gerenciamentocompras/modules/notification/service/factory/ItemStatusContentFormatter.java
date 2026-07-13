@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.factory;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.strategy.DeliveredStatusImpl;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 
 import java.math.BigDecimal;
 import java.text.Normalizer;
@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 public class ItemStatusContentFormatter {
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy 'as' HH:mm");
-    private static final String DELIVERED_STATUS = new DeliveredStatusImpl().getName();
+    private static final String DELIVERED_STATUS = "Entregue";
 
     public boolean isDelivered(String statusName) {
         return normalize(statusName).equals(normalize(DELIVERED_STATUS));
@@ -33,7 +33,11 @@ public class ItemStatusContentFormatter {
     }
 
     public String valueOrNotInformed(String value) {
-        return hasText(value) ? value : "Nao informado";
+        return hasText(value) ? plainText(value) : "Nao informado";
+    }
+
+    public String plainText(String value) {
+        return value == null ? "" : HtmlUtils.htmlEscape(value.trim());
     }
 
     public String resolveWithdrawalType(String deliveryLocation) {

@@ -147,8 +147,8 @@ class NotificationIntegrationTest {
         notification.setTitle(title);
         notification.setMessage(message);
         notification.setViewed(false);
-        notification.setUser(user);
-        notification.setRequest(request);
+        notification.setUserId(user.getId());
+        notification.setRequestId(request.getId());
         return notificationRepository.save(notification);
     }
 

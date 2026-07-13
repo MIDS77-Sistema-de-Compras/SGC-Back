@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.api;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceImpl.CreateInternalNotificationServiceImpl;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.CreateInternalNotificationUseCase;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class NotificationPublicApiImpl implements NotificationPublicApi {
 
-    private final CreateInternalNotificationServiceImpl createInternalNotificationService;
+    private final CreateInternalNotificationUseCase createInternalNotificationService;
 
     @Override
     public void createInternalNotifications(

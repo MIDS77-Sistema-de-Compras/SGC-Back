@@ -2,19 +2,17 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.mapper;
 
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NotificationMapper {
 
-    public Notification toEntity(String title, String message, User user, Request request) {
+    public Notification toEntity(String title, String message, Long userId, Long requestId) {
         Notification notification = new Notification();
         notification.setTitle(title);
         notification.setMessage(message);
-        notification.setUser(user);
-        notification.setRequest(request);
+        notification.setUserId(userId);
+        notification.setRequestId(requestId);
         return notification;
     }
 
@@ -25,8 +23,8 @@ public class NotificationMapper {
                 notification.getMessage(),
                 notification.getViewed(),
                 notification.getCreatedAt(),
-                notification.getUser().getId(),
-                notification.getRequest().getId()
+                notification.getUserId(),
+                notification.getRequestId()
         );
     }
 }

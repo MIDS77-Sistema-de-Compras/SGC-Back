@@ -2,11 +2,11 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.useCases
 
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.DeliveryPublicApi;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryNotificationData;
-import net.centroweg.gerenciamentocompras.modules.notification.service.api.NotificationPublicApi;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.CreateInternalNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusContentFormatter;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusEmailContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusInternalNotificationFactory;
-import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.ItemStatusRecipientDeduplicator;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.ItemStatusChangedEmailSender;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationData;
@@ -36,7 +36,7 @@ class HandleItemStatusChangedNotificationServiceImplTest {
 
     @Mock private RequestPublicApi requestPublicApi;
     @Mock private DeliveryPublicApi deliveryPublicApi;
-    @Mock private NotificationPublicApi notificationPublicApi;
+    @Mock private CreateInternalNotificationUseCase createInternalNotificationUseCase;
     @Mock private ItemStatusChangedEmailSender emailSender;
 
     private HandleItemStatusChangedNotificationServiceImpl service;
@@ -47,10 +47,10 @@ class HandleItemStatusChangedNotificationServiceImplTest {
         service = new HandleItemStatusChangedNotificationServiceImpl(
                 requestPublicApi,
                 deliveryPublicApi,
-                notificationPublicApi,
+                createInternalNotificationUseCase,
                 new ItemStatusInternalNotificationFactory(formatter),
                 new ItemStatusEmailContentFactory(formatter),
-                new ItemStatusRecipientDeduplicator(),
+                new RequestNotificationRecipientDeduplicator(),
                 emailSender
         );
     }
@@ -72,7 +72,7 @@ class HandleItemStatusChangedNotificationServiceImplTest {
         service.handle(event);
 
         ArgumentCaptor<String> message = ArgumentCaptor.forClass(String.class);
-        verify(notificationPublicApi).createInternalNotifications(
+        verify(createInternalNotificationUseCase).createNotifications(
                 eq("Item disponivel para retirada - Solicitacao #10"),
                 message.capture(),
                 eq(10L),

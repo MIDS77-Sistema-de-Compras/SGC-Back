@@ -5,26 +5,32 @@ import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.Deliv
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import jakarta.persistence.LockModeType;
 
 @Repository
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     @Override
-    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
+    @EntityGraph(attributePaths = {"request", "receivers", "receivers.user"})
     Optional<Delivery> findById(Long id);
 
-    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select delivery from Delivery delivery where delivery.id = :id")
+    Optional<Delivery> findByIdForUpdate(@Param("id") Long id);
+
+    @EntityGraph(attributePaths = {"request", "receivers", "receivers.user"})
     List<Delivery> findByActiveTrue();
 
-    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
+    @EntityGraph(attributePaths = {"request", "receivers", "receivers.user"})
     List<Delivery> findByRequestId(Long requestId);
 
-    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
+    @EntityGraph(attributePaths = {"request", "receivers", "receivers.user"})
     @Query("select distinct delivery from Delivery delivery join delivery.receivers receiver where receiver.user.id = :receiverId")
     List<Delivery> findByReceiverId(@Param("receiverId") Long receiverId);
 

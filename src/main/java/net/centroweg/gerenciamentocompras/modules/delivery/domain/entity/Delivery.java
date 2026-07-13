@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,13 +23,14 @@ import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "delivery")
@@ -67,9 +69,8 @@ public class Delivery {
     @JoinColumn(name = "request_id", nullable = false)
     private Request request;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status_id", nullable = false)
-    private Status status;
+    @Column(name = "status_id", nullable = false)
+    private Long statusId;
 
     @BatchSize(size = 30)
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -80,18 +81,26 @@ public class Delivery {
     @JoinTable(
             name = "delivery_item_request_product",
             joinColumns = @JoinColumn(name = "delivery_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_request_product_id")
+            inverseJoinColumns = @JoinColumn(name = "item_request_product_id"),
+            uniqueConstraints = @UniqueConstraint(
+                    name = "uk_delivery_product_item",
+                    columnNames = {"delivery_id", "item_request_product_id"}
+            )
     )
-    private List<ItemRequestProduct> productItems = new ArrayList<>();
+    private Set<ItemRequestProduct> productItems = new LinkedHashSet<>();
 
     @BatchSize(size = 30)
     @ManyToMany
     @JoinTable(
             name = "delivery_item_request_service",
             joinColumns = @JoinColumn(name = "delivery_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_request_service_id")
+            inverseJoinColumns = @JoinColumn(name = "item_request_service_id"),
+            uniqueConstraints = @UniqueConstraint(
+                    name = "uk_delivery_service_item",
+                    columnNames = {"delivery_id", "item_request_service_id"}
+            )
     )
-    private List<ItemRequestProvision> provisionItems = new ArrayList<>();
+    private Set<ItemRequestProvision> provisionItems = new LinkedHashSet<>();
 
     public void addReceiver(User user) {
         DeliveryReceiver receiver = new DeliveryReceiver(this, user);

@@ -1,8 +1,7 @@
 package net.centroweg.gerenciamentocompras.integration;
 
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
-import net.centroweg.gerenciamentocompras.modules.request.service.notification.CreateRequestStatusNotificationServiceImpl;
-import net.centroweg.gerenciamentocompras.modules.request.service.notification.SendRequestStatusChangedEmailServiceImpl;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.HandleRequestStatusChangedNotificationUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,15 +23,16 @@ class RequestStatusChangedAfterCommitIntegrationTest {
     @Autowired private ApplicationEventPublisher eventPublisher;
     @Autowired private PlatformTransactionManager transactionManager;
 
-    @MockitoBean private CreateRequestStatusNotificationServiceImpl createNotificationService;
-    @MockitoBean private SendRequestStatusChangedEmailServiceImpl sendEmailService;
+    @MockitoBean private HandleRequestStatusChangedNotificationUseCase notificationUseCase;
 
     @Test
     void shouldNotProcessEventWhenTransactionRollsBack() {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         RequestStatusChangedEvent event = new RequestStatusChangedEvent(
                 10L,
+                1L,
                 "Aprovado",
+                2L,
                 "Em atendimento",
                 null,
                 20L,
@@ -45,6 +45,6 @@ class RequestStatusChangedAfterCommitIntegrationTest {
             throw new IllegalStateException("Forçar rollback");
         }));
 
-        verifyNoInteractions(createNotificationService, sendEmailService);
+        verifyNoInteractions(notificationUseCase);
     }
 }

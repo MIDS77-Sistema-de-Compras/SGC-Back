@@ -27,7 +27,7 @@ public class ItemStatusInternalNotificationFactory {
         message.append("Solicitacao atualizada: #").append(event.requestId()).append('\n');
         message.append("Item atualizado: ").append(formatter.valueOrNotInformed(event.itemName()));
         if (formatter.hasText(event.itemCode())) {
-            message.append(" (").append(event.itemCode()).append(')');
+            message.append(" (").append(formatter.plainText(event.itemCode())).append(')');
         }
         message.append('\n');
         message.append("Status anterior: ").append(formatter.valueOrNotInformed(event.previousStatusName())).append('\n');
@@ -35,7 +35,7 @@ public class ItemStatusInternalNotificationFactory {
         message.append("Data da alteracao: ").append(formatter.formatDateTime(event.changedAt())).append('\n');
 
         if (formatter.hasText(event.observation())) {
-            message.append("Observacoes: ").append(event.observation()).append('\n');
+            message.append("Observacoes: ").append(formatter.plainText(event.observation())).append('\n');
         }
 
         if (formatter.isDelivered(event.newStatusName())) {
@@ -60,7 +60,7 @@ public class ItemStatusInternalNotificationFactory {
         message.append("Itens a recolher:\n");
         appendItems(message, delivery);
         if (formatter.hasText(delivery.description())) {
-            message.append("Observacoes da entrega: ").append(delivery.description()).append('\n');
+            message.append("Observacoes da entrega: ").append(formatter.plainText(delivery.description())).append('\n');
         }
         message.append("Recebedores: ").append(formatReceivers(delivery)).append('\n');
     }
@@ -75,7 +75,7 @@ public class ItemStatusInternalNotificationFactory {
             }
             message.append(" - ").append(formatter.formatQuantity(item.quantity()));
             if (formatter.hasText(item.measurementUnit())) {
-                message.append(' ').append(item.measurementUnit());
+                message.append(' ').append(formatter.plainText(item.measurementUnit()));
             }
             message.append('\n');
         }

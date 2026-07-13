@@ -1,11 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.mapper;
 
+import org.springframework.stereotype.Component;
+
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrSimpleResponse;
-import org.springframework.stereotype.Component;
 
 /**
  * Mapper responsável pela conversão entre a entidade {@link Cr} e seus DTOs.
@@ -44,6 +45,7 @@ public class CrMapper {
                 cr.getId(),
                 cr.getName(),
                 cr.getCode(),
+                cr.getDescription(),
                 cr.getMaster(),
                 cr.getSector() != null ? cr.getSector().getName() : null
         );

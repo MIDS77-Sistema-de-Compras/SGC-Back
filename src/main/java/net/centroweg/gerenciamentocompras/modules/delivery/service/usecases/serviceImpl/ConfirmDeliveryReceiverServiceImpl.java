@@ -10,8 +10,11 @@ import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persis
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.request.ConfirmDeliveryReceiverRequest;
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryResponse;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.strategy.DeliveredStatusImpl;
+import net.centroweg.gerenciamentocompras.modules.request.domain.strategy.PartiallyFulfilledStatusImpl;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
@@ -73,8 +76,32 @@ public class ConfirmDeliveryReceiverServiceImpl {
             return;
         }
 
-        String deliveredStatusName = new DeliveredStatusImpl().getName();
-        statusRepository.findByNameIgnoreCase(deliveredStatusName)
+        String finalStatusName = hasRefusedItems(delivery.getRequest())
+                ? new PartiallyFulfilledStatusImpl().getName()
+                : new DeliveredStatusImpl().getName();
+
+        statusRepository.findByNameIgnoreCase(finalStatusName)
                 .ifPresent(delivery::setStatus);
+    }
+
+    /**
+     * Verifica se algum item (produto ou serviço) da solicitação foi recusado.
+     */
+    private boolean hasRefusedItems(Request request) {
+        boolean refusedProduct = request.getItemRequestProducts()
+                .stream()
+                .anyMatch(item -> isRefused(item.getStatus_id()));
+
+        boolean refusedProvision = request.getItemRequestProvisions()
+                .stream()
+                .anyMatch(item -> isRefused(item.getStatus()));
+
+        return refusedProduct || refusedProvision;
+    }
+
+    private boolean isRefused(Status status) {
+        return status != null
+                && status.getName() != null
+                && status.getName().trim().equalsIgnoreCase("Recusado");
     }
 }

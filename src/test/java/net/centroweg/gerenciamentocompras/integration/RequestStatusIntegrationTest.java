@@ -143,8 +143,8 @@ class RequestStatusIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integracao] PATCH /requests/{id}/status com Recusado sem justificativa deve retornar bad request")
-    void shouldReturnBadRequestWhenRefusingWithoutJustification() throws Exception {
+    @DisplayName("[Integracao] PATCH /requests/{id}/status com Recusado sem justificativa deve recusar com feedback nulo")
+    void shouldRefuseWithoutJustification() throws Exception {
         Request request = saveRequest(pending);
 
         mockMvc.perform(patch("/requests/{id}/status", request.getId())
@@ -155,11 +155,12 @@ class RequestStatusIntegrationTest {
                                     "statusName": "Recusado"
                                 }
                                 """))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value("Recusado"));
 
-        Request unchanged = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(unchanged.getStatus().getId()).isEqualTo(pending.getId());
-        assertThat(unchanged.getFeedback()).isNull();
+        Request updated = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(updated.getStatus().getId()).isEqualTo(refused.getId());
+        assertThat(updated.getFeedback()).isNull();
     }
 
     @Test

@@ -8,7 +8,6 @@ import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestRejectionJustificationRequiredException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
@@ -100,22 +99,24 @@ class UpdateRequestStatusServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve lancar excecao ao recusar sem justificativa")
-    void shouldThrowWhenRefusingWithoutJustification() {
+    @DisplayName("Deve recusar sem justificativa e manter o feedback nulo")
+    void shouldRefuseWithoutJustification() {
         User requester = user(10L, "Solicitante", "solicitante@teste.com");
         User responsible = user(20L, "Responsavel", "responsavel@teste.com");
         Status refused = status(3L, "Recusado");
         Request request = request(100L, status(1L, "Pendente"), requester, responsible);
+        RequestResponse expected = response(100L, "Recusado", null);
 
         mockLookup(request, responsible, refused);
+        when(requestRepository.save(request)).thenReturn(request);
+        when(requestMapper.toDTO(request)).thenReturn(expected);
 
-        assertThrows(
-                RequestRejectionJustificationRequiredException.class,
-                () -> service.updateStatus(request.getId(), new UpdateRequestStatus("Recusado", " "))
-        );
+        RequestResponse response = service.updateStatus(request.getId(), new UpdateRequestStatus("Recusado", " "));
 
-        verify(requestRepository, never()).save(request);
-        verifyNoInteractions(notificationService, requestMapper);
+        assertSame(expected, response);
+        assertSame(refused, request.getStatus());
+        assertNull(request.getFeedback());
+        verify(requestRepository).save(request);
     }
 
     @Test

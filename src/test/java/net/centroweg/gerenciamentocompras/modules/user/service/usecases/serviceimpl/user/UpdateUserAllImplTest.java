@@ -87,6 +87,7 @@ public class UpdateUserAllImplTest {
         when(repository.findById(id)).thenReturn(Optional.of(usuarioExistenteNoBanco));
         when(roleRepository.findByNameIgnoreCase("SUPERVISOR")).thenReturn(java.util.Optional.of(new Role("SUPERVISOR")));
         when(repository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(passwordEncoder.encode("NovaSenha@123")).thenReturn("senha-criptografada");
 
         updateUserAllImpl.updateUserAll(id, request);
 
@@ -98,7 +99,7 @@ public class UpdateUserAllImplTest {
 
         assertEquals("Novo Nome", atualizado.getName());
         assertEquals("novo@email.com", atualizado.getEmail());
-        assertEquals("NovaSenha@123", atualizado.getPassword());
+        assertEquals("senha-criptografada", atualizado.getPassword());
         assertEquals("9999", atualizado.getExtensionNumber());
         assertEquals(false, atualizado.getActive());
     }

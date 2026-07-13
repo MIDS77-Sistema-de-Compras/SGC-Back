@@ -11,7 +11,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
 /**
- * Classe de serviço da {@link Sector} que delega cada operação à sua respectiva classe de funcionalidade.
+ * Classe de serviço do {@link Sector} que delega cada operação à sua respectiva classe de funcionalidade.
  * Implementa {@link SectorService} que segue o princípio de responsabilidade única, onde cada método apenas repassa a chamada para uma classe especializada responsável por uma única operação.
  *
  */

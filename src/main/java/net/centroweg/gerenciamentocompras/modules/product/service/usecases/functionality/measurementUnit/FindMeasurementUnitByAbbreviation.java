@@ -1,39 +1,31 @@
-package net.centroweg.gerenciamentocompras.modules.product.service.usecases.serviceImpl;
+package net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.measurementUnit;
 
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.MeasurementUnitNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.MeasurementUnitRepository;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.MeasurementUnitResponse;
 import net.centroweg.gerenciamentocompras.modules.product.service.mapper.MeasurementUnitMapper;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
 
 /**
- * Caso de uso responsável pela busca de unidades de medida
- * com base no identificador único.
- *
- * @author Ana Beatriz de Oliveira Ribeiro
- * @since 2026
+ * Caso de uso responsável por buscar uma {@link MeasurementUnit} pela sua abreviação.
  */
 @Service
 @RequiredArgsConstructor
-public class FindMeasurementUnitById {
+public class FindMeasurementUnitByAbbreviation {
 
     private final MeasurementUnitMapper measurementUnitMapper;
     private final MeasurementUnitRepository measurementUnitRepository;
 
     /**
-     * Busca uma unidade de medida pelo ID.
-     *
-     * @param id Identificador único da unidade de medida.
-     * @return Dados da unidade de medida encontrada.
-     * @throws MeasurementUnitNotFoundException Caso nenhuma unidade
-     * seja encontrada com o ID informado.
+     * Busca uma unidade de medida pela abreviação.
+     * @param abbreviation abreviação(sigla) da unidade de medida.
+     * @return unidade de medida encontrada.
+     * @throws MeasurementUnitNotFoundException caso a unidade de medida não seja encontrada.
      */
-    public MeasurementUnitResponse findMeasurementUnitById(Long id) {
-
-        return measurementUnitMapper.toResponse(
-            measurementUnitRepository.findById(id)
+    public MeasurementUnitResponse findMeasurementUnitByAbbreviation(String abbreviation) {
+        return measurementUnitMapper.toResponse(measurementUnitRepository.findByAbbreviation(abbreviation)
                 .orElseThrow(() -> new MeasurementUnitNotFoundException())
         );
     }

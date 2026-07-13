@@ -9,7 +9,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
 /**
- * Caso de uso responsável pela busca de um {@link Sector} de forma completa.
+ * Caso de uso responsável pela listagem de {@link Sector} de forma completa.
  */
 @Service
 @RequiredArgsConstructor

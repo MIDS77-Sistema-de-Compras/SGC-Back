@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
 /**
- * Caso de uso responsável por buscar um {@link Sector} de forma simples.
+ * Caso de uso responsável por buscar um {@link Sector} pelo seu identificador de forma simples.
  */
 @Service
 @RequiredArgsConstructor

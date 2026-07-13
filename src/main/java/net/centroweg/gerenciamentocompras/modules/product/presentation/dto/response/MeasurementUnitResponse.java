@@ -1,14 +1,14 @@
 package net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response;
+
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
+
 /**
- * DTO responsável pelo retorno de dados
- * de unidades de medida.
- *
- * @author Ana Beatriz de Oliveira Ribeiro
- * @since 2026
->>>>>>> 0b1edfa ([API-125] docs/ adiciona documentação de unidades de medida)
+ * DTO de saída com os dados de uma {@link MeasurementUnit}.
+ * @param id identificador único da unidade de medida.
+ * @param name nome da unidade de medida.
+ * @param abbreviation abreviação(sigla) da unidade de medida.
  */
 public record MeasurementUnitResponse(
-
     Long id,
     String name,
     String abbreviation

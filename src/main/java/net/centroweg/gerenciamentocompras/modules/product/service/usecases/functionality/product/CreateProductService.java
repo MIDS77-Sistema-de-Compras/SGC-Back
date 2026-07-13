@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.product.service;
+package net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.product;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
@@ -8,6 +8,9 @@ import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.product.service.mapper.IProductMapper;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável pela criação de um {@link Product}.
+ */
 @Service
 @RequiredArgsConstructor
 public class CreateProductService {
@@ -15,6 +18,11 @@ public class CreateProductService {
     private final ProductRepository productRepository;
     private final IProductMapper productMapper;
 
+    /**
+     * Cria e persiste um produto no banco de dados.
+     * @param request dados do produto.
+     * @return produto criado.
+     */
     public ProductResponse execute(CreateProductRequest request) {
         Product product = Product.builder()
                 .name(request.name())

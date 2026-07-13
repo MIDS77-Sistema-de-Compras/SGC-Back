@@ -5,6 +5,11 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.product.CreateProductService;
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.product.DeleteProductService;
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.product.FindProductService;
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.product.UpdateProductService;
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.serviceImpl.product.ProductServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.measurementUnit.*;
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.serviceImpl.measurementUnit.MeasurementUnitServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +24,7 @@ class MeasurementUnitServiceImplTest {
     private CreateMeasurementUnit create;
 
     @Mock
-    private ReadMeasurementUnit read;
+    private FindAllMeasurementUnit read;
 
     @Mock
     private UpdateMeasurementUnit update;

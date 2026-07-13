@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.MeasurementUnitRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.MeasurementUnitResponse;
-import net.centroweg.gerenciamentocompras.modules.product.service.usecases.serviceIntrf.MeasurementUnitService;
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.serviceIntrf.measurementUnit.MeasurementUnitService;
 import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
 
 /**
@@ -32,8 +32,8 @@ public class MeasurementUnitController {
     private final MeasurementUnitService measurementUnitService;
 
     /**
-     * Criar uma unidade de medida.
-     * @param request corpo da requisicao com os dados da unidade de medida.
+     * Cria uma unidade de medida.
+     * @param request dados da unidade de medida.
      * @return unidade de medida criada.
      */
     @Operation(description = "ENDPOINT responsável pela criação de unidades de medida")
@@ -43,7 +43,7 @@ public class MeasurementUnitController {
     }
 
     /**
-     * Lista de unidades de medida.
+     * Lista as unidades de medida cadastradas.
      * @return lista com todas as unidades de medida encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todas as unidades de medida")

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 
+import net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.measurementUnit.FindAllMeasurementUnit;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +28,7 @@ class ReadMeasurementUnitTest {
     private MeasurementUnitMapper mapper;
 
     @InjectMocks
-    private ReadMeasurementUnit readMeasurementUnit;
+    private FindAllMeasurementUnit readMeasurementUnit;
 
     @Test
     @DisplayName("Deve listar todas as unidades de medida com sucesso")

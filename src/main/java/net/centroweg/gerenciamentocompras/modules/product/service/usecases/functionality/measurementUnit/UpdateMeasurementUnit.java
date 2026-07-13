@@ -1,7 +1,6 @@
-package net.centroweg.gerenciamentocompras.modules.product.service.usecases.serviceImpl;
+package net.centroweg.gerenciamentocompras.modules.product.service.usecases.functionality.measurementUnit;
 
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.MeasurementUnitNotFoundException;
@@ -11,10 +10,7 @@ import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.product.service.mapper.MeasurementUnitMapper;
 
 /**
- * Caso de uso responsável pela atualização de unidades de medida.
- *
- * @author Ana Beatriz de Oliveira Ribeiro
- * @since 2026
+ * Caso de uso responsável pela atualização de uma {@link MeasurementUnit}.
  */
 @Service
 @RequiredArgsConstructor
@@ -24,27 +20,19 @@ public class UpdateMeasurementUnit {
     private final MeasurementUnitMapper measurementUnitMapper;
 
     /**
-     * Atualiza os dados de uma unidade de medida existente.
-     *
-     * @param id Identificador único da unidade de medida.
-     * @param request Novos dados da unidade de medida.
-     * @return Dados atualizados da unidade de medida.
-     * @throws MeasurementUnitNotFoundException Caso nenhuma unidade
-     * seja encontrada com o ID informado.
+     * Atualiza uma unidade de medida existente.
+     * @param id identificador da unidade de medida.
+     * @param request novos dados da unidade de medida.
+     * @return unidade de medida já atualizada.
+     * @throws MeasurementUnitNotFoundException caso nenhuma unidade de medida seja encontrada.
      */
-    public MeasurementUnitResponse updateMeasurementUnit(
-            Long id,
-            MeasurementUnitRequest request) {
-
+    public MeasurementUnitResponse updateMeasurementUnit(Long id, MeasurementUnitRequest request) {
         MeasurementUnit measurementUnit =
             measurementUnitRepository.findById(id)
                 .orElseThrow(() -> new MeasurementUnitNotFoundException());
-
         measurementUnit.setName(request.name());
         measurementUnit.setAbbreviation(request.abbreviation());
-
         measurementUnitRepository.save(measurementUnit);
-
         return measurementUnitMapper.toResponse(measurementUnit);
     }
 }

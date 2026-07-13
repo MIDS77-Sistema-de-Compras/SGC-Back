@@ -27,6 +27,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ class UpdateRequestStatusServiceImplTest {
     @Mock private CurrentUserService currentUserService;
     @Mock private RequestBusinessRuleValidator validator;
     @Mock private NotificationService notificationService;
+    @Mock private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private UpdateRequestStatusServiceImpl service;

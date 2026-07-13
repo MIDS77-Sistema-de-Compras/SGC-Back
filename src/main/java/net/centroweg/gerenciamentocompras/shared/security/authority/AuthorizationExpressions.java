@@ -48,6 +48,14 @@ public final class AuthorizationExpressions {
                     "'" + Authorities.ADMIN + "'" +
                     ")";
 
+    public static final String CAN_UPDATE_REQUEST_STATUS =
+            "hasAnyAuthority(" +
+                    "'" + Authorities.COMPRADOR + "'," +
+                    "'" + Authorities.SUPERVISOR + "'," +
+                    "'" + Authorities.COORDENADOR + "'," +
+                    "'" + Authorities.ADMIN + "'" +
+                    ")";
+
     public static final String CAN_VIEW_ANALYTICS =
             "hasAnyAuthority(" +
                     "'" + Authorities.COORDENADOR + "'," +
@@ -58,7 +66,11 @@ public final class AuthorizationExpressions {
             "hasAuthority('" + Authorities.COMPRADOR + "')";
 
     public static final String CAN_MANAGE_STATUS =
-            ADMIN_ONLY;
+            "hasAuthority(" +
+                    "'" + Authorities.COMPRADOR + "'," +
+                    "'" + Authorities.SUPERVISOR + "'," +
+                    "'" + Authorities.ADMIN + "'" +
+                    ")";
 
     public static final String CAN_MANAGE_MEASUREMENT_UNIT =
             CAN_MANAGE_PURCHASE_ITEMS;

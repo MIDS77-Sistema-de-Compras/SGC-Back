@@ -62,6 +62,7 @@ class RequestStatusIntegrationTest {
     private Status pending;
     private Status approved;
     private Status refused;
+    private Status inService;
     private User requester;
     private User responsible;
 
@@ -80,6 +81,7 @@ class RequestStatusIntegrationTest {
         pending = statusRepository.save(new Status("Pendente", "Solicitacao pendente"));
         approved = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada"));
         refused = statusRepository.save(new Status("Recusado", "Solicitacao recusada"));
+        inService = statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
     }
 
     @AfterEach
@@ -88,7 +90,7 @@ class RequestStatusIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integracao] PATCH /requests/{id}/status com Aprovado deve alterar status no banco")
+    @DisplayName("[Integracao] PATCH /requests/{id}/status com Aprovado por supervisor deve avancar para Em atendimento")
     void shouldApproveRequestAndPersistStatus() throws Exception {
         Request request = saveRequest(pending);
 
@@ -102,10 +104,10 @@ class RequestStatusIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(request.getId()))
-                .andExpect(jsonPath("$.statusName").value("Aprovado"));
+                .andExpect(jsonPath("$.statusName").value("Em atendimento"));
 
         Request updated = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(updated.getStatus().getId()).isEqualTo(approved.getId());
+        assertThat(updated.getStatus().getId()).isEqualTo(inService.getId());
         assertThat(updated.getFeedback()).isNull();
     }
 
@@ -198,7 +200,7 @@ class RequestStatusIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.crBranchId").value(crBranch.getId()))
-                .andExpect(jsonPath("$.statusName").value("Aprovado"));
+                .andExpect(jsonPath("$.statusName").value("Em atendimento"));
     }
 
     @Test

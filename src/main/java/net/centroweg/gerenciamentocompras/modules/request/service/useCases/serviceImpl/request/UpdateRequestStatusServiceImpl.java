@@ -16,6 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,6 +26,7 @@ public class UpdateRequestStatusServiceImpl {
 
     private static final String REFUSED_STATUS = "recusado";
     private static final String APPROVED_STATUS = "aprovado";
+    private static final String IN_SERVICE_STATUS = "em atendimento";
 
     private final RequestRepository requestRepository;
     private final StatusRepository statusRepository;
@@ -45,6 +47,11 @@ public class UpdateRequestStatusServiceImpl {
 
         boolean isRefused = isStatus(newStatus, REFUSED_STATUS);
         boolean isApproved = isStatus(newStatus, APPROVED_STATUS);
+
+        if (isApproved && isSupervisor(currentUser)) {
+            newStatus = statusRepository.findByNameIgnoreCase(IN_SERVICE_STATUS)
+                    .orElseThrow(StatusNotFoundException::new);
+        }
 
         if (isRefused && !StringUtils.hasText(dto.justification())) {
             throw new RequestRejectionJustificationRequiredException();
@@ -85,6 +92,13 @@ public class UpdateRequestStatusServiceImpl {
             ));
         }
     }
+
+    private boolean isSupervisor(User user) {
+        return user.getRole() != null
+                && user.getRole().getName() != null
+                && user.getRole().getName().trim().equalsIgnoreCase(Authorities.SUPERVISOR);
+    }
+
 
     private boolean isStatus(Status status, String expectedStatus) {
         return status.getName() != null

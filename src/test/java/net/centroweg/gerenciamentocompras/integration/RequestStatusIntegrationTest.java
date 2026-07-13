@@ -7,6 +7,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email.NotificationEmailService;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -53,6 +54,7 @@ class RequestStatusIntegrationTest {
     @Autowired private UserRepository userRepository;
     @Autowired private RoleRepository roleRepository;
     @Autowired private NotificationRepository notificationRepository;
+    @Autowired private DeliveryRepository deliveryRepository;
 
     @MockitoBean
     private NotificationEmailService notificationEmailService;
@@ -62,6 +64,7 @@ class RequestStatusIntegrationTest {
     private Status pending;
     private Status approved;
     private Status refused;
+    private Status inService;
     private User requester;
     private User responsible;
 
@@ -80,6 +83,7 @@ class RequestStatusIntegrationTest {
         pending = statusRepository.save(new Status("Pendente", "Solicitacao pendente"));
         approved = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada"));
         refused = statusRepository.save(new Status("Recusado", "Solicitacao recusada"));
+        inService = statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
     }
 
     @AfterEach
@@ -88,7 +92,7 @@ class RequestStatusIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integracao] PATCH /requests/{id}/status com Aprovado deve alterar status no banco")
+    @DisplayName("[Integracao] PATCH /requests/{id}/status com Aprovado deve aprovar e criar a entrega automatica")
     void shouldApproveRequestAndPersistStatus() throws Exception {
         Request request = saveRequest(pending);
 
@@ -107,6 +111,11 @@ class RequestStatusIntegrationTest {
         Request updated = requestRepository.findById(request.getId()).orElseThrow();
         assertThat(updated.getStatus().getId()).isEqualTo(approved.getId());
         assertThat(updated.getFeedback()).isNull();
+
+        assertThat(deliveryRepository.findByRequestId(request.getId()))
+                .hasSize(1)
+                .first()
+                .satisfies(delivery -> assertThat(delivery.getStatus().getId()).isEqualTo(inService.getId()));
     }
 
     @Test
@@ -271,6 +280,7 @@ class RequestStatusIntegrationTest {
     }
 
     private void cleanDatabase() {
+        deliveryRepository.deleteAll();
         notificationRepository.deleteAll();
         requestRepository.deleteAll();
         crBranchRepository.deleteAll();

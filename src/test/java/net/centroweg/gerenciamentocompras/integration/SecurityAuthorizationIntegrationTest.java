@@ -102,7 +102,7 @@ class SecurityAuthorizationIntegrationTest {
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
 
         statusRepository.save(new net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status(
-                "EM_ANDAMENTO",
+                "Aguardando aprovação",
                 "Solicitacao aguardando aprovacao"
         ));
         measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));

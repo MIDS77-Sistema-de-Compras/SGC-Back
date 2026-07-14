@@ -41,7 +41,7 @@ class RequestControllerUnitTest {
     private RequestController controller;
 
     private RequestResponse sampleResponse(Long id) {
-        return new RequestResponse(id, null, null, 100L, "EM_ANDAMENTO", null, "Fulano", "1234", null, null, null);
+        return new RequestResponse(id, null, null, 100L, "EM_ANDAMENTO", null, null, "Fulano", "1234", null, null, null);
     }
 
     @Test

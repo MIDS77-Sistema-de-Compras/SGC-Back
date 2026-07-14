@@ -1,9 +1,9 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 public record RequestProductItemRequest(
         @NotBlank(message = "O nome do produto é obrigatorio.")
@@ -17,7 +17,7 @@ public record RequestProductItemRequest(
         Double quantity,
 
         @NotBlank(message = "As informações adicionais do produto não podem estar em branco.")
-        @Max(value=255, message = "Informações adicionais excedem o limite máximo permitido (255 caractéres)")
+        @Size(max = 255, message = "Informações adicionais excedem o limite máximo permitido (255 caractéres)")
         String additionalInformations
 ) {
 }

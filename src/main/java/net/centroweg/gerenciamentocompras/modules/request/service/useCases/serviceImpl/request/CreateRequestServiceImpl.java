@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -32,16 +33,19 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 
 @Service
 @RequiredArgsConstructor
 public class CreateRequestServiceImpl {
 
-    private static final String INITIAL_STATUS = "AGUARDANDO_APROVACAO";
+    private static final String INITIAL_STATUS = "Aguardando aprovação";
+    private static final String APPROVED_STATUS = "Aprovado";
     private static final String REQUEST_PRODUCT_TYPE = "Solicitacao";
     private static final double REQUEST_PRODUCT_DEFAULT_PRICE = 0.0;
     private final RequestRepository requestRepository;
@@ -52,17 +56,24 @@ public class CreateRequestServiceImpl {
     private final NotificationService notificationService;
     private final RequestPublicApi requestPublicApi;
     private final ProvisionRepository provisionRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
 
-        Status status = statusRepository.findByNameIgnoreCase(INITIAL_STATUS)
+        User requester = userRepository.findByEmail(userPrincipal.getUsername())
+                .orElseThrow(UserNotFoundException::new);
+
+        boolean createdApproved = isSupervisor(requester);
+
+        Status status = createdApproved
+                ? statusRepository.findByNameIgnoreCase(APPROVED_STATUS)
+                .orElseThrow(StatusNotFoundException::new)
+                : statusRepository.findByNameIgnoreCase(INITIAL_STATUS)
                 .orElseThrow(StatusNotFoundException::new);
 
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
-        User requester = userRepository.findByEmail(userPrincipal.getUsername())
-                .orElseThrow(UserNotFoundException::new);
 
         List<User> assignedUsers = new ArrayList<>();
         assignedUsers.add(requester);
@@ -78,6 +89,10 @@ public class CreateRequestServiceImpl {
         addProvisionItems(request, requestToSave, status);
 
         Request savedRequest = requestRepository.save(requestToSave);
+
+        if (createdApproved) {
+            eventPublisher.publishEvent(new RequestApprovedEvent(savedRequest.getId()));
+        }
 
         if (crBranch.getResponsibleUsers() != null) {
             for (User responsible : crBranch.getResponsibleUsers()) {
@@ -179,4 +194,9 @@ public class CreateRequestServiceImpl {
         return value != null && !value.isBlank();
     }
 
+    private boolean isSupervisor(User user) {
+        return user.getRole() != null
+                && user.getRole().getName() != null
+                && user.getRole().getName().trim().equalsIgnoreCase(Authorities.SUPERVISOR);
+    }
 }

@@ -15,6 +15,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request.UpdateRequestStatusServiceImpl;
+import net.centroweg.gerenciamentocompras.modules.request.service.validator.CompradorRequestAccessValidator;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
@@ -46,6 +47,7 @@ class UpdateRequestStatusServiceImplTest {
     @Mock private RequestBusinessRuleValidator validator;
     @Mock private NotificationService notificationService;
     @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock private CompradorRequestAccessValidator compradorRequestAccessValidator;
 
     @InjectMocks
     private UpdateRequestStatusServiceImpl service;

@@ -62,7 +62,9 @@ public class RequestController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate endDate,
-            Pageable pageable
+            Pageable pageable,
+            @AuthenticationPrincipal
+            UserPrincipal userPrincipal
     ){
         RequestFilterRequest filter = new RequestFilterRequest(
                 crCode,
@@ -72,7 +74,7 @@ public class RequestController {
                 endDate
         );
 
-        return ResponseEntity.ok(requestService.findAllRequest(filter, pageable));
+        return ResponseEntity.ok(requestService.findAllRequest(filter, pageable, userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de Request por id")

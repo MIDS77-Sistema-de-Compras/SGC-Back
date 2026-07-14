@@ -12,6 +12,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import net.centroweg.gerenciamentocompras.modules.request.service.validator.CompradorRequestAccessValidator;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
@@ -34,10 +35,13 @@ public class UpdateRequestStatusServiceImpl {
     private final RequestBusinessRuleValidator validator;
     private final NotificationService notificationService;
     private final ApplicationEventPublisher eventPublisher;
+    private final CompradorRequestAccessValidator compradorRequestAccessValidator;
 
     public RequestResponse updateStatus(Long id, UpdateRequestStatus dto) {
         Request request = requestRepository.findById(id)
                 .orElseThrow(RequestNotFoundException::new);
+
+        compradorRequestAccessValidator.validate(request);
 
         User currentUser = currentUserService.getCurrentUser();
         validator.validateCanUpdateStatus(request, currentUser);

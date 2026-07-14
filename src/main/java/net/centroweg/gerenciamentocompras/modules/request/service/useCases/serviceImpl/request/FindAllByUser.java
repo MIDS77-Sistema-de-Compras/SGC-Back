@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,8 @@ public class FindAllByUser {
                 .and(statusNameEquals(filter.statusName()))
                 .and(supervisorNameContain(filter.supervisorName()))
                 .and(requestDateBetween(filter.startDate(), filter.endDate()));
+
+
 
         return requestRepository.findAll(specification, pageable)
                 .map(requestMapper::toDTO);

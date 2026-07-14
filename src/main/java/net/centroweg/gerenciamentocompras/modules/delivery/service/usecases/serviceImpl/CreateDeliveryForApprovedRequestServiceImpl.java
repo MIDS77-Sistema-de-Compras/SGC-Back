@@ -2,13 +2,13 @@ package net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.ser
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Delivery;
+import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryStatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +34,7 @@ public class CreateDeliveryForApprovedRequestServiceImpl {
 
     private final DeliveryRepository deliveryRepository;
     private final RequestRepository requestRepository;
-    private final StatusRepository statusRepository;
+    private final StatusPublicApi statusPublicApi;
 
     /**
      * Cria a entrega da solicitação aprovada, caso ainda não exista nenhuma.
@@ -50,8 +50,8 @@ public class CreateDeliveryForApprovedRequestServiceImpl {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(RequestNotFoundException::new);
 
-        Status status = statusRepository.findByNameIgnoreCase(IN_SERVICE_STATUS)
-                .orElseThrow(StatusNotFoundException::new);
+        Status status = statusPublicApi.findByName(IN_SERVICE_STATUS)
+                .orElseThrow(DeliveryStatusNotFoundException::new);
 
         Delivery delivery = new Delivery();
         delivery.setRequest(request);

@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserNotificationData;
+
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,6 +26,16 @@ public class UserPublicApiImpl implements UserPublicApi {
     @Override
     public Optional<User> findByEmailOrCpf(String email, String cpf){
         return userRepository.findByEmailOrCpf(email, cpf);
+    }
+
+    @Override
+    public List<UserNotificationData> findNotificationDataByIds(Collection<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return List.of();
+        }
+        return userRepository.findAllById(userIds).stream()
+                .map(user -> new UserNotificationData(user.getId(), user.getName(), user.getEmail()))
+                .toList();
     }
 
 }

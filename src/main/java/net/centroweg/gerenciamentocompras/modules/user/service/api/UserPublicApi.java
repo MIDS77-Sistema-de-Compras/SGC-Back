@@ -3,10 +3,15 @@ package net.centroweg.gerenciamentocompras.modules.user.service.api;
 import java.util.Optional;
 
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserNotificationData;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface UserPublicApi {
 
     Boolean existsByEmail(String email);
     Optional<User> findByEmailOrCpf(String email, String cpf);
+    List<UserNotificationData> findNotificationDataByIds(Collection<Long> userIds);
     
 }

@@ -5,14 +5,18 @@ import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persis
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.delivery;
 import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.request;
@@ -27,6 +31,7 @@ class FindAllDeliveryServiceImplTest {
 
     @Mock
     private DeliveryRepository deliveryRepository;
+    @Mock private StatusPublicApi statusPublicApi;
 
     private FindAllDeliveryServiceImpl service;
     private Delivery activeDelivery;
@@ -34,9 +39,10 @@ class FindAllDeliveryServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        service = new FindAllDeliveryServiceImpl(deliveryRepository, new DeliveryMapper());
+        service = new FindAllDeliveryServiceImpl(deliveryRepository, new DeliveryMapper(statusPublicApi));
         Request request = request();
         Status status = status();
+        Mockito.lenient().when(statusPublicApi.findById(status.getId())).thenReturn(Optional.of(status));
         User firstReceiver = user(1L, "Primeiro", true);
         User secondReceiver = user(2L, "Segundo", true);
         activeDelivery = delivery(request, status, firstReceiver, secondReceiver);

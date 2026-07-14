@@ -10,9 +10,10 @@ import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.Del
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryStatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
@@ -49,7 +50,7 @@ class CreateDeliveryServiceImplTest {
     private RequestRepository requestRepository;
 
     @Mock
-    private StatusRepository statusRepository;
+    private StatusPublicApi statusPublicApi;
 
     @Mock
     private UserRepository userRepository;
@@ -71,10 +72,10 @@ class CreateDeliveryServiceImplTest {
         service = new CreateDeliveryServiceImpl(
                 deliveryRepository,
                 requestRepository,
-                statusRepository,
+                statusPublicApi,
                 new DeliveryReceiverValidator(userRepository),
                 deliveryItemResolver,
-                new DeliveryMapper(),
+                new DeliveryMapper(statusPublicApi),
                 eventPublisher
         );
         request = request();
@@ -152,15 +153,15 @@ class CreateDeliveryServiceImplTest {
     @Test
     void shouldRejectUnknownStatus() {
         when(requestRepository.findById(10L)).thenReturn(Optional.of(request));
-        when(statusRepository.findById(20L)).thenReturn(Optional.empty());
+        when(statusPublicApi.findById(20L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(createRequest(List.of(1L, 2L))))
-                .isInstanceOf(StatusNotFoundException.class);
+                .isInstanceOf(DeliveryStatusNotFoundException.class);
     }
 
     private void mockRequestAndStatus() {
         when(requestRepository.findById(10L)).thenReturn(Optional.of(request));
-        when(statusRepository.findById(20L)).thenReturn(Optional.of(status));
+        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(status));
     }
 
     private void mockRequestStatusAndReceivers(List<User> receivers) {

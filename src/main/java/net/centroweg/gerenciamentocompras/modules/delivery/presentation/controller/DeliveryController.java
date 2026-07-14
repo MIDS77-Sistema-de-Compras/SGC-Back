@@ -10,6 +10,8 @@ import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.requ
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryResponse;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceIntrf.DeliveryService;
 import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManagePurchaseItems;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -78,9 +80,10 @@ public class DeliveryController {
 
     @Operation(description = "Confirma o recebimento por um recebedor associado a entrega.")
     @PatchMapping("/{deliveryId}/receivers/{userId}/confirm")
+    @Auditable(action = "CONFIRMAR_RECEBIMENTO_ENTREGA")
     public ResponseEntity<DeliveryResponse> confirmReceiver(
             @PathVariable Long deliveryId,
-            @PathVariable Long userId,
+            @AuditParam("user") @PathVariable Long userId,
             @Valid @RequestBody ConfirmDeliveryReceiverRequest request
     ) {
         return ResponseEntity.ok(deliveryService.confirmReceiver(deliveryId, userId, request));

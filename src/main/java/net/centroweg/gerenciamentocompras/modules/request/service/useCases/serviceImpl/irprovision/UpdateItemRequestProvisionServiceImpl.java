@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -59,8 +60,8 @@ public class UpdateItemRequestProvisionServiceImpl {
         item.setProvision(provision);
         item.setStatus(status);
 
-        if(!requestDto.additionalInformation().isBlank()){
-            item.setAdditionalInformation(requestDto.additionalInformation());
+        if (StringUtils.hasText(requestDto.additionalInformation())) {
+            item.setAdditionalInformation(requestDto.additionalInformation().trim());
         }
 
         // also have to update the dependencies

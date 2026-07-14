@@ -35,6 +35,7 @@ public class UpdateCrBranch {
     private final BranchRepository branchRepository;
     private final UserRepository userRepository;
     private final CrBranchMapper crBranchMapper;
+    private final ValidateCrBranchSupervisors validateCrBranchSupervisors;
 
     /**
      * Atualiza os dados de um vínculo CR-filial existente.
@@ -64,6 +65,8 @@ public class UpdateCrBranch {
         if (request.responsibleUsersId() != null) {
             user = userRepository.findAllById(request.responsibleUsersId());
         }
+
+        validateCrBranchSupervisors.validate(user);
 
         crBranch.setBranch(branch);
         crBranch.setCr(cr);

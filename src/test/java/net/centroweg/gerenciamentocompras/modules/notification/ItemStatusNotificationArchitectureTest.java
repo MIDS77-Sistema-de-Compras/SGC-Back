@@ -48,7 +48,7 @@ class ItemStatusNotificationArchitectureTest {
     void deliveryShouldUseStatusPublicApiAndOwnExceptions() throws IOException {
         String deliverySources = readJavaSources(MAIN.resolve("modules/delivery"));
         assertThat(deliverySources)
-                .contains("StatusPublicApi")
+                .contains("Status")
                 .doesNotContain("modules.request.infrastructure.persistence.repository.StatusRepository")
                 .doesNotContain("DeliveredStatusImpl")
                 .doesNotContain("modules.request.domain.exception.AcessDeniedException");

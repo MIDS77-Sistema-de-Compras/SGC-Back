@@ -1,6 +1,6 @@
 package net.centroweg.gerenciamentocompras.integration;
 
-import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.HandleItemStatusChangedNotificationUseCase;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleItemStatusChangedNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 import org.junit.jupiter.api.Test;

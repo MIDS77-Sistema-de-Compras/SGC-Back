@@ -5,8 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.Inva
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashSet;
@@ -17,8 +16,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DeliveryItemResolver {
 
-    private final ItemRequestProductRepository itemRequestProductRepository;
-    private final ItemRequestProvisionRepository itemRequestProvisionRepository;
+    private final RequestPublicApi requestPublicApi;
 
     public List<ItemRequestProduct> resolveProductItems(Request request, List<Long> itemIds) {
         if (itemIds == null || itemIds.isEmpty()) {
@@ -26,7 +24,7 @@ public class DeliveryItemResolver {
         }
 
         Set<Long> uniqueIds = new LinkedHashSet<>(itemIds);
-        List<ItemRequestProduct> items = itemRequestProductRepository.findAllById(List.copyOf(uniqueIds));
+        List<ItemRequestProduct> items = requestPublicApi.findItemProductsByIds(List.copyOf(uniqueIds));
         if (items.size() != uniqueIds.size()) {
             throw new InvalidDeliveryItemsException("Um ou mais itens de produto da entrega nao foram encontrados.");
         }
@@ -46,7 +44,7 @@ public class DeliveryItemResolver {
         }
 
         Set<Long> uniqueIds = new LinkedHashSet<>(itemIds);
-        List<ItemRequestProvision> items = itemRequestProvisionRepository.findAllById(List.copyOf(uniqueIds));
+        List<ItemRequestProvision> items = requestPublicApi.findItemProvisionsByIds(List.copyOf(uniqueIds));
         if (items.size() != uniqueIds.size()) {
             throw new InvalidDeliveryItemsException("Um ou mais itens de servico da entrega nao foram encontrados.");
         }

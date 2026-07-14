@@ -14,7 +14,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Cr
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +33,7 @@ public class UpdateCrBranch {
     private final CrBranchRepository crBranchRepository;
     private final CrRepository crRepository;
     private final BranchRepository branchRepository;
-    private final UserRepository userRepository;
+    private final UserPublicApi userPublicApi;
     private final CrBranchMapper crBranchMapper;
     private final ValidateCrBranchSupervisors validateCrBranchSupervisors;
 
@@ -63,7 +63,7 @@ public class UpdateCrBranch {
 
         List<User> user = null;
         if (request.responsibleUsersId() != null) {
-            user = userRepository.findAllById(request.responsibleUsersId());
+            user = userPublicApi.findUsersByIds(request.responsibleUsersId());
         }
 
         validateCrBranchSupervisors.validate(user);

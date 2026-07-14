@@ -3,7 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.service;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.RequestStatusCategory;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
@@ -16,7 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request.UpdateRequestStatusServiceImpl;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request.UpdateRequestStatusServiceImpl;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.CompradorRequestAccessValidator;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;

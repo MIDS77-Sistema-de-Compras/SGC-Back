@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+
 import java.util.List;
 
 
@@ -40,6 +42,7 @@ public class CrController {
     @Operation(description = "ENDPOINT responsável pela criação de CR")
     @PostMapping
     @CanManageCr
+    @Auditable(action = "CRIAR_CR")
     public ResponseEntity<CrCompoundResponse> create(@RequestBody CrRequest dto, @AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(crService.create(dto, userPrincipal));
@@ -80,6 +83,7 @@ public class CrController {
     @Operation(description = "ENDPOINT responsável pela atualização de CR")
     @PutMapping("{id}")
     @CanManageCr
+    @Auditable(action = "ATUALIZAR_CR")
     public ResponseEntity<CrCompoundResponse> update(@PathVariable Long id, @RequestBody CrRequest dto){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.update(id, dto));
@@ -94,6 +98,7 @@ public class CrController {
     @Operation(description = "ENDPOINT responsável pelo delete de CR")
     @DeleteMapping("{id}")
     @CanManageCr
+    @Auditable(action = "EXCLUIR_CR")
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(crService.delete(id));

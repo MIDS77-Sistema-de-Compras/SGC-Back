@@ -7,7 +7,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persis
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class CreateDeliveryForApprovedRequestServiceImpl {
     private static final int DEFAULT_EXPECTED_DAYS = 7;
 
     private final DeliveryRepository deliveryRepository;
-    private final RequestRepository requestRepository;
+    private final RequestPublicApi requestPublicApi;
     private final StatusPublicApi statusPublicApi;
 
     /**
@@ -47,7 +47,7 @@ public class CreateDeliveryForApprovedRequestServiceImpl {
             return;
         }
 
-        Request request = requestRepository.findById(requestId)
+        Request request = requestPublicApi.findRequestById(requestId)
                 .orElseThrow(RequestNotFoundException::new);
 
         Status status = statusPublicApi.findByName(IN_SERVICE_STATUS)

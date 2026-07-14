@@ -6,7 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotF
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
-import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.FindLoggedUser;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.FindLoggedUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -4,7 +4,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
-import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.role.ListRoleImpl;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.role.ListRoleImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

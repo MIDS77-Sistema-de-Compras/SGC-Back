@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.integration;
 
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
-import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.HandleRequestStatusChangedNotificationUseCase;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleRequestStatusChangedNotificationUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

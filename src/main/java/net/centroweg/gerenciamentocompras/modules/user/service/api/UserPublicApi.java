@@ -11,7 +11,10 @@ import java.util.List;
 public interface UserPublicApi {
 
     Boolean existsByEmail(String email);
+    Optional<User> findByEmail(String email);
     Optional<User> findByEmailOrCpf(String email, String cpf);
     List<UserNotificationData> findNotificationDataByIds(Collection<Long> userIds);
-    
+    Optional<User> findUserById(Long id);
+    List<User> findUsersByIds(Collection<Long> ids);
+
 }

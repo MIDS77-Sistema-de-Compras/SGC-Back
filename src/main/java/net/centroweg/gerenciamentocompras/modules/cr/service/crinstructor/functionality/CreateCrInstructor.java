@@ -13,7 +13,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Cr
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructorMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +22,11 @@ public class CreateCrInstructor {
     private final CrInstructorRepository crInstructorRepository;
     private final CrInstructorMapper crInstructorMapper;
 
-    private final UserRepository userRepository;
+    private final UserPublicApi userPublicApi;
     private final CrBranchRepository crBranchRepository;
 
     public CrInstructorResponse addCrInstructor(CrInstructorRequest request){
-        List<User> user = userRepository.findAllById(request.instructorIds());
+        List<User> user = userPublicApi.findUsersByIds(request.instructorIds());
         CrBranch crBranch = crBranchRepository.findById(request.crBranchId()).orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
         return crInstructorMapper.toResponse(

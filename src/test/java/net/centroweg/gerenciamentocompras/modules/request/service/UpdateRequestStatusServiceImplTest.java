@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.service;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
@@ -54,6 +55,7 @@ class UpdateRequestStatusServiceImplTest {
     @Mock private RequestMapper requestMapper;
     @Mock private CurrentUserService currentUserService;
     @Mock private RequestBusinessRuleValidator validator;
+    @Mock private NotificationService notificationService;
     @Mock private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
@@ -304,6 +306,7 @@ class UpdateRequestStatusServiceImplTest {
                 List.of(),
                 List.of()
         );
+        return new RequestResponse(id, dateTime, dateTime, 50L, statusName, null, feedback, "Solicitante", "1234", List.of(), List.of(), List.of());
     }
 
     private record Scenario(Request request, Status newStatus, RequestResponse response) {

@@ -15,8 +15,8 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
-import net.centroweg.gerenciamentocompras.shared.security.annotation.CanApproveRequest;
 import net.centroweg.gerenciamentocompras.shared.security.annotation.CanCreateRequest;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanUpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.shared.security.annotation.CanViewReports;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -108,7 +108,7 @@ public class RequestController {
     @Operation(description = "ENDPOINT responsável pela atualização do status de Request")
     @PatchMapping("/{id}/status")
     @Auditable(action = "ATUALIZAR_STATUS_SOLICITACAO")
-    @CanApproveRequest
+    @CanUpdateRequestStatus
     public ResponseEntity<RequestResponse> updateStatus(
             @AuditParam(value = "request") @PathVariable Long id,
             @Valid @RequestBody UpdateRequestStatus request

@@ -13,6 +13,12 @@ import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.requ
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryResponse;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.strategy.DeliveredStatusImpl;
+import net.centroweg.gerenciamentocompras.modules.request.domain.strategy.PartiallyFulfilledStatusImpl;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.springframework.stereotype.Service;
@@ -85,5 +91,41 @@ public class ConfirmDeliveryReceiverServiceImpl {
 
     private String normalizeObservation(String observation) {
         return StringUtils.hasText(observation) ? observation.trim() : null;
+    }
+    private void updateStatusWhenAllReceiversConfirmed(Delivery delivery) {
+        boolean allConfirmed = delivery.getReceivers()
+                .stream()
+                .allMatch(receiver -> Boolean.TRUE.equals(receiver.getConfirmed()));
+
+        if (!allConfirmed) {
+            return;
+        }
+
+        String finalStatusName = hasRefusedItems(delivery.getRequest())
+                ? new PartiallyFulfilledStatusImpl().getName()
+                : new DeliveredStatusImpl().getName();
+
+        statusPublicApi.findByName(finalStatusName);
+    }
+
+    /**
+     * Verifica se algum item (produto ou serviço) da solicitação foi recusado.
+     */
+    private boolean hasRefusedItems(Request request) {
+        boolean refusedProduct = request.getItemRequestProducts()
+                .stream()
+                .anyMatch(item -> isRefused(item.getStatus_id()));
+
+        boolean refusedProvision = request.getItemRequestProvisions()
+                .stream()
+                .anyMatch(item -> isRefused(item.getStatus()));
+
+        return refusedProduct || refusedProvision;
+    }
+
+    private boolean isRefused(Status status) {
+        return status != null
+                && status.getName() != null
+                && status.getName().trim().equalsIgnoreCase("Recusado");
     }
 }

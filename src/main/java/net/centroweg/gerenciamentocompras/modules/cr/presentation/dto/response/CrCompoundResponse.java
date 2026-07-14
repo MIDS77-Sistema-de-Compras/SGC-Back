@@ -12,6 +12,7 @@ public record CrCompoundResponse (
         long id,
         String name,
         String code,
+        String description,
         Boolean master,
         String sector
 ){

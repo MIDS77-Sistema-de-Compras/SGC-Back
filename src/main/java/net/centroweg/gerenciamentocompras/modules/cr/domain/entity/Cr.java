@@ -1,9 +1,18 @@
 package net.centroweg.gerenciamentocompras.modules.cr.domain.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import org.hibernate.annotations.BatchSize;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Entidade que representa um Centro de Responsabilidade (CR).
@@ -32,6 +41,10 @@ public class Cr {
     /** Código identificador do Centro de Responsabilidade. Não pode ser nulo. */
     @Column(nullable=false)
     private String code;
+
+    /** Descrição do Centro de Responsabilidade. Pode ser nulo. */
+    @Column(nullable=true)
+    private String description;
 
     /** Indica se este CR é o CR master da estrutura organizacional. */
     private Boolean master;

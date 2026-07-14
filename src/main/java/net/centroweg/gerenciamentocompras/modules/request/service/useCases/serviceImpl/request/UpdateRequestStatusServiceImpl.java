@@ -1,6 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
@@ -12,6 +14,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -34,6 +37,7 @@ public class UpdateRequestStatusServiceImpl {
     private final CurrentUserService currentUserService;
     private final RequestBusinessRuleValidator validator;
     private final ApplicationEventPublisher eventPublisher;
+    private final NotificationService notificationService;
 
     @Transactional
     public RequestResponse updateStatus(Long id, UpdateRequestStatus dto) {
@@ -78,6 +82,31 @@ public class UpdateRequestStatusServiceImpl {
         }
 
         return requestMapper.toDTO(savedRequest);
+    }
+
+    private void notifyRequester(Request request, boolean approved, String justification) {
+        String title = approved
+                ? "Solicitação aprovada"
+                : "Solicitação recusada";
+
+        String message;
+        if (approved) {
+            message = "A sua solicitação #" + request.getId() + " foi aprovada.";
+        } else {
+            message = "A sua solicitação #" + request.getId() + " foi recusada.";
+            if (StringUtils.hasText(justification)) {
+                message += " Justificativa: " + justification;
+            }
+        }
+
+        for (User requester : request.getCreatedByUsers()) {
+            notificationService.createNotification(new NotificationRequest(
+                    title,
+                    message,
+                    requester.getId(),
+                    request.getId()
+            ));
+        }
     }
 
     private boolean isStatus(Status status, String expectedStatus) {

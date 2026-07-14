@@ -5,7 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.Deli
 import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,14 +31,14 @@ class DeleteDeliveryServiceImplTest {
     private DeliveryRepository deliveryRepository;
 
     @Mock
-    private StatusRepository statusRepository;
+    private StatusPublicApi statusPublicApi;
 
     private DeleteDeliveryServiceImpl service;
     private Delivery delivery;
 
     @BeforeEach
     void setUp() {
-        service = new DeleteDeliveryServiceImpl(deliveryRepository, statusRepository);
+        service = new DeleteDeliveryServiceImpl(deliveryRepository, statusPublicApi);
         Request request = request();
         Status status = status();
         User firstReceiver = user(1L, "Primeiro", true);
@@ -50,7 +50,7 @@ class DeleteDeliveryServiceImplTest {
     void shouldInactivateDeliveryAndApplyCancelledStatus() {
         Status cancelled = new Status("Pedido cancelado", "A entrega foi cancelada pelo comprador.");
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(statusRepository.findByNameIgnoreCase("Pedido cancelado")).thenReturn(Optional.of(cancelled));
+        when(statusPublicApi.findByName("Pedido cancelado")).thenReturn(Optional.of(cancelled));
 
         service.delete(100L);
 
@@ -63,7 +63,7 @@ class DeleteDeliveryServiceImplTest {
     void shouldKeepStatusWhenCancelledStatusDoesNotExist() {
         Status original = delivery.getStatus();
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(statusRepository.findByNameIgnoreCase("Pedido cancelado")).thenReturn(Optional.empty());
+        when(statusPublicApi.findByName("Pedido cancelado")).thenReturn(Optional.empty());
 
         service.delete(100L);
 

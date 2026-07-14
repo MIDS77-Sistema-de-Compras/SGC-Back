@@ -1,13 +1,15 @@
 package net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl;
 
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Delivery;
+import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryAccessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryReceiverNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryStatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
+import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.request.ConfirmDeliveryReceiverRequest;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,115 +21,114 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.confirmRequest;
-import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.deliveredStatus;
-import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.delivery;
-import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.request;
-import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.status;
-import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.user;
+import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ConfirmDeliveryReceiverServiceImplTest {
 
-    @Mock
-    private DeliveryRepository deliveryRepository;
-
-    @Mock
-    private StatusRepository statusRepository;
-
-    @Mock
-    private CurrentUserService currentUserService;
+    @Mock DeliveryRepository deliveryRepository;
+    @Mock StatusPublicApi statusPublicApi;
+    @Mock CurrentUserService currentUserService;
 
     private ConfirmDeliveryReceiverServiceImpl service;
-    private Status status;
-    private User firstReceiver;
-    private User secondReceiver;
-    private User outsider;
+    private Status pending;
+    private User first;
+    private User second;
 
     @BeforeEach
     void setUp() {
         service = new ConfirmDeliveryReceiverServiceImpl(
-                deliveryRepository,
-                statusRepository,
-                currentUserService,
-                new DeliveryMapper()
-        );
-        status = status();
-        firstReceiver = user(1L, "Primeiro", true);
-        secondReceiver = user(2L, "Segundo", true);
-        outsider = user(3L, "Terceiro", true);
-
-        lenient().when(deliveryRepository.save(any(Delivery.class))).thenAnswer(invocation -> invocation.getArgument(0));
+                deliveryRepository, statusPublicApi, currentUserService, new DeliveryMapper(statusPublicApi));
+        pending = status();
+        first = user(1L, "Primeiro", true);
+        second = user(2L, "Segundo", true);
+        lenient().when(statusPublicApi.findById(20L)).thenReturn(Optional.of(pending));
+        lenient().when(statusPublicApi.findById(30L)).thenReturn(Optional.of(deliveredStatus()));
+        lenient().when(deliveryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     @Test
-    void shouldConfirmReceiver() {
-        Delivery delivery = delivery(request(), status, firstReceiver, secondReceiver);
-        when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(currentUserService.getCurrentUser()).thenReturn(firstReceiver);
+    void shouldConfirmFirstReceiverWithoutCompletingDelivery() {
+        Delivery delivery = delivery(request(), pending, first, second);
+        mockDelivery(delivery, first);
 
-        var response = service.confirmReceiver(100L, 1L, confirmRequest());
+        var response = service.confirmReceiver(100L, 1L, new ConfirmDeliveryReceiverRequest("  conferido  "));
 
-        assertThat(response.receivers())
-                .filteredOn(receiver -> receiver.userId().equals(1L))
-                .first()
-                .extracting("confirmed")
-                .isEqualTo(true);
+        assertThat(response.receivers().getFirst().confirmed()).isTrue();
+        assertThat(response.receivers().getFirst().confirmedAt()).isNotNull();
+        assertThat(response.receivers().getFirst().observation()).isEqualTo("conferido");
+        assertThat(delivery.getDeliveredAt()).isNull();
     }
 
     @Test
-    void shouldRejectConfirmationByDifferentAuthenticatedUser() {
-        Delivery delivery = delivery(request(), status, firstReceiver, secondReceiver);
-        when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(currentUserService.getCurrentUser()).thenReturn(firstReceiver);
+    void shouldCompleteDeliveryWithOneConsistentTimestamp() {
+        Delivery delivery = delivery(request(), pending, first, second);
+        delivery.getReceivers().getFirst().setConfirmed(true);
+        delivery.getReceivers().getFirst().setConfirmedAt(LocalDateTime.now().minusHours(1));
+        mockDelivery(delivery, second);
+        when(statusPublicApi.findByName("Entregue")).thenReturn(Optional.of(deliveredStatus()));
+
+        var response = service.confirmReceiver(100L, 2L, confirmRequest());
+
+        assertThat(response.statusName()).isEqualTo("Entregue");
+        assertThat(response.deliveredAt()).isEqualTo(response.receivers().get(1).confirmedAt());
+        assertThat(response.receivers()).allMatch(value -> Boolean.TRUE.equals(value.confirmed()));
+    }
+
+    @Test
+    void shouldKeepConfirmedAtDeliveredAtAndObservationOnRepeatedConfirmation() {
+        Delivery delivery = delivery(request(), deliveredStatus(), first, second);
+        LocalDateTime original = LocalDateTime.now().minusHours(2);
+        delivery.setDeliveredAt(original);
+        delivery.getReceivers().getFirst().setConfirmed(true);
+        delivery.getReceivers().getFirst().setConfirmedAt(original);
+        delivery.getReceivers().getFirst().setObservation("original");
+        mockDelivery(delivery, first);
+
+        service.confirmReceiver(100L, 1L, new ConfirmDeliveryReceiverRequest("alterar"));
+
+        assertThat(delivery.getDeliveredAt()).isEqualTo(original);
+        assertThat(delivery.getReceivers().getFirst().getConfirmedAt()).isEqualTo(original);
+        assertThat(delivery.getReceivers().getFirst().getObservation()).isEqualTo("original");
+        verify(deliveryRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldFailWithoutDeliveredStatusAndLeaveReceiverUnchanged() {
+        Delivery delivery = delivery(request(), pending, first, second);
+        delivery.getReceivers().getFirst().setConfirmed(true);
+        mockDelivery(delivery, second);
+        when(statusPublicApi.findByName("Entregue")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.confirmReceiver(100L, 2L, confirmRequest()))
-                .isInstanceOf(AcessDeniedException.class);
+                .isInstanceOf(DeliveryStatusNotFoundException.class);
+        assertThat(delivery.getReceivers().get(1).getConfirmed()).isFalse();
+        assertThat(delivery.getDeliveredAt()).isNull();
     }
 
     @Test
-    void shouldRejectConfirmationByUserNotAssociatedWithDelivery() {
-        Delivery delivery = delivery(request(), status, firstReceiver, secondReceiver);
-        when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(currentUserService.getCurrentUser()).thenReturn(outsider);
+    void shouldRejectDifferentAuthenticatedUser() {
+        Delivery delivery = delivery(request(), pending, first, second);
+        mockDelivery(delivery, first);
+        assertThatThrownBy(() -> service.confirmReceiver(100L, 2L, confirmRequest()))
+                .isInstanceOf(DeliveryAccessDeniedException.class);
+    }
 
+    @Test
+    void shouldRejectUserNotAssociated() {
+        User outsider = user(3L, "Terceiro", true);
+        Delivery delivery = delivery(request(), pending, first, second);
+        mockDelivery(delivery, outsider);
         assertThatThrownBy(() -> service.confirmReceiver(100L, 3L, confirmRequest()))
                 .isInstanceOf(DeliveryReceiverNotFoundException.class);
     }
 
-    @Test
-    void shouldTreatRepeatedConfirmationAsIdempotent() {
-        Delivery delivery = delivery(request(), status, firstReceiver, secondReceiver);
-        LocalDateTime confirmedAt = LocalDateTime.now().minusHours(1);
-        delivery.getReceivers().get(0).setConfirmed(true);
-        delivery.getReceivers().get(0).setConfirmedAt(confirmedAt);
-        delivery.getReceivers().get(0).setObservation("primeira");
-        when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(currentUserService.getCurrentUser()).thenReturn(firstReceiver);
-
-        service.confirmReceiver(100L, 1L, confirmRequest());
-
-        assertThat(delivery.getReceivers().get(0).getConfirmedAt()).isEqualTo(confirmedAt);
-        assertThat(delivery.getReceivers().get(0).getObservation()).isEqualTo("primeira");
-    }
-
-    @Test
-    void shouldUpdateStatusWhenBothReceiversConfirmed() {
-        Delivery delivery = delivery(request(), status, firstReceiver, secondReceiver);
-        delivery.getReceivers().get(0).setConfirmed(true);
-        delivery.getReceivers().get(0).setConfirmedAt(LocalDateTime.now().minusHours(1));
-        when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(currentUserService.getCurrentUser()).thenReturn(secondReceiver);
-        when(statusRepository.findByNameIgnoreCase("Entregue")).thenReturn(Optional.of(deliveredStatus()));
-
-        var response = service.confirmReceiver(100L, 2L, confirmRequest());
-
-        assertThat(response.receivers()).allMatch(receiver -> Boolean.TRUE.equals(receiver.confirmed()));
-        assertThat(response.statusName()).isEqualTo("Entregue");
+    private void mockDelivery(Delivery delivery, User authenticated) {
+        when(deliveryRepository.findByIdForUpdate(100L)).thenReturn(Optional.of(delivery));
+        when(currentUserService.getCurrentUser()).thenReturn(authenticated);
     }
 }

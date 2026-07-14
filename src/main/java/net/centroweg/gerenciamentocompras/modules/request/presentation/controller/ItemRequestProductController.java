@@ -7,6 +7,9 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProductService;
 import jakarta.validation.Valid;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManagePurchaseItems;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +25,9 @@ public class ItemRequestProductController {
 
     @Operation(description = "ENDPOINT responsável pela criação de Item Request Product")
     @PostMapping
-    public ResponseEntity<ItemRequestProductResponse> createItemRequestProduct(@Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
+    @CanManagePurchaseItems
+    @Auditable(action = "ADICIONAR_ITEM_PRODUTO")
+    public ResponseEntity<ItemRequestProductResponse> createItemRequestProduct(@AuditParam("request") @Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
         return ResponseEntity.status(201).body(itemRequestProductService.createRequestProduct(itemRequestProductRequest));
     }
 
@@ -40,12 +45,16 @@ public class ItemRequestProductController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de Item Request Product")
     @PutMapping("/{id}")
-    public ResponseEntity<ItemRequestProductResponse> updateItemRequestProduct(@PathVariable Long id, @Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
+    @CanManagePurchaseItems
+    @Auditable(action = "ATUALIZAR_ITEM_PRODUTO")
+    public ResponseEntity<ItemRequestProductResponse> updateItemRequestProduct(@PathVariable Long id, @AuditParam("request")  @Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
         return ResponseEntity.status(200).body(itemRequestProductService.updateRequestProduct(itemRequestProductRequest, id));
     }
 
     @Operation(description = "ENDPOINT responsável pelo delete de Item Request Product")
     @DeleteMapping("/{id}")
+    @CanManagePurchaseItems
+    @Auditable(action = "REMOVER_ITEM_PRODUTO")
     public ResponseEntity<Void> deleteItemRequestProduct(@PathVariable Long id){
         itemRequestProductService.deleteRequestProduct(id);
         return ResponseEntity.status(204).build();

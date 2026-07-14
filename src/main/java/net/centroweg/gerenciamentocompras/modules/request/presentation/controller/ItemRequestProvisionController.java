@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +31,7 @@ public class ItemRequestProvisionController {
 
     @Operation(description = "ENDPOINT responsável pela criação de Item Request Provision")
     @PostMapping
+    @Auditable(action = "ADICIONAR_ITEM")
     public ResponseEntity<ItemRequestProvisionResponse> addItem(@RequestBody ItemRequestProvisionRequest request){
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(itemRequestProvisionService.addItemToProvisionRequest(request));

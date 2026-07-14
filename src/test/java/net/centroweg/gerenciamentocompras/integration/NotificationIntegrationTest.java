@@ -57,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-@WithMockUser
+@WithMockUser(authorities = "ADMIN")
 class NotificationIntegrationTest {
 
     private MockMvc mockMvc;
@@ -90,13 +90,15 @@ class NotificationIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
-                .defaultRequest(get("/").with(user("admin").roles("USER", "ADMIN")))
+                .defaultRequest(get("/").with(user("admin").authorities(
+                        new SimpleGrantedAuthority("ADMIN")
+                )))
                 .build();
 
         deleteData();
 
         user = new User("Admin Teste", CPF_VALIDO, "admin@teste.com", "Senha@123", "1234", true);
-        user.setRole(roleRepository.save(new Role("ROLE_ADMIN")));
+        user.setRole(roleRepository.save(new Role("ADMIN")));
         user = userRepository.save(user);
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
@@ -104,8 +106,7 @@ class NotificationIntegrationTest {
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(this.user)));
 
-        waitingStatus = statusRepository.save(new Status("Aguardando aprovacao", "Solicitacao aguardando aprovacao"));
-        statusRepository.save(new Status("EM_ANDAMENTO", "Solicitacao em andamento"));
+        waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
 
         productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
         measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));
@@ -136,7 +137,7 @@ class NotificationIntegrationTest {
         return new UsernamePasswordAuthenticationToken(
                 new UserPrincipal(u),
                 null,
-                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                List.of(new SimpleGrantedAuthority("ADMIN"))
         );
     }
 
@@ -145,13 +146,13 @@ class NotificationIntegrationTest {
         notification.setTitle(title);
         notification.setMessage(message);
         notification.setViewed(false);
-        notification.setUser(user);
-        notification.setRequest(request);
+        notification.setUserId(user.getId());
+        notification.setRequestId(request.getId());
         return notificationRepository.save(notification);
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     @DisplayName("[Integracao] Deve listar as notificacoes de um usuario")
     void deveListarNotificacoesPorUsuario() throws Exception {
         criarNotificacao("Status atualizado", "Sua solicitacao foi aprovada");
@@ -166,7 +167,7 @@ class NotificationIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     @DisplayName("[Integracao] Deve retornar lista vazia quando usuario nao tem notificacoes")
     void deveRetornarListaVaziaSemNotificacoes() throws Exception {
         mockMvc.perform(get("/notifications/user/{userId}", user.getId())
@@ -177,7 +178,7 @@ class NotificationIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     @DisplayName("[Integracao] Deve marcar uma notificacao como lida")
     void deveMarcarNotificacaoComoLida() throws Exception {
         Notification saved = criarNotificacao("Status atualizado", "Sua solicitacao foi aprovada");
@@ -191,7 +192,7 @@ class NotificationIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     @DisplayName("[Integracao] Deve retornar 404 ao marcar notificacao inexistente como lida")
     void deveRetornarNotFoundParaNotificacaoInexistente() throws Exception {
         mockMvc.perform(patch("/notifications/{id}/viewed", 9999L))
@@ -199,7 +200,7 @@ class NotificationIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     @DisplayName("[Integracao] Deve gerar notificacao ao criar uma solicitacao")
     void deveGerarNotificacaoAoCriarSolicitacao() throws Exception {
         mockMvc.perform(post("/requests")
@@ -212,7 +213,7 @@ class NotificationIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     @DisplayName("[Integracao] Deve gerar notificacao ao mudar o status de uma solicitacao")
     void deveGerarNotificacaoAoMudarStatus() throws Exception {
         statusRepository.save(new Status("Em atendimento", "Compra em andamento"));

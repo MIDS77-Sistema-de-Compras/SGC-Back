@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateRole;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.RoleIntrf;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.AdminOnly;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/role")
 @RequiredArgsConstructor
+@AdminOnly
 public class RoleController {
 
     private final RoleIntrf role;

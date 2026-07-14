@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-@WithMockUser
+@WithMockUser(authorities = "ADMIN")
 class RequestControllerTest {
 
     @Autowired private WebApplicationContext context;
@@ -82,13 +82,13 @@ class RequestControllerTest {
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
 
-        waitingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Solicitacao aguardando aprovacao"));
+        waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
         approvedStatus = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada pelo supervisor"));
         productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
         measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));
 
         User newUser = new User("Test User", "52998224725", "test@test.com", "Password@1", "1234", true);
-        newUser.setRole(roleRepository.save(new Role("USER")));
+        newUser.setRole(roleRepository.save(new Role("DOCENTE")));
         testUser = userRepository.save(newUser);
         userPrincipal = new UserPrincipal(testUser);
     }
@@ -102,7 +102,7 @@ class RequestControllerTest {
                         .content(createBody()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.crBranchId").value(crBranch.getId()))
-                .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"))
+                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"))
                 .andExpect(jsonPath("$.products.length()").value(1));
     }
 
@@ -123,7 +123,7 @@ class RequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(saved.getId()))
                 .andExpect(jsonPath("$.crBranchId").value(crBranch.getId()))
-                .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"));
+                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"));
     }
 
     @Test
@@ -145,12 +145,12 @@ class RequestControllerTest {
                         .content("""
                                 {
                                     "crBranchId": %d,
-                                    "statusName": "EM_ANDAMENTO",
+                                    "statusName": "Aguardando aprovação",
                                     "userIds": []
                                 }
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"));
+                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"));
     }
 
     @Test

@@ -17,10 +17,14 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
+import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -34,6 +38,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -57,11 +66,17 @@ class RequestStatusIntegrationTest {
     @MockitoBean
     private NotificationEmailService notificationEmailService;
 
+    @MockitoBean
+    private EmailSenderService emailSenderService;
+
     private MockMvc mockMvc;
     private CrBranch crBranch;
     private Status pending;
     private Status approved;
     private Status refused;
+    private Status inService;
+    private Status delivered;
+    private Status cancelled;
     private User requester;
     private User responsible;
 
@@ -70,8 +85,8 @@ class RequestStatusIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
         cleanDatabase();
 
-        requester = saveUser("Solicitante", "solicitante@teste.com", "52998224725");
-        responsible = saveUser("Responsavel", "responsavel@teste.com", "12345678909");
+        requester = saveUser("Solicitante", "solicitante@teste.com", "52998224725", "DOCENTE");
+        responsible = saveUser("Responsavel", "responsavel@teste.com", "12345678909", "SUPERVISOR");
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
@@ -80,6 +95,9 @@ class RequestStatusIntegrationTest {
         pending = statusRepository.save(new Status("Pendente", "Solicitacao pendente"));
         approved = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada"));
         refused = statusRepository.save(new Status("Recusado", "Solicitacao recusada"));
+        inService = statusRepository.save(new Status("Em atendimento", "Solicitacao em atendimento"));
+        delivered = statusRepository.save(new Status("Entregue", "Solicitacao entregue"));
+        cancelled = statusRepository.save(new Status("Cancelado", "Solicitacao cancelada"));
     }
 
     @AfterEach
@@ -107,6 +125,7 @@ class RequestStatusIntegrationTest {
         Request updated = requestRepository.findById(request.getId()).orElseThrow();
         assertThat(updated.getStatus().getId()).isEqualTo(approved.getId());
         assertThat(updated.getFeedback()).isNull();
+        awaitAnyEmail();
     }
 
     @Test
@@ -120,7 +139,7 @@ class RequestStatusIntegrationTest {
                         .content("""
                                 {
                                     "statusName": "Recusado",
-                                    "justification": "Faltam informacoes"
+                                    "justification": "  Faltam informacoes  "
                                 }
                                 """))
                 .andExpect(status().isOk())
@@ -131,12 +150,14 @@ class RequestStatusIntegrationTest {
         Request updated = requestRepository.findById(request.getId()).orElseThrow();
         assertThat(updated.getStatus().getId()).isEqualTo(refused.getId());
         assertThat(updated.getFeedback()).isEqualTo("Faltam informacoes");
+        awaitAnyEmail();
     }
 
     @Test
-    @DisplayName("[Integracao] PATCH /requests/{id}/status com Recusado sem justificativa deve retornar bad request")
-    void shouldReturnBadRequestWhenRefusingWithoutJustification() throws Exception {
+    @DisplayName("[Integracao] PATCH /requests/{id}/status com Recusado sem campo justificativa deve recusar")
+    void shouldRefuseWithoutJustificationField() throws Exception {
         Request request = saveRequest(pending);
+        clearInvocations(emailSenderService);
 
         mockMvc.perform(patch("/requests/{id}/status", request.getId())
                         .with(user(principalOf(responsible)))
@@ -146,11 +167,31 @@ class RequestStatusIntegrationTest {
                                     "statusName": "Recusado"
                                 }
                                 """))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value("Recusado"));
 
-        Request unchanged = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(unchanged.getStatus().getId()).isEqualTo(pending.getId());
-        assertThat(unchanged.getFeedback()).isNull();
+        assertRefusalWithoutFeedback(request);
+    }
+
+    @ParameterizedTest(name = "[Integracao] justificativa opcional: {0}")
+    @ValueSource(strings = {"null", "\"\"", "\"   \""})
+    void shouldRefuseWithNullEmptyOrBlankJustification(String justificationJsonValue) throws Exception {
+        Request request = saveRequest(pending);
+        clearInvocations(emailSenderService);
+
+        mockMvc.perform(patch("/requests/{id}/status", request.getId())
+                        .with(user(principalOf(responsible)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "statusName": "Recusado",
+                                    "justification": %s
+                                }
+                                """.formatted(justificationJsonValue)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value("Recusado"));
+
+        assertRefusalWithoutFeedback(request);
     }
 
     @Test
@@ -199,6 +240,7 @@ class RequestStatusIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.crBranchId").value(crBranch.getId()))
                 .andExpect(jsonPath("$.statusName").value("Aprovado"));
+        awaitAnyEmail();
     }
 
     @Test
@@ -220,9 +262,11 @@ class RequestStatusIntegrationTest {
                 .hasSize(1)
                 .first()
                 .satisfies(notification -> {
-                    assertThat(notification.getRequest().getId()).isEqualTo(request.getId());
-                    assertThat(notification.getTitle()).contains("aprovada");
+                    assertThat(notification.getRequestId()).isEqualTo(request.getId());
+                    assertThat(notification.getTitle()).isEqualTo("Status da solicitação atualizado");
+                    assertThat(notification.getMessage()).contains("Pendente", "Aprovado");
                 });
+        awaitAnyEmail();
     }
 
     @Test
@@ -245,10 +289,87 @@ class RequestStatusIntegrationTest {
                 .hasSize(1)
                 .first()
                 .satisfies(notification -> {
-                    assertThat(notification.getRequest().getId()).isEqualTo(request.getId());
-                    assertThat(notification.getTitle()).contains("recusada");
+                    assertThat(notification.getRequestId()).isEqualTo(request.getId());
+                    assertThat(notification.getTitle()).isEqualTo("Status da solicitação atualizado");
                     assertThat(notification.getMessage()).contains("Sem verba");
                 });
+        awaitAnyEmail();
+    }
+
+    @Test
+    @DisplayName("[Integracao] Em atendimento deve persistir status, notificação e e-mail do solicitante")
+    void shouldNotifyAndEmailRequesterForInServiceStatus() throws Exception {
+        Request request = saveRequest(approved);
+        clearInvocations(emailSenderService);
+
+        mockMvc.perform(patch("/requests/{id}/status", request.getId())
+                        .with(user(principalOf(responsible)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "statusName": "Em atendimento",
+                                    "justification": null
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value("Em atendimento"));
+
+        assertThat(requestRepository.findById(request.getId()).orElseThrow().getStatus().getId())
+                .isEqualTo(inService.getId());
+        assertThat(notificationRepository.findByUserId(requester.getId()))
+                .singleElement()
+                .satisfies(notification -> assertThat(notification.getMessage())
+                        .contains("Aprovado", "Em atendimento"));
+
+        org.mockito.ArgumentCaptor<DefaultEmail> emailCaptor = org.mockito.ArgumentCaptor.forClass(DefaultEmail.class);
+        org.mockito.ArgumentCaptor<String> htmlCaptor = org.mockito.ArgumentCaptor.forClass(String.class);
+        verify(emailSenderService, timeout(5000)).sendEmail(emailCaptor.capture(), htmlCaptor.capture());
+        assertThat(emailCaptor.getValue().getSendTo()).isEqualTo("solicitante@teste.com");
+        assertThat(emailCaptor.getValue().getSubject()).contains("Em atendimento");
+        assertThat(htmlCaptor.getValue()).contains("Em atendimento", "/docente/solicitacoes/" + request.getId());
+    }
+
+    @Test
+    @DisplayName("[Integracao] Status igual não deve criar notificação nem enviar e-mail")
+    void shouldNotNotifyWhenStatusIsUnchanged() throws Exception {
+        Request request = saveRequest(inService);
+        clearInvocations(emailSenderService);
+
+        mockMvc.perform(patch("/requests/{id}/status", request.getId())
+                        .with(user(principalOf(responsible)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "statusName": "Em atendimento"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value("Em atendimento"));
+
+        assertThat(notificationRepository.findByUserId(requester.getId())).isEmpty();
+        verify(emailSenderService, org.mockito.Mockito.after(500).never())
+                .sendEmail(org.mockito.ArgumentMatchers.any(DefaultEmail.class), anyString());
+    }
+
+    @Test
+    @DisplayName("[Integracao] Entregue e Cancelado são status válidos para o fluxo de evento")
+    void shouldNotifyForDeliveredAndCancelledStatuses() throws Exception {
+        Request deliveredRequest = saveRequest(inService);
+
+        patchStatus(deliveredRequest.getId(), "Entregue");
+        assertThat(requestRepository.findById(deliveredRequest.getId()).orElseThrow().getStatus().getId())
+                .isEqualTo(delivered.getId());
+        awaitAnyEmail();
+
+        clearInvocations(emailSenderService);
+        Request cancelledRequest = saveRequest(approved);
+        patchStatus(cancelledRequest.getId(), "Cancelado");
+        assertThat(requestRepository.findById(cancelledRequest.getId()).orElseThrow().getStatus().getId())
+                .isEqualTo(cancelled.getId());
+        verify(emailSenderService, timeout(5000)).sendEmail(
+                org.mockito.ArgumentMatchers.any(DefaultEmail.class),
+                anyString()
+        );
     }
 
     private Request saveRequest(Status status) {
@@ -260,14 +381,51 @@ class RequestStatusIntegrationTest {
         return requestRepository.save(request);
     }
 
-    private User saveUser(String name, String email, String cpf) {
+    private User saveUser(String name, String email, String cpf, String roleName) {
         User user = new User(name, cpf, email, "Senha@123", "1234", true);
-        user.setRole(roleRepository.save(new Role("USER")));
+        user.setRole(roleRepository.save(new Role(roleName)));
         return userRepository.save(user);
     }
 
     private UserPrincipal principalOf(User user) {
         return new UserPrincipal(user);
+    }
+
+    private void patchStatus(Long requestId, String statusName) throws Exception {
+        mockMvc.perform(patch("/requests/{id}/status", requestId)
+                        .with(user(principalOf(responsible)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "statusName": "%s"
+                                }
+                                """.formatted(statusName)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value(statusName));
+    }
+
+    private void awaitAnyEmail() throws Exception {
+        verify(emailSenderService, timeout(5000).atLeastOnce()).sendEmail(
+                org.mockito.ArgumentMatchers.any(DefaultEmail.class),
+                anyString()
+        );
+    }
+
+    private void assertRefusalWithoutFeedback(Request request) throws Exception {
+        Request updated = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(updated.getStatus().getId()).isEqualTo(refused.getId());
+        assertThat(updated.getFeedback()).isNull();
+        assertThat(notificationRepository.findByUserId(requester.getId()))
+                .singleElement()
+                .satisfies(notification -> assertThat(notification.getMessage())
+                        .doesNotContain("Justificativa", "null"));
+
+        org.mockito.ArgumentCaptor<String> htmlCaptor = org.mockito.ArgumentCaptor.forClass(String.class);
+        verify(emailSenderService, timeout(5000)).sendEmail(
+                org.mockito.ArgumentMatchers.any(DefaultEmail.class),
+                htmlCaptor.capture()
+        );
+        assertThat(htmlCaptor.getValue()).doesNotContain("Justificativa", ">null<");
     }
 
     private void cleanDatabase() {

@@ -7,6 +7,8 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
+import net.centroweg.gerenciamentocompras.modules.user.domain.rolelevels.SystemRole;
+import net.centroweg.gerenciamentocompras.modules.user.service.authorization.UserRoleAuthorizationService;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.CreateUserImpl;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.UniquenessValidator;
@@ -34,6 +36,7 @@ public class CreateUserImplTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private CpfHasher cpfHasher;
     @Mock private UniquenessValidator uniquenessValidator;
+    @Mock private UserRoleAuthorizationService authorizationService;
 
     @InjectMocks
     private CreateUserImpl createUserImpl;
@@ -64,6 +67,7 @@ public class CreateUserImplTest {
         UserResponse result = createUserImpl.createUser(dto);
 
         assertNotNull(result);
+        verify(authorizationService).validateCanCreate(SystemRole.COMPRADOR);
         verify(mapper).toEntity(any());
         verify(repository).save(any());
         verify(mapper).toDTO(any());
@@ -95,6 +99,7 @@ public class CreateUserImplTest {
         createUserImpl.createUser(request);
 
         verify(repository).save(userCaptor.capture());
+        verify(authorizationService).validateCanCreate(SystemRole.COMPRADOR);
         User userEnviadoParaOBanco = userCaptor.getValue();
 
         assertEquals(request.name(), userEnviadoParaOBanco.getName(), "O nome foi mandado errado!");

@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.UpdateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
 import net.centroweg.gerenciamentocompras.modules.product.service.IProductService;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManagePurchaseItems;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,7 @@ public class ProductController {
      */
     @Operation(description = "ENDPOINT responsável pela criação de Product")
     @PostMapping
+    @CanManagePurchaseItems
     public ResponseEntity<ProductResponse> create(@RequestBody @Valid CreateProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request));
     }
@@ -129,6 +131,7 @@ public class ProductController {
      */
     @Operation(description = "ENDPOINT responsável pela atualização de Product")
     @PutMapping("/{id}")
+    @CanManagePurchaseItems
     public ResponseEntity<ProductResponse> update(
             @PathVariable Long id,
             @RequestBody @Valid UpdateProductRequest request) {
@@ -149,6 +152,7 @@ public class ProductController {
      */
     @Operation(description = "ENDPOINT responsável pelo delete de Product")
     @DeleteMapping("/{id}")
+    @CanManagePurchaseItems
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();

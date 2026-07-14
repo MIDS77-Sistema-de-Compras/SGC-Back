@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.service.validator;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.*;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -23,7 +24,7 @@ public class RequestBusinessRuleValidator {
             "cancelado"
     );
 
-    private static final String ADMIN_ROLE = "Administrador";
+    private static final String ADMIN_ROLE = Authorities.ADMIN;
 
     public void validateCanInactivate(Request request, User currentUser) {
         validateRequestIsActive(request);
@@ -94,7 +95,17 @@ public class RequestBusinessRuleValidator {
 
     public void validateCanUpdateStatus(Request request, User currentUser) {
         validateRequestIsActive(request);
+
+        if (hasRole(currentUser, Authorities.COMPRADOR)) {
+            return;
+        }
+
         validateUserIsResponsibleForCr(request, currentUser);
+    }
+
+    private boolean hasRole(User user, String roleName) {
+        return user.getRole() != null
+                && normalize(user.getRole().getName()).equals(normalize(roleName));
     }
 
     private void validateUserIsResponsibleForCr(Request request, User currentUser) {

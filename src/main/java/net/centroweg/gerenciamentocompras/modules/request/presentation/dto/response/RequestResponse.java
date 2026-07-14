@@ -1,6 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response;
 
 
+import net.centroweg.gerenciamentocompras.modules.request.domain.RequestStatusCategory;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,6 +12,7 @@ public record RequestResponse(
         LocalDateTime updatedAt,
         Long crBranchId,
         String statusName,
+        RequestStatusCategory statusCategory,
         String feedback,
         String requesterName,
         String requesterExtension,

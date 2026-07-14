@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -16,5 +18,7 @@ public record ItemRequestProvisionRequest(
     @Positive(message = "O ID do status deve ser maior que 0")
     Long statusId,
 
+    @NotBlank(message = "As informações adicionais não podem estar em branco.")
+    @Max(value=255, message = "Informações adicionais excedem o tamanho máximo permitido (255 caractéres).")
     String additionalInformation
 ) {}

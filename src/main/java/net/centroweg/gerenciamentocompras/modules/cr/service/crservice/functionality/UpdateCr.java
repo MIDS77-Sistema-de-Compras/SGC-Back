@@ -1,5 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crservice.functionality;
 
+import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
@@ -7,7 +10,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrCompoundResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
-import org.springframework.stereotype.Service;
 
 /**
  * Caso de uso responsável por atualizar os dados de um Centro de Resultado (CR).
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class UpdateCr {
     private final CrRepository crRepository;
     private final CrMapper crMapper;
+    private final ValidateCrMasterCoordinator validateCrMasterCoordinator;
 
     /**
      * Atualiza nome, código e flag master do CR identificado pelo ID informado.
@@ -26,12 +29,16 @@ public class UpdateCr {
      * @return {@link CrCompoundResponse} com os dados após a atualização
      * @throws CrNotFoundException caso nenhum CR seja encontrado com o ID informado
      */
+    @Transactional
     public CrCompoundResponse update(Long id, CrRequest dto){
+        validateCrMasterCoordinator.validate();
+
         Cr cr = crRepository.findById(id).orElseThrow(()->new CrNotFoundException(id));
         cr.setName(dto.name());
         cr.setCode(dto.code());
+        cr.setDescription(dto.description());
         cr.setMaster(dto.master());
 
-        return crMapper.toCrCompoundResponse(crRepository.save(cr));
+        return crMapper.toCrCompoundResponse(cr);
     }
 }

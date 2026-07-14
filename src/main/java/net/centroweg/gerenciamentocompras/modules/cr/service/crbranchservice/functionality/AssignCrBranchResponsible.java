@@ -11,12 +11,13 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
- * Caso de uso responsável por atribuir um usuário responsável a um vínculo CR-filial.
+ * Caso de uso responsável por adicionar um usuário responsável a um vínculo CR-filial.
  *
- * <p>Caso o vínculo já possua um responsável, ele é substituído pelo novo usuário informado.</p>
+ * <p>O usuário informado é adicionado à lista de responsáveis existente,
+ * sem substituir os responsáveis já vinculados.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -25,30 +26,39 @@ public class AssignCrBranchResponsible {
     private final CrBranchRepository crBranchRepository;
     private final UserRepository userRepository;
     private final CrBranchMapper crBranchMapper;
+    private final ValidateCrBranchSupervisors validateCrBranchSupervisors;
 
     /**
-     * Atribui um usuário como responsável por um vínculo CR-filial.
+     * Adiciona um usuário à lista de responsáveis de um vínculo CR-filial.
      *
-     * <p>Se já existir um responsável definido, ele é removido antes da nova atribuição.</p>
+     * <p>Caso o usuário já seja responsável pelo vínculo, nada é alterado.</p>
      *
      * @param crBranchId
      * @param userId
-     * @return o vínculo atualizado com o novo responsável
+     * @return o vínculo atualizado com o responsável adicionado
      * @throws CrBranchNotFoundException se o vínculo não for encontrado
      * @throws UsernameNotFoundException se o usuário não for encontrado
      */
-    public CrBranchResponse assignCrBranchResponsible(Long crBranchId, List<Long> userId) {
+    public CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId) {
         CrBranch crBranch = crBranchRepository.findById(crBranchId)
                 .orElseThrow(() -> new CrBranchNotFoundException(crBranchId));
 
-        if (crBranch.getResponsibleUsers() != null && !crBranch.getResponsibleUsers().isEmpty()) {
-            crBranch.setResponsibleUsers(null);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o ID: " + userId));
+
+        if (crBranch.getResponsibleUsers() == null) {
+            crBranch.setResponsibleUsers(new ArrayList<>());
         }
 
-        List<User> users = userRepository.findAllById(userId);
+        boolean alreadyResponsible = crBranch.getResponsibleUsers().stream()
+                .anyMatch(responsible -> responsible.getId().equals(userId));
 
-        crBranch.setResponsibleUsers(users);
-        crBranchRepository.save(crBranch);
+        if (!alreadyResponsible) {
+            crBranch.getResponsibleUsers().add(user);
+            validateCrBranchSupervisors.validate(crBranch.getResponsibleUsers());
+            crBranchRepository.save(crBranch);
+        }
+
         return crBranchMapper.toResponse(crBranch);
     }
 }

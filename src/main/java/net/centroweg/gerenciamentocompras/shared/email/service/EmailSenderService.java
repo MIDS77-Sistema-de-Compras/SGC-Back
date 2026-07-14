@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.shared.email.service;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -8,15 +9,25 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailSenderService {
     
     private final JavaMailSender mailSender;
 
+    @Value("${app.mail.enabled:true}")
+    private boolean mailEnabled;
+
     public void sendEmail(DefaultEmail email, String content) throws MessagingException{
+        if (!mailEnabled) {
+            log.info("Email sending disabled. Subject: {}, recipient: {}", email.getSubject(), email.getSendTo());
+            return;
+        }
+
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 

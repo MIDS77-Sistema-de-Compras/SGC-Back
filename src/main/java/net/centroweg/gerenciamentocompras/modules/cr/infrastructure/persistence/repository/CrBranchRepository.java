@@ -35,4 +35,12 @@ public interface CrBranchRepository extends JpaRepository<CrBranch, Long>, JpaSp
      */
     Optional<CrBranch> findByCrIdAndBranchId(Long crId, Long branchId);
 
+    /**
+     * Verifica se o usuário é responsável por algum vínculo cujo CR é master.
+     *
+     * @param userId identificador do usuário
+     * @return {@code true} se o usuário for responsável por um CR Master
+     */
+    boolean existsByCrMasterTrueAndResponsibleUsersId(Long userId);
+
 }

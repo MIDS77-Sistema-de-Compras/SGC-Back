@@ -18,7 +18,7 @@ import java.util.List;
 public interface RequestService {
 
     RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal);
-    Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable);
+    Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable, UserPrincipal userPrincipal);
     RequestResponse findRequestById(Long id);
     Page<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable);
     RequestResponse updateRequest(UpdateRequestRequest request, Long id);

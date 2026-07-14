@@ -26,6 +26,7 @@ public class AssignCrBranchResponsible {
     private final CrBranchRepository crBranchRepository;
     private final UserRepository userRepository;
     private final CrBranchMapper crBranchMapper;
+    private final ValidateCrBranchSupervisors validateCrBranchSupervisors;
 
     /**
      * Adiciona um usuário à lista de responsáveis de um vínculo CR-filial.
@@ -54,6 +55,7 @@ public class AssignCrBranchResponsible {
 
         if (!alreadyResponsible) {
             crBranch.getResponsibleUsers().add(user);
+            validateCrBranchSupervisors.validate(crBranch.getResponsibleUsers());
             crBranchRepository.save(crBranch);
         }
 

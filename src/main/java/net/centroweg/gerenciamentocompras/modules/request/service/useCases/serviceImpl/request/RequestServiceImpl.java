@@ -42,8 +42,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable) {
-        return findAllRequestService.findAllRequest(filter, pageable);
+    public Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable, UserPrincipal userPrincipal) {
+        return findAllRequestService.findAllRequest(filter, pageable, userPrincipal);
     }
 
     @Override

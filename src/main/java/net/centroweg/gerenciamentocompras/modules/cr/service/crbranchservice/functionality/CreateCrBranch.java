@@ -35,6 +35,7 @@ public class CreateCrBranch {
     private final CrRepository crRepository;
     private final UserRepository userRepository;
     private final CrBranchMapper crBranchMapper;
+    private final ValidateCrBranchSupervisors validateCrBranchSupervisors;
 
     /**
      * Cria um vínculo entre CR e filial a partir dos dados informados.
@@ -63,6 +64,8 @@ public class CreateCrBranch {
         if (request.responsibleUsersId() != null) {
             users = userRepository.findAllById(request.responsibleUsersId());
         }
+
+        validateCrBranchSupervisors.validate(users);
 
         CrBranch crBranch = crBranchMapper.toEntity(branch, cr, users);
         crBranchRepository.save(crBranch);

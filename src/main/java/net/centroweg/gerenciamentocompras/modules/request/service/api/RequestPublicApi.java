@@ -1,10 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.api;
 
+import java.util.Optional;
+
 import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
 import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
-
-import java.util.Optional;
 
 public interface RequestPublicApi {
 

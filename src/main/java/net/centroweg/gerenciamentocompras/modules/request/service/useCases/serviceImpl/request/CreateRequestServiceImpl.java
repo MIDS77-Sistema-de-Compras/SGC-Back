@@ -1,5 +1,11 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.request;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
@@ -30,17 +36,12 @@ import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CreateRequestServiceImpl {
 
-    private static final String INITIAL_STATUS = "EM_ANDAMENTO";
+    private static final String INITIAL_STATUS = "AGUARDANDO_APROVACAO";
     private static final String REQUEST_PRODUCT_TYPE = "Solicitacao";
     private static final double REQUEST_PRODUCT_DEFAULT_PRICE = 0.0;
     private final RequestRepository requestRepository;
@@ -113,7 +114,7 @@ public class CreateRequestServiceImpl {
     }
 
     private Product findOrCreateProduct(RequestProductItemRequest productRequest) {
-        return requestPublicApi.findProuctByNameIgnoreCase(productRequest.productName())
+        return requestPublicApi.findProuctByNameIgnoreCase(productRequest.productName()) // typo
                 .orElseGet(() -> requestPublicApi.createProduct(new CreateProductRequest(
                         productRequest.productName(),
                         productRequest.additionalInformations(),

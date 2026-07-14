@@ -1,5 +1,16 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
@@ -11,17 +22,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.crservice.crinterfa
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -53,7 +53,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldCreateCr() {
-        CrRequest request = new CrRequest("CR Compras", "1001L", true, "Setor Teste");
+        CrRequest request = new CrRequest("CR Compras", "1001L", null, true, "Setor Teste");
 
         CrCompoundResponse response = crService.create(request, coordenador);
 
@@ -66,8 +66,8 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldListAllCrs() {
-        CrCompoundResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
-        CrCompoundResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", false, "Setor Teste"), coordenador);
+        CrCompoundResponse firstCr = crService.create(new CrRequest("CR Compras", "1001L", null, true, "Setor Teste"), coordenador);
+        CrCompoundResponse secondCr = crService.create(new CrRequest("CR Engenharia", "1002L", null, false, "Setor Teste"), coordenador);
 
         List<CrCompoundResponse> responses = crService.listAll();
 
@@ -79,7 +79,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldFindCrById() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", null, true, "Setor Teste"), coordenador);
 
         CrCompoundResponse response = crService.listById(createdCr.id());
 
@@ -91,8 +91,8 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldUpdateCr() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
-        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", false, null);
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", null, true, "Setor Teste"), coordenador);
+        CrRequest updateRequest = new CrRequest("CR Financeiro", "2002L", null, false, null);
 
         CrCompoundResponse response = crService.update(createdCr.id(), updateRequest);
 
@@ -109,7 +109,7 @@ class CrServiceIntegrationTest {
 
     @Test
     void shouldDeleteCr() {
-        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", true, "Setor Teste"), coordenador);
+        CrCompoundResponse createdCr = crService.create(new CrRequest("CR Compras", "1001L", null, true, "Setor Teste"), coordenador);
 
         MessageDTO response = crService.delete(createdCr.id());
 

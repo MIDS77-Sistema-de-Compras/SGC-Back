@@ -24,8 +24,8 @@ public class FindAllCrBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Lista todos os vínculos CR-filial cadastrados.
-     * @return a lista de vínculos, vazia se não houver nenhum.
+     * Lista todos os vínculos CR-filial cadastrados no banco de dados.
+     * @return lista de vínculos encontrados, caso exista.
      */
     @Transactional(readOnly = true)
     public List<CrBranchResponse> findAll(

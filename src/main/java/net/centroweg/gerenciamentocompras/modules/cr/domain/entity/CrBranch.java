@@ -44,7 +44,7 @@ public class CrBranch {
     private Cr cr;
 
     /**
-     * Relacionamento com a entidade usuário(user), vários usuários podem ter vários CR-filiais.
+     * Relacionamento com a entidade usuário, vários usuários podem ter vários CR-filiais.
      */
     @BatchSize(size = 30)
     @ManyToMany

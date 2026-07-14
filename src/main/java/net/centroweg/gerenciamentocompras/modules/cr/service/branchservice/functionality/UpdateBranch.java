@@ -20,11 +20,11 @@ public class UpdateBranch {
     private final BranchMapper branchMapper;
 
     /**
-     * Atualiza os dados de uma filial existente.
-     * @param id identificador da filial a ser atualizada.
+     * Atualiza uma filial existente no banco de dados.
+     * @param id identificador da filial.
      * @param branchRequest novos dados da filial.
-     * @return a filial com os dados atualizados.
-     * @throws BranchNotFoundException se nenhuma filial for encontrada com o ID informado.
+     * @return filial já atualizada.
+     * @throws BranchNotFoundException se nenhuma filial com o ID informado for encontrada.
      */
     public BranchResponse update(Long id, BranchRequest branchRequest){
         Branch branch = branchRepository.findById(id).orElseThrow(() -> new BranchNotFoundException());

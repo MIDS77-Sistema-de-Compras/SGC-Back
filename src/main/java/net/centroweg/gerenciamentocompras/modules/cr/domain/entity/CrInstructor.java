@@ -26,7 +26,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 @Getter
 
 /**
- * Enidade que víncula um usuário a uma CR-filial, no sistema de gerenciamento de compras.
+ * Entidade que víncula um usuário a uma CR-filial, no sistema de gerenciamento de compras.
  */
 public class CrInstructor {
 

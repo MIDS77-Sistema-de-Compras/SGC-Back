@@ -19,9 +19,9 @@ public class RemoveCrBranchResponsible {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Remove um usuário responsável de um vínculo CR-filial.
+     * Remove um usuário responsável de um vínculo CR-filial no banco de dados.
      * @param crBranchId identificador do CR-filial.
-     * @return o vínculo atualizado sem responsável.
+     * @return vínculo atualizado sem o responsável.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */
     public CrBranchResponse removeCrBranchResponsible(Long crBranchId) {

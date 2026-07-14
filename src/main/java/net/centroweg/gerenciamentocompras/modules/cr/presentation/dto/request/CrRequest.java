@@ -5,9 +5,9 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 
 /**
  * DTO de entrada para criação e atualização de um {@link Cr}.
- * @param name nome do CR, não deve ser nulo e nem vazio.
- * @param code código identificador do CR, não deve ser nulo e nem vazio.
- * @param master booleano que indica se este CR é o master da estrutura organizacional(true) ou não(false).
+ * @param name nome do CR, não deve ser nulo ou vazio.
+ * @param code código identificador do CR, não deve ser nulo ou vazio.
+ * @param master booleano que indica se este CR é o master da estrutura organizacional ou não.
  * @param sectorName nome do bloco que o CR pertence.
  */
 public record CrRequest(

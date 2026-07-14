@@ -49,7 +49,7 @@ public class Cr {
      * Construtor utilizado para criação de novos CRs, sem ID e relacionamento definido.
      * @param name nome do CR.
      * @param code código do CR.
-     * @param master booleano que indica se ele é um CR master(true) ou não(false).
+     * @param master booleano que indica se ele é um CR master ou não.
      */
     public Cr(String name, String code, Boolean master) {
         this.name = name;
@@ -58,11 +58,11 @@ public class Cr {
     }
 
     /**
-     * Construtor utilizado para criação de novos CRs, sem ID definido.
+     * Construtor utilizado para criar um novo CRs, sem ID definido.
      * @param name nome do CR.
      * @param code código do CR.
-     * @param master booleano que indica se ele é um CR master(true) ou não(false).
-     * @param bloco relacionamenro com a classe bloco.
+     * @param master booleano que indica se ele é um CR master ou não.
+     * @param bloco relacionamento com a classe bloco.
      */
     public Cr(String name, String code, Boolean master, Sector bloco) {
         this.name = name;

@@ -27,7 +27,7 @@ public class CreateCrInstructor {
     private final CrBranchRepository crBranchRepository;
 
     /**
-     * Cria e persiste um novo vínculo entre CR-filial e usuário, chamado de CR-instrutor no banco de dados.
+     * Cria e persiste um novo vínculo CR-instrutor no banco de dados.
      * @param request dados do CR-instrutor.
      * @return vínculo criado.
      */

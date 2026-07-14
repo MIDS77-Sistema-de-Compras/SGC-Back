@@ -12,15 +12,15 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Classe utilitária responsável por fornecer Specifications utilizadas na construção dinâmica de consultas da entidade {@link CrBranch}.
+ * Classe utilitária responsável por fornecer especificações utilizadas na construção dinâmica de consultas da entidade {@link CrBranch}.
  */
 @NoArgsConstructor
 public final class CrBranchSpecifications {
 
     /**
-     * Cria uma Specification para filtrar filial de CR pelo código do CR.
-     * @param crCode código do CR utilizado na pesquisa.
-     * @return Specification correspondente ao filtro informado ou unrestricted caso o parâmetro seja nulo ou vazio.
+     * Cria uma especificação para filtrar filial de CR pelo código do CR.
+     * @param crCode código do CR.
+     * @return especificação correspondente ao filtro informado, caso exista.
      */
     public static Specification<CrBranch> crCodeContain(String crCode){
         if(isBlank(crCode)){
@@ -43,9 +43,9 @@ public final class CrBranchSpecifications {
     }
 
     /**
-     * Cria uma Specification para filtrar filial de CR pelo nome do CR.
-     * @param crName nome do CR utilizado na pesquisa.
-     * @return Specification correspondente ao filtro informado ou unrestricted caso o parâmetro seja nulo ou vazio.
+     * Cria uma especificação para filtrar filial de CR pelo nome do CR.
+     * @param crName nome do CR.
+     * @return especificação correspondente ao filtro informado, caso exista.
      */
     public static Specification<CrBranch> crNameContain(String crName){
         if(isBlank(crName)){
@@ -68,9 +68,9 @@ public final class CrBranchSpecifications {
     }
 
     /**
-     * Cria uma Specification para filtrar filial de CR pelos responsáveis.
+     * Cria uma especificação para filtrar filial de CR pelos responsáveis.
      * @param responsibleNames lista de nomes dos responsáveis.
-     * @return Specification correspondente ao filtro informado ou unrestricted caso a lista seja nulo ou vazio.
+     * @return especificação correspondente ao filtro informado, caso exista.
      */
     public static Specification<CrBranch> crResponsibleNameIn(List<String> responsibleNames){
 
@@ -103,16 +103,16 @@ public final class CrBranchSpecifications {
     /**
      * Verifica se a String é nula ou contém apenas espaços em branco.
      * @param value valor a ser verificado.
-     * @return booleano, caso seja vazio ou nulo(true) e se tiver algo escrito(false).
+     * @return booleano confirmando se tem algo escrito ou não.
      */
     private static boolean isBlank(String value) {
         return value == null || value.isBlank();
     }
 
     /**
-     * Converte um texto para o padrão utilizado em consultas do tipo {@code LIKE}, ignorando diferenças em relação ao tamanho das letras.
+     * Converte um texto para o padrão utilizado em consultas do tipo like, ignorando diferenças em relação ao tamanho das letras.
      * @param value texto informado pelo usuário.
-     * @return texto formatado para pesquisas utilizando o {@code LIKE}.
+     * @return texto formatado para pesquisas utilizando o like.
      */
     private static String containsIgnoreCase(String value) {
         return "%" + value.trim().toLowerCase(Locale.ROOT) + "%";

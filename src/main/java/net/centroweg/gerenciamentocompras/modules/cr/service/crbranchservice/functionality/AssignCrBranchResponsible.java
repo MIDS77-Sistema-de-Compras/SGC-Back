@@ -24,10 +24,10 @@ public class AssignCrBranchResponsible {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Atribui um usuário como responsável por um vínculo CR-filial.
+     * Atribui um usuário responsável por um vínculo CR-filial no banco de dados.
      * @param crBranchId identificador da CR-filial.
      * @param userId identificador do usuário.
-     * @return o vínculo atualizado com o/os responsável/is.
+     * @return vínculo atualizado.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      * @throws UsernameNotFoundException se o usuário não for encontrado.
      */

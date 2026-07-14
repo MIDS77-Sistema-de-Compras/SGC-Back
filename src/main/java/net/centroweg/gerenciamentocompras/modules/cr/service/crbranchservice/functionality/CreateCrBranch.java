@@ -33,13 +33,13 @@ public class CreateCrBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Cria um vínculo entre CR e filial a partir dos dados informados.
-     * @param request dados do CR-filial informados.
-     * @return o vínculo criado.
+     * Cria e persiste um novo vínculo entre CR e filial no banco de dados.
+     * @param request dados do CR-filial.
+     * @return vínculo criado.
      * @throws BranchNotFoundException se a filial não for encontrada.
      * @throws CrNotFoundException se o CR não for encontrado.
      * @throws CrBranchAlreadyExistsException se já existir um vínculo entre o CR e a filial.
-     * @throws UsernameNotFoundException se o responsável informado não for encontrado.
+     * @throws UsernameNotFoundException se o usuário não for encontrado.
      */
     public CrBranchResponse create(CrBranchRequest request) {
         Branch branch = branchRepository.findById(request.branchId())

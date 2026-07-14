@@ -1,13 +1,14 @@
 package net.centroweg.gerenciamentocompras.modules.auth.service.api;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Classe que implementa interface {@link AuthPublicApi} e sobreescreve os query methods.
+ * Classe de serviço da {@link AuthPublicApi} e sobreescreve os query methods.
  */
 @Repository
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class AuthPublicApiImpl implements AuthPublicApi{
     /**
      * Verifica se o usuário existe.
      * @param email e-mail do usuário a ser procurado.
-     * @return booleano, se o usuário for encontrado(true) se não(false).
+     * @return booleano, se o usuário foi encontrado ou não.
      */
     @Override 
     public Boolean existsByEmail(String email){

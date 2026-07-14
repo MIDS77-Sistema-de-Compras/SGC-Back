@@ -1,11 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.auth.service.api;
 
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-
 import java.util.Optional;
 
 /**
- * Interface que disponibiliza operações públicas relacionadas à autenticação e consulta de usuários.
+ * Interface de serviço que disponibiliza operações públicas relacionadas à autenticação e consulta de usuários.
  */
 public interface AuthPublicApi {
 
@@ -18,7 +17,7 @@ public interface AuthPublicApi {
     Optional<User> findByEmailOrCpf(String email, String cpf);
 
     /**
-     * Verifica se o usuário existe por e-mail e retona se existe(true) ou não(false).
+     * Verifica se o usuário existe por e-mail e retona se existe ou não.
      * @param email e-mail do usuário a ser procurado.
      * @return booleano com o resultado da busca pelo usuário.
      */

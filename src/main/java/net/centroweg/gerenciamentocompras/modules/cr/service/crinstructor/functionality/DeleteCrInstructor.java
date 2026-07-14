@@ -17,7 +17,7 @@ public class DeleteCrInstructor {
     private final CrInstructorRepository crInstructorRepository;
 
     /**
-     * Deleta um vínculo entre CR-filial e usuário, chamada de CR-instrutor do banco de dados.
+     * Deleta um vínculo CR-instrutor do banco de dados.
      * @param id identificador do CR-instrutor.
      * @return mensagem de confirmação da remoção.
      */

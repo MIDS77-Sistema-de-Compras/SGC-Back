@@ -47,7 +47,7 @@ public class UserPrincipal implements UserDetails {
 
     /**
      * Indica se a conta do usuário expirou.
-     * @return booleano para identificar se a conta expirou(true) ou não(false).
+     * @return booleano para identificar se a conta expirou ou não.
      */
     @Override
     public boolean isAccountNonExpired() {
@@ -56,7 +56,7 @@ public class UserPrincipal implements UserDetails {
 
     /**
      * Indica se a conta do usuário não foi bloqueada.
-     * @return booleano para identificar se a conta foi bloqueada(true) ou não(false).
+     * @return booleano para identificar se a conta foi bloqueada ou não.
      */
     @Override
     public boolean isAccountNonLocked() {
@@ -65,7 +65,7 @@ public class UserPrincipal implements UserDetails {
 
     /**
      * Verifica se a senha expirou.
-     * @return booleano para identificar se a senha expirou(true) ou não(false).
+     * @return booleano para identificar se a senha expirou ou não.
      */
     @Override
     public boolean isCredentialsNonExpired() {
@@ -74,7 +74,7 @@ public class UserPrincipal implements UserDetails {
 
     /**
      * Verifica se o usuário está ativo no sistema.
-     * @return booleano para identificar se está ativo(true) ou não(false).
+     * @return booleano para identificar se está ativo ou não.
      */
     @Override
     public boolean isEnabled() {

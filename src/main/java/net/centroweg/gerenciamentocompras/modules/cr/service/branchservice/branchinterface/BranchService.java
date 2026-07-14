@@ -13,39 +13,39 @@ import java.util.List;
 public interface BranchService {
 
     /**
-     * Cria uma nova filial.
-     * @param branchRequest dados da filial a ser criada.
-     * @return a filial criada.
+     * Cria e persiste uma nova filial no banco de dados.
+     * @param branchRequest dados da filial.
+     * @return filial criada.
      */
     BranchResponse create(BranchRequest branchRequest);
 
     /**
-     * Lista todas as filiais cadastradas.
-     * @return lista de filiais, vazia se não houver nenhuma.
+     * Lista todas as filiais cadastradas no banco de dados.
+     * @return lista de filiais, caso exista.
      */
     List<BranchResponse> findAll();
 
     /**
-     * Atualiza os dados de uma filial existente.
-     * @param id identificador da filial a ser atualizada.
+     * Atualiza uma filial existente no banco de dados.
+     * @param id identificador da filial.
      * @param branchRequest novos dados da filial.
-     * @return a filial com os dados atualizados.
-     * @throws BranchNotFoundException se o ID não for encontrado.
+     * @return filial já atualizada.
+     * @throws BranchNotFoundException se a filial não for encontrada.
      */
     BranchResponse update(Long id, BranchRequest branchRequest);
 
     /**
-     * Busca uma filial pelo seu identificador.
-     * @param id identificador da filial a ser pesquisada.
+     * Busca uma filial no banco de dados pelo seu identificador.
+     * @param id identificador da filial.
      * @return a filial encontrada.
-     * @throws BranchNotFoundException se o ID não for encontrado.
+     * @throws BranchNotFoundException se a filial não for encontrada.
      */
     BranchResponse findById(Long id);
 
     /**
-     * Remove uma filial pelo seu identificador.
-     * @param id identificador da filial a ser removida.
-     * @return mensagem de confirmação da operação.
+     * Remove uma filial do banco de dados.
+     * @param id identificador da filial.
+     * @return mensagem de confirmação da remoção.
      */
     MessageDTO delete(Long id);
 }

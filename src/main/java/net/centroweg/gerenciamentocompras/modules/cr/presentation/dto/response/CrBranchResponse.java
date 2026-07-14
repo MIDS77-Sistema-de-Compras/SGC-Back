@@ -4,7 +4,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 
 /**
- * DTO de saída com dados que representam um vínculo entre CR e filial na {@link CrBranch}.
+ * DTO de saída com dados que representam um vínculo entre CR e filial no {@link CrBranch}.
  * @param id identificador do vínculo.
  * @param branchName nome da filial associada.
  * @param crName nome do CR associado.

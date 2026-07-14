@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 
 /**
- * DTO de entrada para criação de filtros possíveis com dados da {@link CrBranch}.
- * @param crCode código do CR, não pode ser nulo e nem vazio.
- * @param crName nome do CR, não pode ser nulo e nem vazio.
- * @param responsibleName lista que contém o nome de todos os responsáveis pela requisição.
+ * DTO de entrada para criação de possíveis filtros com dados da {@link CrBranch}.
+ * @param crCode código do CR, não pode ser nulo ou vazio.
+ * @param crName nome do CR, não pode ser nulo ou vazio.
+ * @param responsibleName lista que contém o nome de todos os responsáveis pela solicitação.
  */
 public record CrBranchFilterRequest (
         @NotBlank(message = "O código do CR não deve ser nulo e nem vazio!")

@@ -24,7 +24,7 @@ public class BranchServiceImpl implements BranchService {
     private final CreateBranch createBranch;
 
     /**
-     * Componente responsável pela listagem de todas as filiais.
+     * Componente responsável pela listagem de todas as filiais cadastradas.
      */
     private final findAllBranch listAllBranch;
 
@@ -39,14 +39,14 @@ public class BranchServiceImpl implements BranchService {
     private final FindByIdBranch findById;
 
     /**
-     * Componente responsável por deletar uma filial.
+     * Componente responsável por remover uma filial.
      */
     private final DeleteBranch deleteBranch;
 
     /**
-     * Cria uma nova filial com base nos dados passados.
-     * @param branchRequest dados da filial a ser criada.
-     * @return a nova filial criada.
+     * Cria e persiste uma nova filial no banco de dados.
+     * @param branchRequest dados da filial.
+     * @return filial criada.
      */
     @Override
     public BranchResponse create(BranchRequest branchRequest){
@@ -54,7 +54,7 @@ public class BranchServiceImpl implements BranchService {
     }
 
     /**
-     * Lista todas as filiais que foram criadas e não foram excluídas.
+     * Lista todas as filiais cadastradas no banco de dados.
      * @return lista com todas as filiais encontradas.
      */
     @Override
@@ -63,10 +63,10 @@ public class BranchServiceImpl implements BranchService {
     }
 
     /**
-     * Atualiza a filial que corresponde ao ID informado com os dados que foram passados.
-     * @param id identificador da filial a ser atualizada.
+     * Atualiza uma filial existente no banco de dados.
+     * @param id identificador da filial.
      * @param branchRequest novos dados da filial.
-     * @return a filial atualizada.
+     * @return filial já atualizada.
      */
     @Override
     public BranchResponse update(Long id, BranchRequest branchRequest){
@@ -74,9 +74,9 @@ public class BranchServiceImpl implements BranchService {
     }
 
     /**
-     * Busca uma filial pelo ID informado.
+     * Busca uma filial no banco de dados pelo ID informado.
      * @param id identificador da filial.
-     * @return a filial encontrada, caso existir, se não retorna uma excessão.
+     * @return filial encontrada, caso exista.
      */
     @Override
     public BranchResponse findById(Long id){
@@ -84,13 +84,13 @@ public class BranchServiceImpl implements BranchService {
     }
 
     /**
-     * Deleta a filial que corresponde ao ID informado.
-     * @param id identificador da filial a ser removida.
-     * @return mensagem de sucesso caso não ocorra erros durante o processo.
+     * Remove uma filial do banco de dados.
+     * @param id identificador da filial.
+     * @return mensagem de sucesso da remoção.
      */
     @Override
     public MessageDTO delete(Long id){
         deleteBranch.delete(id);
-        return new MessageDTO("Deletado");
+        return new MessageDTO("Deletado!");
     }
 }

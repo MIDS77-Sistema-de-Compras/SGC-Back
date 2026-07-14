@@ -32,7 +32,7 @@ public class Sector {
     private String name;
 
     /**
-     * Relacionamento com a entidade CR, várias CRs pertencem a um bloco.
+     * Relacionamento com a entidade CR, um bloco possui várias CRs.
      */
     @OneToMany(mappedBy = "bloco")
     private List<Cr> crs;

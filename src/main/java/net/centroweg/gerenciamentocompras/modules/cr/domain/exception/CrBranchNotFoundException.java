@@ -8,6 +8,6 @@ import org.springframework.http.HttpStatus;
  */
 public class CrBranchNotFoundException extends BusinessException {
     public CrBranchNotFoundException(Long id) {
-        super("CrBranch não encontrado com id: " + id, HttpStatus.NOT_FOUND);
+        super("CrBranch não encontrado com id: " + id + "!", HttpStatus.NOT_FOUND);
     }
 }

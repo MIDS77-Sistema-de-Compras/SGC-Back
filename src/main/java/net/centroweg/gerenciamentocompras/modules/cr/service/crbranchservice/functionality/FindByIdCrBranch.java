@@ -19,9 +19,9 @@ public class FindByIdCrBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Busca um vínculo CR-filial pelo seu identificador.
+     * Busca um vínculo CR-filial no banco de dados pelo ID informado.
      * @param id identificador do CR-filial.
-     * @return o vínculo encontrado.
+     * @return vínculo encontrado.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */
     public CrBranchResponse findById(Long id) {

@@ -1,10 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.auth.service.usecase.implementations;
 
 import java.util.List;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +58,7 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
     /**
      * Valida a existência do usuário e gera um token de recuperação de senha.
      * @param recovery objeto contendo o e-mail informado para recuperação.
-     * @throws MessagingException caso ocorra algum erro durante o envio de e-mail.
+     * @throws MessagingException caso ocorra algum erro durante o envio do e-mail.
      */
     @Override
     public void validateAndGenerateRecoveryToken(Recovery recovery) throws MessagingException{
@@ -80,24 +78,24 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
     /**
      * Monta o conteúdo do e-mail de recuperação de senha e realiza seu envio.
      * @param recovery dados do usuário que solicitou a recuperação.
-     * @param token token de recuperação utilizado na redefinição e senha.
-     * @throws MessagingException caso ocorra algum erro durante o envio de e-mail.
+     * @param token token de recuperação utilizado na redefinição de senha.
+     * @throws MessagingException caso ocorra algum erro durante o envio do e-mail.
      */
     @Override
     public void prepareAndSendEmail(Recovery recovery, String token) throws MessagingException{
-        EmailLayout layout = new EmailLayout("Recuperação de Senha",
+        EmailLayout layout = new EmailLayout("Recuperação de Senha!",
             List.<EmailBuilder>of(
-                new EmailTitle("Recuperação de Senha"),
-                new EmailParagraph("Foi solicitada uma mudança de senha para a sua conta (" + recovery.email() + ").", "#666666", 14),
+                new EmailTitle("Recuperação de Senha!"),
+                new EmailParagraph("Foi solicitada uma mudança de senha para a sua conta: (" + recovery.email() + ").", "#666666", 14),
                 new EmailParagraph("Clique no botão abaixo para recuperar sua conta.", "#666666", 14),
-                new EmailButton("http://localhost:3000/nova-senha?token=" + token, "Recuperar Conta"),
+                new EmailButton("http://localhost:3000/nova-senha?token=" + token, "Recuperar Conta."),
                 new EmailFooter()
             )
         );
 
         String text = layout.buildHtml();
 
-        mailSender.sendEmail(new DefaultEmail("Recuperação de Senha", recovery.email()), text);
+        mailSender.sendEmail(new DefaultEmail("Recuperação de Senha!", recovery.email()), text);
     }
 
     /**

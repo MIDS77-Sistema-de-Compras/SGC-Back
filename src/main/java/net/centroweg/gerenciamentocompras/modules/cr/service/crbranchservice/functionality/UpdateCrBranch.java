@@ -33,10 +33,10 @@ public class UpdateCrBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Atualiza os dados de um vínculo CR-filial existente.
+     * Atualiza os dados de um vínculo CR-filial existente no banco de dados.
      * @param id identificador do CR-filial.
      * @param request novos dados do CR-filial.
-     * @return o vínculo atualizado.
+     * @return vínculo atualizado.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      * @throws BranchNotFoundException se a filial não for encontrada.
      * @throws CrNotFoundException se o CR não for encontrado.

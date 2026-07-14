@@ -6,15 +6,15 @@ import jakarta.validation.constraints.Positive;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
 /**
- * DTO de entrada para criar um vínculo entre CR e usuário na {@link CrInstructor}.
- * @param instructorIds lista de identificadores dos usuários, não deve ser nula e nem vazia e o identificador deve ser positivo.
- * @param crBranchId identificador do CR-filial, não deve ser nulo e nem vazio, devendo ser positivo.
+ * DTO de entrada para criar um vínculo entre CR e usuário no {@link CrInstructor}.
+ * @param instructorIds lista de identificadores dos usuários, não deve ser nula ou vazia e o identificador deve ser positivo.
+ * @param crBranchId identificador do CR-filial, não deve ser nulo ou vazio e deve ser positivo.
  */
 public record CrInstructorRequest(
-    @NotNull(message = "O ID do usuário não deve ser nulo.")
-    List<@Positive(message = "O ID do usuário não pode ser menor que 1.") Long> instructorIds,
+    @NotNull(message = "O ID do usuário não deve ser nulo e nem vazio.")
+    List<@Positive(message = "O ID do usuário deve ser maior ou igual a zero.") Long> instructorIds,
 
-    @NotNull(message = "O ID da CR-filial não deve ser nulo.")
-    @Positive(message = "O ID da CR-filial não pode ser menor que 1.")
+    @NotNull(message = "O ID do CR-filial não deve ser nulo e nem vazio.")
+    @Positive(message = "O ID do CR-filial deve ser maior ou igual a zero.")
     Long crBranchId
 ) {}

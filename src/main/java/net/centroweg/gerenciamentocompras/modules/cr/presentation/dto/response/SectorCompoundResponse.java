@@ -5,7 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
 /**
  * DTO de saída com dados completos do {@link Sector}.
- * @param id identificadordo bloco.
+ * @param id identificador do bloco.
  * @param name nome do bloco.
  * @param crs lista de CRs que pertencem a um bloco.
  */

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 
 @Entity
 @Table(name = "item_request_service")

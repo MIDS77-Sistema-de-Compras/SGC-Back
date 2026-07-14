@@ -25,49 +25,49 @@ public class SectorController {
     private final SectorService service;
 
     /**
-     * Criar um novo bloco.
-     * @param sector corpo da requisição com dados.
+     * Cria um novo bloco.
+     * @param sector dados do bloco.
      * @return bloco criado.
      */
-    @Operation(description = "ENDPOINT responsável pela criação de bloco")
+    @Operation(description = "ENDPOINT responsável pela criação de um bloco")
     @PostMapping
     public ResponseEntity<SectorSimpleResponse> createSector(@Valid @RequestBody SectorRequest sector){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createSector(sector));
     }
 
     /**
-     * Listar todos os blocos de forma simplificada.
-     * @return lista de blocos encontrados.
+     * Lista todos os blocos cadastrados de forma simples.
+     * @return lista de todos os blocos encontrados.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem simplificada de todos blocos")
+    @Operation(description = "ENDPOINT responsável pela listagem simples de todos os blocos")
     @GetMapping("/simple")
     public ResponseEntity<List<SectorSimpleResponse>> findAllSectorSimple(){
         return ResponseEntity.ok(service.findAllSectorSimple());
     }
 
     /**
-     * Listar todos os blocos de forma completa.
-     * @return lista de blocos encontrados.
+     * Lista todos os blocos cadastrados de forma completa.
+     * @return lista de todos os blocos encontrados.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem completa de todos blocos")
+    @Operation(description = "ENDPOINT responsável pela listagem completa de todos os blocos")
     @GetMapping("/compound")
     public ResponseEntity<List<SectorCompoundResponse>> findAllSectorCompound(){
         return ResponseEntity.ok(service.findAllSectorCompound());
     }
 
     /**
-     * Buscar bloco de forma simplificada por identificador único.
+     * Busca um  bloco de forma simples pelo seu identificador.
      * @param id identificador do bloco.
      * @return bloco encontrado.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem simplificada de bloco por id")
+    @Operation(description = "ENDPOINT responsável pela listagem simples de bloco por id")
     @GetMapping("/simple/{id}")
     public ResponseEntity<SectorSimpleResponse> findSectorByIdSimple(@PathVariable Long id){
         return ResponseEntity.ok(service.findSectorByIdSimple(id));
     }
 
     /**
-     * Buscar bloco de forma completa por identificador único
+     * Busca um bloco de forma completa por identificador.
      * @param id identificador do bloco.
      * @return bloco encontrado.
      */
@@ -78,19 +78,19 @@ public class SectorController {
     }
 
     /**
-     * Atualizar bloco por identificador único.
-     * @param sector corpo da requisição com novos dados.
+     * Atualiza um bloco existente.
+     * @param sector novos dados do bloco.
      * @param id identificador do bloco.
-     * @return bloco atualizado.
+     * @return bloco já atualizado.
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de bloco")
+    @Operation(description = "ENDPOINT responsável pela atualização de um bloco")
     @PutMapping("/{id}")
     public ResponseEntity<SectorSimpleResponse> updateSector(@Valid @RequestBody SectorRequest sector, @PathVariable Long id){
         return ResponseEntity.ok(service.updateSector(id, sector));
     }
 
     /**
-     * Remover bloco por identificador único.
+     * Remove um bloco.
      * @param id identificador do bloco.
      * @return mensagem de confirmação da remoção.
      */

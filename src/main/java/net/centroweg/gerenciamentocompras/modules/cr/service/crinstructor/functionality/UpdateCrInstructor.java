@@ -25,7 +25,7 @@ public class UpdateCrInstructor {
     private final CrBranchRepository crBranchRepository;
 
     /**
-     * Atualiza um CR-instrutor, vínculo entre CR-filial e usuário, existente.
+     * Atualiza um CR-instrutor existente no banco de dados.
      * @param id identificador do CR-instrutor.
      * @param request novos dados do CR-instrutor.
      * @return vínculo atualizado.

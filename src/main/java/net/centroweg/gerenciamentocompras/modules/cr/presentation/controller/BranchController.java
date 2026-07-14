@@ -24,11 +24,11 @@ public class BranchController {
     private final BranchService branchService;
 
     /**
-     * Criar uma nova filial.
-     * @param branchRequest corpo da requisição com os dados da filial.
-     * @return a unidade de medida criada.
+     * Cria uma nova filial.
+     * @param branchRequest dados da filial.
+     * @return filial criada.
      */
-    @Operation(description = "ENDPOINT responsável pela criação de filial")
+    @Operation(description = "ENDPOINT responsável pela criação de uma filial")
     @PostMapping
     public ResponseEntity<BranchResponse> create(@RequestBody BranchRequest branchRequest){
         return ResponseEntity.status(201)
@@ -36,7 +36,7 @@ public class BranchController {
     }
 
     /**
-     * Listar todas as filiais cadastradas.
+     * Lista todas as filiais cadastradas.
      * @return lista de filiais encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todas as filiais")
@@ -59,12 +59,12 @@ public class BranchController {
     }
 
     /**
-     * Atualizar os dados de uma filial existente.
-     * @param id identificador da filial a ser atualizada.
-     * @param branchRequest corpo da requisição com os novos dados da filial.
+     * Atualiza uma filial existente.
+     * @param id identificador da filial.
+     * @param branchRequest novos dados da filial.
      * @return filial já atualizada.
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de filiais")
+    @Operation(description = "ENDPOINT responsável pela atualização de uma filial")
     @PutMapping("/{id}")
     public ResponseEntity<BranchResponse> update(@PathVariable Long id, @RequestBody BranchRequest branchRequest){
         return ResponseEntity.status(200)
@@ -72,8 +72,8 @@ public class BranchController {
     }
 
     /**
-     * Remover uma filial pelo seu identificador.
-     * @param id identificador da filial a ser removida.
+     * Remove uma filial pelo seu identificador.
+     * @param id identificador da filial.
      * @return mensagem de confirmação da remoção.
      */
     @Operation(description = "ENDPOINT responsável por deletar as filiais")
@@ -82,5 +82,4 @@ public class BranchController {
         return ResponseEntity.status(204)
                 .body(branchService.delete(id));
     }
-
 }

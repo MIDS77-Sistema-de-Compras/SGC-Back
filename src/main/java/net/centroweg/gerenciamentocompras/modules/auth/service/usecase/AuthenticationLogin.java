@@ -32,7 +32,6 @@ public class AuthenticationLogin {
      */
     public String loginAndGenerateToken(LogIn loginDto){
         var authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.userName(), loginDto.password());
-
         var authentication = authenticationManager.authenticate(authenticationToken);
 
         return jwtService.generateToken((UserPrincipal) authentication.getPrincipal());

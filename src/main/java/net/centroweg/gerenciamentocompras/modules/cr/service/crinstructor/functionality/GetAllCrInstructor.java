@@ -19,7 +19,7 @@ public class GetAllCrInstructor {
     private final CrInstructorMapper crInstructorMapper;
 
     /**
-     * Lista todos os vínculos entre CR-filial e usuário, chamado de CR-instrutor cadastrados no sistema.
+     * Lista todos os CR-instrutores cadastrados no banco de dados.
      * @return lista com todos os vínculos encontrados.
      */
     public List<CrInstructorResponse> getAll(){

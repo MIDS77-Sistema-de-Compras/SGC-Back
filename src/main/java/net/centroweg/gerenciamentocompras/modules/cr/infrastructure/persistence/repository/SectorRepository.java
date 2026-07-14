@@ -14,7 +14,7 @@ public interface SectorRepository extends JpaRepository<Sector, Long> {
     /**
      * Busca um bloco pelo nome.
      * @param name nome do bloco.
-     * @return {@link Optional} com o bloco encontrado, caso exista.
+     * @return bloco encontrado, caso exista.
      */
     Optional<Sector> findByName(String name);
 }

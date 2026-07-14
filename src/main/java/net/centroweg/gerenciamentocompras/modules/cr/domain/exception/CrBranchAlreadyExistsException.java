@@ -8,6 +8,6 @@ import org.springframework.http.HttpStatus;
  */
 public class CrBranchAlreadyExistsException extends BusinessException {
     public CrBranchAlreadyExistsException() {
-        super("CR já vinculado a esta filial", HttpStatus.CONFLICT);
+        super("CR já vinculado a esta filial!", HttpStatus.CONFLICT);
     }
 }

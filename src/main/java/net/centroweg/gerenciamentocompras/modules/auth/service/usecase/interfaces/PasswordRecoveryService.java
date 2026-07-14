@@ -30,5 +30,4 @@ public interface PasswordRecoveryService {
      * @param token token de recuperação utilizado para autorizar a atualização.
      */
     public void changePasswordWhenValidToken(NewPassword newPassword, String token);
-
 }

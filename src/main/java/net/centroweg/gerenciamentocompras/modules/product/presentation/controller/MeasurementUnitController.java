@@ -23,7 +23,7 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Measurem
 /**
  * Controlador REST responsável pelos endpoints de gerenciamento da {@link MeasurementUnit}.
  */
-@Tag(name = "ENDPOINTS da entidade MEASUREMENT-UNIT")
+@Tag(name = "ENDPOINTS da entidade unidade de medida")
 @RestController
 @RequestMapping("/measurement-unit")
 @RequiredArgsConstructor
@@ -36,7 +36,7 @@ public class MeasurementUnitController {
      * @param request dados da unidade de medida.
      * @return unidade de medida criada.
      */
-    @Operation(description = "ENDPOINT responsável pela criação de unidades de medida")
+    @Operation(description = "ENDPOINT responsável pela criação de uma unidade de medida")
     @PostMapping
     public ResponseEntity<MeasurementUnitResponse> createMeasurementUnit(@Valid @RequestBody MeasurementUnitRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(measurementUnitService.createMeasurementUnit(request));
@@ -53,22 +53,22 @@ public class MeasurementUnitController {
     }
 
     /**
-     * Busca uma unidade de medida peo identificador.
+     * Busca uma unidade de medida pelo seu identificador.
      * @param id identificador da unidade de medida.
      * @return unidade de medida encontrada, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela busca de unidades de medida por id")
+    @Operation(description = "ENDPOINT responsável pela busca de uma unidade de medida pelo id")
     @GetMapping("/{id}")
     public ResponseEntity<MeasurementUnitResponse> findMeasurementUnitById(@PathVariable Long id){
         return ResponseEntity.ok(measurementUnitService.findMeasurementUnitById(id));
     }
 
     /**
-     * Busca uma unidade de medida pela abreviação.
-     * @param abbreviation abreviação da unidade de medida.
+     * Busca uma unidade de medida pela abreviação(sigla).
+     * @param abbreviation abreviação(sigla) da unidade de medida.
      * @return unidade de medida encontrada, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela busca de unidades de medida por abreviação")
+    @Operation(description = "ENDPOINT responsável pela busca de uma unidade de medida pela abreviação")
     @GetMapping("/search")
     public ResponseEntity<MeasurementUnitResponse> findMeasurementUnitByAbbreviation(@RequestParam String abbreviation){
         return ResponseEntity.ok(measurementUnitService.findMeasurementUnitByAbbreviation(abbreviation));
@@ -76,7 +76,7 @@ public class MeasurementUnitController {
 
     /**
      * Atualiza uma unidade de medida existente.
-     * @param id identificador da unidade de medida a ser atualizada.
+     * @param id identificador da unidade de medida.
      * @param request novos dados da unidade de medida.
      * @return unidade de medida atualizada.
      */

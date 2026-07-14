@@ -7,7 +7,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
  * @param id identificador do CR.
  * @param name nome do CR.
  * @param code código do CR.
- * @param master boolean que indica se é o CR master(true) ou não(false).
+ * @param master booleano que indica se é o CR master ou não.
  * @param sector nome do bloco que a CR pertence.
  */
 

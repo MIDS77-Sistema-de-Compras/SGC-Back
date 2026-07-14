@@ -2,12 +2,10 @@ package net.centroweg.gerenciamentocompras.modules.provision.infrastructure.pers
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 
 /**
- * Interface extendendo o JPA para interação no banco de dados.
- * @see {@code JpaRepository<T,ID>}
+ * Repositório de acesso a dados da entidade {@link Provision}.
  */
 @Repository
 public interface ProvisionRepository extends JpaRepository<Provision, Long> {}

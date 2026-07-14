@@ -13,60 +13,60 @@ import java.util.List;
 public interface CrBranchService {
 
     /**
-     * Cria um novo CR-filial.
-     * @param request dados do CR-filial a ser criado.
-     * @return CR-filial já criado.
+     * Cria e persiste um novo CR-filial no banco de dados.
+     * @param request dados do CR-filial.
+     * @return CR-filial criado.
      */
     CrBranchResponse create(CrBranchRequest request);
 
     /**
-     * Listagem de todos os CR-filiais que correspondem a pesquisa.
+     * Listagem de todos os CR-filiais correspondentes a pesquisa cadastrados no banco de dados.
      * @param filter parâmetro para realizar alguma pesquisa específica.
-     * @return lista com os CR-filiais encontrados da pesquisa, caso não tenha parâmetro, vai listar todos.
+     * @return lista com os CR-filiais encontrados, caso não tenha parâmetro, vai listar todos.
      */
     List<CrBranchResponse> findAll(CrBranchFilterRequest filter);
 
     /**
-     * Busca um CR-filial pelo seu ID.
+     * Busca um CR-filial no banco de dados pelo ID informado.
      * @param id identificador do CR-filial.
-     * @return CR-filial que foi encontrado na pesquisa.
+     * @return CR-filial encontrado, caso exista.
      */
     CrBranchResponse findById(Long id);
 
     /**
-     * Atualiza um CR-filial existente.
-     * @param id identificador do CR-filial a ser atualizado.
+     * Atualiza um CR-filial existente no banco de dados.
+     * @param id identificador do CR-filial.
      * @param request novos dados do CR-filial.
-     * @return CR-filial com os dados já atualizados.
+     * @return CR-filial já atualizado.
      */
     CrBranchResponse update(Long id, CrBranchRequest request);
 
     /**
-     * Deleta um CR-filial no banco de dados.
-     * @param id identificador do CR-filial a ser excluído.
-     * @return mensagem de sucesso se tudo ocorrer certo.
+     * Remove um CR-filial do banco de dados.
+     * @param id identificador do CR-filial.
+     * @return mensagem de sucesso da remoção.
      */
     MessageDTO delete(Long id);
 
     /**
-     * Lista os CR-filiais que pertencem a uma filial.
+     * Lista todos os CR-filiais que pertencem a uma filial cadastrados no banco de dados.
      * @param branchId identificador da filial.
-     * @return lista com os CR-filiais encontrados, vazio caso não tenha nenhum.
+     * @return lista com os CR-filiais encontrados, caso exista.
      */
     List<CrBranchResponse> findCrBranchByBranch(Long branchId);
 
     /**
-     * Adicionar um responsável a um CR-filial.
-     * @param crBranchId identificador do CR-filial que vai receber um usuário.
-     * @param userId identificador do usuário que será atribuído a um CR-filial.
-     * @return CR-filial atualizado com a atribuição.
+     * Atribuir um usuário responsável a um vínculo CR-filial no banco de dados.
+     * @param crBranchId identificador do CR-filial.
+     * @param userId identificador do usuário.
+     * @return CR-filial atualizado.
      */
     CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId);
 
     /**
-     * Remove um responsável de um CR-filial.
+     * Remove um usuário responsável de um vínculo CR-filial no banco de dados.
      * @param crBranchId identificador do CR-filial.
-     * @return CR-filial atualizado.
+     * @return CR-filial atualizado sem o usuário.
      */
     CrBranchResponse removeCrBranchResponsible(Long crBranchId);
 }

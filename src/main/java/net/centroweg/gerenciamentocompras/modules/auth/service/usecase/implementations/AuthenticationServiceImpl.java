@@ -7,7 +7,7 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.
 import org.springframework.stereotype.Service;
 
 /**
- * Implementação do serviço de autenticação de aplicação.
+ * Implementação do serviço de autenticação da aplicação.
  */
 @Service
 @RequiredArgsConstructor

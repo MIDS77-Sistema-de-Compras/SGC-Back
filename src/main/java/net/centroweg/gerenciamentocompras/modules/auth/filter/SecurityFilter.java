@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-
 import java.io.IOException;
 
 /**
@@ -51,7 +50,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     /**
      * Método que executa o processo de autenticação antes de cada requisição HTTP.
      * @param request requisição HTTP recebida.
-     * @param response resposta HTTP que será enviada ao cliente.
+     * @param response resposta HTTP que será enviada ao usuário.
      * @param filterChain filtros responsáveis por dar continuidade ao processamento da requisição.
      * @throws ServletException caso ocorra algum erro relacionado ao processamento do servlet.
      * @throws IOException caso ocorra algum erro de entrada ou saída.
@@ -66,7 +65,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 String tokenValidated = jwtService.validateToken(token);
 
                 if (tokenValidated == null) {
-                    throw new InvalidTokenException("Token inválido");
+                    throw new InvalidTokenException("Token inválido!");
                 }
 
                 UserDetails user = customUserDetailsService.loadUserByUsername(tokenValidated);
@@ -86,7 +85,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     /**
      * Procura o cookie com o nome JWT na requisição HTTP e retorna seu valor.
      * @param request requisição HTTP recebida.
-     * @return token JWT encontrado no cookie ou {@code null} caso o cookie não exista.
+     * @return token JWT encontrado no cookie ou nulo caso o cookie não exista.
      */
     private String extractJwt(HttpServletRequest request) {
         Cookie [] cookies = request.getCookies();

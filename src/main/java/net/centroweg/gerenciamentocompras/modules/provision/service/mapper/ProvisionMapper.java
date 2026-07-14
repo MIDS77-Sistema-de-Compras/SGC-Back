@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.provision.service.mapper;
 
 import java.util.List;
 
-import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
 

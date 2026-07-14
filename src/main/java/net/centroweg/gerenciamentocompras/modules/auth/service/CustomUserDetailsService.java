@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Carrega os dados do usuário a partir do login informado.
-     *  @param login e-mail ou CPF informado pelo usuário.
+     * @param login e-mail ou CPF informado pelo usuário.
      * @return objeto contendo os dados do usuário autenticado.
      * @throws UsernameNotFoundException caso nenhum usuário seja encontrado.
      */
@@ -42,7 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         String searchCpf = cleanCpf.isEmpty() ? "" : cpfHasher.hash(cleanCpf);
 
         User userSearched = authPublicApi.findByEmailOrCpf(cleanLogin, searchCpf)
-                .orElseThrow(() -> new UsernameNotFoundException("Credenciais inválidas para o login fornecido"));
+                .orElseThrow(() -> new UsernameNotFoundException("Credenciais inválidas para o login fornecido!"));
 
         return new UserPrincipal(userSearched);
     }

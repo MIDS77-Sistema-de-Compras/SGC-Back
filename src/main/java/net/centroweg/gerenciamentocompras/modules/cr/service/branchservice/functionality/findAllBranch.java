@@ -20,8 +20,8 @@ public class findAllBranch {
     private final BranchMapper branchMapper;
 
     /**
-     * Retorna todas as filiais registradas no banco de dados.
-     * @return lista de filiais, vazia se não houver nenhuma cadastrada.
+     * Retorna todas as filiais cadastradas no banco de dados.
+     * @return lista de filiais, caso exista.
      */
     public List<BranchResponse> listAll(){
         List<Branch> branches = branchRepository.findAll();

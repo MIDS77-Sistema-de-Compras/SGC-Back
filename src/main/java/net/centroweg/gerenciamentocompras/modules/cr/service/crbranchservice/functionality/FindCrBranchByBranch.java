@@ -21,9 +21,9 @@ public class FindCrBranchByBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Lista todos os vínculos CR-filial associados a uma filial.
+     * Lista todos os vínculos CR-filial associados a uma filial cadastrados no banco de dados.
      * @param branchId identificador da filial.
-     * @return a lista de vínculos da filial, vazia se não houver nenhum.
+     * @return lista de vínculos da filial, caso exista.
      * @throws BranchNotFoundException se a filial não for encontrada.
      */
     public List<CrBranchResponse> findCrBranchByBranch(Long branchId) {

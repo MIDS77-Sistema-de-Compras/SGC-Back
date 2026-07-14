@@ -20,7 +20,7 @@ public class CreateBranch {
 
     /**
      * Cria e persiste uma nova filial no banco de dados.
-     * @param branchRequest dados da filial a ser criada.
+     * @param branchRequest dados da filial.
      * @return filial criada.
      */
     public BranchResponse create(BranchRequest branchRequest){

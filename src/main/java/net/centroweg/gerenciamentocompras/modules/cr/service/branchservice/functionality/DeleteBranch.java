@@ -18,9 +18,9 @@ public class DeleteBranch {
     private final BranchMapper branchMapper;
 
     /**
-     * Remove a filial com o ID informado do banco de dados.
-     * @param id identificador da filial a ser removida.
-     * @return confirmação da operação.
+     * Remove uma filial do banco de dados.
+     * @param id identificador da filial.
+     * @return mensagem de confirmação da remoção.
      */
     public MessageDTO delete(Long id){
         branchRepository.deleteById(id);

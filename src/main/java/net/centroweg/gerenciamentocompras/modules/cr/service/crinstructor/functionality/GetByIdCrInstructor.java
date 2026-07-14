@@ -19,7 +19,7 @@ public class GetByIdCrInstructor {
     private final CrInstructorMapper crInstructorMapper;
 
     /**
-     * Busca um CR-instrutor, vínculo entre CR-filial e usuário, pelo ID fornecido.
+     * Busca um CR-instrutor no banco de dados pelo ID informado.
      * @param id identificador do CR-instrutor.
      * @return vínculo encontrado.
      */

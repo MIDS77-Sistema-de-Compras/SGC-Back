@@ -21,7 +21,7 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
 /**
- * Controlador responsável por liberar os endpoints de autenticação e recuperação de senha.
+ * Controlador REST responsável pelo gerenciamento dos endpoints de autenticação e recuperação de senha.
  */
 @Tag(name = "ENDPOINTS de autenticação")
 @RestController
@@ -73,7 +73,7 @@ public class AuthenticationController {
     public ResponseEntity<MessageDTO> sendEmailWithToken(@Valid @RequestBody Recovery recoveryDto){
         try{
             passwordRecoveryService.validateAndGenerateRecoveryToken(recoveryDto);
-            return ResponseEntity.ok().body(new MessageDTO("Enviamos um email, não esqueça de conferir a caixa de spam, caso necessário."));
+            return ResponseEntity.ok().body(new MessageDTO("Enviamos um e-mail, não esqueça de conferir a caixa de spam, caso necessário."));
 
         }catch(MessagingException exception){
             return ResponseEntity.internalServerError().build();
@@ -89,7 +89,7 @@ public class AuthenticationController {
     @PostMapping("/recovery/new")
     public ResponseEntity<MessageDTO> validateAndChangePassword(@Valid @RequestBody NewPassword newPasswordDto, @RequestParam String token){
         passwordRecoveryService.changePasswordWhenValidToken(newPasswordDto, token);
-        return ResponseEntity.ok().body(new MessageDTO("Senha atualizada com sucesso"));
+        return ResponseEntity.ok().body(new MessageDTO("Senha atualizada com sucesso!"));
     }
 
 }

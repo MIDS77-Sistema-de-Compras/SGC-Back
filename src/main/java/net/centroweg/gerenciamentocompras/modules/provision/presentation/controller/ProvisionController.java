@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.provision.presentation.controller;
 
 import java.util.List;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -14,22 +13,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
 import net.centroweg.gerenciamentocompras.modules.provision.service.interfaces.ProvisionService;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 
 /**
- * Classe responsável por controlar os endpoints da API
- * @author gabrielEFagundes
- * @version 0.1.0
- * @see ProvisionService
- * @see ProvisionRequest
- * @see ProvisionResponse
+ * Controlador REST responsável pelos endpoints de gerenciamento de {@link Provision}.
  */
-@Tag(name = "ENDPOINTS da entidade PROVISION")
+@Tag(name = "ENDPOINTS da entidade serviço")
 @RestController
 @RequestMapping("/provisions")
 @RequiredArgsConstructor
@@ -38,12 +32,11 @@ public class ProvisionController {
     private final ProvisionService provisionService;
 
     /**
-     * Método responsável por salvar o serviço no banco de dados.
-     * @param request O corpo da requisição inserido pelo usuário.
-     * @return {@code ResponseEntity<ProvisionResponse>} Uma resposta de status HTTP com o corpo do serviço salvo.
-     * @see ProvisionService#createProvision(ProvisionRequest)
+     * Cria um novo serviço.
+     * @param request dados do serviço.
+     * @return serviço criado.
      */
-    @Operation(description = "ENDPOINT responsável pela criação de Provision")
+    @Operation(description = "ENDPOINT responsável pela criação de um serviço")
     @PostMapping
     public ResponseEntity<ProvisionResponse> saveProvision(@Valid @RequestBody ProvisionRequest request){
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -55,7 +48,7 @@ public class ProvisionController {
      * @return {@code ResponseEntity<List<ProvisionResponse>>} Uma resposta de status HTTP com a lista de serviços.
      * @see ProvisionService#getAllProvisions()
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de todos Provision")
+    @Operation(description = "ENDPOINT responsável pela listagem de todos os serviços")
     @GetMapping
     public ResponseEntity<List<ProvisionResponse>> listAllProvision(){
         return ResponseEntity.status(HttpStatus.OK)

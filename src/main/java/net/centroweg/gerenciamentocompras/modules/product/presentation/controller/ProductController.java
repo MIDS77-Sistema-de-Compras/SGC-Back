@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller REST responsável pelos endpoints de gerenciamento de {@link Product}.
+ * Controlador REST responsável pelos endpoints de gerenciamento de {@link Product}.
  */
 @Tag(name = "ENDPOINTS da entidade PRODUCT")
 @RestController

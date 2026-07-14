@@ -19,9 +19,9 @@ public class DeleteCrBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Remove um vínculo CR-filial pelo seu identificador.
+     * Remove um vínculo CR-filial do banco de dados.
      * @param id identificador do CR-filial.
-     * @return uma mensagem de confirmação da remoção.
+     * @return mensagem de confirmação da remoção.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */
     public MessageDTO delete(Long id) {

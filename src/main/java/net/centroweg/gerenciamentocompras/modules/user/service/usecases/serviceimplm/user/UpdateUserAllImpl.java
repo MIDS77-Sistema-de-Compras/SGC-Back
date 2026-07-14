@@ -58,7 +58,7 @@ public class UpdateUserAllImpl {
 
         userSave.setName(user.name());
         userSave.setEmail(user.email());
-        userSave.setPassword(user.password());
+        userSave.setPassword(encryptedPassword);
         userSave.setExtensionNumber(user.extensionNumber());
         userSave.setActive(user.active());
         userSave.setUpdatedAt(LocalDateTime.now());

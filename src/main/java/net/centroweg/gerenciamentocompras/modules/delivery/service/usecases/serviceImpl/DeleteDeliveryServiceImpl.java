@@ -5,6 +5,8 @@ import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Deliver
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryAlreadyInactiveException;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
+import net.centroweg.gerenciamentocompras.modules.request.domain.strategy.DeliveryCancelledStatusImpl;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeleteDeliveryServiceImpl {
 
     private final DeliveryRepository deliveryRepository;
+    private final StatusRepository statusRepository;
 
     @Transactional
     public void delete(Long id) {
@@ -21,6 +24,7 @@ public class DeleteDeliveryServiceImpl {
         ensureActive(delivery);
 
         delivery.setActive(false);
+        applyCancelledStatus(delivery);
         deliveryRepository.save(delivery);
     }
 
@@ -28,5 +32,14 @@ public class DeleteDeliveryServiceImpl {
         if (!Boolean.TRUE.equals(delivery.getActive())) {
             throw new DeliveryAlreadyInactiveException();
         }
+    }
+
+    /**
+     * Marca a entrega cancelada com o status "Pedido cancelado".
+     */
+    private void applyCancelledStatus(Delivery delivery) {
+        String cancelledStatusName = new DeliveryCancelledStatusImpl().getName();
+        statusRepository.findByNameIgnoreCase(cancelledStatusName)
+                .ifPresent(delivery::setStatus);
     }
 }

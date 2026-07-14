@@ -37,11 +37,16 @@ public class RequestBusinessRuleValidator {
 
     public void validateCanEdit(Request request, User currentUser) {
         validateRequestIsActive(request);
-        validateUserIsCreator(request, currentUser);
 
         if (isOperationalApprovedOrAfter(request)) {
             throw new RequestNotEditableException();
         }
+
+        if (isCreator(request, currentUser)) {
+            return;
+        }
+
+        validateActingRole(request, currentUser);
     }
 
     public void validateCrCanBeChanged(Request request, User currentUser) {
@@ -49,11 +54,17 @@ public class RequestBusinessRuleValidator {
             return;
         }
 
-        String roleName = currentUser.getRole() != null
-                ? normalize(currentUser.getRole().getName())
-                : "";
+        if (hasRole(currentUser, ADMIN_ROLE)) {
+            return;
+        }
 
-        if (roleName.equals(normalize(ADMIN_ROLE))) {
+        if (hasRole(currentUser, Authorities.COORDENADOR)) {
+            validateUserIsResponsibleForCr(request, currentUser);
+            return;
+        }
+
+        if (hasRole(currentUser, Authorities.SUPERVISOR) && !isMasterCr(request)) {
+            validateUserIsResponsibleForCr(request, currentUser);
             return;
         }
 
@@ -67,13 +78,15 @@ public class RequestBusinessRuleValidator {
     }
 
     private void validateUserIsCreator(Request request, User currentUser) {
-        boolean isCreator = request.getCreatedByUsers()
-                .stream()
-                .anyMatch(user -> user.getId().equals(currentUser.getId()));
-
-        if (!isCreator) {
+        if (!isCreator(request, currentUser)) {
             throw new AcessDeniedException();
         }
+    }
+
+    private boolean isCreator(Request request, User currentUser) {
+        return request.getCreatedByUsers()
+                .stream()
+                .anyMatch(user -> user.getId().equals(currentUser.getId()));
     }
 
     private boolean isSupervisorApprovedOrAfter(Request request) {
@@ -95,12 +108,35 @@ public class RequestBusinessRuleValidator {
 
     public void validateCanUpdateStatus(Request request, User currentUser) {
         validateRequestIsActive(request);
+        validateActingRole(request, currentUser);
+    }
 
-        if (hasRole(currentUser, Authorities.COMPRADOR)) {
+    public void validateCanEditItems(Request request, User currentUser) {
+        validateRequestIsActive(request);
+
+        if (isCreator(request, currentUser)) {
             return;
         }
 
+        validateActingRole(request, currentUser);
+    }
+
+    private void validateActingRole(Request request, User currentUser) {
+        if (hasRole(currentUser, Authorities.COMPRADOR) || hasRole(currentUser, ADMIN_ROLE)) {
+            return;
+        }
+
+        if (isMasterCr(request) && hasRole(currentUser, Authorities.SUPERVISOR)) {
+            throw new AcessDeniedException();
+        }
+
         validateUserIsResponsibleForCr(request, currentUser);
+    }
+
+    private boolean isMasterCr(Request request) {
+        return request.getCrBranch() != null
+                && request.getCrBranch().getCr() != null
+                && Boolean.TRUE.equals(request.getCrBranch().getCr().getMaster());
     }
 
     private boolean hasRole(User user, String roleName) {

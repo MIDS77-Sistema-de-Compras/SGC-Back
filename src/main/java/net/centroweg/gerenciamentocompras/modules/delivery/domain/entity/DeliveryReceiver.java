@@ -1,13 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.delivery.domain.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -32,15 +31,16 @@ import java.time.LocalDateTime;
 @Setter
 public class DeliveryReceiver {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private DeliveryReceiverId id = new DeliveryReceiverId();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("deliveryId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "delivery_id", nullable = false)
     private Delivery delivery;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("userId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -52,6 +52,10 @@ public class DeliveryReceiver {
     private String observation;
 
     public DeliveryReceiver(Delivery delivery, User user) {
+        this.id = new DeliveryReceiverId(
+                delivery == null ? null : delivery.getId(),
+                user == null ? null : user.getId()
+        );
         this.delivery = delivery;
         this.user = user;
         this.confirmed = false;

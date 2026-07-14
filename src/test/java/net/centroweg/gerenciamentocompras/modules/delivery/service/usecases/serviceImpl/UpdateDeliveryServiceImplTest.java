@@ -8,7 +8,8 @@ import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.Del
 import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryReceiverValidator;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ class UpdateDeliveryServiceImplTest {
     private DeliveryRepository deliveryRepository;
 
     @Mock
-    private StatusRepository statusRepository;
+    private StatusPublicApi statusPublicApi;
 
     @Mock
     private UserRepository userRepository;
@@ -59,10 +60,10 @@ class UpdateDeliveryServiceImplTest {
     void setUp() {
         service = new UpdateDeliveryServiceImpl(
                 deliveryRepository,
-                statusRepository,
+                statusPublicApi,
                 new DeliveryReceiverValidator(userRepository),
                 deliveryItemResolver,
-                new DeliveryMapper()
+                new DeliveryMapper(statusPublicApi)
         );
         request = request();
         status = status();
@@ -79,7 +80,7 @@ class UpdateDeliveryServiceImplTest {
     void shouldUpdateDeliveryData() {
         Delivery delivery = delivery(request, status, firstReceiver, secondReceiver);
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(statusRepository.findById(20L)).thenReturn(Optional.of(status));
+        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(status));
         when(userRepository.findAllById(List.of(1L, 2L))).thenReturn(List.of(firstReceiver, secondReceiver));
 
         var response = service.update(100L, updateRequest(List.of(1L, 2L)));
@@ -97,7 +98,7 @@ class UpdateDeliveryServiceImplTest {
         delivery.getReceivers().get(0).setObservation("preservar");
 
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(statusRepository.findById(20L)).thenReturn(Optional.of(status));
+        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(status));
         when(userRepository.findAllById(List.of(1L, 3L))).thenReturn(List.of(firstReceiver, thirdReceiver));
 
         var response = service.update(100L, updateRequest(List.of(1L, 3L)));

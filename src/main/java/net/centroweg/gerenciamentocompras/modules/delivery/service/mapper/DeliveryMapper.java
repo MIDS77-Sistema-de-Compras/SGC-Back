@@ -6,6 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Deliver
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryStatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryReceiverResponse;
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryResponse;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
 import org.springframework.stereotype.Component;
@@ -26,14 +27,14 @@ public class DeliveryMapper {
                 .map(this::toReceiverDTO)
                 .toList();
 
-        StatusPublicData status = statusPublicApi.findById(delivery.getStatusId())
+        Status status = statusPublicApi.findById(delivery.getStatus().getId())
                 .orElseThrow(DeliveryStatusNotFoundException::new);
 
         return new DeliveryResponse(
                 delivery.getId(),
                 delivery.getRequest().getId(),
-                status.id(),
-                status.name(),
+                status.getId(),
+                status.getName(),
                 delivery.getExpectedDeliveryAt(),
                 delivery.getDeliveredAt(),
                 delivery.getDeliveryLocation(),

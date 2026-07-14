@@ -45,7 +45,7 @@ final class DeliveryServiceTestFixtures {
         Delivery delivery = new Delivery();
         delivery.setId(100L);
         delivery.setRequest(request);
-        delivery.setStatusId(status.getId());
+        delivery.setStatus(status);
         delivery.setExpectedDeliveryAt(LocalDateTime.now().plusDays(1));
         delivery.setDeliveryLocation("Portaria");
         delivery.setActive(true);

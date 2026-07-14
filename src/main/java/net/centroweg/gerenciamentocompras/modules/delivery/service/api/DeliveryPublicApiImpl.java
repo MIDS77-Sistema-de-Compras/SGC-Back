@@ -38,9 +38,10 @@ public class DeliveryPublicApiImpl implements DeliveryPublicApi {
     @Transactional(readOnly = true)
     public DeliveryCreatedNotificationData findNotificationDataById(Long deliveryId) {
         Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(DeliveryNotFoundException::new);
-        var status = statusPublicApi.findById(delivery.getStatusId()).orElseThrow(DeliveryStatusNotFoundException::new);
+        var status = statusPublicApi.findById(delivery.getStatus().getId()).orElseThrow(DeliveryStatusNotFoundException::new);
+
         return new DeliveryCreatedNotificationData(
-                delivery.getId(), delivery.getRequest().getId(), status.id(), status.name(),
+                delivery.getId(), delivery.getRequest().getId(), status.getId(), status.getName(),
                 delivery.getExpectedDeliveryAt(), delivery.getDeliveredAt(), delivery.getDeliveryLocation(),
                 delivery.getDescription(),
                 delivery.getReceivers().stream()

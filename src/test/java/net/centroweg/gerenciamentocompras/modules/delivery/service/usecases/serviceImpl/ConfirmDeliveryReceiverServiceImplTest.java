@@ -46,8 +46,8 @@ class ConfirmDeliveryReceiverServiceImplTest {
         pending = status();
         first = user(1L, "Primeiro", true);
         second = user(2L, "Segundo", true);
-        lenient().when(statusPublicApi.findById(20L)).thenReturn(Optional.of(new StatusPublicData(20L, "EM_ANDAMENTO")));
-        lenient().when(statusPublicApi.findById(30L)).thenReturn(Optional.of(new StatusPublicData(30L, "Entregue")));
+        lenient().when(statusPublicApi.findById(20L)).thenReturn(Optional.of(pending));
+        lenient().when(statusPublicApi.findById(30L)).thenReturn(Optional.of(deliveredStatus()));
         lenient().when(deliveryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
@@ -70,7 +70,7 @@ class ConfirmDeliveryReceiverServiceImplTest {
         delivery.getReceivers().getFirst().setConfirmed(true);
         delivery.getReceivers().getFirst().setConfirmedAt(LocalDateTime.now().minusHours(1));
         mockDelivery(delivery, second);
-        when(statusPublicApi.findByName("Entregue")).thenReturn(Optional.of(new StatusPublicData(30L, "Entregue")));
+        when(statusPublicApi.findByName("Entregue")).thenReturn(Optional.of(deliveredStatus()));
 
         var response = service.confirmReceiver(100L, 2L, confirmRequest());
 

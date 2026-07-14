@@ -41,7 +41,7 @@ public class UpdateDeliveryServiceImpl {
                 .orElseThrow(DeliveryStatusNotFoundException::new);
         List<User> receivers = deliveryReceiverValidator.validateAndFindReceivers(request.receiverIds());
 
-        delivery.setStatusId(status.id());
+        delivery.setStatus(status);
         delivery.setExpectedDeliveryAt(request.expectedDeliveryAt());
         delivery.setDeliveredAt(request.deliveredAt());
         delivery.setDeliveryLocation(request.deliveryLocation());

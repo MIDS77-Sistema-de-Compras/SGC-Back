@@ -80,7 +80,7 @@ class UpdateDeliveryServiceImplTest {
     void shouldUpdateDeliveryData() {
         Delivery delivery = delivery(request, status, firstReceiver, secondReceiver);
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(new StatusPublicData(status.getId(), status.getName())));
+        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(status));
         when(userRepository.findAllById(List.of(1L, 2L))).thenReturn(List.of(firstReceiver, secondReceiver));
 
         var response = service.update(100L, updateRequest(List.of(1L, 2L)));
@@ -98,7 +98,7 @@ class UpdateDeliveryServiceImplTest {
         delivery.getReceivers().get(0).setObservation("preservar");
 
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(new StatusPublicData(status.getId(), status.getName())));
+        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(status));
         when(userRepository.findAllById(List.of(1L, 3L))).thenReturn(List.of(firstReceiver, thirdReceiver));
 
         var response = service.update(100L, updateRequest(List.of(1L, 3L)));

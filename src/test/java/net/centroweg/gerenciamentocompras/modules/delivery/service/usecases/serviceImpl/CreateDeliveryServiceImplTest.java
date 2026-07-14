@@ -161,7 +161,7 @@ class CreateDeliveryServiceImplTest {
 
     private void mockRequestAndStatus() {
         when(requestRepository.findById(10L)).thenReturn(Optional.of(request));
-        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(new StatusPublicData(status.getId(), status.getName())));
+        when(statusPublicApi.findById(20L)).thenReturn(Optional.of(status));
     }
 
     private void mockRequestStatusAndReceivers(List<User> receivers) {

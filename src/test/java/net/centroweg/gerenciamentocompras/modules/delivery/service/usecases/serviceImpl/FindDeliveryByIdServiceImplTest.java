@@ -40,8 +40,7 @@ class FindDeliveryByIdServiceImplTest {
         service = new FindDeliveryByIdServiceImpl(deliveryRepository, new DeliveryMapper(statusPublicApi));
         Request request = request();
         Status status = status();
-        org.mockito.Mockito.lenient().when(statusPublicApi.findById(status.getId()))
-                .thenReturn(java.util.Optional.of(new StatusPublicData(status.getId(), status.getName())));
+        org.mockito.Mockito.lenient().when(statusPublicApi.findById(status.getId())).thenReturn(Optional.of(status));
         User firstReceiver = user(1L, "Primeiro", true);
         User secondReceiver = user(2L, "Segundo", true);
         delivery = delivery(request, status, firstReceiver, secondReceiver);

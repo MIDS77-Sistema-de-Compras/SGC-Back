@@ -282,7 +282,7 @@ class DeliveryIntegrationTest {
 
         Delivery persisted = deliveryRepository.findById(delivery.getId()).orElseThrow();
         assertThat(persisted.getReceivers()).allMatch(receiver -> Boolean.TRUE.equals(receiver.getConfirmed()));
-        assertThat(persisted.getStatusId()).isEqualTo(deliveredStatus.getId());
+        assertThat(persisted.getStatus().getId()).isEqualTo(deliveredStatus.getId());
         assertThat(persisted.getDeliveredAt()).isNotNull();
     }
 
@@ -444,7 +444,7 @@ class DeliveryIntegrationTest {
     private Delivery createDelivery() {
         Delivery delivery = new Delivery();
         delivery.setRequest(request);
-        delivery.setStatusId(pendingStatus.getId());
+        delivery.setStatus(pendingStatus);
         delivery.setExpectedDeliveryAt(LocalDateTime.now().plusDays(1));
         delivery.setDeliveryLocation("Portaria");
         Delivery saved = deliveryRepository.saveAndFlush(delivery);

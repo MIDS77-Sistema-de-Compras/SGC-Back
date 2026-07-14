@@ -12,9 +12,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.delivery;
 import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.request;
@@ -40,8 +42,7 @@ class FindAllDeliveryServiceImplTest {
         service = new FindAllDeliveryServiceImpl(deliveryRepository, new DeliveryMapper(statusPublicApi));
         Request request = request();
         Status status = status();
-        org.mockito.Mockito.lenient().when(statusPublicApi.findById(status.getId()))
-                .thenReturn(java.util.Optional.of(new StatusPublicData(status.getId(), status.getName())));
+        Mockito.lenient().when(statusPublicApi.findById(status.getId())).thenReturn(Optional.of(status));
         User firstReceiver = user(1L, "Primeiro", true);
         User secondReceiver = user(2L, "Segundo", true);
         activeDelivery = delivery(request, status, firstReceiver, secondReceiver);

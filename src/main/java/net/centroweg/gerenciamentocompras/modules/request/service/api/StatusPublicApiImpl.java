@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.api;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
 import org.springframework.stereotype.Service;
@@ -16,15 +17,13 @@ public class StatusPublicApiImpl implements StatusPublicApi {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<StatusPublicData> findById(Long id) {
-        return statusRepository.findById(id)
-                .map(status -> new StatusPublicData(status.getId(), status.getName()));
+    public Optional<Status> findById(Long id) {
+        return statusRepository.findById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<StatusPublicData> findByName(String name) {
-        return statusRepository.findByNameIgnoreCase(name)
-                .map(status -> new StatusPublicData(status.getId(), status.getName()));
+    public Optional<Status> findByName(String name) {
+        return statusRepository.findByNameIgnoreCase(name);
     }
 }

@@ -43,7 +43,7 @@ public class CreateDeliveryServiceImpl {
 
         Delivery delivery = new Delivery();
         delivery.setRequest(requestEntity);
-        delivery.setStatusId(status.id());
+        delivery.setStatus(status);
         delivery.setExpectedDeliveryAt(request.expectedDeliveryAt());
         delivery.setDeliveryLocation(request.deliveryLocation());
         delivery.setDescription(request.description());

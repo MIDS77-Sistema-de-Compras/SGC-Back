@@ -87,7 +87,6 @@ public class RequestController {
     @Operation(description = "ENDPOINT responsável pela atualização de Request")
     @PutMapping("/{id}")
     @Auditable(action = "ATUALIZAR_SOLICITACAO")
-
     public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody UpdateRequestRequest request, @AuditParam("request") @PathVariable Long id){
         return ResponseEntity.ok(requestService.updateRequest(request, id));
     }

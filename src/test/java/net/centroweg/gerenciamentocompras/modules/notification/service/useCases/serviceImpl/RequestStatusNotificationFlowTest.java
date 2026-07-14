@@ -63,6 +63,16 @@ class RequestStatusNotificationFlowTest {
     }
 
     @Test
+    void shouldOmitRefusalReasonWhenItIsAbsent() {
+        var internal = new RequestStatusInternalNotificationFactory().build(event("Recusado", null));
+        var email = new RequestStatusEmailContentFactory("http://localhost/requests/{requestId}")
+                .build(event("Recusado", "   "), data(List.of()), "Ana");
+
+        assertThat(internal.message()).doesNotContain("Justificativa", "null");
+        assertThat(email.html()).doesNotContain("Justificativa", ">null<");
+    }
+
+    @Test
     void shouldEscapeDynamicValuesInEmail() {
         var factory = new RequestStatusEmailContentFactory("http://localhost/requests/{requestId}");
         var html = factory.build(event("Recusado", "<script>alert(1)</script>"), data(List.of()), "<b>Ana</b>").html();

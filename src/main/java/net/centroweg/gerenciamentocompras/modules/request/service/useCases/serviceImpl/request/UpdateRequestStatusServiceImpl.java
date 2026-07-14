@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestRejectionJustificationRequiredException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
@@ -49,18 +48,16 @@ public class UpdateRequestStatusServiceImpl {
 
         boolean isRefused = isStatus(newStatus, REFUSED_STATUS);
 
-        if (isRefused && !StringUtils.hasText(dto.justification())) {
-            throw new RequestRejectionJustificationRequiredException();
-        }
-
         Status previousStatus = request.getStatus();
         Long previousStatusId = previousStatus != null ? previousStatus.getId() : null;
         boolean statusChanged = !Objects.equals(previousStatusId, newStatus.getId());
-        String justification = isRefused ? dto.justification().trim() : null;
+        String justification = isRefused && StringUtils.hasText(dto.justification())
+                ? dto.justification().trim()
+                : null;
 
         request.setStatus(newStatus);
 
-        if (isRefused) {
+        if (justification != null) {
             request.setFeedback(justification);
         }
 

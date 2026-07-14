@@ -7,7 +7,6 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestRejectionJustificationRequiredException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
@@ -23,6 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -112,21 +112,40 @@ class UpdateRequestStatusServiceImplTest {
         assertEquals("Orçamento indisponível.", eventCaptor.getValue().justification());
     }
 
-    @Test
-    @DisplayName("Não deve salvar nem publicar evento ao recusar sem justificativa")
-    void shouldRejectRefusalWithoutJustification() {
-        Scenario scenario = scenarioWithoutSave("Em análise", "Recusado");
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    @DisplayName("Deve recusar sem justificativa e publicar evento sem texto de feedback")
+    void shouldRefuseWithoutJustification(String justification) {
+        Scenario scenario = scenario("Em análise", "Recusado");
 
-        assertThrows(
-                RequestRejectionJustificationRequiredException.class,
-                () -> service.updateStatus(
-                        scenario.request().getId(),
-                        new UpdateRequestStatus("Recusado", "   ")
-                )
+        RequestResponse result = service.updateStatus(
+                scenario.request().getId(),
+                new UpdateRequestStatus("Recusado", justification)
         );
 
-        verify(requestRepository, never()).save(scenario.request());
-        verifyNoInteractions(eventPublisher, requestMapper);
+        assertSame(scenario.response(), result);
+        assertSame(scenario.newStatus(), scenario.request().getStatus());
+        assertNull(scenario.request().getFeedback());
+        verify(requestRepository).save(scenario.request());
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertNull(eventCaptor.getValue().justification());
+    }
+
+    @Test
+    @DisplayName("Deve preservar feedback anterior quando a recusa não informar nova justificativa")
+    void shouldKeepExistingFeedbackWhenRefusingWithoutNewJustification() {
+        Scenario scenario = scenario("Em análise", "Recusado");
+        scenario.request().setFeedback("Feedback anterior");
+
+        service.updateStatus(
+                scenario.request().getId(),
+                new UpdateRequestStatus("Recusado", null)
+        );
+
+        assertEquals("Feedback anterior", scenario.request().getFeedback());
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertNull(eventCaptor.getValue().justification());
     }
 
     @Test

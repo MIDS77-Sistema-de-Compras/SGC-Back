@@ -23,6 +23,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -152,9 +154,10 @@ class RequestStatusIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integracao] PATCH /requests/{id}/status com Recusado sem justificativa deve retornar bad request")
-    void shouldReturnBadRequestWhenRefusingWithoutJustification() throws Exception {
+    @DisplayName("[Integracao] PATCH /requests/{id}/status com Recusado sem campo justificativa deve recusar")
+    void shouldRefuseWithoutJustificationField() throws Exception {
         Request request = saveRequest(pending);
+        clearInvocations(emailSenderService);
 
         mockMvc.perform(patch("/requests/{id}/status", request.getId())
                         .with(user(principalOf(responsible)))
@@ -164,11 +167,31 @@ class RequestStatusIntegrationTest {
                                     "statusName": "Recusado"
                                 }
                                 """))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value("Recusado"));
 
-        Request unchanged = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(unchanged.getStatus().getId()).isEqualTo(pending.getId());
-        assertThat(unchanged.getFeedback()).isNull();
+        assertRefusalWithoutFeedback(request);
+    }
+
+    @ParameterizedTest(name = "[Integracao] justificativa opcional: {0}")
+    @ValueSource(strings = {"null", "\"\"", "\"   \""})
+    void shouldRefuseWithNullEmptyOrBlankJustification(String justificationJsonValue) throws Exception {
+        Request request = saveRequest(pending);
+        clearInvocations(emailSenderService);
+
+        mockMvc.perform(patch("/requests/{id}/status", request.getId())
+                        .with(user(principalOf(responsible)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "statusName": "Recusado",
+                                    "justification": %s
+                                }
+                                """.formatted(justificationJsonValue)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value("Recusado"));
+
+        assertRefusalWithoutFeedback(request);
     }
 
     @Test
@@ -386,6 +409,23 @@ class RequestStatusIntegrationTest {
                 org.mockito.ArgumentMatchers.any(DefaultEmail.class),
                 anyString()
         );
+    }
+
+    private void assertRefusalWithoutFeedback(Request request) throws Exception {
+        Request updated = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(updated.getStatus().getId()).isEqualTo(refused.getId());
+        assertThat(updated.getFeedback()).isNull();
+        assertThat(notificationRepository.findByUserId(requester.getId()))
+                .singleElement()
+                .satisfies(notification -> assertThat(notification.getMessage())
+                        .doesNotContain("Justificativa", "null"));
+
+        org.mockito.ArgumentCaptor<String> htmlCaptor = org.mockito.ArgumentCaptor.forClass(String.class);
+        verify(emailSenderService, timeout(5000)).sendEmail(
+                org.mockito.ArgumentMatchers.any(DefaultEmail.class),
+                htmlCaptor.capture()
+        );
+        assertThat(htmlCaptor.getValue()).doesNotContain("Justificativa", ">null<");
     }
 
     private void cleanDatabase() {

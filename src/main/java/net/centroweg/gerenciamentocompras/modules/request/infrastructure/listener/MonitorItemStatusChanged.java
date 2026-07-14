@@ -52,12 +52,12 @@ public class MonitorItemStatusChanged {
 
         if (allMatch) {
             request.setStatus(
-                    statusRepository.findByNameIgnoreCase(event.newStatusName())
-                            .orElseThrow(() -> new StatusNotFoundException()));
+                statusRepository.findByNameIgnoreCase(event.newStatusName())
+                        .orElseThrow(() -> new StatusNotFoundException()));
         } else {
             request.setStatus(
-                    statusRepository.findByNameIgnoreCase(MIXED_STATUS)
-                            .orElseThrow(() -> new StatusNotFoundException()));
+                statusRepository.findByNameIgnoreCase(MIXED_STATUS)
+                        .orElseThrow(() -> new StatusNotFoundException()));
         }
     }
 }

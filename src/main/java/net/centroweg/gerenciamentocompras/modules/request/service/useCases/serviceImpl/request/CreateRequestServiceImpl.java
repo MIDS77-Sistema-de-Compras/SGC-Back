@@ -63,9 +63,9 @@ public class CreateRequestServiceImpl {
         User requester = userRepository.findByEmail(userPrincipal.getUsername())
                 .orElseThrow(UserNotFoundException::new);
 
-        boolean createdApproved = isSupervisor(requester);
+        boolean isSupervisor = isSupervisor(requester);
 
-        Status status = createdApproved
+        Status status = isSupervisor
                 ? statusRepository.findByNameIgnoreCase(APPROVED_STATUS)
                 .orElseThrow(StatusNotFoundException::new)
                 : statusRepository.findByNameIgnoreCase(INITIAL_STATUS)
@@ -90,7 +90,7 @@ public class CreateRequestServiceImpl {
 
         Request savedRequest = requestRepository.save(requestToSave);
 
-        if (createdApproved) {
+        if (isSupervisor) {
             eventPublisher.publishEvent(new RequestApprovedEvent(savedRequest.getId()));
         }
 

@@ -66,7 +66,7 @@ public final class AuthorizationExpressions {
             "hasAuthority('" + Authorities.COMPRADOR + "')";
 
     public static final String CAN_MANAGE_STATUS =
-            "hasAuthority(" +
+            "hasAnyAuthority(" +
                     "'" + Authorities.COMPRADOR + "'," +
                     "'" + Authorities.SUPERVISOR + "'," +
                     "'" + Authorities.ADMIN + "'" +

@@ -23,10 +23,10 @@ public class ApprovalDelegationController {
 
     private final ApprovalDelegationService approvalDelegationService;
 
-    @Operation(description = "Cria uma delegação temporária para todas as filiais do supervisor autenticado")
+    @Operation(description = "Cria uma delegação temporária para todas as cr-filiais do supervisor autenticado")
     @PostMapping
     @SupervisorOnly
-    @Auditable(action = "CRIAR_DELEGACAO_TEMPORARIA_APROVACAO")
+    @Auditable(action = "DELEGAR_APROVACAO")
     public ResponseEntity<ApprovalDelegationResponse> create(
             @Valid @RequestBody CreateApprovalDelegationRequest request
     ) {

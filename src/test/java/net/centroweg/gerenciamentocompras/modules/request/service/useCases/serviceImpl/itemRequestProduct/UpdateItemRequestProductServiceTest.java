@@ -117,11 +117,11 @@ class UpdateItemRequestProductServiceTest {
         when(requestPublicApi.findMeasurementByNameIgnoreCase("UN")).thenReturn(Optional.of(unit));
         when(statusRepository.findByNameIgnoreCase(status.getName())).thenReturn(Optional.of(status));
         when(itemRepository.save(item)).thenReturn(item);
-        when(mapper.toResponse(item)).thenReturn(new ItemRequestProductResponse(99L, 10L, "Parafuso", "UN", 2.0, status.getName(), "Obs"));
+        when(mapper.toResponse(item)).thenReturn(new ItemRequestProductResponse(99L, 10L, "Parafuso", null, "UN", 2.0, status.getName(), "Obs"));
     }
 
     private ItemRequestProductRequest requestDto(String statusName) {
-        return new ItemRequestProductRequest(10L, "Parafuso", "UN", 2.0, statusName, "Obs");
+        return new ItemRequestProductRequest(10L, "Parafuso", null, "UN", 2.0, statusName, "Obs");
     }
 
     private Status status(Long id, String name) {

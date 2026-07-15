@@ -77,6 +77,7 @@ public class UpdateItemRequestProductService {
         itemRequestProduct.setRequest(request);
         itemRequestProduct.setProduct(product);
         itemRequestProduct.setMeasurementUnit(measurementUnit);
+        itemRequestProduct.setVariation(dto.variation());
         itemRequestProduct.setQuantity(dto.quantity());
         itemRequestProduct.setStatus_id(status);
         itemRequestProduct.setAdditionalInformations(dto.additionalInformations());

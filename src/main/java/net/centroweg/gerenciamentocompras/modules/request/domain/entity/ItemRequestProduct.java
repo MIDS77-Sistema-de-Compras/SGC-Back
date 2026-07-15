@@ -32,6 +32,9 @@ public class ItemRequestProduct {
     @JoinColumn(name = "measurement_unit_id", nullable = false)
     private MeasurementUnit measurementUnit;
 
+    @Column(nullable = true)
+    private String variation;
+
     private Double quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)

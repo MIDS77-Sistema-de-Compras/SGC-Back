@@ -61,10 +61,10 @@ class ItemRequestProductServiceTest {
     @DisplayName("Deve criar um item de produto com sucesso")
     void shouldCreateItemRequestProductSuccessfully() {
         ItemRequestProductRequest request = new ItemRequestProductRequest(
-                1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
+                1L, "Parafuso", "M", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
         );
         ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
-                1L, 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
+                1L, 1L, "Parafuso", "M", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
         );
 
         when(createRequestProductService.create(request)).thenReturn(fakeResponse);
@@ -85,10 +85,10 @@ class ItemRequestProductServiceTest {
     @DisplayName("Deve retornar a lista de todos os itens de produto")
     void shouldFindAllItemRequestProducts() {
         ItemRequestProductResponse item1 = new ItemRequestProductResponse(
-                1L, 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Obs 1"
+                1L, 1L, "Parafuso", "M", "UN", 10.0, "EM_ANDAMENTO", "Obs 1"
         );
         ItemRequestProductResponse item2 = new ItemRequestProductResponse(
-                2L, 2L, "Porca", "CX", 5.0, "EM_ANDAMENTO", "Obs 2"
+                2L, 2L, "Porca", "G", "CX", 5.0, "EM_ANDAMENTO", "Obs 2"
         );
 
         when(findAllRequestProductService.findAll()).thenReturn(List.of(item1, item2));
@@ -120,7 +120,7 @@ class ItemRequestProductServiceTest {
     @DisplayName("Deve buscar um item de produto por ID com sucesso")
     void shouldFindItemRequestProductById() {
         ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
-                1L, 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
+                1L, 1L, "Parafuso", "M", "UN", 10.0, "EM_ANDAMENTO", "Nenhuma observação adicional"
         );
 
         when(findRequestProductByIdService.findById(1L)).thenReturn(fakeResponse);
@@ -153,10 +153,10 @@ class ItemRequestProductServiceTest {
     @DisplayName("Deve atualizar um item de produto com sucesso")
     void shouldUpdateItemRequestProductSuccessfully() {
         ItemRequestProductRequest updateRequest = new ItemRequestProductRequest(
-                1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+                1L, "Parafuso Atualizado", "G", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
         ItemRequestProductResponse fakeResponse = new ItemRequestProductResponse(
-                1L, 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+                1L, 1L, "Parafuso Atualizado", "G", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
 
         when(updateRequestProductService.update(1L, updateRequest)).thenReturn(fakeResponse);
@@ -175,7 +175,7 @@ class ItemRequestProductServiceTest {
     @DisplayName("Deve lançar exceção ao tentar atualizar item de produto com ID inexistente")
     void shouldThrowExceptionWhenUpdatingItemRequestProductByNonExistentId() {
         ItemRequestProductRequest updateRequest = new ItemRequestProductRequest(
-                1L, "Produto X", "UN", 5.0, "EM_ANDAMENTO", "Sem observações"
+                1L, "Produto X", null, "UN", 5.0, "EM_ANDAMENTO", "Sem observações"
         );
 
         when(updateRequestProductService.update(99L, updateRequest))

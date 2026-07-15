@@ -34,11 +34,11 @@ class ItemRequestProductControllerTest {
     private ItemRequestProductController controller;
 
     private ItemRequestProductRequest sampleRequest() {
-        return new ItemRequestProductRequest(10L, "Cimento", "SACO", 5.0, "EM_ANDAMENTO", "obs");
+        return new ItemRequestProductRequest(10L, "Cimento", null, "SACO", 5.0, "EM_ANDAMENTO", "obs");
     }
 
     private ItemRequestProductResponse sampleResponse() {
-        return new ItemRequestProductResponse(1L, 10L, "Cimento", "SACO", 5.0, "EM_ANDAMENTO", "obs");
+        return new ItemRequestProductResponse(1L, 10L, "Cimento", null, "SACO", 5.0, "EM_ANDAMENTO", "obs");
     }
 
     @Test

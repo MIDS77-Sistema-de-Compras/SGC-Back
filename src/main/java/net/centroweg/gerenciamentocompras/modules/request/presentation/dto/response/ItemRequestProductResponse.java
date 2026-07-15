@@ -4,6 +4,7 @@ public record ItemRequestProductResponse(
         Long itemRequestProduct,
         Long requestId,
         String productName,
+        String variation,
         String measurementUnit,
         Double quantity,
         String statusName,

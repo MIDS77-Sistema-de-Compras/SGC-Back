@@ -17,6 +17,7 @@ public class ItemRequestProductMapper {
                 item.getId(),
                 item.getRequest().getId(),
                 item.getProduct() != null ? item.getProduct().getName() : null,
+                item.getVariation(),
                 item.getMeasurementUnit() != null ? item.getMeasurementUnit().getName() : null,
                 item.getQuantity(),
                 item.getStatus_id() != null ? item.getStatus_id().getName() : null,
@@ -37,6 +38,7 @@ public class ItemRequestProductMapper {
         item.setRequest(request);
         item.setProduct(product);
         item.setMeasurementUnit(measurementUnit);
+        item.setVariation(dto.variation());
         item.setQuantity(dto.quantity());
         item.setStatus_id(status);
         item.setAdditionalInformations(dto.additionalInformations());

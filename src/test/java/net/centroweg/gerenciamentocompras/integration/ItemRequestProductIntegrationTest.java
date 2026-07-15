@@ -52,6 +52,7 @@ class ItemRequestProductIntegrationTest {
         validRequest = new ItemRequestProductRequest(
                 1L,
                 "Parafuso",
+                "M",
                 "UN",
                 10.0,
                 "EM_ANDAMENTO",
@@ -62,6 +63,7 @@ class ItemRequestProductIntegrationTest {
                 1L,
                 1L,
                 "Parafuso",
+                "M",
                 "UN",
                 10.0,
                 "EM_ANDAMENTO",
@@ -93,18 +95,21 @@ class ItemRequestProductIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integração] Deve retornar 400 quando additionalInformations estiver em branco")
-    void createItemRequestProduct_shouldReturn400_whenAdditionalInformationsIsBlank() throws Exception {
-        ItemRequestProductRequest invalidRequest = new ItemRequestProductRequest(
-                1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", ""
+    @DisplayName("[Integração] Deve criar item de produto quando additionalInformations estiver em branco")
+    void createItemRequestProduct_shouldReturn201_whenAdditionalInformationsIsBlank() throws Exception {
+        ItemRequestProductRequest requestWithoutAdditionalInfo = new ItemRequestProductRequest(
+                1L, "Parafuso", "M", "UN", 10.0, "EM_ANDAMENTO", ""
         );
+
+        when(itemRequestProductService.createRequestProduct(any(ItemRequestProductRequest.class)))
+                .thenReturn(mockResponse);
 
         mockMvc.perform(post("/item-request-products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest());
+                        .content(objectMapper.writeValueAsString(requestWithoutAdditionalInfo)))
+                .andExpect(status().isCreated());
 
-        verify(itemRequestProductService, never()).createRequestProduct(any());
+        verify(itemRequestProductService, times(1)).createRequestProduct(any(ItemRequestProductRequest.class));
     }
 
     // ─────────────────────────── GET /item-request-products ────────────────────────────
@@ -113,7 +118,7 @@ class ItemRequestProductIntegrationTest {
     @DisplayName("[Integração] Deve retornar 200 com lista de itens de produto")
     void listItemRequestProduct_shouldReturn200_withFullList() throws Exception {
         ItemRequestProductResponse second = new ItemRequestProductResponse(
-                2L, 2L, "Porca", "CX", 5.0, "EM_ANDAMENTO", "Outra observação"
+                2L, 2L, "Porca", "G", "CX", 5.0, "EM_ANDAMENTO", "Outra observação"
         );
 
         when(itemRequestProductService.findAllRequestProduct()).thenReturn(List.of(mockResponse, second));
@@ -175,10 +180,10 @@ class ItemRequestProductIntegrationTest {
     @DisplayName("[Integração] Deve retornar 200 ao atualizar item de produto com sucesso")
     void updateItemRequestProduct_shouldReturn200_whenRequestIsValid() throws Exception {
         ItemRequestProductRequest updateRequest = new ItemRequestProductRequest(
-                1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+                1L, "Parafuso Atualizado", "G", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
         ItemRequestProductResponse updatedResponse = new ItemRequestProductResponse(
-                1L, 1L, "Parafuso Atualizado", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
+                1L, 1L, "Parafuso Atualizado", "G", "KG", 20.0, "CONCLUIDO", "Informações atualizadas"
         );
 
         when(itemRequestProductService.updateRequestProduct(any(ItemRequestProductRequest.class), eq(1L)))

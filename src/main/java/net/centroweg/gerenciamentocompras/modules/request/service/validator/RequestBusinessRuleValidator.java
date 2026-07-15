@@ -50,7 +50,7 @@ public class RequestBusinessRuleValidator {
     }
 
     public void validateCrCanBeChanged(Request request, User currentUser) {
-        if (normalize(request.getStatus().getName()).equals("em analise")) {
+        if (!isSupervisorApprovedOrAfter(request)) {
             return;
         }
 

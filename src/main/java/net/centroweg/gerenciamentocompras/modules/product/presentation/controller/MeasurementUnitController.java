@@ -40,7 +40,6 @@ public class MeasurementUnitController {
     
     @Operation(description = "ENDPOINT responsável pela listagem de todos Measurement Unit")
     @GetMapping
-    @CanManageMeasurementUnit
     public ResponseEntity<List<MeasurementUnitResponse>> readMeasurementUnit(){
         return ResponseEntity.ok(measurementUnitService.readMeasurementUnit());
     }

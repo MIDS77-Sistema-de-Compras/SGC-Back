@@ -18,9 +18,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.Claims;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.exception.InvalidTokenException;
 import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
 import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
+import net.centroweg.gerenciamentocompras.shared.security.ImpersonationDetails;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -56,6 +58,18 @@ public class SecurityFilter extends OncePerRequestFilter {
                     throw new DisabledException("Usuário inativo");
                 }
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
+                // Token de impersonação: expõe quem é o administrador original
+                // para que a auditoria registre quem realmente executou a ação.
+                Claims claims = jwtService.parseClaims(token);
+                String impersonatedBy = claims != null ? claims.get("impersonatedBy", String.class) : null;
+                if (impersonatedBy != null) {
+                    authenticationToken.setDetails(new ImpersonationDetails(
+                            impersonatedBy,
+                            claims.get("impersonatedByName", String.class)
+                    ));
+                }
+
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
             }

@@ -8,4 +8,5 @@ public interface AuthPublicApi {
 
     Optional<User> findByEmailOrCpf(String email, String cpf);
     Boolean existsByEmail(String email);
+    Optional<User> findUserById(Long id);
 }

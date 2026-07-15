@@ -36,6 +36,13 @@ public class AuditLog {
     @Column(nullable = false)
     private String typeAction;
 
+    /**
+     * Descrição complementar da ação. Preenchida, por exemplo, quando um
+     * administrador executa a ação logado na conta de outro usuário.
+     */
+    @Column(length = 500)
+    private String description;
+
     @ManyToOne(optional = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Request request;

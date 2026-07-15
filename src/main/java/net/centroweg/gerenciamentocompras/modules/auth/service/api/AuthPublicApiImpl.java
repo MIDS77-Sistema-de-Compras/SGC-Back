@@ -22,4 +22,9 @@ public class AuthPublicApiImpl implements AuthPublicApi{
     public Boolean existsByEmail(String email){
         return userPublicApi.existsByEmail(email);
     }
+
+    @Override
+    public Optional<User> findUserById(Long id) {
+        return userPublicApi.findUserById(id);
+    }
 }

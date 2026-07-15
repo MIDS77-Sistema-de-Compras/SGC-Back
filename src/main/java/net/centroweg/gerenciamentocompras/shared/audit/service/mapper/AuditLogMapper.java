@@ -30,6 +30,7 @@ public class AuditLogMapper {
                 entity.getUserAgent().getName(),
                 entity.getUserAgent().getRole().getName(),
                 entity.getTypeAction(),
+                entity.getDescription(),
                 (entity.getUserTarget() != null)? entity.getUserTarget().getName() : null,
                 (entity.getRequest() != null)? entity.getRequest().getId() : null,
                 entity.getTimestamp()

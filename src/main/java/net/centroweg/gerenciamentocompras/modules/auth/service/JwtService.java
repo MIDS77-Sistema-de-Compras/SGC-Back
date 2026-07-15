@@ -29,6 +29,26 @@ public class JwtService {
     }
 
     public String generateToken(UserPrincipal principal) {
+        return baseTokenBuilder(principal).compact();
+    }
+
+    /**
+     * Gera um token de impersonação: o token pertence ao usuário-alvo (subject,
+     * role, nome), mas carrega claims identificando o administrador que iniciou
+     * a impersonação — usadas pela auditoria e pelo retorno à conta original.
+     *
+     * @param target     usuário cuja conta será usada
+     * @param adminEmail e-mail do administrador que está impersonando
+     * @param adminName  nome do administrador que está impersonando
+     */
+    public String generateImpersonationToken(UserPrincipal target, String adminEmail, String adminName) {
+        return baseTokenBuilder(target)
+                .claim("impersonatedBy", adminEmail)
+                .claim("impersonatedByName", adminName)
+                .compact();
+    }
+
+    private io.jsonwebtoken.JwtBuilder baseTokenBuilder(UserPrincipal principal) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + ((long) expirationHours * 60 * 60 * 1000));
 
@@ -47,19 +67,24 @@ public class JwtService {
                 .claim("cpf", cpf)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256);
     }
 
     public String validateToken(String token) {
+        Claims claims = parseClaims(token);
+        return claims != null ? claims.getSubject() : null;
+    }
+
+    /**
+     * Retorna as claims do token, ou {@code null} se o token for inválido.
+     */
+    public Claims parseClaims(String token) {
         try {
-            Claims claims = Jwts.parserBuilder()
+            return Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-
-            return claims.getSubject();
         } catch (JwtException | IllegalArgumentException e) {
             return null;
         }

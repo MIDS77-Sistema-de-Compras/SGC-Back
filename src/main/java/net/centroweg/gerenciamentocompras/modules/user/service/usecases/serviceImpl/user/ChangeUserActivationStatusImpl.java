@@ -44,9 +44,24 @@ public class ChangeUserActivationStatusImpl {
                 SystemRole.from(user.getRole().getName())
         );
 
-        user.setActive(request.active());
-        user.setUpdatedAt(LocalDateTime.now());
+        return userMapper.toDTO(updateActiveStatus(user, request.active()));
+    }
 
-        return userMapper.toDTO(userRepository.save(user));
+    /**
+     * Altera o estado pela API pública do módulo, reutilizando a mesma mutação usada pelo endpoint.
+     * A autorização do ator é responsabilidade do caso de uso chamador, pois schedulers não possuem
+     * um usuário autenticado no contexto de segurança.
+     */
+    @Transactional
+    public void changeActivationStatusFromPublicApi(Long userId, boolean active) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        updateActiveStatus(user, active);
+    }
+
+    private User updateActiveStatus(User user, boolean active) {
+        user.setActive(active);
+        user.setUpdatedAt(LocalDateTime.now());
+        return userRepository.save(user);
     }
 }

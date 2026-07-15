@@ -45,7 +45,6 @@ public class ItemRequestProductController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de Item Request Product")
     @PutMapping("/{id}")
-    @CanManagePurchaseItems
     @Auditable(action = "ATUALIZAR_ITEM_PRODUTO")
     public ResponseEntity<ItemRequestProductResponse> updateItemRequestProduct(@PathVariable Long id, @AuditParam("request")  @Valid @RequestBody ItemRequestProductRequest itemRequestProductRequest){
         return ResponseEntity.status(200).body(itemRequestProductService.updateRequestProduct(itemRequestProductRequest, id));

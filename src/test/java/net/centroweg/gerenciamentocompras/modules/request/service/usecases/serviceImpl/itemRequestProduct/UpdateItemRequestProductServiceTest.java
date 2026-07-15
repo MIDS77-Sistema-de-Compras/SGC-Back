@@ -15,6 +15,8 @@ import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPub
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
+import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
+import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,6 +43,9 @@ class UpdateItemRequestProductServiceTest {
     @Mock private StatusRepository statusRepository;
     @Mock private ItemRequestProductMapper mapper;
     @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock private RequestBusinessRuleValidator requestBusinessRuleValidator;
+    @Mock private CurrentUserService currentUserService;
+
 
     private UpdateItemRequestProductService service;
     private ItemRequestProduct item;
@@ -53,7 +58,8 @@ class UpdateItemRequestProductServiceTest {
     @BeforeEach
     void setUp() {
         service = new UpdateItemRequestProductService(
-                itemRepository, requestRepository, requestPublicApi, statusRepository, mapper, eventPublisher
+                itemRepository, requestRepository, requestPublicApi, statusRepository, mapper, eventPublisher,
+                requestBusinessRuleValidator, currentUserService
         );
         previousStatus = status(1L, "Aprovado");
         newStatus = status(2L, "Entregue");

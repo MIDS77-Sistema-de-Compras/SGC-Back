@@ -20,6 +20,9 @@ import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStat
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
+import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +41,8 @@ public class UpdateItemRequestProductService {
     private final StatusRepository statusRepository;
     private final ItemRequestProductMapper itemRequestProductMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final RequestBusinessRuleValidator requestBusinessRuleValidator;
+    private final CurrentUserService currentUserService;
 
     @Transactional
     public ItemRequestProductResponse update(Long id, ItemRequestProductRequest dto) {
@@ -49,6 +54,9 @@ public class UpdateItemRequestProductService {
         Request request =
                 requestRepository.findById(dto.requestId())
                         .orElseThrow(()-> new RequestNotFoundException());
+
+        User currentUser = currentUserService.getCurrentUser();
+        requestBusinessRuleValidator.validateCanEditItems(request, currentUser);
 
         Product product =
                 requestPublicApi.findProuctByNameIgnoreCase(dto.productName())

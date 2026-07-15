@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.validator;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
@@ -38,6 +39,7 @@ class RequestBusinessRuleValidatorTest {
     @DisplayName("Deve bloquear edição quando o usuário não for o criador")
     void shouldBlockEditWhenCurrentUserIsNotCreator() {
         Request request = request("Pendente", true, user(1L));
+        request.setCrBranch(new CrBranch());
 
         assertThrows(AcessDeniedException.class, () -> validator.validateCanEdit(request, user(2L)));
     }

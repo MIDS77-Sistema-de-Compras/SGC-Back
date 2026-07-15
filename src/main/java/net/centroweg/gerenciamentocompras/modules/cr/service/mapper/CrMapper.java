@@ -23,6 +23,7 @@ public class CrMapper {
         Cr crSave = new Cr();
         crSave.setName(dto.name());
         crSave.setCode(dto.code());
+        crSave.setDescription(dto.description());
         crSave.setMaster(dto.master());
         crSave.setSector(sector);
         return crSave;

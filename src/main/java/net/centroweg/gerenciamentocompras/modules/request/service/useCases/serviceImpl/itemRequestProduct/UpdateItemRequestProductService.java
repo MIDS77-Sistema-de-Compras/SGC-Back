@@ -28,11 +28,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class UpdateItemRequestProductService {
+
+    private static final String APPROVED_STATUS = "Aprovado";
+    private static final String RECUSED_STATUS = "Recusado";
+    private static final String PARTIALLY_APPROVED_STATUS = "Parcialmente aprovada";
 
     private final ItemRequestProductRepository itemRequestProductRepository;
     private final RequestRepository requestRepository;
@@ -84,6 +89,8 @@ public class UpdateItemRequestProductService {
 
         ItemRequestProduct saved = itemRequestProductRepository.save(itemRequestProduct);
         if (statusChanged) {
+            recalculateRequestStatus(request);
+
             eventPublisher.publishEvent(new ItemStatusChangedEvent(
                     request.getId(),
                     saved.getId(),
@@ -100,5 +107,61 @@ public class UpdateItemRequestProductService {
         }
 
         return itemRequestProductMapper.toResponse(saved);
+    }
+
+    /**
+     * Recalcula o status geral da solicitação a partir da decisão (aprovado/recusado)
+     * de cada item de produto e serviço. Enquanto houver item sem decisão, o status
+     * geral não é alterado. Quando todos os itens tiverem decisão, a solicitação vira
+     * "Aprovado" (todos aprovados), "Recusado" (todos recusados) ou
+     * "Parcialmente aprovada" (decisão mista).
+     */
+    private void recalculateRequestStatus(Request request) {
+        List<String> itemStatusNames = new java.util.ArrayList<>();
+
+        request.getItemRequestProducts().forEach(item -> {
+            if (item.getStatus_id() != null) {
+                itemStatusNames.add(normalizeStatusName(item.getStatus_id().getName()));
+            }
+        });
+
+        request.getItemRequestProvisions().forEach(item -> {
+            if (item.getStatus() != null) {
+                itemStatusNames.add(normalizeStatusName(item.getStatus().getName()));
+            }
+        });
+
+        if (itemStatusNames.isEmpty()) {
+            return;
+        }
+
+        boolean hasPendingItem = itemStatusNames.stream()
+                .anyMatch(name -> !name.equals(normalizeStatusName(APPROVED_STATUS))
+                        && !name.equals(normalizeStatusName(RECUSED_STATUS)));
+
+        if (hasPendingItem) {
+            return;
+        }
+
+        boolean allApproved = itemStatusNames.stream()
+                .allMatch(name -> name.equals(normalizeStatusName(APPROVED_STATUS)));
+        boolean allRecused = itemStatusNames.stream()
+                .allMatch(name -> name.equals(normalizeStatusName(RECUSED_STATUS)));
+
+        String newStatusName = allApproved
+                ? APPROVED_STATUS
+                : allRecused ? RECUSED_STATUS : PARTIALLY_APPROVED_STATUS;
+
+        Status newStatus = statusRepository.findByNameIgnoreCase(newStatusName)
+                .orElseThrow(StatusNotFoundException::new);
+
+        if (request.getStatus() == null || !Objects.equals(request.getStatus().getId(), newStatus.getId())) {
+            request.setStatus(newStatus);
+            requestRepository.save(request);
+        }
+    }
+
+    private String normalizeStatusName(String value) {
+        return value == null ? "" : value.trim().toLowerCase();
     }
 }

@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.auth.service.api;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -11,15 +11,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthPublicApiImpl implements AuthPublicApi{
 
-    private final UserRepository userRepository;
+    private final UserPublicApi userPublicApi;
 
     @Override
     public Optional<User> findByEmailOrCpf(String email, String cpf) {
-        return userRepository.findByEmailOrCpf(email, cpf);
+        return userPublicApi.findByEmailOrCpf(email, cpf);
     }
 
-    @Override 
+    @Override
     public Boolean existsByEmail(String email){
-        return userRepository.existsByEmail(email);
+        return userPublicApi.existsByEmail(email);
     }
 }

@@ -11,7 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrInstructorRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructorMapper;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class UpdateCrInstructor {
     private final CrInstructorRepository crInstructorRepository;
     private final CrInstructorMapper crInstructorMapper;
 
-    private final UserRepository userRepository;
+    private final UserPublicApi userPublicApi;
     private final CrBranchRepository crBranchRepository;
 
     public CrInstructorResponse update(Long id, CrInstructorRequest request){
@@ -32,7 +32,7 @@ public class UpdateCrInstructor {
         );
 
         crInstructor.setInstructors(
-            userRepository.findAllById(request.instructorIds())
+            userPublicApi.findUsersByIds(request.instructorIds())
         );
 
         return crInstructorMapper.toResponse(crInstructorRepository.save(crInstructor));

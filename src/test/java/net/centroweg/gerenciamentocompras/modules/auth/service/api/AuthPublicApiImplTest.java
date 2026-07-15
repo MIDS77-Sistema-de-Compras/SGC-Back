@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.auth.service.api;
 
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class AuthPublicApiImplTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UserPublicApi userPublicApi;
 
     @InjectMocks
     private AuthPublicApiImpl authPublicApiImpl;
@@ -46,7 +46,7 @@ class AuthPublicApiImplTest {
     @Test
     @DisplayName("Should find user by email successfully")
     void shouldFindUserByEmail() {
-        when(userRepository.findByEmailOrCpf("maria@gmail.com", "12345678900"))
+        when(userPublicApi.findByEmailOrCpf("maria@gmail.com", "12345678900"))
                 .thenReturn(Optional.of(user));
 
         Optional<User> result = authPublicApiImpl.findByEmailOrCpf("maria@gmail.com", "12345678900");
@@ -54,43 +54,43 @@ class AuthPublicApiImplTest {
         assertTrue(result.isPresent());
         assertEquals("Maria Eduarda", result.get().getName());
         assertEquals("maria@gmail.com", result.get().getEmail());
-        verify(userRepository).findByEmailOrCpf("maria@gmail.com", "12345678900");
+        verify(userPublicApi).findByEmailOrCpf("maria@gmail.com", "12345678900");
     }
 
     @Test
     @DisplayName("Should find user by CPF successfully")
     void shouldFindUserByCpf() {
-        when(userRepository.findByEmailOrCpf("other@email.com", "12345678900"))
+        when(userPublicApi.findByEmailOrCpf("other@email.com", "12345678900"))
                 .thenReturn(Optional.of(user));
 
         Optional<User> result = authPublicApiImpl.findByEmailOrCpf("other@email.com", "12345678900");
 
         assertTrue(result.isPresent());
         assertEquals("12345678900", result.get().getCpf());
-        verify(userRepository).findByEmailOrCpf("other@email.com", "12345678900");
+        verify(userPublicApi).findByEmailOrCpf("other@email.com", "12345678900");
     }
 
     @Test
     @DisplayName("Should return empty Optional when user is not found")
     void shouldReturnEmptyOptionalWhenNotFound() {
-        when(userRepository.findByEmailOrCpf("nonexistent@gmail.com", "00000000000"))
+        when(userPublicApi.findByEmailOrCpf("nonexistent@gmail.com", "00000000000"))
                 .thenReturn(Optional.empty());
 
         Optional<User> result = authPublicApiImpl.findByEmailOrCpf("nonexistent@gmail.com", "00000000000");
 
         assertFalse(result.isPresent());
-        verify(userRepository).findByEmailOrCpf("nonexistent@gmail.com", "00000000000");
+        verify(userPublicApi).findByEmailOrCpf("nonexistent@gmail.com", "00000000000");
     }
 
     @Test
-    @DisplayName("Should delegate the call correctly to UserRepository")
-    void shouldDelegateToUserRepository() {
-        when(userRepository.findByEmailOrCpf(anyString(), anyString()))
+    @DisplayName("Should delegate the call correctly to UserPublicApi")
+    void shouldDelegateToUserPublicApi() {
+        when(userPublicApi.findByEmailOrCpf(anyString(), anyString()))
                 .thenReturn(Optional.of(user));
 
         authPublicApiImpl.findByEmailOrCpf("test@email.com", "99999999999");
 
-        verify(userRepository, times(1)).findByEmailOrCpf("test@email.com", "99999999999");
-        verifyNoMoreInteractions(userRepository);
+        verify(userPublicApi, times(1)).findByEmailOrCpf("test@email.com", "99999999999");
+        verifyNoMoreInteractions(userPublicApi);
     }
 }

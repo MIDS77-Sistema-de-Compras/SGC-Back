@@ -7,7 +7,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class AssignCrBranchResponsible {
 
     private final CrBranchRepository crBranchRepository;
-    private final UserRepository userRepository;
+    private final UserPublicApi userPublicApi;
     private final CrBranchMapper crBranchMapper;
     private final ValidateCrBranchSupervisors validateCrBranchSupervisors;
 
@@ -43,7 +43,7 @@ public class AssignCrBranchResponsible {
         CrBranch crBranch = crBranchRepository.findById(crBranchId)
                 .orElseThrow(() -> new CrBranchNotFoundException(crBranchId));
 
-        User user = userRepository.findById(userId)
+        User user = userPublicApi.findUserById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o ID: " + userId));
 
         if (crBranch.getResponsibleUsers() == null) {

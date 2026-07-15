@@ -11,7 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +44,7 @@ class UpdateDeliveryServiceImplTest {
     private StatusPublicApi statusPublicApi;
 
     @Mock
-    private UserRepository userRepository;
+    private UserPublicApi userPublicApi;
 
     @Mock
     private DeliveryItemResolver deliveryItemResolver;
@@ -61,7 +61,7 @@ class UpdateDeliveryServiceImplTest {
         service = new UpdateDeliveryServiceImpl(
                 deliveryRepository,
                 statusPublicApi,
-                new DeliveryReceiverValidator(userRepository),
+                new DeliveryReceiverValidator(userPublicApi),
                 deliveryItemResolver,
                 new DeliveryMapper(statusPublicApi)
         );
@@ -81,7 +81,7 @@ class UpdateDeliveryServiceImplTest {
         Delivery delivery = delivery(request, status, firstReceiver, secondReceiver);
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
         when(statusPublicApi.findById(20L)).thenReturn(Optional.of(status));
-        when(userRepository.findAllById(List.of(1L, 2L))).thenReturn(List.of(firstReceiver, secondReceiver));
+        when(userPublicApi.findUsersByIds(List.of(1L, 2L))).thenReturn(List.of(firstReceiver, secondReceiver));
 
         var response = service.update(100L, updateRequest(List.of(1L, 2L)));
 
@@ -99,7 +99,7 @@ class UpdateDeliveryServiceImplTest {
 
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
         when(statusPublicApi.findById(20L)).thenReturn(Optional.of(status));
-        when(userRepository.findAllById(List.of(1L, 3L))).thenReturn(List.of(firstReceiver, thirdReceiver));
+        when(userPublicApi.findUsersByIds(List.of(1L, 3L))).thenReturn(List.of(firstReceiver, thirdReceiver));
 
         var response = service.update(100L, updateRequest(List.of(1L, 3L)));
 

@@ -12,7 +12,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.RequestService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.RequestService;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import net.centroweg.gerenciamentocompras.shared.security.annotation.CanCreateRequest;

@@ -10,8 +10,8 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response
 import net.centroweg.gerenciamentocompras.modules.user.domain.rolelevels.SystemRole;
 import net.centroweg.gerenciamentocompras.modules.user.service.authorization.UserRoleAuthorizationService;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
-import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.CreateUserImpl;
-import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.UniquenessValidator;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.CreateUserImpl;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.UniquenessValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

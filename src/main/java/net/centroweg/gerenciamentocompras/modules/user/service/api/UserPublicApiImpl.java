@@ -24,8 +24,23 @@ public class UserPublicApiImpl implements UserPublicApi {
     }
     
     @Override
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public Optional<User> findByEmailOrCpf(String email, String cpf){
         return userRepository.findByEmailOrCpf(email, cpf);
+    }
+
+    @Override
+    public Optional<User> findUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public List<User> findUsersByIds(Collection<Long> ids) {
+        return userRepository.findAllById(ids);
     }
 
     @Override

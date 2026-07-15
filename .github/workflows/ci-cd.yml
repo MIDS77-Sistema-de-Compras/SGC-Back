@@ -39,8 +39,49 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Disparar Deploy no Render
-        run: |
-          echo "Iniciando deploy no Render para a branch main..."
-          curl -f "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
-          echo "Deploy solicitado com sucesso!"
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Baixar o artefato JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: spring-boot-app
+          path: target/
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest
+
+      - name: Deploy na AWS EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Autentica o Docker da EC2 no seu Docker Hub de forma segura
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            
+            # Baixa a última versão da imagem que o GitHub acabou de compilar
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest
+            
+            # Remove o container anterior se ele já estiver rodando
+            docker stop sgs-api || true
+            docker rm sgs-api || true
+            
+            # Inicia o novo container mapeando as portas e definindo as configurações de produção
+            docker run -d \
+              --name sgs-api \
+              -p 8080:8080 \
+              --restart always \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangeUserActivationStatus;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
@@ -124,6 +125,23 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@AuditParam(value = "user") @PathVariable Long userId){
         user.deleteUser(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Altera o estado de ativação do usuário pelo seu identificador único.
+     * @param userId identificador único do usuário
+     * @param request novo estado de ativação
+     * @return usuário atualizado com status {@code 200 OK}
+     */
+    @Operation(description = "ENDPOINT responsável por alterar o estado de ativação de User")
+    @PatchMapping("/userId/{userId}/active")
+    @CanManageUsers
+    @Auditable(action = "ALTERAR_STATUS_ATIVACAO_USUARIO")
+    public ResponseEntity<UserResponse> changeActivationStatus(
+            @AuditParam("user") @PathVariable Long userId,
+            @Valid @RequestBody ChangeUserActivationStatus request
+    ) {
+        return ResponseEntity.ok(user.changeActivationStatus(userId, request));
     }
 
     @Operation(description = "ENDPOINT responsável pela edição de foto de perfil")

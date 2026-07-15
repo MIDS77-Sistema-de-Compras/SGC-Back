@@ -37,6 +37,14 @@ public class UserRoleAuthorizationService {
         validateAllowed(canDeactivate(actorRole, targetRole));
     }
 
+    public void validateCanChangeActivationStatus(SystemRole targetRole) {
+        validateCanChangeActivationStatus(currentActorRole(), targetRole);
+    }
+
+    public void validateCanChangeActivationStatus(SystemRole actorRole, SystemRole targetRole) {
+        validateAllowed(canDeactivate(actorRole, targetRole));
+    }
+
     private boolean canCreate(SystemRole actorRole, SystemRole targetRole) {
         if (actorRole == null || targetRole == null) {
             return false;

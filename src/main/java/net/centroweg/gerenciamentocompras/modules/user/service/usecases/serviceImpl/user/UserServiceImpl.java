@@ -1,19 +1,14 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
-import net.centroweg.gerenciamentocompras.shared.MessageDTO;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangeUserActivationStatus;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
+import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +35,7 @@ public class UserServiceImpl implements UserIntrf {
     private final FindUserByNameImpl findUserByName;
     private final UpdateUserAllImpl updateUserAll;
     private final DeleteUserImpl deleteUser;
+    private final ChangeUserActivationStatusImpl changeUserActivationStatus;
     private final UploadProfilePicture uploadProfilePicture;
     private final FindLoggedUser findLoggedUser;
     private final ChangeUserPwdImpl changeUserPwd;
@@ -101,6 +97,14 @@ public class UserServiceImpl implements UserIntrf {
     @Override
     public void deleteUser(Long id){
         deleteUser.deleteUser(id);
+    }
+
+    @Override
+    public UserResponse changeActivationStatus(
+            Long userId,
+            ChangeUserActivationStatus request
+    ) {
+        return changeUserActivationStatus.changeActivationStatus(userId, request);
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,6 +52,9 @@ public class SecurityFilter extends OncePerRequestFilter {
                 }
 
                 UserDetails user = customUserDetailsService.loadUserByUsername(tokenValidated);
+                if (!user.isEnabled()) {
+                    throw new DisabledException("Usuário inativo");
+                }
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
@@ -58,6 +62,9 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
+        } catch (DisabledException e) {
+            SecurityContextHolder.clearContext();
+            resolver.resolveException(request, response, null, e);
         } catch (AccessDeniedException | AuthenticationException e) {
             throw e;
         } catch (Exception e) {

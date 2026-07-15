@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -87,6 +88,7 @@ class SecurityFilterTest {
 
         UserDetails mockUserDetails = mock(UserDetails.class);
         when(customUserDetailsService.loadUserByUsername("maria@gmail.com")).thenReturn(mockUserDetails);
+        when(mockUserDetails.isEnabled()).thenReturn(true);
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
@@ -94,6 +96,28 @@ class SecurityFilterTest {
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
         assertEquals(mockUserDetails, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         verifyNoInteractions(resolver);
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar JWT válido quando o usuário estiver inativo")
+    void shouldRejectValidTokenWhenUserIsInactive() throws Exception {
+        when(request.getCookies()).thenReturn(new Cookie[]{ new Cookie("jwt", "my-token") });
+        when(jwtService.validateToken("my-token")).thenReturn("maria@gmail.com");
+
+        UserDetails mockUserDetails = mock(UserDetails.class);
+        when(customUserDetailsService.loadUserByUsername("maria@gmail.com")).thenReturn(mockUserDetails);
+        when(mockUserDetails.isEnabled()).thenReturn(false);
+
+        securityFilter.doFilterInternal(request, response, filterChain);
+
+        verify(resolver).resolveException(
+                eq(request),
+                eq(response),
+                isNull(),
+                any(DisabledException.class)
+        );
+        verify(filterChain, never()).doFilter(request, response);
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test

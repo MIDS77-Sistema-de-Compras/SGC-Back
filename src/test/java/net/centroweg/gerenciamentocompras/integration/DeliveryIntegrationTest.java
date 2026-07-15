@@ -52,6 +52,7 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.Matchers.contains;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -209,10 +210,13 @@ class DeliveryIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(confirmBody()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.receivers[0].confirmed").value(true));
+                .andExpect(jsonPath("$.receivers[?(@.userId == %d)].confirmed", firstReceiver.getId()).value(contains(true)));
 
         Delivery persisted = deliveryRepository.findById(delivery.getId()).orElseThrow();
-        assertThat(persisted.getReceivers().getFirst().getConfirmedAt()).isNotNull();
+        DeliveryReceiver confirmedReceiver = persisted.getReceivers().stream()
+                .filter(receiver -> receiver.getUser().getId().equals(firstReceiver.getId()))
+                .findFirst().orElseThrow();
+        assertThat(confirmedReceiver.getConfirmedAt()).isNotNull();
         assertThat(persisted.getDeliveredAt()).isNull();
         assertThat(auditLogRepository.findAll()).anyMatch(log ->
                 "CONFIRMAR_RECEBIMENTO_ENTREGA".equals(log.getTypeAction()));

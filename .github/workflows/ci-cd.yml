@@ -68,20 +68,28 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Autentica o Docker da EC2 no seu Docker Hub de forma segura
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             
-            # Baixa a última versão da imagem que o GitHub acabou de compilar
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest
             
-            # Remove o container anterior se ele já estiver rodando
             docker stop sgs-api || true
             docker rm sgs-api || true
             
-            # Inicia o novo container mapeando as portas e definindo as configurações de produção
             docker run -d \
-              --name sgs-api \
-              -p 8080:8080 \
-              --restart always \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest
+            --name sgs-api \
+            -p 8080:8080 \
+            --restart always \
+            -e SPRING_PROFILES_ACTIVE=prod \
+            ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest
+            
+            echo "Verificando o estado do LocalTunnel no PM2..."
+            
+            if pm2 describe sgs-tunnel > /dev/null 2>&1; then
+              echo "O sgs-tunnel já existe. Reiniciando para garantir a conectividade..."
+              pm2 restart sgs-tunnel
+            else
+              echo "O sgs-tunnel não foi encontrado. Criando um novo processo em segundo plano..."
+              pm2 start lt --name "sgs-tunnel" -- --port 8080 --local-host 127.0.0.1 --subdomain sistema-gerenciamento-solicitacao-api
+            fi
+            
+            pm2 save

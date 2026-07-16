@@ -120,7 +120,7 @@ public class CreateRequestServiceImpl {
             item.setRequest(requestToSave);
             item.setProduct(product);
             item.setMeasurementUnit(measurementUnit);
-            item.setVariation(productRequest.variation());
+            item.setType(productRequest.type());
             item.setQuantity(productRequest.quantity());
             item.setStatus_id(status);
             item.setAdditionalInformations(productRequest.additionalInformations());

@@ -14,7 +14,7 @@ public record ItemRequestProductRequest(
         String productName,
 
         @Size(max = 100, message = "Variação excede o limite máximo permitido (100 caractéres).")
-        String variation,
+        String type,
 
         @NotBlank(message = "A unidade de medida não pode estar em branco.")
         String measurementUnit,

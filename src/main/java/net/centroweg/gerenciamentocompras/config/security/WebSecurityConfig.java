@@ -7,16 +7,22 @@ import org.springframework.core.env.Environment;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -44,6 +50,7 @@ public class WebSecurityConfig {
      * @return Classe que representa os filtros de segurança para a requisição
      * */
     @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -73,6 +80,44 @@ public class WebSecurityConfig {
                 .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    /**
+     * Cadeia de segurança dedicada ao endpoint de métricas ({@code /actuator/**}), usado pelo
+     * agente de scraping do Grafana/Prometheus. Fica isolada da cadeia principal (JWT via cookie)
+     * e usa Basic Auth com credencial própria, configurada via variáveis de ambiente.
+     * @param http parâmetro que representa a requisição do cliente HTTP
+     * @return Classe que representa os filtros de segurança para a requisição
+     * */
+    @Bean
+    @Order(1)
+    public SecurityFilterChain actuatorSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/actuator/**")
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().hasRole("METRICS"))
+                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
+    }
+
+    /**
+     * Usuário único, em memória, usado exclusivamente para autenticar o scraping de métricas.
+     * Não tem relação com os usuários da aplicação (módulo {@code user}).
+     * @return Serviço de detalhes do usuário com a credencial de métricas
+     * */
+    @Bean
+    public UserDetailsService actuatorUserDetailsService(
+            PasswordEncoder passwordEncoder,
+            @Value("${actuator.metrics.username}") String metricsUsername,
+            @Value("${actuator.metrics.password}") String metricsPassword
+    ) {
+        UserDetails metricsUser = org.springframework.security.core.userdetails.User.builder()
+                .username(metricsUsername)
+                .password(passwordEncoder.encode(metricsPassword))
+                .roles("METRICS")
+                .build();
+        return new InMemoryUserDetailsManager(metricsUser);
     }
 
     /**

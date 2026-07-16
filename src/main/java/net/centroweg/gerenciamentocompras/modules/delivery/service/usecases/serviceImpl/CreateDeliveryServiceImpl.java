@@ -11,7 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.Del
 import net.centroweg.gerenciamentocompras.modules.delivery.service.validator.DeliveryReceiverValidator;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryStatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
@@ -26,7 +26,7 @@ import java.util.List;
 public class CreateDeliveryServiceImpl {
 
     private final DeliveryRepository deliveryRepository;
-    private final RequestRepository requestRepository;
+    private final RequestPublicApi requestPublicApi;
     private final StatusPublicApi statusPublicApi;
     private final DeliveryReceiverValidator deliveryReceiverValidator;
     private final DeliveryItemResolver deliveryItemResolver;
@@ -35,7 +35,7 @@ public class CreateDeliveryServiceImpl {
 
     @Transactional
     public DeliveryResponse create(CreateDeliveryRequest request) {
-        Request requestEntity = requestRepository.findById(request.requestId())
+        Request requestEntity = requestPublicApi.findRequestById(request.requestId())
                 .orElseThrow(RequestNotFoundException::new);
         var status = statusPublicApi.findById(request.statusId())
                 .orElseThrow(DeliveryStatusNotFoundException::new);

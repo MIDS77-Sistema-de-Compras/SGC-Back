@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.infrastructure.l
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.event.DeliveryCreatedEvent;
-import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.HandleDeliveryCreatedNotificationUseCase;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleDeliveryCreatedNotificationUseCase;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;

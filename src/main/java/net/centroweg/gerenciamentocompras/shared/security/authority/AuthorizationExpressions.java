@@ -11,6 +11,9 @@ public final class AuthorizationExpressions {
     public static final String ADMIN_ONLY =
             "hasAuthority('" + Authorities.ADMIN + "')";
 
+    public static final String SUPERVISOR_ONLY =
+            "hasAuthority('" + Authorities.SUPERVISOR + "')";
+
     public static final String CAN_CREATE_REQUEST =
             "hasAnyAuthority(" +
                     "'" + Authorities.DOCENTE + "'," +
@@ -66,7 +69,7 @@ public final class AuthorizationExpressions {
             "hasAuthority('" + Authorities.COMPRADOR + "')";
 
     public static final String CAN_MANAGE_STATUS =
-            "hasAuthority(" +
+            "hasAnyAuthority(" +
                     "'" + Authorities.COMPRADOR + "'," +
                     "'" + Authorities.SUPERVISOR + "'," +
                     "'" + Authorities.ADMIN + "'" +

@@ -37,6 +37,10 @@ REQUESTER_REQUEST_URL_TEMPLATE=http://localhost:3000/docente/solicitacoes/{reque
 # Rota do frontend usada nos e-mails genéricos enviados aos responsáveis/coordenadores
 COORDINATOR_REQUESTS_URL=http://localhost:3000/coordenador/solicitacoes
 
+# Métricas (Actuator + Prometheus) — credencial Basic Auth exclusiva pro scraping do Grafana/agente
+ACTUATOR_METRICS_USERNAME=<usuario>
+ACTUATOR_METRICS_PASSWORD=<senha>
+
 # Opcional
 PORT=8080
 ```
@@ -50,6 +54,7 @@ PORT=8080
 ```
 - API: `http://localhost:8080`
 - Swagger UI (só em profile `dev`): `http://localhost:8080/swagger-ui.html`
+- Métricas Prometheus (protegido por Basic Auth, credencial `ACTUATOR_METRICS_*`): `http://localhost:8080/actuator/prometheus`
 - Profile ativo padrão: `dev` (definido em `application.properties`).
 
 ## Build / empacotar

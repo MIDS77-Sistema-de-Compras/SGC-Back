@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.modules.user.service.authorization.UserRoleAuthorizationService;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
-import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.UpdateUserAllImpl;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.UpdateUserAllImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

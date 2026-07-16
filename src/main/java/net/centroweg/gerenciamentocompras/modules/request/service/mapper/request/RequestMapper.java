@@ -2,7 +2,6 @@ package net.centroweg.gerenciamentocompras.modules.request.service.mapper.reques
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -23,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestMapper {
 
-    private final CrBranchRepository repositoryCR;
     private final StatusRepository repositorySt;
     private final RequestStatusCategoryResolver statusCategoryResolver;
 

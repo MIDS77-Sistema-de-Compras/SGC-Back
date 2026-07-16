@@ -54,6 +54,23 @@ class UserRoleAuthorizationServiceTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("allowedDeactivateRoles")
+    @DisplayName("Deve permitir alterar ativação conforme a hierarquia de desativação")
+    void shouldAllowActivationChangeWhenHierarchyPermits(SystemRole actorRole, SystemRole targetRole) {
+        assertDoesNotThrow(() -> service.validateCanChangeActivationStatus(actorRole, targetRole));
+    }
+
+    @ParameterizedTest
+    @MethodSource("forbiddenDeactivateRoles")
+    @DisplayName("Deve bloquear alteração de ativação fora da hierarquia")
+    void shouldBlockActivationChangeWhenHierarchyDoesNotPermit(SystemRole actorRole, SystemRole targetRole) {
+        assertThrows(
+                RoleNotAllowedException.class,
+                () -> service.validateCanChangeActivationStatus(actorRole, targetRole)
+        );
+    }
+
     @Test
     @DisplayName("Deve normalizar role valida")
     void shouldNormalizeValidRole() {

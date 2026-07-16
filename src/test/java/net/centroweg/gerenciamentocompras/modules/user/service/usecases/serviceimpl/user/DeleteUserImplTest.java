@@ -5,7 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.rolelevels.SystemRole;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.service.authorization.UserRoleAuthorizationService;
-import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.user.DeleteUserImpl;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.DeleteUserImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

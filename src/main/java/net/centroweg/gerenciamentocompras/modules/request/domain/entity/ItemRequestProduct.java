@@ -33,7 +33,7 @@ public class ItemRequestProduct {
     private MeasurementUnit measurementUnit;
 
     @Column(nullable = true)
-    private String variation;
+    private String type;
 
     private Double quantity;
 

@@ -44,7 +44,7 @@ import java.util.UUID;
 public class CreateRequestServiceImpl {
 
     private static final String INITIAL_STATUS = "Aguardando aprovação";
-    private static final String APPROVED_STATUS = "Aprovado";
+    private static final String APPROVED_STATUS = "Auto-aprovado";
     private static final String REQUEST_PRODUCT_TYPE = "Solicitacao";
     private static final double REQUEST_PRODUCT_DEFAULT_PRICE = 0.0;
     private final RequestRepository requestRepository;

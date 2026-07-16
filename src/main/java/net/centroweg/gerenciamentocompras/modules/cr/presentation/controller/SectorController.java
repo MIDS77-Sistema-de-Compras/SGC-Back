@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+
 import java.util.List;
 
 @Tag(name = "ENDPOINTS da entidade SECTOR")
@@ -26,6 +28,7 @@ public class SectorController {
     @Operation(description = "ENDPOINT responsável pela criação de Sector")
     @PostMapping
     @CanManageCr
+    @Auditable(action = "CRIAR_SETOR")
     public ResponseEntity<SectorSimpleResponse> createSector(@Valid @RequestBody SectorRequest sector){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createSector(sector));
     }
@@ -57,6 +60,7 @@ public class SectorController {
     @Operation(description = "ENDPOINT responsável pela atualização de Sector")
     @PutMapping("/{id}")
     @CanManageCr
+    @Auditable(action = "ATUALIZAR_SETOR")
     public ResponseEntity<SectorSimpleResponse> updateSector(@Valid @RequestBody SectorRequest sector, @PathVariable Long id){
         return ResponseEntity.ok(service.updateSector(id, sector));
     }
@@ -64,6 +68,7 @@ public class SectorController {
     @Operation(description = "ENDPOINT responsável pelo delete de Sector")
     @DeleteMapping("/{id}")
     @CanManageCr
+    @Auditable(action = "EXCLUIR_SETOR")
     public ResponseEntity<Void> deleteSector(@PathVariable Long id){
         service.deleteSector(id);
         return ResponseEntity.noContent().build();

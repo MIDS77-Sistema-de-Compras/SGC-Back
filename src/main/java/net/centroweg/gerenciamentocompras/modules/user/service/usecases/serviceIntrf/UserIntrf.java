@@ -1,16 +1,16 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf;
 
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangeUserActivationStatus;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.util.List;
 
@@ -56,6 +56,13 @@ public interface UserIntrf {
      * @return vazio/nulo
      */
     void deleteUser(Long id);
+    /**
+     * Altera o estado de ativação do usuário informado.
+     * @param userId identificador único do usuário
+     * @param request novo estado de ativação
+     * @return usuário com o estado atualizado
+     */
+    UserResponse changeActivationStatus(Long userId, ChangeUserActivationStatus request);
     UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException;
     UserResponse findLoggedUser(UserPrincipal userPrincipal);
 

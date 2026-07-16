@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.api;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.CreateInternalNotificationUseCase;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.CreateInternalNotificationUseCase;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;

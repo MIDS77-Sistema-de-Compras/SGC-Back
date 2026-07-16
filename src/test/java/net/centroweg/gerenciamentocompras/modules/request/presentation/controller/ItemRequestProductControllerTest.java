@@ -2,7 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.controll
 
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProductService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

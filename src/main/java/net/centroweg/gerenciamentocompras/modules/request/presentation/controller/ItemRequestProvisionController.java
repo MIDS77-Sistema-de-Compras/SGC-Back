@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProvisionService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProvisionService;
 
 @Tag(name = "ENDPOINTS da entidade ITEM-REQUEST-PROVISION")
 @RestController

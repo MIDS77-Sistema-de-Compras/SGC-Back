@@ -49,7 +49,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProvisionController;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProvisionService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProvisionService;
 import tools.jackson.databind.ObjectMapper;
 
 // 1. Explicitly isolate the web slice to ONLY load your targeted controller type

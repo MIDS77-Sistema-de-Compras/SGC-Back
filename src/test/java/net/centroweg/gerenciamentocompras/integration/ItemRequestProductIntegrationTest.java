@@ -5,7 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.controller.ItemRequestProductController;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProductService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProductService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

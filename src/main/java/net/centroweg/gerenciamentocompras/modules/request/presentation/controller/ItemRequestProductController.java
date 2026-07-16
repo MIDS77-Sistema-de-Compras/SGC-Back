@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceIntrf.ItemRequestProductService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProductService;
 import jakarta.validation.Valid;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;

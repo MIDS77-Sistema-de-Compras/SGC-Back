@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import net.centroweg.gerenciamentocompras.shared.audit.domain.entity.AuditLog;
 import net.centroweg.gerenciamentocompras.shared.audit.infrastructure.persistence.AuditLogRepository;
 import net.centroweg.gerenciamentocompras.shared.audit.service.api.AuditLogPublicApi;
+import net.centroweg.gerenciamentocompras.shared.security.ImpersonationDetails;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -56,6 +57,13 @@ public class AuditLogAspect {
         AuditLog auditLog = new AuditLog(agent, auditable.action());
         auditLog.setRequest(requestSearched);
         auditLog.setUserTarget(targetUserSearched);
+
+        // Quando um administrador está logado na conta de outro usuário, a ação é
+        // registrada em nome do usuário, mas a descrição deixa claro quem realmente agiu.
+        if (auth.getDetails() instanceof ImpersonationDetails impersonation) {
+            auditLog.setDescription("Ação realizada pelo administrador " + impersonation.adminName()
+                    + " logado na conta de " + agent.getName() + ".");
+        }
 
         auditLogRepository.save(auditLog);
 

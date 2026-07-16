@@ -4,12 +4,12 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemR
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.CreateRequestProductService;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.DeleteItemRequestProductService;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.FindAllItemRequestProductService;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.FindByIdItemRequestProductService;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.ItemRequestProductServiceImpl;
-import net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.itemRequestProduct.UpdateItemRequestProductService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.itemRequestProduct.CreateRequestProductService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.itemRequestProduct.DeleteItemRequestProductService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.itemRequestProduct.FindAllItemRequestProductService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.itemRequestProduct.FindByIdItemRequestProductService;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.itemRequestProduct.ItemRequestProductServiceImpl;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.itemRequestProduct.UpdateItemRequestProductService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

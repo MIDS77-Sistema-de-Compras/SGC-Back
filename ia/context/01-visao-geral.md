@@ -32,6 +32,8 @@ os envolvidos por e-mail/notificação e registra tudo em **auditoria**.
 | **Sector** (Setor) | Agrupa CRs | `modules/cr` |
 | **CrInstructor** | Instrutores associados a um CrBranch | `modules/cr` |
 | **Status** | Estado da solicitação no fluxo | `modules/request` |
+| **Delivery** (Entrega) | Entrega dos itens de uma solicitação aprovada, com 2 recebedores | `modules/delivery` |
+| **DeliveryReceiver** | Recebedor que confirma o recebimento de uma entrega | `modules/delivery` |
 | **Role** | Perfil de acesso do usuário (ex: COMPRADOR, GESTOR, ADMIN) | `modules/user` |
 | **AuditLog** | Registro de quem fez qual ação | `shared/audit` |
 

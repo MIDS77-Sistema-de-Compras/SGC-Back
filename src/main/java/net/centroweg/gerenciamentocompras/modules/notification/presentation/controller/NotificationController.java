@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
-import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.NotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

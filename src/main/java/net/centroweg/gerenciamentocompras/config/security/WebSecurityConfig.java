@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -91,11 +93,19 @@ public class WebSecurityConfig {
      * */
     @Bean
     @Order(1)
-    public SecurityFilterChain actuatorSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain actuatorSecurityFilterChain(
+            HttpSecurity http,
+            UserDetailsService actuatorUserDetailsService,
+            PasswordEncoder passwordEncoder
+    ) throws Exception {
+        DaoAuthenticationProvider actuatorAuthenticationProvider = new DaoAuthenticationProvider(actuatorUserDetailsService);
+        actuatorAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+
         return http
                 .securityMatcher("/actuator/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().hasRole("METRICS"))
+                .authenticationManager(new ProviderManager(actuatorAuthenticationProvider))
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();

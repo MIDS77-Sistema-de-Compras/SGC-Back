@@ -20,7 +20,7 @@ public class UpdateSector {
     private final SectorRepository repository;
 
     /**
-     * Atualiza um bloco existente.
+     * Atualiza um bloco existente no banco de dados.
      * @param id identificador do bloco.
      * @param sector novos dados do bloco.
      * @return bloco já atualizado.

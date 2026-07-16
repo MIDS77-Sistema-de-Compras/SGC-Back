@@ -9,7 +9,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 
 /**
- * Caso de uso responsável por listar todos os {@link Cr} cadastrados.
+ * Caso de uso responsável por listar todos os {@link Cr}.
  */
 @Service
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class FindAllCr {
     private final CrMapper crMapper;
 
     /**
-     * Retorna todos os CRs cadastrados no banco de dados.
+     * Lista todos os CRs cadastrados no banco de dados.
      * @return lista com todos os CRs encontrados.
      */
     public List<CrCompoundResponse> listAll(){

@@ -13,8 +13,8 @@ public class BranchMapper {
 
     /**
      * Converte um DTO de entrada da filial em uma entidade filial.
-     * @param branchRequest DTO com os dados de entrada da filial.
-     * @return conversão dos dados para uma entidade filial.
+     * @param branchRequest DTO de entrada com os dados da filial.
+     * @return dados convertidos para entidade.
      */
     public Branch toEntity(BranchRequest branchRequest){
         return new Branch(
@@ -24,8 +24,8 @@ public class BranchMapper {
 
     /**
      * Converte uma entidade filial em um DTO de saída da filial.
-     * @param branch entidade com os dados.
-     * @return DTO de saída com os dados da filial já convertidos.
+     * @param branch entidade com os dados da filial.
+     * @return dados convertidos para DTO de saída.
      */
     public BranchResponse toResponse(Branch branch){
         return new BranchResponse(

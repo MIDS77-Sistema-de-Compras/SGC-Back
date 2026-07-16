@@ -7,42 +7,42 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * Interface de serviço para operações de gerenciamento de {@link Notification}
+ * Interface de serviço para operações de gerenciamento de {@link Notification}.
  */
 public interface NotificationService {
 
     /**
-     * Cria uma nova notificação.
+     * Cria e persiste uma nova notificação no banco de dados.
      * @param request dados da notificação.
      * @return notificação criada.
      */
     NotificationResponse createNotification(NotificationRequest request);
 
     /**
-     * Lista notificações por identificador do usuário.
+     * Lista todas as notificações cadastradas no banco de dados por identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista de notificações encontradas.
+     * @return lista todas as notificações encontradas.
      */
     List<NotificationResponse> findNotificationsByUser(Long userId);
 
     /**
-     * Lista de notificações não visualizadas por identificador do usuário.
+     * Lista todas as notificações cadastradas no banco de dados não visualizadas por identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista de notificações encontradas.
+     * @return lista todas as notificações encontradas.
      */
     List<NotificationResponse> findUnviewedNotificationsByUser(Long userId);
 
     /**
-     * Marcar notificação como visualizada.
+     * Marcar uma notificação existente como visualizada no banco de dados.
      * @param id identificador da notificação.
-     * @return notificação com a visualização já atualizada.
+     * @return notificação já atualizada.
      */
     NotificationResponse markAsViewed(Long id);
 
     /**
-     * Listar notificações pelo dono da solicitação.
-     * @param userPrincipal usuário que fez a solicitação.
-     * @return lista com as notificações encontradas.
+     * Listar todas as notificações cadastradas no banco de dados pelo dono da solicitação.
+     * @param userPrincipal usuário.
+     * @return lista com todas as notificações encontradas.
      */
     List<NotificationResponse> findByOwnUser (UserPrincipal userPrincipal);
 }

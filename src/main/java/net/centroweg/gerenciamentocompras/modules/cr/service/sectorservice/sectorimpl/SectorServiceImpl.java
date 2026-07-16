@@ -13,7 +13,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 /**
  * Classe de serviço do {@link Sector} que delega cada operação à sua respectiva classe de funcionalidade.
  * Implementa {@link SectorService} que segue o princípio de responsabilidade única, onde cada método apenas repassa a chamada para uma classe especializada responsável por uma única operação.
- *
  */
 @Service
 @RequiredArgsConstructor
@@ -25,22 +24,22 @@ public class SectorServiceImpl implements SectorService {
     private final CreateSector create;
 
     /**
-     * Componente responsável pela listagem dos blocos cadastrados de forma simples.
+     * Componente responsável pela listagem de todos os blocos cadastrados de forma simples.
      */
     private final FindAllSectorSimple findAllSimple;
 
     /**
-     * Componente responsável pela listagem dos blocos cadastrados de forma completa.
+     * Componente responsável pela listagem de todos os blocos cadastrados de forma completa.
      */
     private final FindAllSectorCompound findAllCompound;
 
     /**
-     * Componente responsável por buscar um bloco pelo ID de forma simples.
+     * Componente responsável por buscar um bloco pelo ID informado de forma simples.
      */
     private final FindSectorByIdSimple findByIdSimple;
 
     /**
-     * Componente responsável por buscar um bloco pelo ID de forma completa.
+     * Componente responsável por buscar um bloco pelo ID informado de forma completa.
      */
     private final FindSectorByIdCompound findByIdCompound;
 
@@ -55,7 +54,7 @@ public class SectorServiceImpl implements SectorService {
     private final DeleteSector delete;
 
     /**
-     * Cria um bloco.
+     * Cria e persiste um novo bloco no banco de dados.
      * @param sector dados do bloco.
      * @return bloco criado.
      */
@@ -65,8 +64,8 @@ public class SectorServiceImpl implements SectorService {
     }
 
     /**
-     * Lista todos os blocos cadastrados de forma simples.
-     * @return lista com os blocos encontrados.
+     * Lista todos os blocos cadastrados no banco de dados de forma simples.
+     * @return lista com todos os blocos encontrados.
      */
     @Override
     public List<SectorSimpleResponse> findAllSectorSimple(){
@@ -74,8 +73,8 @@ public class SectorServiceImpl implements SectorService {
     }
 
     /**
-     * Lista todos os blocos cadastrados de forma completa.
-     * @return lista com os blocos encontrados.
+     * Lista todos os blocos cadastrados no banco de dados de forma completa.
+     * @return lista com todos os blocos encontrados.
      */
     @Override
     public List<SectorCompoundResponse> findAllSectorCompound(){
@@ -85,7 +84,7 @@ public class SectorServiceImpl implements SectorService {
     /**
      * Busca um bloco pelo ID informado de forma simples.
      * @param id identificador do bloco.
-     * @return o bloco encontrado.
+     * @return bloco encontrado.
      */
     @Override
     public SectorSimpleResponse findSectorByIdSimple(Long id){
@@ -95,7 +94,7 @@ public class SectorServiceImpl implements SectorService {
     /**
      * Busca um bloco pelo ID informado de forma completa.
      * @param id identificador do bloco.
-     * @return o bloco encontrado.
+     * @return bloco encontrado.
      */
     @Override
     public SectorCompoundResponse findSectorByIdCompound(Long id){
@@ -103,10 +102,10 @@ public class SectorServiceImpl implements SectorService {
     }
 
     /**
-     * Atualiza um bloco existente.
+     * Atualiza um bloco existente no banco de dados.
      * @param id identificador do bloco.
      * @param sector novos dados do bloco.
-     * @return o bloco atualizado.
+     * @return bloco já atualizado.
      */
     @Override
     public SectorSimpleResponse updateSector(Long id, SectorRequest sector){
@@ -114,7 +113,7 @@ public class SectorServiceImpl implements SectorService {
     }
 
     /**
-     * Deleta um bloco.
+     * Remove um bloco do banco de dados.
      * @param id identificador do bloco.
      */
     @Override

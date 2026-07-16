@@ -16,11 +16,11 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Cr
 public class CrBranchMapper {
 
     /**
-     * Converte um DTO de entrada de um CR-filial em uma entidade CR-filial.
+     * Converte um DTO de entrada do CR-filial em uma entidade CR-filial.
      * @param branch dados da filial.
      * @param cr dados do CR.
      * @param responsibleUsers usuários responsáveis.
-     * @return conversão dos dados para uma entidade CR-filial.
+     * @return dados convertidos para uma entidade.
      */
     public CrBranch toEntity(Branch branch, Cr cr, List<User> responsibleUsers) {
         return new CrBranch(
@@ -32,8 +32,8 @@ public class CrBranchMapper {
 
     /**
      * Converte uma entidade CR-filial em um DTO de saída do CR-filial.
-     * @param crBranch entidade com os dados.
-     * @return DTO de saída com os dados do CR-filial já convertidos.
+     * @param crBranch entidade com os dados do CR-filial.
+     * @return dados convertidos para um DTO de saída.
      */
     public CrBranchResponse toResponse(CrBranch crBranch) {
         List<String> responsibleUsers = crBranch.getResponsibleUsers() != null
@@ -49,9 +49,9 @@ public class CrBranchMapper {
     }
 
     /**
-     * Converte uma lista de entidades do CR-filial em uma lista de DTOs de saída do CR-filial.
-     * @param crBranches lista com as entidades.
-     * @return lista de DTOs de saída com os CR-filiais já convertidos.
+     * Converte uma lista de entidades CR-filial em uma lista de DTOs de saída do CR-filial.
+     * @param crBranches lista de entidades com os dados do CR-filial.
+     * @return dados convertido para uma lista de DTOs de saída.
      */
     public List<CrBranchResponse> toResponseList(List<CrBranch> crBranches){
         return crBranches

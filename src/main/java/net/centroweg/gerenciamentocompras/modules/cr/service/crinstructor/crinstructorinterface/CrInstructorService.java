@@ -19,7 +19,7 @@ public interface CrInstructorService {
     CrInstructorResponse create(CrInstructorRequest request);
 
     /**
-     * Lista os vínculos CR-instrutor cadastrados no banco de dados.
+     * Lista todos os vínculos CR-instrutor cadastrados no banco de dados.
      * @return lista com todos os vínculos encontrados.
      */
     List<CrInstructorResponse> findAll();

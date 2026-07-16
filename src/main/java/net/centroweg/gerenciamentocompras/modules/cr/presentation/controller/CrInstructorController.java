@@ -32,9 +32,9 @@ public class CrInstructorController {
     private final CrInstructorService crInstructorService;
 
     /**
-     * Cria um novo CR-instrutor.
-     * @param request dados do CR-instrutor.
-     * @return CR-instrutor criado.
+     * Cria um novo vínculo entre CR e usuário.
+     * @param request dados do vínculo.
+     * @return vínculo criado.
      */
     @Operation(description = "ENDPOINT responsável pela criação de um CR-instrutor")
     @PostMapping
@@ -44,8 +44,8 @@ public class CrInstructorController {
     }
 
     /**
-     * Lista todos os CR-instrutores cadastrados.
-     * @return lista com todos os CR-instrutores encontrados.
+     * Lista todos os vínculos CR-instrutores cadastrados.
+     * @return lista com todos os vínculos CR-instrutores encontrados.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todos os CR-instrutores")
     @GetMapping
@@ -55,9 +55,9 @@ public class CrInstructorController {
     }
 
     /**
-     * Busca um CR-instrutor pelo seu identificador.
-     * @param id identificador do CR-instrutor para pesquisa.
-     * @return CR-instrutor encontrado.
+     * Busca um vínculo CR-instrutor pelo seu identificador.
+     * @param id identificador do vínculo.
+     * @return vínculos encontrado.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR-instrutores por id")
     @GetMapping("/{id}")
@@ -67,10 +67,10 @@ public class CrInstructorController {
     }
 
     /**
-     * Atualiza um CR-instrutor existente.
-     * @param id identificador do CR-instrutor.
-     * @param request novos dados do CR-instrutor.
-     * @return CR-instrutor já atualizado.
+     * Atualiza um vínculo CR-instrutor existente.
+     * @param id identificador do vínculo.
+     * @param request novos dados do vínculo.
+     * @return vínculo já atualizado.
      */
     @Operation(description = "ENDPOINT responsável pela atualização de um CR-instrutor")
     @PutMapping("/{id}")
@@ -80,8 +80,8 @@ public class CrInstructorController {
     }
 
     /**
-     * Remove um CR-instrutor.
-     * @param id identificador do CR-instrutor.
+     * Remove um vínculo CR-instrutor.
+     * @param id identificador do vínculo.
      * @return mensagem de confirmação da remoção.
      */
     @Operation(description = "ENDPOINT responsável por deletar os CR-instrutor")

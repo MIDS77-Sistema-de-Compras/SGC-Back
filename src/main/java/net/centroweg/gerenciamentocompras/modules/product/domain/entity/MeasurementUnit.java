@@ -41,6 +41,11 @@ public class MeasurementUnit {
     @Column(nullable = false)
     private String abbreviation;
 
+    /**
+     * Construtor utilizado para criar uma nova unidade de medida, sem ID definido.
+     * @param name nome da unidade de medida.
+     * @param abbreviation abreviação da unidade de medida.
+     */
     public MeasurementUnit(String name, String abbreviation) {
         this.name = name;
         this.abbreviation = abbreviation;

@@ -12,48 +12,48 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 public interface SectorService {
 
     /**
-     * Cria um novo bloco.
+     * Cria e persiste um novo bloco no banco de dados.
      * @param sector dados do bloco.
      * @return bloco criado.
      */
     SectorSimpleResponse createSector(SectorRequest sector);
 
     /**
-     * Lista todos os blocos cadastrados de forma simples.
+     * Lista todos os blocos cadastrados no banco de dados de forma simples.
      * @return lista com todos os blocos encontrados.
      */
     List<SectorSimpleResponse> findAllSectorSimple();
 
     /**
-     * Lista todos os blocos cadastrados de forma completa.
+     * Lista todos os blocos cadastrados no banco de dados de forma completa.
      * @return lista com todos os blocos encontrados.
      */
     List<SectorCompoundResponse> findAllSectorCompound();
 
     /**
-     * Busca um bloco pelo ID de forma simples.
+     * Busca um bloco no banco de dados pelo ID de forma simples.
      * @param id identificador do bloco.
      * @return bloco encontrado.
      */
     SectorSimpleResponse findSectorByIdSimple(Long id);
 
     /**
-     * Busca um bloco pelo ID de forma completa.
+     * Busca um bloco no banco de dados pelo ID de forma completa.
      * @param id identificador do bloco.
      * @return bloco encontrado.
      */
     SectorCompoundResponse findSectorByIdCompound(Long id);
 
     /**
-     * Atualiza um bloco existente.
+     * Atualiza um bloco existente no banco de dados.
      * @param id identificador do bloco.
      * @param sector novos dados do bloco.
-     * @return o bloco com os dados atualizados.
+     * @return bloco já atualizado.
      */
     SectorSimpleResponse updateSector(Long id, SectorRequest sector);
 
     /**
-     * Deleta um bloco.
+     * Remove um bloco do banco de dados.
      * @param id identificador do bloco.
      */
     void deleteSector(Long id);

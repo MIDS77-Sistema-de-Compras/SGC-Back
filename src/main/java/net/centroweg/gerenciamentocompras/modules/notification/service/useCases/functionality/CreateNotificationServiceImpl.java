@@ -1,8 +1,8 @@
-package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceImpl;
+package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.functionality;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
-import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email.NotificationEmailService;
+import net.centroweg.gerenciamentocompras.modules.notification.service.email.NotificationEmailService;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
@@ -31,7 +31,7 @@ public class CreateNotificationServiceImpl {
     /**
      * Cria e persiste uma notificação no banco de dados.
      * @param request dados da notificação.
-     * @return notificação já criada.
+     * @return notificação criada.
      */
     public NotificationResponse createNotification(NotificationRequest request) {
         User user = userRepository.findById(request.userId())

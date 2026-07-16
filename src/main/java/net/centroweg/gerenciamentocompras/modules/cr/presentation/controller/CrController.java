@@ -39,7 +39,7 @@ public class CrController {
 
     /**
      * Lista todos os CRs cadastrados.
-     * @return lista de todos os CRs encontrados.
+     * @return lista com todos os CRs encontrados.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todos os CR")
     @GetMapping

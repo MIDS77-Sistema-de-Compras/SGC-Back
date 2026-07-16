@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 
 /**
- * Caso de uso responsável por deletar um {@link Cr}.
+ * Caso de uso responsável por remover um {@link Cr}.
  */
 @Service
 @RequiredArgsConstructor
@@ -18,8 +18,8 @@ public class DeleteCr {
     private final CrMapper crMapper;
 
     /**
-     * Deleta um CR do banco de dados.
-     * @param id identificador único do CR.
+     * Remove um CR do banco de dados.
+     * @param id identificador do CR.
      * @return mensagem de sucesso da remoção.
      * @throws CrNotFoundException caso não exista um CR com o identificador informado.
      */

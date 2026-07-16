@@ -10,7 +10,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
 import org.springframework.stereotype.Service;
 
 /**
- * Caso de uso responsável por atualizar os dados de um {@link Cr}.
+ * Caso de uso responsável por atualizar um {@link Cr}.
  */
 @Service
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class UpdateCr {
     private final CrMapper crMapper;
 
     /**
-     * Atualiza os dados de um CR existente.
-     * @param id identificador do CR a ser atualizado.
+     * Atualiza um CR existente no banco de dados.
+     * @param id identificador do CR.
      * @param dto novos dados do CR.
      * @return CR já atualizado.
      * @throws CrNotFoundException caso nenhum CR seja encontrado com o ID informado.

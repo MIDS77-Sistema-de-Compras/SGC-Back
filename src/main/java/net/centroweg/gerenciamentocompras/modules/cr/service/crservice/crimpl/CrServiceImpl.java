@@ -30,7 +30,7 @@ public class CrServiceImpl implements CrService {
     private final FindAllCr findAllCr;
 
     /**
-     * Componente responsável pela busca de um CR pelo ID.
+     * Componente responsável pela busca de um CR pelo ID informado.
      */
     private final FindById findById;
 
@@ -40,15 +40,15 @@ public class CrServiceImpl implements CrService {
     private final UpdateCr updateCr;
 
     /**
-     * Componente responsável por deletar um CR.
+     * Componente responsável por remover um CR.
      */
     private final DeleteCr deleteCr;
 
     /**
-     * Cria um CR.
-     * @param dto dados do CR a ser criado.
-     * @param userPrincipal dados do usuário que vai ser atribuído a CR.
-     * @return CR criada.
+     * Cria e persiste um novo CR no banco de dados.
+     * @param dto dados do CR.
+     * @param userPrincipal dados do usuário que será atribuído ao CR.
+     * @return CR criado.
      */
     @Override
     public CrCompoundResponse create(CrRequest dto, UserPrincipal userPrincipal) {
@@ -56,8 +56,8 @@ public class CrServiceImpl implements CrService {
     }
 
     /**
-     * Lista todos os CRs cadastrados.
-     * @return lista com todos os CRs cadastrados.
+     * Lista todos os CRs cadastrados no banco de dados.
+     * @return lista com todos os CRs encontrados.
      */
     @Override
     public List<CrCompoundResponse> listAll(){
@@ -65,7 +65,7 @@ public class CrServiceImpl implements CrService {
     }
 
     /**
-     * Busca um CR pelo ID.
+     * Busca um CR no banco de dados pelo ID informado.
      * @param id identificador do CR.
      * @return CR encontrado.
      */
@@ -75,10 +75,10 @@ public class CrServiceImpl implements CrService {
     }
 
     /**
-     * Atualiza um CR existente.
+     * Atualiza um CR existente no banco de dados.
      * @param id  identificador do CR.
      * @param dto novos dados do CR.
-     * @return CR atualizado.
+     * @return CR já atualizado.
      */
     @Override
     public CrCompoundResponse update(Long id, CrRequest dto){
@@ -86,8 +86,8 @@ public class CrServiceImpl implements CrService {
     }
 
     /**
-     * Deleta um CR.
-     * @param id identificador do CR a ser removido.
+     * Remove um CR do banco de dados.
+     * @param id identificador do CR.
      * @return mensagem de confirmação da remoção.
      */
     @Override

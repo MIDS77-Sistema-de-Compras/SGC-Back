@@ -29,7 +29,7 @@ public class Branch {
     private String name;
 
     /**
-     * Construtor utilizado para criar uma nova filial informando apenas o nome.
+     * Construtor utilizado para criar uma nova filial, sem ID definido.
      * @param name nome da filial.
      */
     public Branch(String name) {

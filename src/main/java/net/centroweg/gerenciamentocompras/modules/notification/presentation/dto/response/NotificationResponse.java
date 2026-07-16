@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * DTO de saída com os dados da {@link Notification}.
+ * DTO de saída com os dados de uma {@link Notification}.
  * @param id identificador da notificação.
  * @param title titulo da notificação.
  * @param message mensagem da notificação.

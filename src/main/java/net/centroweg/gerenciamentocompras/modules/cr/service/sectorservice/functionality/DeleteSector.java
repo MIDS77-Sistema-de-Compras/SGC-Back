@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
 /**
- * Caso de uso responsável por deletar um {@link Sector}.
+ * Caso de uso responsável por remover um {@link Sector}.
  */
 @Service
 @RequiredArgsConstructor
@@ -15,7 +15,7 @@ public class DeleteSector {
     private final SectorRepository repository;
 
     /**
-     * Deleta um bloco do banco de dados.
+     * Remove um bloco do banco de dados.
      * @param id identificador do bloco.
      */
     public void deleteSector(Long id){

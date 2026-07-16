@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
+import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.functionality.*;
 import net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceIntrf.NotificationService;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -43,7 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final FindNotificationByOwnUser findNotificationByOwnUser;
 
     /**
-     * Cria uma notificação.
+     * Cria e persiste uma nova notificação no banco de dados.
      * @param request dados da notificação.
      * @return notificação criada.
      */
@@ -53,9 +54,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Lista notificações pelo identificador do usuário.
+     * Lista notificações cadastradas no banco de dados pelo identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista de notificações encontradas.
+     * @return lista todas as notificações encontradas.
      */
     @Override
     public List<NotificationResponse> findNotificationsByUser(Long userId) {
@@ -63,9 +64,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Lista notificações não visualizadas pelo identificador do usuário.
+     * Lista notificações cadastradas no banco de dados não visualizadas pelo identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista de notificações encontradas.
+     * @return lista todas as notificações encontradas.
      */
     @Override
     public List<NotificationResponse> findUnviewedNotificationsByUser(Long userId) {
@@ -73,9 +74,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Marca uma notificação como visualizada.
+     * Marca uma notificação existente como visualizada no banco de dados.
      * @param id identificador da notificação.
-     * @return notificação atualizada.
+     * @return notificação já atualizada.
      */
     @Override
     public NotificationResponse markAsViewed(Long id) {
@@ -83,9 +84,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Lista notificações que pertencem ao dono da solicitação.
-     * @param userPrincipal usuário que fez a solicitação.
-     * @return lista de notificações encontradas.
+     * Lista notificações cadastradas no banco de dados pertencentes ao dono da solicitação.
+     * @param userPrincipal usuário.
+     * @return lista todas as notificações encontradas.
      */
     @Override
     public List<NotificationResponse> findByOwnUser(UserPrincipal userPrincipal){

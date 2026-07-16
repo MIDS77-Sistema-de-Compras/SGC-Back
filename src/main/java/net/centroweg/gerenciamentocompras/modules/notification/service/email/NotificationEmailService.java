@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email;
+package net.centroweg.gerenciamentocompras.modules.notification.service.email;
 
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class NotificationEmailService {
                         new EmailParagraph(message, "#666666", 14),
                         new EmailParagraph(buildRequestSummary(request), "#333333", 14),
                         new EmailParagraph("Clique na opção abaixo para analisar a solicitação.", "#666666", 14),
-                        new EmailButton(frontendUrl, "Acessar solicitação"),
+                        new EmailButton(frontendUrl, "Acessar solicitação."),
                         new EmailFooter()
                 )
         );
@@ -66,7 +66,7 @@ public class NotificationEmailService {
             );
         } catch (MessagingException exception) {
             log.error(
-                    "Erro ao enviar e-mail de notificação para {}",
+                    "Erro ao enviar e-mail de notificação para {}!",
                     user.getEmail(),
                     exception
             );
@@ -122,9 +122,9 @@ public class NotificationEmailService {
     }
 
     /**
-     * Monta o resumo dos produtos da solicitação em formato HTML.
+     * Monta o resumo dos produtos da solicitação.
      * @param request solicitação contendo itens de produto.
-     * @return resumo dos produtos.
+     * @return resumo dos produtos em formato HTML.
      */
     private String buildProductItemsSummary(Request request) {
         StringBuilder builder = new StringBuilder();
@@ -156,9 +156,9 @@ public class NotificationEmailService {
     }
 
     /**
-     * Monta o resumo dos serviços da solicitação em formato HTML.
+     * Monta o resumo dos serviços da solicitação.
      * @param request solicitação contendo itens de serviço.
-     * @return resumo dos serviços.
+     * @return resumo dos serviços em formato HTML.
      */
     private String buildProvisionItemsSummary(Request request) {
         StringBuilder builder = new StringBuilder();
@@ -190,11 +190,11 @@ public class NotificationEmailService {
     /**
      * Obtém o nome do usuário que criou a solicitação.
      * @param request solicitação que possui o nome do solicitante.
-     * @return nome do solicitante ou 'não informado' caso não exista.
+     * @return nome do solicitante, caso exista.
      */
     private String getRequesterName(Request request) {
         if (request.getCreatedByUsers() == null || request.getCreatedByUsers().isEmpty()) {
-            return "Não informado";
+            return "Não informado!";
         }
 
         return request.getCreatedByUsers().get(0).getName();

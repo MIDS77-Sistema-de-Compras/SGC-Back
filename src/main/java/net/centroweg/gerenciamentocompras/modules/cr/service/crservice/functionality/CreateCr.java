@@ -14,7 +14,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Acess
 import org.springframework.stereotype.Service;
 
 /**
- * Caso de uso responsável pela criação de um {@link Cr}.
+ * Caso de uso responsável pela criação de um novo{@link Cr}.
  */
 @Service
 @RequiredArgsConstructor

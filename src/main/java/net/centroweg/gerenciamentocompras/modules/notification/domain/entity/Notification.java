@@ -34,13 +34,13 @@ public class Notification {
     private String title;
 
     /**
-     * Mensagem a ser passada na notificação, não pode ser nulo.
+     * Mensagem da notificação, não pode ser nula.
      */
     @Column(nullable = false)
     private String message;
 
     /**
-     * Visualização da notificação, não pode ser nulo.
+     * Visualização da notificação, não pode ser nula.
      */
     @Column(nullable = false)
     private Boolean viewed = false;
@@ -59,7 +59,7 @@ public class Notification {
     private User user;
 
     /**
-     * Relacionamento com a entidade requisição, uma notificação tem apenas uma requisição.
+     * Relacionamento com a entidade solicitação, uma notificação tem apenas uma solicitação.
      */
     @ManyToOne
     @JoinColumn(name = "request_id")
@@ -67,7 +67,7 @@ public class Notification {
 
 
     /**
-     * Pega o momento atual(data e hora) e incrementa no atributo de criado em.
+     * Pega o momento atual(data e hora) e incrementa no atributo de criação.
      */
     @PrePersist
     protected void onCreate() {

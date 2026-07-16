@@ -7,21 +7,21 @@ import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Not
 
 /**
  * DTO de entrada para criação e atualização de uma {@link Notification}.
- * @param title titulo da notificação, não pode ser branco e nem nulo.
- * @param message mensagem da notificação, não pode ser branco e nem nulo.
- * @param userId identificação do usuário.
- * @param requestId identificação da solicitação.
+ * @param title titulo da notificação, não pode ser nulo ou vazio.
+ * @param message mensagem da notificação, não pode ser nula ou vazia.
+ * @param userId identificador do usuário, não pode ser nulo ou vazio e deve ser positivo.
+ * @param requestId identificador da solicitação, não pode ser nulo ou vazio e deve ser positivo.
  */
 public record NotificationRequest(
-        @NotBlank
+        @NotBlank(message = "O título da notificação não deve ser nulo e nem vazio!")
         String title,
-        @NotBlank
+        @NotBlank(message = "A mensagem da notificação não deve ser nula e nem vazia!")
         String message,
-        @NotNull
-        @Positive
+        @NotNull(message = "O identificador do usuário não deve ser nulo e nem vazio!")
+        @Positive(message = "O identificador do usuário deve ser positivo!")
         Long userId,
-        @NotNull
-        @Positive
+        @NotNull(message = "O identificador da solicitação não deve ser nulo e nem vazio!")
+        @Positive(message = "O identificador da solicitação deve ser positivo!")
         Long requestId
 ) {
 }

@@ -19,7 +19,7 @@ public class FindSectorByIdSimple {
     private final SectorMapper sectorMapper;
 
     /**
-     * Busca um bloco pelo ID de forma simples.
+     * Busca um bloco no banco de dados pelo ID de forma simples.
      * @param id identificador do bloco.
      * @return bloco encontrado.
      */

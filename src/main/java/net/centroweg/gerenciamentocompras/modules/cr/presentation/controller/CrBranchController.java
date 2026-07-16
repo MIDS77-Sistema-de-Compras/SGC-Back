@@ -39,7 +39,7 @@ public class CrBranchController {
 
     /**
      * Lista todos os vínculos CR-filial cadastrados.
-     * @return lista de todos o9s CR-filiais encontrados.
+     * @return lista com todos os CR-filiais encontrados.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR-filiais")
     @GetMapping

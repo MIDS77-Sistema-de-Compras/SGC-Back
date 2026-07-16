@@ -37,7 +37,7 @@ public class BranchController {
 
     /**
      * Lista todas as filiais cadastradas.
-     * @return lista de filiais encontradas.
+     * @return lista com todas filiais encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todas as filiais")
     @GetMapping

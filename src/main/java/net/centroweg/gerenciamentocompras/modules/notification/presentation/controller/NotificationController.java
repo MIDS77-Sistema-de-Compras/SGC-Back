@@ -16,7 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Not
 /**
  * Controlador REST responsável pelos endpoints de gerenciamento de {@link Notification}.
  */
-@Tag(name = "ENDPOINTS da entidade NOTIFICATION")
+@Tag(name = "ENDPOINTS da entidade de notificações")
 @RequiredArgsConstructor
 @RequestMapping("/notifications")
 @RestController
@@ -25,9 +25,9 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     /**
-     * Lista todas as notificações pelo identificador do usuário.
+     * Lista todas as notificações cadastradas pelo identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista com as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de notificações por usuário")
     @GetMapping("/user/{userId}")
@@ -36,11 +36,10 @@ public class NotificationController {
                 .body(notificationService.findNotificationsByUser(userId));
     }
 
-
     /**
-     * Lista todas as notificações do usuário logado.
-     * @param userPrincipal dados do usuário logado.
-     * @return lista com as notificações encontradas.
+     * Lista todas as notificações cadastradas do usuário logado.
+     * @param userPrincipal dados do usuário.
+     * @return lista com todas as notificações encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de notificações do próprio usuário logado")
     @GetMapping("/me")
@@ -52,7 +51,7 @@ public class NotificationController {
     /**
      * Marca a notificação como visualizada.
      * @param id identificador da notificação.
-     * @return notificação com a visualização atualizada.
+     * @return notificação já atualizada.
      */
     @Operation(description = "ENDPOINT responsável por marcar notificações como visualizada")
     @PatchMapping("/{id}/viewed")
@@ -64,7 +63,7 @@ public class NotificationController {
     /**
      * Lista todas as notificações não visualizadas por usuário.
      * @param userId identificador do usuário.
-     * @return lista com as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de notificações não visualizadas por usuário")
     @GetMapping("user/{userId}/unviewed")

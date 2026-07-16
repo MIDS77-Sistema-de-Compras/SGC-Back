@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceImpl;
+package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.functionality;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
@@ -9,24 +9,25 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * Caso de uso responsável pela listagem de {@link Notification} não lidas por usuário.
+ * Caso de uso responsável pela listagem de {@link Notification} por usuário.
  */
 @Service
 @RequiredArgsConstructor
-public class FindUnviewedNotificationsByUserServiceImpl {
+public class FindNotificationsByUserServiceImpl {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
     /**
-     * Lista as notificações encontradas na pesquisa específica no banco de dados.
+     * Lista todas as notificações cadastradas no banco de dados por usuário.
      * @param userId identificador do usuário.
-     * @return lista com as notificações encontradas.
+     * @return lista todas as notificações encontradas.
      */
-    public List<NotificationResponse> findUnviewedByUser(Long userId) {
-        return notificationRepository.findByUserIdAndViewedFalse(userId)
+    public List<NotificationResponse> findNotificationsByUser(Long userId) {
+        return notificationRepository.findByUserId(userId)
                 .stream()
                 .map(notificationMapper::toResponse)
                 .toList();
     }
+
 }

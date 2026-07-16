@@ -19,7 +19,7 @@ public class CreateSector {
     private final SectorRepository repository;
 
     /**
-     * Cria e persiste um bloco no banco de dados.
+     * Cria e persiste um novo bloco no banco de dados.
      * @param sector dados do bloco.
      * @return bloco criado.
      */

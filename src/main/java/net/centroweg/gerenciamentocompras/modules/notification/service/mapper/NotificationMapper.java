@@ -17,9 +17,9 @@ public class NotificationMapper {
      * Converte um DTO de entrada da notificação em uma entidade notificação.
      * @param title titulo da notificação.
      * @param message mensagem da notificação.
-     * @param user usuário que vai receber a notificação.
-     * @param request requisição feita.
-     * @return
+     * @param user identificador do usuário.
+     * @param request identificador da requisição.
+     * @return dados convertidos para entidade.
      */
     public Notification toEntity(String title, String message, User user, Request request) {
         Notification notification = new Notification();
@@ -33,7 +33,7 @@ public class NotificationMapper {
     /**
      * Converte uma entidade notificação em um DTO de saída da notificação.
      * @param notification entidade com os dados.
-     * @return DTO de saída com os dados já convertidos.
+     * @return dados convertidos em um DTO de saída.
      */
     public NotificationResponse toResponse(Notification notification) {
         return new NotificationResponse(

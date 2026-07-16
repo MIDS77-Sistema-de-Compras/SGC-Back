@@ -1,4 +1,4 @@
-package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceImpl;
+package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.functionality;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
@@ -20,8 +20,8 @@ public class MarkAsViewedServiceImpl {
 
     /**
      * Marca a notificação como lida e atualiza no banco de dados.
-     * @param id identificador da notificação a ser atualizada.
-     * @return a notificação já atualizada.
+     * @param id identificador da notificação.
+     * @return notificação já atualizada.
      */
     public NotificationResponse markAsViewed(Long id) {
         Notification notification = notificationRepository.findById(id)

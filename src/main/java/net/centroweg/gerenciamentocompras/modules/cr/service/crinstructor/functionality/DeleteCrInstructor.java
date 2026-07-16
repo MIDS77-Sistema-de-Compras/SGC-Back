@@ -8,7 +8,7 @@ import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
 /**
- * Caso de uso responsável por deletar um {@link CrInstructor}.
+ * Caso de uso responsável por remover um {@link CrInstructor}.
  */
 @Service
 @RequiredArgsConstructor
@@ -17,7 +17,7 @@ public class DeleteCrInstructor {
     private final CrInstructorRepository crInstructorRepository;
 
     /**
-     * Deleta um vínculo CR-instrutor do banco de dados.
+     * Remove um vínculo CR-instrutor do banco de dados.
      * @param id identificador do CR-instrutor.
      * @return mensagem de confirmação da remoção.
      */

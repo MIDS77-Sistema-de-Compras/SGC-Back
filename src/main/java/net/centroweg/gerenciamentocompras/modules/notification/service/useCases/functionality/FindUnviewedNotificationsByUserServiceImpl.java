@@ -1,7 +1,6 @@
-package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceImpl;
+package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.functionality;
 
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
@@ -10,22 +9,22 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * Caso de uso responsável pela listagem de {@link Notification} pelo usuário responsável pela solicitação.
+ * Caso de uso responsável pela listagem de {@link Notification} não lidas por usuário.
  */
 @Service
 @RequiredArgsConstructor
-public class FindNotificationByOwnUser {
+public class FindUnviewedNotificationsByUserServiceImpl {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
     /**
-     * Lista as notificações encontradas na pesquisa específica no banco de dados.
-     * @param userPrincipal usuário responsável pela solicitação.
-     * @return lista com as notificações encontrados.
+     * Lista todas as notificações cadastradas no banco de dados não lidas por usuário.
+     * @param userId identificador do usuário.
+     * @return lista todas as notificações encontradas.
      */
-    public List<NotificationResponse> findNotificationsByOwnUser(UserPrincipal userPrincipal) {
-        return notificationRepository.findByUserId(userPrincipal.getId())
+    public List<NotificationResponse> findUnviewedByUser(Long userId) {
+        return notificationRepository.findByUserIdAndViewedFalse(userId)
                 .stream()
                 .map(notificationMapper::toResponse)
                 .toList();

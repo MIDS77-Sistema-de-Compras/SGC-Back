@@ -10,7 +10,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
  * @param master booleano que indica se é o CR master ou não.
  * @param sector nome do bloco que a CR pertence.
  */
-
 public record CrCompoundResponse (
         long id,
         String name,

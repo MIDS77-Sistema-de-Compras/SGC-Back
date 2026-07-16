@@ -1,6 +1,7 @@
-package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.serviceImpl;
+package net.centroweg.gerenciamentocompras.modules.notification.service.useCases.functionality;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
@@ -9,25 +10,24 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * Caso de uso responsável pela listagem de {@link Notification} por usuário.
+ * Caso de uso responsável pela listagem de {@link Notification} pelo usuário responsável pela solicitação.
  */
 @Service
 @RequiredArgsConstructor
-public class FindNotificationsByUserServiceImpl {
+public class FindNotificationByOwnUser {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
 
     /**
-     * Lista as notificações encontradas na pesquisa específica no banco de dados.
-     * @param userId identificador do usuário.
-     * @return lista com as notificações encontradas.
+     * Lista as todas notificações cadastradas no banco de dados pelo usuário responsável.
+     * @param userPrincipal usuário responsável.
+     * @return lista com todas as notificações encontrados.
      */
-    public List<NotificationResponse> findNotificationsByUser(Long userId) {
-        return notificationRepository.findByUserId(userId)
+    public List<NotificationResponse> findNotificationsByOwnUser(UserPrincipal userPrincipal) {
+        return notificationRepository.findByUserId(userPrincipal.getId())
                 .stream()
                 .map(notificationMapper::toResponse)
                 .toList();
     }
-
 }

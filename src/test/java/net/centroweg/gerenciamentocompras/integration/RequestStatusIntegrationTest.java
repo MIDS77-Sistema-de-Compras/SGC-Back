@@ -7,7 +7,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
-import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.email.NotificationEmailService;
+import net.centroweg.gerenciamentocompras.modules.notification.service.email.NotificationEmailService;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;

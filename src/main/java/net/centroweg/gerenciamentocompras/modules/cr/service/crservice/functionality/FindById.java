@@ -18,9 +18,9 @@ public class FindById {
     private final CrMapper crMapper;
 
     /**
-     * Busca um CR pelo ID informado.
+     * Busca um CR no banco de dadospelo ID informado.
      * @param id identificador do CR.
-     * @return o CR encontrado.
+     * @return CR encontrado.
      * @throws CrNotFoundException caso nenhum CR seja encontrado com o ID informado.
      */
     public CrCompoundResponse listById(Long id){

@@ -2,6 +2,10 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.controll
 
 import java.util.List;
 
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManagePurchaseItems;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +25,6 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProvisionService;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
-import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 
 @Tag(name = "ENDPOINTS da entidade ITEM-REQUEST-PROVISION")
 @RestController
@@ -34,6 +37,7 @@ public class ItemRequestProvisionController {
     @Operation(description = "ENDPOINT responsável pela criação de Item Request Provision")
     @PostMapping
     @Auditable(action = "ADICIONAR_ITEM")
+    @CanManagePurchaseItems
     public ResponseEntity<ItemRequestProvisionResponse> addItem(@RequestBody ItemRequestProvisionRequest request){
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(itemRequestProvisionService.addItemToProvisionRequest(request));
@@ -56,6 +60,7 @@ public class ItemRequestProvisionController {
     @Operation(description = "ENDPOINT responsável pela atualização de Item Request Provision")
     @PutMapping("/request/{itemId}")
     @Auditable(action = "ATUALIZAR_ITEM_SERVIÇO")
+    @CanManagePurchaseItems
     public ResponseEntity<ItemRequestProvisionResponse> updateItem(@PathVariable("itemId") Long itemId, @AuditParam("request") @Valid @RequestBody ItemRequestProvisionRequest request){
         return ResponseEntity.status(HttpStatus.OK)
             .body(itemRequestProvisionService.updateItemFromProvisionRequest(itemId, request));
@@ -63,6 +68,7 @@ public class ItemRequestProvisionController {
 
     @Operation(description = "ENDPOINT responsável pelo delete de Item Request Provision")
     @DeleteMapping("/request/{itemId}")
+    @CanManagePurchaseItems
     public ResponseEntity<Void> deleteItem(@PathVariable("itemId") Long itemId){
         itemRequestProvisionService.deleteItemFromProvisionRequest(itemId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)

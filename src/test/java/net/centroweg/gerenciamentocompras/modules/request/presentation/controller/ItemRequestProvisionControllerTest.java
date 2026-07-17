@@ -95,8 +95,8 @@ class ItemRequestProvisionControllerTest {
 
         assertThat(ItemRequestProvisionController.class.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
         assertThat(updateItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
-        assertThat(addItem.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
+        assertThat(addItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
         assertThat(findAllItems.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
-        assertThat(deleteItem.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
+        assertThat(deleteItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
     }
 }

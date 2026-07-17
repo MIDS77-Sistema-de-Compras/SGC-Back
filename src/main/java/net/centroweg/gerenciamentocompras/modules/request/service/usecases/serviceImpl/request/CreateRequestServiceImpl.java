@@ -63,7 +63,7 @@ public class CreateRequestServiceImpl {
         User requester = userPublicApi.findByEmail(userPrincipal.getUsername())
                 .orElseThrow(UserNotFoundException::new);
 
-        boolean isSupervisor = isSupervisor(requester);
+        boolean isSupervisor = isSupervisorOrCoordenador(requester);
 
         Status status = isSupervisor
                 ? statusRepository.findByNameIgnoreCase(APPROVED_STATUS)

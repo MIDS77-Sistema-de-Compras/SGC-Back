@@ -21,9 +21,8 @@ import static org.mockito.Mockito.*;
 /**
  * Testes unitários (Mockito) do {@link ItemRequestProvisionController}.
  *
- * <p>Validam a delegação ao serviço e os status HTTP. Ver {@code AuditAnnotationsTest} para o
- * achado de que apenas o POST possui {@code @Auditable} (sem {@code @AuditParam}), enquanto PUT e
- * DELETE não são auditados hoje.</p>
+ * <p>Validam a delegação ao serviço, os status HTTP e o controle de acesso por
+ * {@code @CanManagePurchaseItems} nas operações de escrita (POST, PUT e DELETE).</p>
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ItemRequestProvisionController - testes unitários")
@@ -82,8 +81,8 @@ class ItemRequestProvisionControllerTest {
     }
 
     @Test
-    @DisplayName("Deve proteger somente o PUT de atualizacao")
-    void deveProtegerSomenteAtualizacao() throws NoSuchMethodException {
+    @DisplayName("Deve proteger as operacoes de escrita (POST, PUT e DELETE) com @CanManagePurchaseItems")
+    void deveProtegerOperacoesDeEscrita() throws NoSuchMethodException {
         Method updateItem = ItemRequestProvisionController.class.getMethod(
                 "updateItem", Long.class, ItemRequestProvisionRequest.class
         );
@@ -94,9 +93,9 @@ class ItemRequestProvisionControllerTest {
         Method deleteItem = ItemRequestProvisionController.class.getMethod("deleteItem", Long.class);
 
         assertThat(ItemRequestProvisionController.class.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
+        assertThat(addItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
         assertThat(updateItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
-        assertThat(addItem.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
+        assertThat(deleteItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
         assertThat(findAllItems.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
-        assertThat(deleteItem.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
     }
 }

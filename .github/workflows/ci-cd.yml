@@ -33,63 +33,57 @@ jobs:
           name: spring-boot-app
           path: target/*.jar
 
-  deploy:
+  deploy-render:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
+      - name: Disparar Deploy no Render
+        run: |
+          echo "Iniciando deploy no Render para a branch main..."
+          curl -f "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+          echo "Deploy solicitado com sucesso!"
 
-      - name: Baixar o artefato JAR
+  deploy-ec2-ngrok:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Baixar o artefato JAR compilado
         uses: actions/download-artifact@v4
         with:
           name: spring-boot-app
           path: target/
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest
-
-      - name: Deploy na AWS EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Copiar JAR e reiniciar serviços na EC2 via SSH
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
+          username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-            
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest
-            
-            docker stop sgs-api || true
-            docker rm sgs-api || true
-            
-            docker run -d \
-            --name sgs-api \
-            -p 8080:8080 \
-            --restart always \
-            -e SPRING_PROFILES_ACTIVE=prod \
-            ${{ secrets.DOCKERHUB_USERNAME }}/sgs-api:latest
-            
-            echo "Verificando o estado do LocalTunnel no PM2..."
-            
+            echo "1. Criando diretório da aplicação caso não exista..."
+            mkdir -p ~/sgs-app
+
+            echo "2. Parando a execução anterior do Spring Boot..."
+            fuser -k 8080/tcp || true
+
+            echo "3. Iniciando a nova versão da API em segundo plano..."
+            nohup java -jar ~/sgs-app/*.jar > ~/sgs-app/app.log 2>&1 &
+
+            sleep 10
+
+            echo "4. Verificando e garantindo o túnel do Ngrok via PM2..."
+
+            ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+
             if pm2 describe sgs-tunnel > /dev/null 2>&1; then
-              echo "O sgs-tunnel já existe. Reiniciando para garantir a conectividade..."
+              echo "Túnel já existe. Reiniciando para garantir conexão estável..."
               pm2 restart sgs-tunnel
             else
-              echo "O sgs-tunnel não foi encontrado. Criando um novo processo em segundo plano..."
-              pm2 start lt --name "sgs-tunnel" -- --port 8080 --local-host 127.0.0.1 --subdomain sistema-gerenciamento-solicitacao-api
+              echo "Criando novo processo de túnel no PM2..."
+              pm2 start ngrok --name "sgs-tunnel" -- http 8080 --url=${{ secrets.NGROK_STATIC_DOMAIN }}
             fi
-            
             pm2 save

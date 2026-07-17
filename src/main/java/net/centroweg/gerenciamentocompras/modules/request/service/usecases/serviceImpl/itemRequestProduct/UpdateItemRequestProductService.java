@@ -1,5 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.itemRequestProduct;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
 import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
@@ -16,19 +23,15 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProductRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditInfo;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +48,9 @@ public class UpdateItemRequestProductService {
     private final CurrentUserService currentUserService;
 
     @Transactional
-    public ItemRequestProductResponse update(Long id, ItemRequestProductRequest dto) {
+    @Auditable(action="MUDANÇA_STATUS", targetFromReturn=true)
+    public ItemRequestProductResponse update(Long id, 
+                @AuditInfo("Novo status: ") ItemRequestProductRequest dto) {
 
         ItemRequestProduct itemRequestProduct =
                 itemRequestProductRepository.findById(id)

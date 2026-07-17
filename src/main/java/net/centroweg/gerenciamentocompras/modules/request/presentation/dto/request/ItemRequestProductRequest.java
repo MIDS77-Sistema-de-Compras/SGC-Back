@@ -25,4 +25,10 @@ public record ItemRequestProductRequest(
         @NotBlank(message = "As informações adicionais do produto não podem estar em branco.")
         @Size(max = 255, message = "Informações adicionais excedem o limite máximo permitido (255 caractéres).")
         String additionalInformations
-) {}
+) {
+        // for logs
+        @Override
+        public String toString(){
+                return statusName;
+        }
+}

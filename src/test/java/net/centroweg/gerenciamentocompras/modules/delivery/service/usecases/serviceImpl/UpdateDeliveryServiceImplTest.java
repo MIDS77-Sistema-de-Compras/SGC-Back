@@ -63,7 +63,7 @@ class UpdateDeliveryServiceImplTest {
                 statusPublicApi,
                 new DeliveryReceiverValidator(userPublicApi),
                 deliveryItemResolver,
-                new DeliveryMapper(statusPublicApi)
+                new DeliveryMapper()
         );
         request = request();
         status = status();

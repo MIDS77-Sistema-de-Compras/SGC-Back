@@ -1,6 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.irprovision;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
@@ -19,15 +25,11 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.irprovision.ItemRequestProvisionMapper;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditInfo;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +45,10 @@ public class UpdateItemRequestProvisionServiceImpl {
     private final CurrentUserService currentUserService;
 
     @Transactional
-    public ItemRequestProvisionResponse updateItem(Long itemId, ItemRequestProvisionRequest requestDto){
+    @Auditable(action="MUDANÇA_STATUS", targetFromReturn=true)
+    public ItemRequestProvisionResponse updateItem(Long itemId,
+            @AuditInfo("Novo status: ") ItemRequestProvisionRequest requestDto){
+
         ItemRequestProvision item = itemRequestProvisionRepository.findById(itemId)
             .orElseThrow(() -> new RequestProvisionItemNotFoundException());
 

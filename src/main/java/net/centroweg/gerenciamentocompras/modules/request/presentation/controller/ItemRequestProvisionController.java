@@ -3,7 +3,6 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.controll
 import java.util.List;
 
 import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManagePurchaseItems;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
@@ -18,10 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProvisionService;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 
 @Tag(name = "ENDPOINTS da entidade ITEM-REQUEST-PROVISION")
 @RestController
@@ -56,8 +59,9 @@ public class ItemRequestProvisionController {
 
     @Operation(description = "ENDPOINT responsável pela atualização de Item Request Provision")
     @PutMapping("/request/{itemId}")
+    @Auditable(action = "ATUALIZAR_ITEM_SERVIÇO")
     @CanManagePurchaseItems
-    public ResponseEntity<ItemRequestProvisionResponse> updateItem(@PathVariable("itemId") Long itemId, @RequestBody ItemRequestProvisionRequest request){
+    public ResponseEntity<ItemRequestProvisionResponse> updateItem(@PathVariable("itemId") Long itemId, @AuditParam("request") @Valid @RequestBody ItemRequestProvisionRequest request){
         return ResponseEntity.status(HttpStatus.OK)
             .body(itemRequestProvisionService.updateItemFromProvisionRequest(itemId, request));
     }

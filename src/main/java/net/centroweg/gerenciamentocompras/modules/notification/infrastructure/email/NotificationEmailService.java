@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.infrastructure.e
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.url.RequestFrontendUrlBuilder;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestEmailNotificationData;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailButton;
@@ -12,7 +13,6 @@ import net.centroweg.gerenciamentocompras.shared.email.components.EmailTitle;
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
@@ -29,12 +29,11 @@ public class NotificationEmailService {
 
     private final EmailSenderService emailSenderService;
     private final RequestPublicApi requestPublicApi;
-
-    @Value("${app.frontend.coordinator-requests-url}")
-    private String frontendUrl;
+    private final RequestFrontendUrlBuilder requestFrontendUrlBuilder;
 
     @Async
     public void sendNotificationEmail(String userName, String userEmail, String subject, String message, Long requestId) {
+        String requestUrl = requestFrontendUrlBuilder.buildManagementRequestUrl(requestId);
         try {
             RequestEmailNotificationData request = requestPublicApi.findEmailNotificationDataById(requestId);
             EmailLayout layout = new EmailLayout(
@@ -45,7 +44,7 @@ public class NotificationEmailService {
                             new EmailParagraph(escape(message), "#666666", 14),
                             new EmailParagraph(buildRequestSummary(request), "#333333", 14),
                             new EmailParagraph("Clique na op\u00E7\u00E3o abaixo para analisar a solicita\u00E7\u00E3o.", "#666666", 14),
-                            new EmailButton(HtmlUtils.htmlEscape(frontendUrl), "Acessar solicita\u00E7\u00E3o"),
+                            new EmailButton(HtmlUtils.htmlEscape(requestUrl), "Acessar solicita\u00E7\u00E3o"),
                             new EmailFooter()
                     )
             );

@@ -21,4 +21,9 @@ public record ItemRequestProvisionRequest(
     @NotBlank(message = "As informações adicionais não podem estar em branco.")
     @Size(max=255, message = "Informações adicionais excedem o tamanho máximo permitido (255 caractéres).")
     String additionalInformation
-) {}
+) {
+    @Override
+    public String toString(){
+        return statusId.toString(); // for some reason, this uses the status' ID, instead of the name
+    }
+}

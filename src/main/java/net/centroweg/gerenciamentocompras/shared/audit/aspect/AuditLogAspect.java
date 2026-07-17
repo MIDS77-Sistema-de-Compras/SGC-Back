@@ -1,31 +1,30 @@
 package net.centroweg.gerenciamentocompras.shared.audit.aspect;
 
+import java.lang.reflect.Parameter;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditInfo;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import net.centroweg.gerenciamentocompras.shared.audit.domain.entity.AuditLog;
 import net.centroweg.gerenciamentocompras.shared.audit.infrastructure.persistence.AuditLogRepository;
 import net.centroweg.gerenciamentocompras.shared.audit.service.api.AuditLogPublicApi;
 import net.centroweg.gerenciamentocompras.shared.security.ImpersonationDetails;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.core.DefaultParameterNameDiscoverer;
-import org.springframework.core.ParameterNameDiscoverer;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Aspect
 @Component
@@ -58,9 +57,12 @@ public class AuditLogAspect {
         auditLog.setRequest(requestSearched);
         auditLog.setUserTarget(targetUserSearched);
 
+        String description = extractDescription(joinPoint, auditable, result, auth, agent);
+        auditLog.setDescription(description);
+
         // Quando um administrador está logado na conta de outro usuário, a ação é
         // registrada em nome do usuário, mas a descrição deixa claro quem realmente agiu.
-        if (auth.getDetails() instanceof ImpersonationDetails impersonation) {
+        if (auth.getDetails() instanceof ImpersonationDetails impersonation && description.isEmpty()) {
             auditLog.setDescription("Ação realizada pelo administrador " + impersonation.adminName()
                     + " logado na conta de " + agent.getName() + ".");
         }
@@ -164,6 +166,38 @@ public class AuditLogAspect {
                 .orElse(null);
     }
 
+    private String extractDescription(JoinPoint joinPoint, Auditable auditable, Object result, Authentication auth, User agent){
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        Parameter[] parameters = methodSignature.getMethod().getParameters();
+        Object[] args = joinPoint.getArgs();
 
+        for(int i = 0; i < parameters.length; i++){
+            AuditInfo descriptor = parameters[i].getAnnotation(AuditInfo.class);
+            if(descriptor != null){
+                Object val = args[i];
+                String txt = (val == null) ? "" : val.toString();
+                return descriptor.value() + txt;
+            }
+        }
+        String methodDesc = null;
+        AuditInfo descriptor = methodSignature.getMethod().getAnnotation(AuditInfo.class);
+        if(descriptor != null){
+            Object body = (result instanceof ResponseEntity<?> re) ? re.getBody() : result;
+            String txt = (body == null) ? "" : body.toString();
+            methodDesc = descriptor.value() + txt;
+        }
+
+        if (methodDesc != null) {
+            return methodDesc;
+        }
+        
+        if (auth.getDetails() instanceof ImpersonationDetails impersonation) {
+            String adminName = impersonation.adminName();
+            String actedAsName = auditLogPublicApi.findByUserEmail(auth.getName()).getName();
+            return "Ação realizada pelo administrador " + adminName
+                    + " logado na conta de " + actedAsName + ".";
+        }
+        return "";
+    }
 
 }

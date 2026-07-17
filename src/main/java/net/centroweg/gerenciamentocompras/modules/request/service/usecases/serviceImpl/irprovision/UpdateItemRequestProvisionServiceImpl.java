@@ -1,6 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.irprovision;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
@@ -20,12 +26,8 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.irprovision.ItemRequestProvisionMapper;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-import org.springframework.util.StringUtils;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditInfo;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +42,10 @@ public class UpdateItemRequestProvisionServiceImpl {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public ItemRequestProvisionResponse updateItem(Long itemId, ItemRequestProvisionRequest requestDto){
+    @Auditable(action="MUDANÇA_STATUS", targetFromReturn=true)
+    public ItemRequestProvisionResponse updateItem(Long itemId, 
+            @AuditInfo("Novo status: ") ItemRequestProvisionRequest requestDto){
+
         ItemRequestProvision item = itemRequestProvisionRepository.findById(itemId)
             .orElseThrow(() -> new RequestProvisionItemNotFoundException());
 

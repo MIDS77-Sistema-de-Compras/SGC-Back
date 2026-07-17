@@ -29,6 +29,7 @@ public class CreateUserImpl {
     private final PasswordEncoder passwordEncoder;
     private final CpfHasher cpfHasher;
     private final UniquenessValidator uniquenessValidator;
+    private final EmailDomainValidator emailDomainValidator;
     private final UserRoleAuthorizationService authorizationService;
 
     /**
@@ -41,6 +42,7 @@ public class CreateUserImpl {
         SystemRole targetRole = SystemRole.from(user.nameRole());
         authorizationService.validateCanCreate(targetRole);
 
+        emailDomainValidator.validate(user.email());
         uniquenessValidator.checkInfo(user);
         String encryptedPassword = passwordEncoder.encode(user.password());
         String hashedCpf = cpfHasher.hash(user.cpf());

@@ -11,6 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.rolelevels.SystemR
 import net.centroweg.gerenciamentocompras.modules.user.service.authorization.UserRoleAuthorizationService;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.CreateUserImpl;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.EmailDomainValidator;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.UniquenessValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ public class CreateUserImplTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private CpfHasher cpfHasher;
     @Mock private UniquenessValidator uniquenessValidator;
+    @Mock private EmailDomainValidator emailDomainValidator;
     @Mock private UserRoleAuthorizationService authorizationService;
 
     @InjectMocks

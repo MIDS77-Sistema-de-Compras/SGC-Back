@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.usecases
 
 import jakarta.mail.MessagingException;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.listener.RequestStatusChangedEventListener;
+import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.url.RequestFrontendUrlBuilder;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.RequestStatusEmailContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.RequestStatusInternalNotificationFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
@@ -65,7 +66,7 @@ class RequestStatusNotificationFlowTest {
     @Test
     void shouldOmitRefusalReasonWhenItIsAbsent() {
         var internal = new RequestStatusInternalNotificationFactory().build(event("Recusado", null));
-        var email = new RequestStatusEmailContentFactory("http://localhost/requests/{requestId}")
+        var email = requestStatusEmailContentFactory()
                 .build(event("Recusado", "   "), data(List.of()), "Ana");
 
         assertThat(internal.message()).doesNotContain("Justificativa", "null");
@@ -74,7 +75,7 @@ class RequestStatusNotificationFlowTest {
 
     @Test
     void shouldEscapeDynamicValuesInEmail() {
-        var factory = new RequestStatusEmailContentFactory("http://localhost/requests/{requestId}");
+        var factory = requestStatusEmailContentFactory();
         var html = factory.build(event("Recusado", "<script>alert(1)</script>"), data(List.of()), "<b>Ana</b>").html();
         assertThat(html).contains("&lt;script&gt;alert(1)&lt;/script&gt;", "&lt;b&gt;Ana&lt;/b&gt;")
                 .doesNotContain("<script>alert(1)</script>");
@@ -84,7 +85,7 @@ class RequestStatusNotificationFlowTest {
     void shouldDeduplicateEmailAndContinueAfterSmtpFailure() throws Exception {
         var sender = new SendRequestStatusChangedEmailServiceImpl(
                 externalEmailSender, new RequestNotificationRecipientDeduplicator(),
-                new RequestStatusEmailContentFactory("http://localhost/requests/{requestId}"));
+                requestStatusEmailContentFactory());
         var recipients = List.of(
                 new RequestNotificationRecipient(1L, "Ana", " ANA@TESTE.COM "),
                 new RequestNotificationRecipient(2L, "Clone", "ana@teste.com"),
@@ -126,5 +127,12 @@ class RequestStatusNotificationFlowTest {
     private RequestStatusChangedEvent event(String newStatus, String justification) {
         return new RequestStatusChangedEvent(10L, 1L, "Aprovado", 2L, newStatus, justification,
                 20L, "Responsavel", LocalDateTime.of(2026, 7, 13, 15, 30));
+    }
+
+    private RequestStatusEmailContentFactory requestStatusEmailContentFactory() {
+        return new RequestStatusEmailContentFactory(new RequestFrontendUrlBuilder(
+                "https://sgc-front-nine.vercel.app/solicitacoes/{requestId}",
+                "https://sgc-front-nine.vercel.app/solicitacoes/gestao/{requestId}"
+        ));
     }
 }

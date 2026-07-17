@@ -326,7 +326,9 @@ class RequestStatusIntegrationTest {
         verify(emailSenderService, timeout(5000)).sendEmail(emailCaptor.capture(), htmlCaptor.capture());
         assertThat(emailCaptor.getValue().getSendTo()).isEqualTo("solicitante@teste.com");
         assertThat(emailCaptor.getValue().getSubject()).contains("Em atendimento");
-        assertThat(htmlCaptor.getValue()).contains("Em atendimento", "/docente/solicitacoes/" + request.getId());
+        assertThat(htmlCaptor.getValue())
+                .contains("Em atendimento", "/solicitacoes/" + request.getId())
+                .doesNotContain("/docente/solicitacoes");
     }
 
     @Test

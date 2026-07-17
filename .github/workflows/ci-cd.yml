@@ -33,7 +33,7 @@ jobs:
           name: spring-boot-app
           path: target/*.jar
 
-  deploy:
+  deploy-render:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -44,3 +44,46 @@ jobs:
           echo "Iniciando deploy no Render para a branch main..."
           curl -f "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
           echo "Deploy solicitado com sucesso!"
+
+  deploy-ec2-ngrok:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Baixar o artefato JAR compilado
+        uses: actions/download-artifact@v4
+        with:
+          name: spring-boot-app
+          path: target/
+
+      - name: Copiar JAR e reiniciar serviços na EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "1. Criando diretório da aplicação caso não exista..."
+            mkdir -p ~/sgs-app
+
+            echo "2. Parando a execução anterior do Spring Boot..."
+            fuser -k 8080/tcp || true
+
+            echo "3. Iniciando a nova versão da API em segundo plano..."
+            nohup java -jar ~/sgs-app/*.jar > ~/sgs-app/app.log 2>&1 &
+
+            sleep 10
+
+            echo "4. Verificando e garantindo o túnel do Ngrok via PM2..."
+
+            ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+
+            if pm2 describe sgs-tunnel > /dev/null 2>&1; then
+              echo "Túnel já existe. Reiniciando para garantir conexão estável..."
+              pm2 restart sgs-tunnel
+            else
+              echo "Criando novo processo de túnel no PM2..."
+              pm2 start ngrok --name "sgs-tunnel" -- http 8080 --url=${{ secrets.NGROK_STATIC_DOMAIN }}
+            fi
+            pm2 save

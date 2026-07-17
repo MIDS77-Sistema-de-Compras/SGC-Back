@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.factory;
 
+import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.url.RequestFrontendUrlBuilder;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestStatusNotificationData;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailButton;
@@ -8,7 +9,6 @@ import net.centroweg.gerenciamentocompras.shared.email.components.EmailLayout;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailParagraph;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailTitle;
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 
@@ -21,12 +21,10 @@ import java.util.Locale;
 public class RequestStatusEmailContentFactory {
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy 'as' HH:mm");
-    private final String requesterRequestUrlTemplate;
+    private final RequestFrontendUrlBuilder requestFrontendUrlBuilder;
 
-    public RequestStatusEmailContentFactory(
-            @Value("${app.frontend.requester-request-url-template}") String requesterRequestUrlTemplate
-    ) {
-        this.requesterRequestUrlTemplate = requesterRequestUrlTemplate;
+    public RequestStatusEmailContentFactory(RequestFrontendUrlBuilder requestFrontendUrlBuilder) {
+        this.requestFrontendUrlBuilder = requestFrontendUrlBuilder;
     }
 
     public RequestStatusEmailContent build(
@@ -43,7 +41,9 @@ public class RequestStatusEmailContentFactory {
                         new EmailParagraph(changeDetails(event), "#333333", 14),
                         new EmailParagraph(requestSummary(request), "#333333", 14),
                         new EmailParagraph("Clique abaixo para acompanhar a solicitacao.", "#666666", 14),
-                        new EmailButton(buildUrl(event.requestId()), "Acompanhar solicitacao"),
+                        new EmailButton(HtmlUtils.htmlEscape(
+                                requestFrontendUrlBuilder.buildRequesterRequestUrl(event.requestId())
+                        ), "Acompanhar solicitacao"),
                         new EmailFooter()
                 )
         );
@@ -80,10 +80,6 @@ public class RequestStatusEmailContentFactory {
         if (!hasText(value)) return "Nao informado";
         String normalized = value.replace('_', ' ').trim().replaceAll("\\s+", " ").toLowerCase(Locale.forLanguageTag("pt-BR"));
         return normalized.substring(0, 1).toUpperCase(Locale.forLanguageTag("pt-BR")) + normalized.substring(1);
-    }
-
-    private String buildUrl(Long requestId) {
-        return HtmlUtils.htmlEscape(requesterRequestUrlTemplate.replace("{requestId}", String.valueOf(requestId)));
     }
 
     private String formatDate(LocalDateTime value) {

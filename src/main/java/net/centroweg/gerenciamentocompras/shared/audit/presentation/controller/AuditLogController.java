@@ -23,13 +23,14 @@ public class AuditLogController {
 
     private final AuditLogService auditLogService;
 
-    @Operation(description = "ENDPOINT responsável pela listagem de todos os registros")
+    @Operation(description = "ENDPOINT responsável pela listagem dos registros de auditoria mais recentes (limitada por 'limit', padrão 100)")
     @GetMapping
     public ResponseEntity<List<AuditLogDTOResponse>> findAll(
             @RequestParam(required = false) String typeAction,
             @RequestParam(required = false) String agentEmail,
             @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate
+            @RequestParam(required = false) LocalDateTime endDate,
+            @RequestParam(defaultValue = "100") int limit
     ){
 
         AuditLogFilterRequest filter = new AuditLogFilterRequest(
@@ -40,6 +41,6 @@ public class AuditLogController {
         );
 
         return ResponseEntity.status(200)
-                .body(auditLogService.findAll(filter));
+                .body(auditLogService.findAll(filter, limit));
     }
 }

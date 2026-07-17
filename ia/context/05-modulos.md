@@ -1,7 +1,7 @@
 # 05 — Módulos
 
 > Este arquivo cobre TODOS os módulos, inclusive os que o `README.md` não documenta
-> (`auth`, `notification`, `report`, `shared/audit`).
+> (`auth`, `delivery`, `notification`, `report`, `shared/audit`).
 
 ## `user` — Usuários e Perfis
 Gerencia usuários (`User`) e perfis de acesso (`Role`).
@@ -34,6 +34,29 @@ Coração do sistema. Entidades: `Request`, `Status`, `ItemRequestProduct`,
   justificativa de recusa obrigatória, etc.).
 - Anexos enviados ao Cloudinary; itens de produto e de serviço.
 - Tem `service/validator` para regras e `infrastructure/listener` para eventos.
+
+## `delivery` — Entregas
+Controla a **entrega** dos itens de uma solicitação aprovada. Entidades: `Delivery`
+e `DeliveryReceiver` (recebedor).
+- **Criação automática:** quando uma `Request` é aprovada, o módulo `request` publica um
+  `RequestApprovedEvent`; o `RequestApprovedEventListener` (`infrastructure/listener`) chama
+  `CreateDeliveryForApprovedRequestServiceImpl`, que cria a entrega com status **"Em atendimento"**,
+  data prevista +7 dias e local "A definir". Também há criação **manual** via `POST /deliveries`.
+- **Dois recebedores obrigatórios:** cada entrega tem **exatamente 2** `DeliveryReceiver`
+  (usuários distintos e ativos — validado por `DeliveryReceiverValidator`). Cada recebedor
+  **confirma o recebimento individualmente** (`PATCH /deliveries/{deliveryId}/receivers/{userId}/confirm`,
+  auditável `CONFIRMAR_RECEBIMENTO_ENTREGA`).
+- **Itens da entrega:** vincula itens de produto (`ItemRequestProduct`) e de serviço
+  (`ItemRequestProvision`) da solicitação; `DeliveryItemResolver` garante que os itens pertencem
+  à solicitação informada.
+- **Exclusão é soft delete:** `DELETE /deliveries/{id}` apenas inativa (`active = false`),
+  preservando o histórico de recebedores.
+- Endpoints `/deliveries`: `POST`, `GET` (lista com filtros), `GET /{id}`, `PUT /{id}`,
+  `DELETE /{id}`, `PATCH /{deliveryId}/receivers/{userId}/confirm`.
+- Emite `DeliveryCreatedEvent` (processado pelo `notification`) e expõe `DeliveryPublicApi`
+  (consulta de entrega ativa por item e dados de notificação).
+- Segue o padrão dos demais: `service/usecases/serviceImpl` + `serviceIntrf`, `service/mapper`,
+  `service/validator`, `service/api` e `service/event`.
 
 ## `provision` — Serviços (Provisões)
 Solicitação de **serviço** (mão de obra), não de produto. Entidade `Provision`

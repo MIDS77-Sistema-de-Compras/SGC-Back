@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.InvalidDeliveryReceiversException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashSet;
@@ -17,7 +17,7 @@ public class DeliveryReceiverValidator {
 
     private static final int REQUIRED_RECEIVERS = 2;
 
-    private final UserRepository userRepository;
+    private final UserPublicApi userPublicApi;
 
     public List<User> validateAndFindReceivers(List<Long> receiverIds) {
         if (receiverIds == null || receiverIds.size() != REQUIRED_RECEIVERS) {
@@ -29,7 +29,7 @@ public class DeliveryReceiverValidator {
             throw new InvalidDeliveryReceiversException("Os recebedores da entrega devem ser diferentes.");
         }
 
-        List<User> receivers = userRepository.findAllById(List.copyOf(uniqueIds));
+        List<User> receivers = userPublicApi.findUsersByIds(List.copyOf(uniqueIds));
         if (receivers.size() != REQUIRED_RECEIVERS) {
             throw new UserNotFoundException();
         }

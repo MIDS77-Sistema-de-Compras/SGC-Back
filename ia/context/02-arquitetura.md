@@ -12,7 +12,7 @@ src/main/java/net/centroweg/gerenciamentocompras/
 ├── config/                                 ← configs globais (security, mail, cloudinary, swagger, async)
 ├── shared/                                 ← código transversal usado por vários módulos
 └── modules/                                ← um pacote por domínio
-    ├── user/  cr/  request/  provision/  product/  auth/  notification/  report/
+    ├── user/  cr/  request/  provision/  product/  auth/  delivery/  notification/  report/
 ```
 
 ## Camadas de um módulo

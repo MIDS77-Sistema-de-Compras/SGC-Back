@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * DTO de entrada para criação e atualização de um Centro de Resultado (CR).
@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 public record CrRequest(
         @NotBlank(message = "O nome do CR é obrigatório") String name,
         @NotBlank(message = "O código do CR é obrigatório") String code,
-        @Max(value=255, message = "A descrição da CR não pode ter mais de 255 caractéres.") String description,
+        @Size(max=255, message = "A descrição da CR não pode ter mais de 255 caractéres.") String description,
         Boolean master,
         String sectorName
 ) {

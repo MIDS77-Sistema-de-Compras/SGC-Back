@@ -22,6 +22,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Cr
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crinstructor.crinstructorinterface.CrInstructorService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 
 @RestController
 @RequestMapping("/cr-instructors")
@@ -34,6 +35,7 @@ public class CrInstructorController {
     @Operation(description = "ENDPOINT responsável pela criação de CR Instrutor")
     @CanManageCr
     @PostMapping
+    @Auditable(action = "CRIAR_INSTRUTOR_CR")
     public ResponseEntity<CrInstructorResponse> create(@Valid @RequestBody CrInstructorRequest request){
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(crInstructorService.create(request));
@@ -56,6 +58,7 @@ public class CrInstructorController {
     @Operation(description = "ENDPOINT responsável pela atualização de CR Instructor")
     @CanManageCr
     @PutMapping("/{id}")
+    @Auditable(action = "ATUALIZAR_INSTRUTOR_CR")
     public ResponseEntity<CrInstructorResponse> update(@PathVariable("id") Long id, @Valid @RequestBody CrInstructorRequest request){
         return ResponseEntity.status(HttpStatus.OK)
             .body(crInstructorService.update(id, request));
@@ -64,6 +67,7 @@ public class CrInstructorController {
     @Operation(description = "ENDPOINT responsável pelo delete de CR Instructor")
     @CanManageCr
     @DeleteMapping("/{id}")
+    @Auditable(action = "EXCLUIR_INSTRUTOR_CR")
     public ResponseEntity<MessageDTO> delete(@PathVariable("id") Long id){
         return ResponseEntity.status(HttpStatus.OK)
             .body(crInstructorService.delete(id));

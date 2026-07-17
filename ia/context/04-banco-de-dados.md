@@ -27,6 +27,8 @@
 | `Product` | `product` | product | name, description, price, type, code (único) |
 | `MeasurementUnit` | `measurement_unit` | product | name, abbreviation |
 | `Notification` | `notification` | notification | title, message, viewed, createdAt, user, request |
+| `Delivery` | `delivery` | delivery | expectedDeliveryAt, deliveredAt, deliveryLocation, description, proofUrl, active, createdAt/updatedAt, request, status, itens de produto/serviço |
+| `DeliveryReceiver` | `delivery_receiver` | delivery | PK composta (`delivery_id` + `user_id`), confirmed, confirmedAt, observation |
 | `AuditLog` | `audit_log` | shared/audit | userAgent, userTarget, typeAction, request, timestamp |
 
 ## Relacionamentos-chave
@@ -37,6 +39,11 @@
 - `Cr` **N:1** `Sector`.
 - `ItemRequestProduct` liga `Request` + `Product` + `MeasurementUnit` + `Status`.
 - `ItemRequestProvision` liga `Request` + `Provision` + `Status`.
+- `Delivery` **N:1** `Request`, **N:1** `Status`; **1:N** `DeliveryReceiver` (cascade ALL, orphanRemoval);
+  **N:N** `ItemRequestProduct` (join `delivery_item_request_product`) e **N:N** `ItemRequestProvision`
+  (join `delivery_item_request_service`).
+- `DeliveryReceiver` **N:1** `Delivery`, **N:1** `User`; PK composta (`DeliveryReceiverId`, `@Embeddable`)
+  com `unique(delivery_id, user_id)`.
 - `AuditLog` **N:1** `User` (agente e alvo) e `Request` (com `OnDelete CASCADE`).
 
 ## Convenções de persistência

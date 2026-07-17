@@ -1,7 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimpl.role;
 
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
-import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceimplm.role.DeleteRoleImpl;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.role.DeleteRoleImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

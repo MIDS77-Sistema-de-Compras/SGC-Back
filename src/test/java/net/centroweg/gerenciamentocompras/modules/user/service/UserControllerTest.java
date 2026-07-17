@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.user.service;
 
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.controller.UserController;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangeUserActivationStatus;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,32 @@ public class UserControllerTest {
 
     @InjectMocks
     private UserController userController;
+
+    @Test
+    @DisplayName("Deve alterar o estado de ativação e retornar status 200 OK")
+    void shouldChangeActivationStatus() {
+        Long userId = 1L;
+        ChangeUserActivationStatus request = new ChangeUserActivationStatus(false);
+        UserResponse expectedResponse = new UserResponse(
+                userId,
+                "Usuário Teste",
+                "cpf-hash",
+                "usuario@teste.com",
+                "1234",
+                false,
+                null,
+                null,
+                null,
+                "DOCENTE"
+        );
+        when(userIntrf.changeActivationStatus(userId, request)).thenReturn(expectedResponse);
+
+        ResponseEntity<UserResponse> response = userController.changeActivationStatus(userId, request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedResponse, response.getBody());
+        verify(userIntrf).changeActivationStatus(userId, request);
+    }
 
     @Test
     @DisplayName("Deve retornar o usuário logado e status 200 OK")

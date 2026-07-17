@@ -14,7 +14,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Cr
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +33,9 @@ public class CreateCrBranch {
     private final CrBranchRepository crBranchRepository;
     private final BranchRepository branchRepository;
     private final CrRepository crRepository;
-    private final UserRepository userRepository;
+    private final UserPublicApi userPublicApi;
     private final CrBranchMapper crBranchMapper;
+    private final ValidateCrBranchSupervisors validateCrBranchSupervisors;
 
     /**
      * Cria um vínculo entre CR e filial a partir dos dados informados.
@@ -61,8 +62,10 @@ public class CreateCrBranch {
 
         List<User> users = null;
         if (request.responsibleUsersId() != null) {
-            users = userRepository.findAllById(request.responsibleUsersId());
+            users = userPublicApi.findUsersByIds(request.responsibleUsersId());
         }
+
+        validateCrBranchSupervisors.validate(users);
 
         CrBranch crBranch = crBranchMapper.toEntity(branch, cr, users);
         crBranchRepository.save(crBranch);

@@ -19,6 +19,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrMapper;
 public class UpdateCr {
     private final CrRepository crRepository;
     private final CrMapper crMapper;
+    private final ValidateCrMasterCoordinator validateCrMasterCoordinator;
 
     /**
      * Atualiza nome, código e flag master do CR identificado pelo ID informado.
@@ -30,6 +31,8 @@ public class UpdateCr {
      */
     @Transactional
     public CrCompoundResponse update(Long id, CrRequest dto){
+        validateCrMasterCoordinator.validate();
+
         Cr cr = crRepository.findById(id).orElseThrow(()->new CrNotFoundException(id));
         cr.setName(dto.name());
         cr.setCode(dto.code());

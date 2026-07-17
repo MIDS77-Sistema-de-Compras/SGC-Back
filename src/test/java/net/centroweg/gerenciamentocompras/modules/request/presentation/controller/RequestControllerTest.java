@@ -19,6 +19,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,19 @@ class RequestControllerTest {
         newUser.setRole(roleRepository.save(new Role("DOCENTE")));
         testUser = userRepository.save(newUser);
         userPrincipal = new UserPrincipal(testUser);
+    }
+
+    @AfterEach
+    void tearDown() {
+        requestRepository.deleteAll();
+        productRepository.deleteAll();
+        measurementUnitRepository.deleteAll();
+        crBranchRepository.deleteAll();
+        statusRepository.deleteAll();
+        crRepository.deleteAll();
+        branchRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     @Test

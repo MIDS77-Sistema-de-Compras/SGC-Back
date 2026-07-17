@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -207,8 +208,27 @@ class SecurityAuthorizationIntegrationTest {
                         .content(body))
                 .andExpect(status().isForbidden());
 
+        // Coordenador comum (sem CR Master) agora tambem e barrado.
         mockMvc.perform(put("/cr/{id}", 999L)
                         .with(user(principalsByRole.get(Authorities.COORDENADOR)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isForbidden());
+
+        // Coordenador responsavel por um CR Master passa pela seguranca.
+        Role masterRole = roleRepository.save(new Role(Authorities.COORDENADOR));
+        User masterCoordinator = new User("Coordenador Master", "05563481050", "coordenador.master@teste.com", "Senha@123", "1234", true);
+        masterCoordinator.setRole(masterRole);
+        masterCoordinator.setCreatedAt(LocalDateTime.now());
+        masterCoordinator.setUpdatedAt(LocalDateTime.now());
+        masterCoordinator = userRepository.save(masterCoordinator);
+
+        Cr masterCr = crRepository.save(new Cr("CR Master", "9999", true));
+        Branch masterBranch = branchRepository.save(new Branch("Filial Master"));
+        crBranchRepository.save(new CrBranch(masterBranch, masterCr, List.of(masterCoordinator)));
+
+        mockMvc.perform(put("/cr/{id}", 999L)
+                        .with(user(new UserPrincipal(masterCoordinator)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(notUnauthorizedOrForbidden());

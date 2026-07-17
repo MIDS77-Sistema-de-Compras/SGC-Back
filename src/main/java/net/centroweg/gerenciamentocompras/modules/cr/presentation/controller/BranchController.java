@@ -11,6 +11,8 @@ import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManageCr
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+
 import java.util.List;
 
 /**
@@ -38,6 +40,7 @@ public class BranchController {
     @Operation(description = "ENDPOINT responsável pela criação de Branch")
     @PostMapping
     @CanManageCr
+    @Auditable(action = "CRIAR_FILIAL")
     public ResponseEntity<BranchResponse> create(@RequestBody BranchRequest branchRequest){
         return ResponseEntity.status(201)
                 .body(branchService.create(branchRequest));
@@ -78,6 +81,7 @@ public class BranchController {
     @Operation(description = "ENDPOINT responsável pela atualização de Branch")
     @PutMapping("/{id}")
     @CanManageCr
+    @Auditable(action = "ATUALIZAR_FILIAL")
     public ResponseEntity<BranchResponse> update(@PathVariable Long id, @RequestBody BranchRequest branchRequest){
         return ResponseEntity.status(200)
                 .body(branchService.update(id,branchRequest));
@@ -92,6 +96,7 @@ public class BranchController {
     @Operation(description = "ENDPOINT responsável pelo delete de Branch")
     @DeleteMapping("/{id}")
     @CanManageCr
+    @Auditable(action = "EXCLUIR_FILIAL")
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(204)
                 .body(branchService.delete(id));

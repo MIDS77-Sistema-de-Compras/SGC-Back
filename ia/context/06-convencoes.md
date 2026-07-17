@@ -12,19 +12,20 @@ interface agregadora**.
 
 ## 2. ⚠️ Nomenclatura de pastas varia POR MÓDULO
 
-Não existe um padrão único de nomes de subpastas de `service`. Antes de criar um arquivo,
-**olhe o módulo alvo** e siga o que já está lá:
+O esquema **canônico** (padrão a seguir) é `service/usecases/serviceImpl/` +
+`service/usecases/serviceIntrf/`. A maioria dos módulos já segue isso; `cr` e `provision`
+ainda destoam (dívida conhecida). Antes de criar um arquivo, **olhe o módulo alvo**:
 
 | Módulo | Impl dos casos de uso | Interfaces |
 |---|---|---|
-| `user` | `service/usecases/serviceimplm/` | `service/usecases/serviceIntrf/` |
-| `request`, `product`, `notification` | `service/usecases/serviceImpl/` | `service/usecases/serviceIntrf/` (ou `useCases/`) |
-| `cr` | `service/<recurso>service/<recurso>impl/` + `functionality/` | `service/<recurso>service/<recurso>interface/` |
-| `auth` | `service/usecase/implementations/` | `service/usecase/interfaces/` |
-| `provision` | `service/` (classes soltas) + `service/interfaces/` | `service/interfaces/` |
+| `user`, `request`, `product`, `notification`, `auth`, `shared/audit` | `service/usecases/serviceImpl/` | `service/usecases/serviceIntrf/` |
+| `cr` *(destoa)* | `service/<recurso>service/<recurso>impl/` + `functionality/` | `service/<recurso>service/<recurso>interface/` |
+| `provision` *(destoa)* | `service/` (classes soltas) + `service/interfaces/` | `service/interfaces/` |
 
-> Essa inconsistência é dívida técnica conhecida. **Não a "conserte" por conta própria** —
-> siga o padrão local. Se for padronizar, faça como tarefa combinada e separada.
+> Os módulos layer-based já foram padronizados para `usecases/serviceImpl/serviceIntrf`.
+> Faltam `cr` (organizado por recurso — reestruturação grande) e `provision` (classes soltas).
+> **Não "conserte" esses dois por conta própria** — siga o padrão local; se for padronizar,
+> faça como tarefa combinada e separada.
 
 ## 3. DTOs são `record`
 
@@ -89,4 +90,5 @@ Só via `service/api/*PublicApi`. Nunca importe o repositório de outro módulo.
 - Campos injetados **duplicados** em alguns casos de uso (ex.: `CreateUserImpl` injeta
   `userMapper`+`mapper` e `userRepository`+`repository`). Ao mexer, prefira **um** campo.
 - **Imports duplicados** em alguns controllers (ex.: `UserController`). Não copie os duplicados.
-- Nomenclatura de pastas inconsistente entre módulos (item 2).
+- Nomenclatura de pastas de `service` inconsistente **apenas em `cr` e `provision`** (item 2);
+  os demais módulos já seguem o padrão canônico `usecases/serviceImpl/serviceIntrf`.

@@ -10,8 +10,19 @@ import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Delivery;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.DeliveryReceiver;
 import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
+import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryReceiverRepository;
+import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
+import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.MeasurementUnitRepository;
+import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
+import net.centroweg.gerenciamentocompras.modules.provision.infrastructure.persistence.ProvisionRepository;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
@@ -19,6 +30,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
+import net.centroweg.gerenciamentocompras.shared.audit.infrastructure.persistence.AuditLogRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,10 +42,17 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.sql.DataSource;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.Matchers.contains;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,6 +72,12 @@ class DeliveryIntegrationTest {
 
     @Autowired
     private DeliveryRepository deliveryRepository;
+
+    @Autowired
+    private DeliveryReceiverRepository deliveryReceiverRepository;
+
+    @Autowired
+    private DataSource dataSource;
 
     @Autowired
     private RequestRepository requestRepository;
@@ -75,7 +100,26 @@ class DeliveryIntegrationTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private AuditLogRepository auditLogRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MeasurementUnitRepository measurementUnitRepository;
+
+    @Autowired
+    private ProvisionRepository provisionRepository;
+
+    @Autowired
+    private ItemRequestProductRepository itemRequestProductRepository;
+
+    @Autowired
+    private ItemRequestProvisionRepository itemRequestProvisionRepository;
+
     private Status pendingStatus;
+    private Status deliveredStatus;
     private Request request;
     private User comprador;
     private User docente;
@@ -101,7 +145,7 @@ class DeliveryIntegrationTest {
         CrBranch crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
 
         pendingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Em andamento"));
-        statusRepository.save(new Status("Entregue", "Entrega concluida"));
+        deliveredStatus = statusRepository.save(new Status("Entregue", "Entrega concluida"));
 
         request = requestRepository.save(new Request(crBranch, pendingStatus));
     }
@@ -166,7 +210,84 @@ class DeliveryIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(confirmBody()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.receivers[0].confirmed").value(true));
+                .andExpect(jsonPath("$.receivers[?(@.userId == %d)].confirmed", firstReceiver.getId()).value(contains(true)));
+
+        Delivery persisted = deliveryRepository.findById(delivery.getId()).orElseThrow();
+        DeliveryReceiver confirmedReceiver = persisted.getReceivers().stream()
+                .filter(receiver -> receiver.getUser().getId().equals(firstReceiver.getId()))
+                .findFirst().orElseThrow();
+        assertThat(confirmedReceiver.getConfirmedAt()).isNotNull();
+        assertThat(persisted.getDeliveredAt()).isNull();
+        assertThat(auditLogRepository.findAll()).anyMatch(log ->
+                "CONFIRMAR_RECEBIMENTO_ENTREGA".equals(log.getTypeAction()));
+    }
+
+    @Test
+    @DisplayName("Ultimo recebedor finaliza entrega e repeticao preserva timestamps")
+    void shouldCompleteDeliveryAndKeepTimestampsOnRepeatedConfirmation() throws Exception {
+        Delivery delivery = createDelivery();
+        confirm(delivery, firstReceiver, " primeiro ").andExpect(status().isOk());
+        confirm(delivery, secondReceiver, " segundo ").andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusName").value("Entregue"))
+                .andExpect(jsonPath("$.deliveredAt").isNotEmpty());
+
+        Delivery completed = deliveryRepository.findById(delivery.getId()).orElseThrow();
+        LocalDateTime deliveredAt = completed.getDeliveredAt();
+        LocalDateTime confirmedAt = completed.getReceivers().stream()
+                .filter(receiver -> receiver.getUser().getId().equals(secondReceiver.getId()))
+                .findFirst().orElseThrow().getConfirmedAt();
+
+        confirm(delivery, secondReceiver, "alterar").andExpect(status().isOk());
+        Delivery repeated = deliveryRepository.findById(delivery.getId()).orElseThrow();
+        assertThat(repeated.getDeliveredAt()).isEqualTo(deliveredAt);
+        assertThat(repeated.getReceivers().stream()
+                .filter(receiver -> receiver.getUser().getId().equals(secondReceiver.getId()))
+                .findFirst().orElseThrow().getConfirmedAt()).isEqualTo(confirmedAt);
+    }
+
+    @Test
+    @DisplayName("Status Entregue ausente retorna 404 e nao deixa confirmacao parcial")
+    void shouldRollbackLastConfirmationWhenDeliveredStatusIsMissing() throws Exception {
+        Delivery delivery = createDelivery();
+        confirm(delivery, firstReceiver, null).andExpect(status().isOk());
+        statusRepository.deleteById(deliveredStatus.getId());
+
+        confirm(delivery, secondReceiver, null).andExpect(status().isNotFound());
+
+        Delivery persisted = deliveryRepository.findById(delivery.getId()).orElseThrow();
+        assertThat(persisted.getDeliveredAt()).isNull();
+        assertThat(persisted.getReceivers().stream()
+                .filter(receiver -> receiver.getUser().getId().equals(secondReceiver.getId()))
+                .findFirst().orElseThrow().getConfirmed()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Usuario autenticado nao confirma por outro recebedor")
+    void shouldRejectConfirmationOnBehalfOfAnotherReceiver() throws Exception {
+        Delivery delivery = createDelivery();
+        mockMvc.perform(patch("/deliveries/{deliveryId}/receivers/{userId}/confirm", delivery.getId(), secondReceiver.getId())
+                        .with(user(new UserPrincipal(firstReceiver)))
+                        .contentType(MediaType.APPLICATION_JSON).content(confirmBody()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Confirmacoes concorrentes finalizam a entrega exatamente uma vez")
+    void shouldCompleteDeliveryWithConcurrentConfirmations() throws Exception {
+        Delivery delivery = createDelivery();
+        CountDownLatch start = new CountDownLatch(1);
+        try (var executor = Executors.newFixedThreadPool(2)) {
+            CompletableFuture<Integer> first = concurrentConfirmation(delivery, firstReceiver, start, executor);
+            CompletableFuture<Integer> second = concurrentConfirmation(delivery, secondReceiver, start, executor);
+            start.countDown();
+            assertThat(first.join()).isEqualTo(200);
+            assertThat(second.join()).isEqualTo(200);
+        }
+
+        Delivery persisted = deliveryRepository.findById(delivery.getId()).orElseThrow();
+        assertThat(persisted.getReceivers()).allMatch(receiver -> Boolean.TRUE.equals(receiver.getConfirmed()));
+        assertThat(persisted.getStatus().getId()).isEqualTo(deliveredStatus.getId());
+        assertThat(persisted.getDeliveredAt()).isNotNull();
     }
 
     @Test
@@ -203,6 +324,86 @@ class DeliveryIntegrationTest {
 
         assertThatThrownBy(() -> deliveryRepository.saveAndFlush(delivery))
                 .isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    @DisplayName("Chave composta localiza recebedores e permite o mesmo usuario em entregas diferentes")
+    void shouldPersistAndFindCompositeReceiverIdsAcrossDeliveries() {
+        Delivery firstDelivery = createDelivery();
+        Delivery secondDelivery = createDelivery();
+
+        var firstLink = deliveryReceiverRepository
+                .findByIdDeliveryIdAndIdUserId(firstDelivery.getId(), firstReceiver.getId())
+                .orElseThrow();
+        var secondLink = deliveryReceiverRepository
+                .findByIdDeliveryIdAndIdUserId(secondDelivery.getId(), firstReceiver.getId())
+                .orElseThrow();
+
+        assertThat(firstLink.getId().getDeliveryId()).isEqualTo(firstDelivery.getId());
+        assertThat(firstLink.getId().getUserId()).isEqualTo(firstReceiver.getId());
+        assertThat(secondLink.getId().getDeliveryId()).isEqualTo(secondDelivery.getId());
+        assertThat(deliveryReceiverRepository.findAll()).hasSize(4);
+    }
+
+    @Test
+    @DisplayName("Hibernate cria chave composta e tabelas de associacao no schema limpo")
+    void shouldCreateCompositeKeyAndItemLinkTablesFromJpaMappings() throws Exception {
+        try (var connection = dataSource.getConnection()) {
+            var metadata = connection.getMetaData();
+            var primaryKeyColumns = new HashSet<String>();
+            try (var keys = metadata.getPrimaryKeys(null, null, "DELIVERY_RECEIVER")) {
+                while (keys.next()) {
+                    primaryKeyColumns.add(keys.getString("COLUMN_NAME").toLowerCase(Locale.ROOT));
+                }
+            }
+
+            assertThat(primaryKeyColumns).containsExactlyInAnyOrder("delivery_id", "user_id");
+            assertThat(tableExists(metadata, "DELIVERY_ITEM_REQUEST_PRODUCT")).isTrue();
+            assertThat(tableExists(metadata, "DELIVERY_ITEM_REQUEST_SERVICE")).isTrue();
+        }
+    }
+
+    @Test
+    @DisplayName("Entrega persiste produtos e servicos sem duplicar associacoes")
+    void shouldPersistSelectedProductAndProvisionItemsWithoutDuplicates() throws Exception {
+        ItemRequestProduct productItem = createProductItem(request, "PRD-ENTREGA");
+        ItemRequestProvision provisionItem = createProvisionItem(request, "Instalacao");
+
+        mockMvc.perform(post("/deliveries")
+                        .with(user(new UserPrincipal(comprador)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createBodyWithItems(
+                                request.getId(),
+                                productItem.getId() + ", " + productItem.getId(),
+                                provisionItem.getId() + ", " + provisionItem.getId()
+                        )))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.productItemIds.length()").value(1))
+                .andExpect(jsonPath("$.provisionItemIds.length()").value(1));
+
+        assertThat(linkCount("delivery_item_request_product")).isEqualTo(1);
+        assertThat(linkCount("delivery_item_request_service")).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Entrega rejeita item inexistente ou pertencente a outra solicitacao")
+    void shouldRejectMissingOrForeignRequestItems() throws Exception {
+        Request otherRequest = requestRepository.save(new Request(request.getCrBranch(), pendingStatus));
+        ItemRequestProduct foreignItem = createProductItem(otherRequest, "PRD-OUTRA");
+
+        mockMvc.perform(post("/deliveries")
+                        .with(user(new UserPrincipal(comprador)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createBodyWithItems(request.getId(), foreignItem.getId().toString(), "")))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/deliveries")
+                        .with(user(new UserPrincipal(comprador)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createBodyWithItems(request.getId(), "999999", "")))
+                .andExpect(status().isBadRequest());
+
+        assertThat(deliveryRepository.findAll()).isEmpty();
     }
 
     @Test
@@ -284,6 +485,22 @@ class DeliveryIntegrationTest {
                 """.formatted(pendingStatus.getId(), LocalDateTime.now().plusDays(2), firstReceiverId, secondReceiverId);
     }
 
+    private String createBodyWithItems(Long requestId, String productItemIds, String provisionItemIds) {
+        return """
+                {
+                    "requestId": %d,
+                    "statusId": %d,
+                    "expectedDeliveryAt": "%s",
+                    "deliveryLocation": "Portaria",
+                    "description": "Entrega com itens",
+                    "receiverIds": [%d, %d],
+                    "productItemIds": [%s],
+                    "provisionItemIds": [%s]
+                }
+                """.formatted(requestId, pendingStatus.getId(), LocalDateTime.now().plusDays(1),
+                firstReceiver.getId(), secondReceiver.getId(), productItemIds, provisionItemIds);
+    }
+
     private String confirmBody() {
         return """
                 {
@@ -292,15 +509,87 @@ class DeliveryIntegrationTest {
                 """;
     }
 
+    private org.springframework.test.web.servlet.ResultActions confirm(Delivery delivery, User receiver, String observation) throws Exception {
+        String body = observation == null ? "{\"observation\": null}" : "{\"observation\": \"" + observation + "\"}";
+        return mockMvc.perform(patch("/deliveries/{deliveryId}/receivers/{userId}/confirm", delivery.getId(), receiver.getId())
+                .with(user(new UserPrincipal(receiver)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body));
+    }
+
+    private CompletableFuture<Integer> concurrentConfirmation(
+            Delivery delivery,
+            User receiver,
+            CountDownLatch start,
+            java.util.concurrent.Executor executor
+    ) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                start.await();
+                return mockMvc.perform(patch("/deliveries/{deliveryId}/receivers/{userId}/confirm", delivery.getId(), receiver.getId())
+                                .with(user(new UserPrincipal(receiver)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"observation\": \"concorrente\"}"))
+                        .andReturn().getResponse().getStatus();
+            } catch (Exception exception) {
+                throw new IllegalStateException(exception);
+            }
+        }, executor);
+    }
+
     private User userEntity(String name, String email, String cpf, Role role) {
         User user = new User(name, cpf, email, "Senha@123", "1234", true);
         user.setRole(role);
         return user;
     }
 
+    private boolean tableExists(java.sql.DatabaseMetaData metadata, String tableName) throws Exception {
+        try (var tables = metadata.getTables(null, null, tableName, new String[]{"TABLE"})) {
+            return tables.next();
+        }
+    }
+
+    private int linkCount(String tableName) throws Exception {
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement();
+             var result = statement.executeQuery("select count(*) from " + tableName)) {
+            result.next();
+            return result.getInt(1);
+        }
+    }
+
+    private ItemRequestProduct createProductItem(Request owner, String code) {
+        Product product = productRepository.save(Product.builder()
+                .name("Produto " + code)
+                .description("Produto de teste")
+                .price(10.0)
+                .type("Material")
+                .code(code)
+                .build());
+        MeasurementUnit unit = measurementUnitRepository.save(new MeasurementUnit("Unidade " + code, "UN"));
+        ItemRequestProduct item = new ItemRequestProduct();
+        item.setRequest(owner);
+        item.setProduct(product);
+        item.setMeasurementUnit(unit);
+        item.setQuantity(2.0);
+        item.setStatus_id(pendingStatus);
+        return itemRequestProductRepository.save(item);
+    }
+
+    private ItemRequestProvision createProvisionItem(Request owner, String name) {
+        Provision provision = provisionRepository.save(new Provision(name, 100.0, "Servico de teste"));
+        return itemRequestProvisionRepository.save(new ItemRequestProvision(owner, provision, pendingStatus, "Agendar"));
+    }
+
     private void cleanDatabase() {
+        auditLogRepository.deleteAll();
         deliveryRepository.deleteAll();
+        itemRequestProductRepository.deleteAll();
+        itemRequestProvisionRepository.deleteAll();
         requestRepository.deleteAll();
+        productRepository.deleteAll();
+        measurementUnitRepository.deleteAll();
+        provisionRepository.deleteAll();
         crBranchRepository.deleteAll();
         crRepository.deleteAll();
         branchRepository.deleteAll();

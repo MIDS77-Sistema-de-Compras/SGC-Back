@@ -7,6 +7,7 @@ public record AuditLogDTOResponse(
         String userAgentName,
         String userAgentRole,
         String typeAction,
+        String description,
         String userTargetName,
         Long request,
         LocalDateTime timestamp

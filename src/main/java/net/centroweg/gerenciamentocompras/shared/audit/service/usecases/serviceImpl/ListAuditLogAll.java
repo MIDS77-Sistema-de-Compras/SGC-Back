@@ -35,6 +35,15 @@ public class ListAuditLogAll {
      * @return os registros mais recentes, do mais novo para o mais antigo
      */
     public List<AuditLogDTOResponse> findAll(AuditLogFilterRequest filter, int limit) {
+        // Caminho rápido (o mais comum, usado pela tela de auditoria): sem filtro
+        // não há por que montar Specification nem pagar a query de count do Page.
+        if (hasNoFilter(filter)) {
+            return auditLogRepository.findAllByOrderByTimestampDesc(PageRequest.of(0, limit))
+                    .stream()
+                    .map(auditLogMapper::toResponse)
+                    .toList();
+        }
+
         Specification<AuditLog> specification = Specification.allOf(
                 logSpecification.typeActionEquals(filter.typeAction()),
                 logSpecification.agentUserEmailEquals(filter.agentEmail()),
@@ -53,5 +62,12 @@ public class ListAuditLogAll {
         return auditLogRepository.findAll(specification, pageRequest)
                 .map(auditLogMapper::toResponse)
                 .getContent();
+    }
+
+    private boolean hasNoFilter(AuditLogFilterRequest filter) {
+        return (filter.typeAction() == null || filter.typeAction().isBlank())
+                && (filter.agentEmail() == null || filter.agentEmail().isBlank())
+                && filter.startDate() == null
+                && filter.endDate() == null;
     }
 }

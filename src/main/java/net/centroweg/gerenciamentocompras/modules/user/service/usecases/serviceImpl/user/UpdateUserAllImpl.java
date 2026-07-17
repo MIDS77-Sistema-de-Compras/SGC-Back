@@ -34,6 +34,7 @@ public class UpdateUserAllImpl {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailDomainValidator emailDomainValidator;
     private final UserRoleAuthorizationService authorizationService;
 
     /**
@@ -46,6 +47,8 @@ public class UpdateUserAllImpl {
     public UserResponse updateUserAll(Long id, UpdateUser user){
         User userSave = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+
+        emailDomainValidator.validate(user.email());
 
         SystemRole currentTargetRole = SystemRole.from(userSave.getRole().getName());
         SystemRole newTargetRole = SystemRole.from(user.nameRole());

@@ -14,6 +14,7 @@ public class RequestBusinessRuleValidator {
 
     private static final Set<String> SUPERVISOR_APPROVED_OR_AFTER = Set.of(
             "aprovado",
+            "auto_aprovado",
             "em atendimento",
             "entregue",
             "cancelado"

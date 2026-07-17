@@ -26,6 +26,7 @@ public class RequestStatusCategoryResolver {
             "em analise",
             "aguardando aprovacao",
             "aprovado",
+            "auto aprovado",
             "em atendimento"
     );
 

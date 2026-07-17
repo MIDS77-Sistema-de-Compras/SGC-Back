@@ -45,7 +45,7 @@ import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 public class CreateRequestServiceImpl {
 
     private static final String INITIAL_STATUS = "Aguardando aprovação";
-    private static final String APPROVED_STATUS = "Auto-aprovado";
+    private static final String APPROVED_STATUS = "AUTO_APROVADO";
     private static final String REQUEST_PRODUCT_TYPE = "Solicitacao";
     private static final double REQUEST_PRODUCT_DEFAULT_PRICE = 0.0;
     private final RequestRepository requestRepository;
@@ -192,9 +192,13 @@ public class CreateRequestServiceImpl {
         return value != null && !value.isBlank();
     }
 
-    private boolean isSupervisor(User user) {
-        return user.getRole() != null
-                && user.getRole().getName() != null
-                && user.getRole().getName().trim().equalsIgnoreCase(Authorities.SUPERVISOR);
+    private boolean isSupervisorOrCoordenador(User user) {
+        if (user.getRole() == null || user.getRole().getName() == null) {
+            return false;
+        }
+
+        String roleName = user.getRole().getName().trim();
+        return roleName.equalsIgnoreCase(Authorities.SUPERVISOR)
+                || roleName.equalsIgnoreCase(Authorities.COORDENADOR);
     }
 }

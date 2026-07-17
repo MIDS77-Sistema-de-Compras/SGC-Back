@@ -132,7 +132,7 @@ class SecurityAuthorizationIntegrationTest {
         mockMvc.perform(post("/users")
                         .with(user(principalsByRole.get(Authorities.SUPERVISOR)))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createUserBody("docente.criado@teste.com", "93541134780", Authorities.DOCENTE)))
+                        .content(createUserBody("docente.criado@sc.senai.br", "93541134780", Authorities.DOCENTE)))
                 .andExpect(status().isCreated());
     }
 

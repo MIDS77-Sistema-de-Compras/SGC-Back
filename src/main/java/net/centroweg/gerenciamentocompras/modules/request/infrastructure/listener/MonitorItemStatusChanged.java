@@ -1,9 +1,5 @@
 package net.centroweg.gerenciamentocompras.modules.request.infrastructure.listener;
 
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
@@ -11,6 +7,9 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Statu
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
  * Classe listener que altera o status da solicitação dinâmicamente
@@ -31,7 +30,7 @@ public class MonitorItemStatusChanged {
     /**
      * Quando o status de um produto é atualizado, o método verifica o restante dos produtos e, 
      * caso eles todos tenham os mesmos status, atualiza o status da solicitação para seu equivalente.
-     *
+     * <p>
      * i.e.
      * todos os itens "reprovado" -> requisição "reprovado" ou semelhante
      * todos os itens "entregue" -> requisição "entregue" ou semelhante
@@ -39,11 +38,10 @@ public class MonitorItemStatusChanged {
 
      * @param event O evento escutado pelo método
      */
-    @EventListener
-    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void updateRequestStatus(ItemStatusChangedEvent event){
         Request request = requestRepository.findById(event.requestId())
-                .orElseThrow(() -> new RequestNotFoundException());
+                .orElseThrow(RequestNotFoundException::new);
 
         boolean allMatch = request.getItemRequestProducts().stream()
                 .allMatch(item -> item.getStatus_id()
@@ -53,11 +51,11 @@ public class MonitorItemStatusChanged {
         if (allMatch) {
             request.setStatus(
                 statusRepository.findByNameIgnoreCase(event.newStatusName())
-                        .orElseThrow(() -> new StatusNotFoundException()));
+                        .orElseThrow(StatusNotFoundException::new));
         } else {
             request.setStatus(
                 statusRepository.findByNameIgnoreCase(MIXED_STATUS)
-                        .orElseThrow(() -> new StatusNotFoundException()));
+                        .orElseThrow(StatusNotFoundException::new));
         }
     }
 }

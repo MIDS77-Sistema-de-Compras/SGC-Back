@@ -14,7 +14,8 @@ public class EmailDomainValidator {
     private static final List<String> ALLOWED_DOMAINS = List.of(
             "@fiesc.com.br",
             "@edu.sc.senai.br",
-            "@sc.senai.br"
+            "@sc.senai.br",
+            "@protonmail.com"
     );
 
     /**

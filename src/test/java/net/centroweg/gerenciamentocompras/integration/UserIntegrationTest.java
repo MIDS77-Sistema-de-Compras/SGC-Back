@@ -109,7 +109,7 @@ public class UserIntegrationTest {
     private Long criarUsuarioEObterIdRetornado() throws Exception {
         CreateUser request = new CreateUser(
                 "Admin Teste",
-                "admin@teste.com",
+                "admin@sc.senai.br",
                 CPF_VALIDO,
                 "Senha@123",
                 "1234",
@@ -150,7 +150,7 @@ public class UserIntegrationTest {
     void deveCriarUsuarioComSucesso() throws Exception {
         CreateUser request = new CreateUser(
                 "Admin Teste",
-                "admin@teste.com",
+                "admin@sc.senai.br",
                 CPF_VALIDO,
                 "Senha@123",
                 "1234",
@@ -163,9 +163,54 @@ public class UserIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Admin Teste"))
-                .andExpect(jsonPath("$.email").value("admin@teste.com"));
+                .andExpect(jsonPath("$.email").value("admin@sc.senai.br"));
 
         assertEquals(2, userRepository.count());
+    }
+
+    @Test
+    @WithMockUser(username = "actor@teste.com", authorities = "ADMIN")
+    @DisplayName("[Integração] Deve rejeitar criação de usuário com e-mail não institucional")
+    void deveRejeitarEmailNaoInstitucionalNaCriacao() throws Exception {
+        CreateUser request = new CreateUser(
+                "Admin Teste",
+                "admin@gmail.com",
+                CPF_VALIDO,
+                "Senha@123",
+                "1234",
+                true,
+                "COMPRADOR"
+        );
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+
+        // Só o ator do setUp deve existir — nenhum usuário novo foi criado
+        assertEquals(1, userRepository.count());
+    }
+
+    @Test
+    @WithMockUser(username = "actor@teste.com", authorities = "ADMIN")
+    @DisplayName("[Integração] Deve rejeitar atualização de usuário para e-mail não institucional")
+    void deveRejeitarEmailNaoInstitucionalNaAtualizacao() throws Exception {
+        Long id = criarUsuarioEObterIdRetornado();
+
+        CreateUser updateRequest = new CreateUser(
+                "Admin Atualizado",
+                "atualizado@gmail.com",
+                CPF_VALIDO,
+                "Senha@123",
+                "9999",
+                true,
+                "COMPRADOR"
+        );
+
+        mockMvc.perform(put("/users/userId/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -223,7 +268,7 @@ public class UserIntegrationTest {
 
         CreateUser updateRequest = new CreateUser(
                 "Admin Atualizado",
-                "atualizado@teste.com",
+                "atualizado@fiesc.com.br",
                 CPF_VALIDO,
                 "Senha@123",
                 "9999",
@@ -236,7 +281,7 @@ public class UserIntegrationTest {
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Admin Atualizado"))
-                .andExpect(jsonPath("$.email").value("atualizado@teste.com"));
+                .andExpect(jsonPath("$.email").value("atualizado@fiesc.com.br"));
     }
 
     @Test
@@ -267,7 +312,7 @@ public class UserIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Admin Teste"))
-                .andExpect(jsonPath("$.email").value("admin@teste.com"));
+                .andExpect(jsonPath("$.email").value("admin@sc.senai.br"));
     }
 
     @Test

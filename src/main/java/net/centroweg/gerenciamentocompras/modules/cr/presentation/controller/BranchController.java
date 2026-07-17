@@ -72,11 +72,11 @@ public class BranchController {
     }
 
     /**
-     * Remove uma filial pelo seu identificador.
+     * Remove uma filial.
      * @param id identificador da filial.
      * @return mensagem de confirmação da remoção.
      */
-    @Operation(description = "ENDPOINT responsável por deletar as filiais")
+    @Operation(description = "ENDPOINT responsável por remover uma filial")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(204)

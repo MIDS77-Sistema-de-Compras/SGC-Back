@@ -16,7 +16,7 @@ import lombok.*;
 public class Product {
 
     /**
-     * Identificador único do produto, gerado automaticamnete pelo banco de dados.
+     * Identificador único do produto, gerado automaticamente pelo banco de dados.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Product {
     private String name;
 
     /**
-     * Descrição do produto, não pode ser nulo.
+     * Descrição do produto, não pode ser nula.
      */
     private String description;
 

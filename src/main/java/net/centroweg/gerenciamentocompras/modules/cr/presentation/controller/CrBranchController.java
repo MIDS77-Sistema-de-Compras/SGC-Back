@@ -89,7 +89,7 @@ public class CrBranchController {
      * @param id identificador do vínculo CR-filial.
      * @return mensagem de confirmação da remoção.
      */
-    @Operation(description = "ENDPOINT responsável por deletar os CR-filiais")
+    @Operation(description = "ENDPOINT responsável por remover um CR-filial")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id) {
         return ResponseEntity.ok(

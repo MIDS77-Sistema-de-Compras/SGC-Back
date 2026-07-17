@@ -4,7 +4,7 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Measurem
 
 /**
  * DTO de saída com os dados de uma {@link MeasurementUnit}.
- * @param id identificador único da unidade de medida.
+ * @param id identificador da unidade de medida.
  * @param name nome da unidade de medida.
  * @param abbreviation abreviação(sigla) da unidade de medida.
  */

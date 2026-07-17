@@ -78,7 +78,7 @@ public class CrController {
      * @param id identificador do CR.
      * @return mensagem de confirmação da remoção.
      */
-    @Operation(description = "ENDPOINT responsável por deletar o CR")
+    @Operation(description = "ENDPOINT responsável por remover um CR")
     @DeleteMapping("{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)

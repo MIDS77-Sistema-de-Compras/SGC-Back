@@ -94,7 +94,7 @@ public class SectorController {
      * @param id identificador do bloco.
      * @return mensagem de confirmação da remoção.
      */
-    @Operation(description = "ENDPOINT responsável por deletar o bloco")
+    @Operation(description = "ENDPOINT responsável por remover um bloco")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSector(@PathVariable Long id){
         service.deleteSector(id);

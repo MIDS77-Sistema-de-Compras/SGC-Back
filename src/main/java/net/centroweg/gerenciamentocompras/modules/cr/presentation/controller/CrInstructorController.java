@@ -84,7 +84,7 @@ public class CrInstructorController {
      * @param id identificador do vínculo.
      * @return mensagem de confirmação da remoção.
      */
-    @Operation(description = "ENDPOINT responsável por deletar os CR-instrutor")
+    @Operation(description = "ENDPOINT responsável por remover um CR-instrutor")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageDTO> delete(@PathVariable("id") Long id){
         return ResponseEntity.status(HttpStatus.OK)

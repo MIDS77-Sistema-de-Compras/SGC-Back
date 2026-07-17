@@ -32,7 +32,7 @@ public class MeasurementUnitController {
     private final MeasurementUnitService measurementUnitService;
 
     /**
-     * Cria uma unidade de medida.
+     * Cria uma nova unidade de medida.
      * @param request dados da unidade de medida.
      * @return unidade de medida criada.
      */
@@ -43,7 +43,7 @@ public class MeasurementUnitController {
     }
 
     /**
-     * Lista as unidades de medida cadastradas.
+     * Lista todas as unidades de medida cadastradas.
      * @return lista com todas as unidades de medida encontradas.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todas as unidades de medida")
@@ -57,7 +57,7 @@ public class MeasurementUnitController {
      * @param id identificador da unidade de medida.
      * @return unidade de medida encontrada, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela busca de uma unidade de medida pelo id")
+    @Operation(description = "ENDPOINT responsável pela busca de uma unidade de medida pelo ID")
     @GetMapping("/{id}")
     public ResponseEntity<MeasurementUnitResponse> findMeasurementUnitById(@PathVariable Long id){
         return ResponseEntity.ok(measurementUnitService.findMeasurementUnitById(id));
@@ -78,7 +78,7 @@ public class MeasurementUnitController {
      * Atualiza uma unidade de medida existente.
      * @param id identificador da unidade de medida.
      * @param request novos dados da unidade de medida.
-     * @return unidade de medida atualizada.
+     * @return unidade de medida já atualizada.
      */
     @Operation(description = "ENDPOINT responsável pela atualização de unidades de medida")
     @PutMapping("/{id}")

@@ -14,22 +14,22 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     /**
      * Busca um produto pelo seu código identificador único.
-     * @param code o código do produto.
-     * @return o produto encontrado, caso exista.
+     * @param code código do produto.
+     * @return produto encontrado, caso exista.
      */
     Optional<Product> findByCode(String code);
 
     /**
      * Busca uma lista de produtos cujo nome contenha o trecho informado, sem distinção entre maiúsculas e minúsculas.
-     * @param name nome do produto, não é necessário escrever completo.
-     * @return lista contendo os produtos cujo nome corresponda ao critério de busca.
+     * @param name nome do produto, não necessariamente completo.
+     * @return lista com todos os produtos encontrados, caso exista.
      */
     List<Product> findByNameContainingIgnoreCase(String name);
 
     /**
      * Busca um produto pelo nome.
      * @param name nome do produto.
-     * @return o produto encontrado, caso exista.
+     * @return produto encontrado, caso exista.
      */
     Optional<Product> findByNameIgnoreCase(String name);
 }

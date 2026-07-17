@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repositório de acesso a dados para a entidade {@link CrBranch}.
+ * Repositório de acesso a dados da entidade {@link CrBranch}.
  */
 @Repository
 public interface CrBranchRepository extends JpaRepository<CrBranch, Long>, JpaSpecificationExecutor<CrBranch> {

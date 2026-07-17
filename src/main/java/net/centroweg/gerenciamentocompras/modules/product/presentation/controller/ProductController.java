@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Controlador REST responsável pelos endpoints de gerenciamento de {@link Product}.
  */
-@Tag(name = "ENDPOINTS da entidade PRODUCT")
+@Tag(name = "ENDPOINTS da entidade produto")
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -30,27 +30,27 @@ public class ProductController {
      * @param request dados do produto.
      * @return produto criado.
      */
-    @Operation(description = "ENDPOINT responsável pela criação de Product")
+    @Operation(description = "ENDPOINT responsável pela criação de um produto")
     @PostMapping
     public ResponseEntity<ProductResponse> create(@RequestBody @Valid CreateProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request));
     }
 
     /**
-     * Busca um produto pelo seu identificador único.
+     * Busca um produto pelo seu identificador.
      * @param id identificador do produto.
      * @return produto encontrado, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de Product por id")
+    @Operation(description = "ENDPOINT responsável pela listagem de um produto por id")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));
     }
 
     /**
-     * Lista os produtos cadastrados com o nome especificado.
+     * Lista todos os produtos cadastrados com o nome especificado.
      * @param name nome do produto.
-     * @return lista com todos os produtos encontrados.
+     * @return lista com todos os produtos encontrados, caso exista.
      */
     @GetMapping
     public ResponseEntity<List<ProductResponse>> findAll(@RequestParam(required = false) String name) {
@@ -61,9 +61,9 @@ public class ProductController {
      * Atualiza um produto existente.
      * @param id identificador do produto.
      * @param request novos dados do produto.
-     * @return produto atualizado.
+     * @return produto já atualizado.
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de Product")
+    @Operation(description = "ENDPOINT responsável pela atualização de um produto")
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(
             @PathVariable Long id,
@@ -72,11 +72,11 @@ public class ProductController {
     }
 
     /**
-     * Deleta um produto.
+     * Remove um produto.
      * @param id identificador do produto.
-     * @return mensagem de conformação da remoção.
+     * @return mensagem de confirmação da remoção.
      */
-    @Operation(description = "ENDPOINT responsável pelo delete de Product")
+    @Operation(description = "ENDPOINT responsável por remover um produto")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);

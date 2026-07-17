@@ -39,7 +39,7 @@ class FindAllDeliveryServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        service = new FindAllDeliveryServiceImpl(deliveryRepository, new DeliveryMapper(statusPublicApi));
+        service = new FindAllDeliveryServiceImpl(deliveryRepository, new DeliveryMapper());
         Request request = request();
         Status status = status();
         Mockito.lenient().when(statusPublicApi.findById(status.getId())).thenReturn(Optional.of(status));

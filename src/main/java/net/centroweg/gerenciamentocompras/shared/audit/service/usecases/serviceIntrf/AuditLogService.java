@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface AuditLogService {
 
-    List<AuditLogDTOResponse> findAll(AuditLogFilterRequest filter);
+    List<AuditLogDTOResponse> findAll(AuditLogFilterRequest filter, int limit);
 }

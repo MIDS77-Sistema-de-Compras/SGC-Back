@@ -15,7 +15,7 @@ public class AuditLogServiceImpl implements AuditLogService {
     private final ListAuditLogAll listAuditLogAll;
 
     @Override
-    public List<AuditLogDTOResponse> findAll(AuditLogFilterRequest filter) {
-        return listAuditLogAll.findAll(filter);
+    public List<AuditLogDTOResponse> findAll(AuditLogFilterRequest filter, int limit) {
+        return listAuditLogAll.findAll(filter, limit);
     }
 }

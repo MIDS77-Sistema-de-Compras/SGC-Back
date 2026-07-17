@@ -75,7 +75,7 @@ class CreateDeliveryServiceImplTest {
                 statusPublicApi,
                 new DeliveryReceiverValidator(userPublicApi),
                 deliveryItemResolver,
-                new DeliveryMapper(statusPublicApi),
+                new DeliveryMapper(),
                 eventPublisher
         );
         request = request();

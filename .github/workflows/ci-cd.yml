@@ -49,6 +49,7 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: ec2
 
     steps:
       - name: Baixar o artefato JAR compilado
@@ -57,33 +58,56 @@ jobs:
           name: spring-boot-app
           path: target/
 
+      - name: Enviar arquivo JAR para a EC2 via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ vars.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "target/*.jar"
+          target: "/home/ubuntu/sgs-app"
+          strip_components: 1
+
       - name: Copiar JAR e reiniciar serviços na EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: ${{ vars.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "1. Criando diretório da aplicação caso não exista..."
             mkdir -p ~/sgs-app
-
-            echo "2. Parando a execução anterior do Spring Boot..."
-            fuser -k 8080/tcp || true
-
-            echo "3. Iniciando a nova versão da API em segundo plano..."
-            nohup java -jar ~/sgs-app/*.jar > ~/sgs-app/app.log 2>&1 &
-
+            
+            echo "2. Parando a execução anterior do Spring Boot na porta 8081..."
+            fuser -k 8081/tcp || true
+            
+            echo "3. Iniciando a nova versão da API com variáveis de ambiente..."
+            nohup java -jar \
+              -DSPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" \
+              -DSPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+              -DSPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+              -DSECURITY_JWT_SECRET_KEY="${{ secrets.SECURITY_JWT_SECRET_KEY }}" \
+              -DSECURITY_JWT_EXPIRATION_TIME="${{ secrets.SECURITY_JWT_EXPIRATION_TIME }}" \
+              -DCLOUD_NAME="${{ secrets.CLOUD_NAME }}" \
+              -DCLOUDINARY_API_KEY="${{ secrets.CLOUDINARY_API_KEY }}" \
+              -DCLOUDINARY_API_SECRET="${{ secrets.CLOUDINARY_API_SECRET }}" \
+              -DMAIL_USERNAME="${{ secrets.MAIL_USERNAME }}" \
+              -DMAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
+              -DCPF_SECRET="${{ secrets.CPF_SECRET }}" \
+              -DACTUATOR_METRICS_USERNAME="${{ secrets.ACTUATOR_METRICS_USERNAME }}" \
+              -DACTUATOR_METRICS_PASSWORD="${{ secrets.ACTUATOR_METRICS_PASSWORD }}" \
+              ~/sgs-app/*.jar > ~/sgs-app/app.log 2>&1 &
+            
             sleep 10
-
-            echo "4. Verificando e garantindo o túnel do Ngrok via PM2..."
-
+            
+            echo "4. Verificando e garantindo o túnel do Ngrok via PM2 apontando para a porta 8081..."
             ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-
+            
             if pm2 describe sgs-tunnel > /dev/null 2>&1; then
               echo "Túnel já existe. Reiniciando para garantir conexão estável..."
               pm2 restart sgs-tunnel
             else
               echo "Criando novo processo de túnel no PM2..."
-              pm2 start ngrok --name "sgs-tunnel" -- http 8080 --url=${{ secrets.NGROK_STATIC_DOMAIN }}
+              pm2 start ngrok --name "sgs-tunnel" -- http 8081 --url=${{ secrets.NGROK_STATIC_DOMAIN }}
             fi
             pm2 save

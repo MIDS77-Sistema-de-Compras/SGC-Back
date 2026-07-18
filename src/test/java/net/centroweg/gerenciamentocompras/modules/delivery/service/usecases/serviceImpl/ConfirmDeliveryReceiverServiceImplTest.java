@@ -42,7 +42,7 @@ class ConfirmDeliveryReceiverServiceImplTest {
     @BeforeEach
     void setUp() {
         service = new ConfirmDeliveryReceiverServiceImpl(
-                deliveryRepository, statusPublicApi, currentUserService, new DeliveryMapper(statusPublicApi));
+                deliveryRepository, statusPublicApi, currentUserService, new DeliveryMapper());
         pending = status();
         first = user(1L, "Primeiro", true);
         second = user(2L, "Segundo", true);

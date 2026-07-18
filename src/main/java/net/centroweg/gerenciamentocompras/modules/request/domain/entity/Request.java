@@ -51,9 +51,11 @@ public class Request {
 
     private String feedback;
 
+    @BatchSize(size = 30)
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemRequestProvision> itemRequestProvisions = new ArrayList<>();
 
+    @BatchSize(size = 30)
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemRequestProduct> itemRequestProducts = new ArrayList<>();
 

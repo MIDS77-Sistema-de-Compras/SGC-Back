@@ -56,6 +56,7 @@ public class UpdateRequestStatusServiceImpl {
                 .orElseThrow(StatusNotFoundException::new);
 
         boolean isRefused = isStatus(newStatus, REFUSED_STATUS);
+        boolean isApproved = isStatus(newStatus, APPROVED_STATUS);
 
         Status previousStatus = request.getStatus();
         Long previousStatusId = previousStatus != null ? previousStatus.getId() : null;
@@ -68,6 +69,13 @@ public class UpdateRequestStatusServiceImpl {
 
         if (justification != null) {
             request.setFeedback(justification);
+        }
+
+        // Aprovar/recusar pela lista decide a solicitação inteira num clique só, sem passar
+        // pela tela de item a item — sem isso os itens ficariam presos em "Aguardando
+        // aprovação" pra sempre, incoerentes com o status já finalizado da solicitação.
+        if (isApproved || isRefused) {
+            cascadeStatusToItems(request, newStatus);
         }
 
         Request savedRequest = requestRepository.save(request);
@@ -117,5 +125,10 @@ public class UpdateRequestStatusServiceImpl {
     private boolean isStatus(Status status, String expectedStatus) {
         return status.getName() != null
                 && status.getName().trim().equalsIgnoreCase(expectedStatus);
+    }
+
+    private void cascadeStatusToItems(Request request, Status status) {
+        request.getItemRequestProducts().forEach(item -> item.setStatus_id(status));
+        request.getItemRequestProvisions().forEach(item -> item.setStatus(status));
     }
 }

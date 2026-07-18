@@ -26,6 +26,16 @@ public class RequestBusinessRuleValidator {
             "cancelado"
     );
 
+    /**
+     * Único status em que o supervisor/coordenador ainda pode decidir a solicitação.
+     * Qualquer outro — Aprovado, Recusado, Auto-aprovado, Parcialmente aprovada, ou
+     * qualquer status que o comprador já tenha atribuído depois disso (Em atendimento,
+     * Entregue, etc.) — significa que a etapa dele já terminou. A checagem é negativa
+     * (não é mais o pendente) em vez de listar cada status "final", que cresceria a cada
+     * novo status adicionado ao fluxo do comprador.
+     */
+    private static final String PENDING_STATUS = "aguardando aprovação";
+
     private static final String ADMIN_ROLE = Authorities.ADMIN;
 
     public void validateCanInactivate(Request request, User currentUser) {
@@ -110,17 +120,39 @@ public class RequestBusinessRuleValidator {
 
     public void validateCanUpdateStatus(Request request, User currentUser) {
         validateRequestIsActive(request);
+
+        if (!isPurchasingStage(currentUser) && isFinalizedForSupervisor(request)) {
+            throw new RequestNotEditableException();
+        }
+
         validateActingRole(request, currentUser);
     }
 
     public void validateCanEditItems(Request request, User currentUser) {
         validateRequestIsActive(request);
 
+        if (!isPurchasingStage(currentUser) && isFinalizedForSupervisor(request)) {
+            throw new RequestNotEditableException();
+        }
+
         if (isCreator(request, currentUser)) {
             return;
         }
 
         validateActingRole(request, currentUser);
+    }
+
+    /**
+     * Comprador e administrador continuam podendo editar itens/status depois que o
+     * supervisor finaliza a solicitação — é justamente a etapa deles que começa ali.
+     */
+    private boolean isPurchasingStage(User currentUser) {
+        return hasRole(currentUser, Authorities.COMPRADOR) || hasRole(currentUser, ADMIN_ROLE);
+    }
+
+    private boolean isFinalizedForSupervisor(Request request) {
+        String statusName = normalize(request.getStatus().getName());
+        return !statusName.equals(PENDING_STATUS);
     }
 
     private void validateActingRole(Request request, User currentUser) {

@@ -68,7 +68,7 @@ class UpdateItemRequestProductServiceTest {
         item.setStatus_id(previousStatus);
         request = new Request();
         request.setId(10L);
-        product = Product.builder().id(20L).name("Parafuso").code("P-1").price(1.0).type("Insumo").build();
+        product = Product.builder().id(20L).name("Parafuso").description("Descrição do Parafuso").code("P-1").price(1.0).type("Insumo").build();
         unit = new MeasurementUnit(30L, "Unidade", "UN");
     }
 

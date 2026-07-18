@@ -1,6 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.irprovision;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
@@ -9,23 +15,21 @@ import net.centroweg.gerenciamentocompras.modules.provision.service.api.Provisio
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestProvisionItemNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.irprovision.ItemRequestProvisionMapper;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-import org.springframework.util.StringUtils;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditInfo;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 
 @Service
 @RequiredArgsConstructor
@@ -34,18 +38,27 @@ public class UpdateItemRequestProvisionServiceImpl {
     private final ItemRequestProvisionMapper itemRequestProvisionMapper;
     private final ItemRequestProvisionRepository itemRequestProvisionRepository;
 
-    private final RequestRepository requestRepository;
     private final ProvisionPublicApi provisionPublicApi;
     private final StatusRepository statusRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final RequestBusinessRuleValidator requestBusinessRuleValidator;
+    private final CurrentUserService currentUserService;
 
     @Transactional
-    public ItemRequestProvisionResponse updateItem(Long itemId, ItemRequestProvisionRequest requestDto){
+    @Auditable(action="MUDANÇA_STATUS", targetFromReturn=true)
+    public ItemRequestProvisionResponse updateItem(Long itemId,
+            @AuditInfo("Novo status: ") ItemRequestProvisionRequest requestDto){
+
         ItemRequestProvision item = itemRequestProvisionRepository.findById(itemId)
             .orElseThrow(() -> new RequestProvisionItemNotFoundException());
 
-        Request request = requestRepository.findById(requestDto.requestId())
-            .orElseThrow(() -> new RequestNotFoundException());
+        Request originalRequest = item.getRequest();
+        User currentUser = currentUserService.getCurrentUser();
+        requestBusinessRuleValidator.validateCanEditItems(originalRequest, currentUser);
+
+        if (!Objects.equals(originalRequest.getId(), requestDto.requestId())) {
+            throw new AcessDeniedException();
+        }
 
         Provision provision = provisionPublicApi.findById(requestDto.provisionId())
             .orElseThrow(() -> new ProvisionNotFoundException());
@@ -56,7 +69,6 @@ public class UpdateItemRequestProvisionServiceImpl {
         Status previousStatus = item.getStatus();
         boolean statusChanged = previousStatus == null || !Objects.equals(previousStatus.getId(), status.getId());
 
-        item.setRequest(request);
         item.setProvision(provision);
         item.setStatus(status);
 
@@ -64,15 +76,10 @@ public class UpdateItemRequestProvisionServiceImpl {
             item.setAdditionalInformation(requestDto.additionalInformation().trim());
         }
 
-        // also have to update the dependencies
-        request.getItemRequestProvisions().add(item);
-        provision.getItemRequestProvisions().add(item);
-        status.getItemRequestProvisions().add(item);
-
         ItemRequestProvision saved = itemRequestProvisionRepository.save(item);
         if (statusChanged) {
             eventPublisher.publishEvent(new ItemStatusChangedEvent(
-                    request.getId(),
+                    originalRequest.getId(),
                     saved.getId(),
                     RequestItemType.PROVISION,
                     provision.getName(),

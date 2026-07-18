@@ -1,5 +1,12 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
@@ -32,12 +39,6 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -62,9 +63,9 @@ public class CreateRequestServiceImpl {
         User requester = userPublicApi.findByEmail(userPrincipal.getUsername())
                 .orElseThrow(UserNotFoundException::new);
 
-        boolean createdApproved = isSupervisorOrCoordenador(requester);
+        boolean isSupervisor = isSupervisorOrCoordenador(requester);
 
-        Status status = createdApproved
+        Status status = isSupervisor
                 ? statusRepository.findByNameIgnoreCase(APPROVED_STATUS)
                 .orElseThrow(StatusNotFoundException::new)
                 : statusRepository.findByNameIgnoreCase(INITIAL_STATUS)
@@ -89,7 +90,7 @@ public class CreateRequestServiceImpl {
 
         Request savedRequest = requestRepository.save(requestToSave);
 
-        if (createdApproved) {
+        if (isSupervisor) {
             eventPublisher.publishEvent(new RequestApprovedEvent(savedRequest.getId()));
         }
 
@@ -128,7 +129,7 @@ public class CreateRequestServiceImpl {
     }
 
     private Product findOrCreateProduct(RequestProductItemRequest productRequest) {
-        return requestPublicApi.findProuctByNameIgnoreCase(productRequest.productName())
+        return requestPublicApi.findProuctByNameIgnoreCase(productRequest.productName()) // typo
                 .orElseGet(() -> requestPublicApi.createProduct(new CreateProductRequest(
                         productRequest.productName(),
                         productRequest.additionalInformations(),

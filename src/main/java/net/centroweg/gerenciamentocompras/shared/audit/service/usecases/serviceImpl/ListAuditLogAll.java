@@ -8,7 +8,9 @@ import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.request.
 import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.response.AuditLogDTOResponse;
 import net.centroweg.gerenciamentocompras.shared.audit.service.mapper.AuditLogMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,16 @@ public class ListAuditLogAll {
     private final AuditLogMapper auditLogMapper;
     private final AuditLogSpecification logSpecification;
 
+    /**
+     * Lista os registros de auditoria mais recentes que atendem ao filtro.
+     *
+     * <p>A tabela de auditoria cresce a cada ação de escrita no sistema; por isso a
+     * consulta é limitada aos {@code limit} registros mais recentes (ordenados por
+     * {@code timestamp} decrescente), evitando carregar o histórico inteiro na tela de logs.</p>
+     *
+     * @param filter filtros opcionais (tipo de ação, e-mail do agente, período)
+     * @return os registros mais recentes, do mais novo para o mais antigo
+     */
     public Page<AuditLogDTOResponse> findAll(AuditLogFilterRequest filter, Pageable pageable) {
         Specification<AuditLog> specification = Specification.allOf(
                 logSpecification.typeActionEquals(filter.typeAction()),

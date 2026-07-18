@@ -24,7 +24,7 @@ public class AuditLogController {
 
     private final AuditLogService auditLogService;
 
-    @Operation(description = "ENDPOINT responsável pela listagem de todos os registros")
+    @Operation(description = "ENDPOINT responsável pela listagem dos registros de auditoria mais recentes (limitada por 'limit', padrão 100)")
     @GetMapping
     public ResponseEntity<Page<AuditLogDTOResponse>> findAll(
             @RequestParam(required = false) String typeAction,

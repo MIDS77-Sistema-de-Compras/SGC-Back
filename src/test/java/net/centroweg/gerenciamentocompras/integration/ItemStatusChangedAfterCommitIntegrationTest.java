@@ -1,8 +1,16 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleItemStatusChangedNotificationUseCase;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -24,6 +33,7 @@ class ItemStatusChangedAfterCommitIntegrationTest {
 
     @Autowired private ApplicationEventPublisher eventPublisher;
     @Autowired private PlatformTransactionManager transactionManager;
+    @Autowired private static RequestRepository repository;
     @MockitoBean private HandleItemStatusChangedNotificationUseCase notificationUseCase;
 
     @Test
@@ -48,7 +58,7 @@ class ItemStatusChangedAfterCommitIntegrationTest {
 
     private ItemStatusChangedEvent event() {
         return new ItemStatusChangedEvent(
-                10L, 99L, RequestItemType.PRODUCT, "Parafuso", "P-1", 2.0, "UN",
+                1L, 1L, RequestItemType.PRODUCT, "Parafuso", "P-1", 2.0, "UN",
                 "Aprovado", "Entregue", null, LocalDateTime.now()
         );
     }

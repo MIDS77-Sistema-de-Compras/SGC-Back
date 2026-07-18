@@ -1,13 +1,12 @@
 package net.centroweg.gerenciamentocompras.shared.audit.service.mapper;
 
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.audit.domain.entity.AuditLog;
 import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.request.AuditLogDTORequest;
 import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.response.AuditLogDTOResponse;
 import net.centroweg.gerenciamentocompras.shared.audit.service.api.AuditLogPublicApi;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor

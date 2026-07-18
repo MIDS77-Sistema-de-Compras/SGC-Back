@@ -1,5 +1,7 @@
 package net.centroweg.gerenciamentocompras.shared.audit.service.api;
 
+import org.springframework.stereotype.Repository;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
@@ -7,8 +9,6 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Repository

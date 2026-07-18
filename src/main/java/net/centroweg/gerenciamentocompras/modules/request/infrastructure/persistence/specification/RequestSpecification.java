@@ -1,5 +1,11 @@
 package net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.specification;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Locale;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
@@ -9,11 +15,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import org.springframework.data.jpa.domain.Specification;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Locale;
 
 @NoArgsConstructor
 public final class RequestSpecification {

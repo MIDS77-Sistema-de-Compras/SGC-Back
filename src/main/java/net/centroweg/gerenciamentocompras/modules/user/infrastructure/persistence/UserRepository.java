@@ -1,13 +1,13 @@
 package net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence;
 
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
-import java.util.List;
-import java.util.Optional;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
  * Repositório de acesso aos dados da entidade

@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface SectorRepository extends JpaRepository<Sector, Long> {
 
     /**
-     * Busca um bloco pelo nome.
+     * Busca um bloco no banco de dados pelo nome informado.
      * @param name nome do bloco.
      * @return bloco encontrado, caso exista.
      */

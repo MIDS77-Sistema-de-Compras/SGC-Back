@@ -56,7 +56,7 @@ public class NotificationServiceImpl implements NotificationService {
     /**
      * Lista notificações cadastradas no banco de dados pelo identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     @Override
     public List<NotificationResponse> findNotificationsByUser(Long userId) {
@@ -66,7 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
     /**
      * Lista notificações cadastradas no banco de dados não visualizadas pelo identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     @Override
     public List<NotificationResponse> findUnviewedNotificationsByUser(Long userId) {
@@ -86,7 +86,7 @@ public class NotificationServiceImpl implements NotificationService {
     /**
      * Lista notificações cadastradas no banco de dados pertencentes ao dono da solicitação.
      * @param userPrincipal usuário.
-     * @return lista todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     @Override
     public List<NotificationResponse> findByOwnUser(UserPrincipal userPrincipal){

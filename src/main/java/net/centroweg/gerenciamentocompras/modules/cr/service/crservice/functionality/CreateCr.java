@@ -14,7 +14,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Acess
 import org.springframework.stereotype.Service;
 
 /**
- * Caso de uso responsável pela criação de um novo{@link Cr}.
+ * Caso de uso responsável pela criação de um novo {@link Cr}.
  */
 @Service
 @RequiredArgsConstructor
@@ -28,6 +28,8 @@ public class CreateCr{
      * Cria e persiste um novo CR no banco de dados.
      * @param dto dados do CR.
      * @return CR criado.
+     * @throws AcessDeniedException caso o usuário não tenha permissão de coordenador.
+     * @throws SectorNotFoundException caso o bloco informado não seja encontrado.
      */
     public CrCompoundResponse create(CrRequest dto, UserPrincipal userPrincipal){
 

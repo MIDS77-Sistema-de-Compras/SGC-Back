@@ -29,7 +29,7 @@ public class Product {
     private String name;
 
     /**
-     * Descrição do produto, não pode ser nula.
+     * Descrição do produto.
      */
     private String description;
 

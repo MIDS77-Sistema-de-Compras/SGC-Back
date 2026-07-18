@@ -21,7 +21,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.crinstructor.crinst
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
 /**
- * Controlador REST responsável pelos endpoints de gerenciamento de CR-instrutor.
+ * Controlador REST responsável pelos endpoints de gerenciamento do {@link CrInstructorController}.
  */
 @RestController
 @RequestMapping("/cr-instructors")
@@ -32,7 +32,7 @@ public class CrInstructorController {
     private final CrInstructorService crInstructorService;
 
     /**
-     * Cria um novo vínculo entre CR e usuário.
+     * Cria um novo vínculo CR-instrutor.
      * @param request dados do vínculo.
      * @return vínculo criado.
      */
@@ -45,7 +45,7 @@ public class CrInstructorController {
 
     /**
      * Lista todos os vínculos CR-instrutores cadastrados.
-     * @return lista com todos os vínculos CR-instrutores encontrados.
+     * @return lista com todos os vínculos encontrados, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todos os CR-instrutores")
     @GetMapping
@@ -57,9 +57,9 @@ public class CrInstructorController {
     /**
      * Busca um vínculo CR-instrutor pelo seu identificador.
      * @param id identificador do vínculo.
-     * @return vínculos encontrado.
+     * @return vínculo encontrado, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de CR-instrutores por id")
+    @Operation(description = "ENDPOINT responsável pela busca de um CR-instrutores pelo seu identificador")
     @GetMapping("/{id}")
     public ResponseEntity<CrInstructorResponse> findById(@PathVariable("id") Long id){
         return ResponseEntity.status(HttpStatus.OK)

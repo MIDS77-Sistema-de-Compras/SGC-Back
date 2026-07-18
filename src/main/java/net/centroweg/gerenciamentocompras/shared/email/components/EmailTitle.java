@@ -5,7 +5,7 @@ import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 /**
  * Contém o HTML necessário para criação de um título no email.
  * 
- * Um pouco mais estilizado que um parágrafo, prefirir isto do que um parágrafo estilizado como título.
+ * Um pouco mais estilizado que um parágrafo, prefira isto do que um parágrafo estilizado como título.
  * 
  * @param text Conteúdo do título
  * 

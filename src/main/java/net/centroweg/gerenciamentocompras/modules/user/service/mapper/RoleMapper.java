@@ -57,8 +57,8 @@ public class RoleMapper {
     }
 
     /**
-     * Tranforma role em DTO de atribuição de role a user
-     * @param role role a ser atribuida a usuário
+     * Transforma role em DTO de atribuição de role a user
+     * @param role role a ser atribuída a usuário
      * @return uma lista com os usuários que possuem determinada role
      * @see UserMapper
      * @see UserRole

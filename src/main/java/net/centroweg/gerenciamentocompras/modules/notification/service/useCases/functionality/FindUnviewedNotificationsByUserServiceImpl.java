@@ -21,7 +21,7 @@ public class FindUnviewedNotificationsByUserServiceImpl {
     /**
      * Lista todas as notificações cadastradas no banco de dados não lidas por usuário.
      * @param userId identificador do usuário.
-     * @return lista todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     public List<NotificationResponse> findUnviewedByUser(Long userId) {
         return notificationRepository.findByUserIdAndViewedFalse(userId)

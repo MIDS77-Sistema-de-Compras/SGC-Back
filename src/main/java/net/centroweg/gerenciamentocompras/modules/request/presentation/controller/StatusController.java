@@ -67,7 +67,13 @@ public class StatusController {
                 .body(statusService.findStatusById(id));
     }
 
-    @Operation(description = "ENDPOINT responsável por encontrar Status por id")
+    /**
+     * Busca um status pelo nome.
+     *
+     * @param statusName nome do status
+     * @return status encontrado
+     */
+    @Operation(description = "ENDPOINT responsável pela listagem de Status por nome")
     @GetMapping("/statusName/{statusName}")
     public ResponseEntity<StatusResponse> findStatusByName(@PathVariable String statusName){
         return ResponseEntity.status(HttpStatus.OK)

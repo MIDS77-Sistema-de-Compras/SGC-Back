@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 public class CrMapper {
 
     /**
-     * Converte um DTO de entrada do CR para uma entidade CR.
+     * Converte um DTO de entrada do CR em uma entidade CR.
      * @param dto DTO com os dados de entrada do CR.
-     * @return dados convertidos para uma entidade.
+     * @return dados convertidos para entidade.
      */
     public Cr toEntity(CrRequest dto, Sector sector){
         Cr crSave = new Cr();
@@ -28,9 +28,9 @@ public class CrMapper {
     }
 
     /**
-     * Converte uma entidade CR para um DTO de saída do CR.
-     * @param cr entidade com os dados.
-     * @return dados convertidos de forma simples para um DTO de saída.
+     * Converte uma entidade CR em um DTO de saída do CR.
+     * @param cr entidade com os dados do CR.
+     * @return dados convertidos de forma simples para DTO de saída.
      */
     public CrSimpleResponse toCrSimpleResponse(Cr cr){
         return new CrSimpleResponse(
@@ -39,9 +39,9 @@ public class CrMapper {
     }
 
     /**
-     * Converte uma entidade CR para um DTO de saída do CR.
-     * @param cr entidade com os dados.
-     * @return dados convertidos de forma completa para um DTO de saída.
+     * Converte uma entidade CR em um DTO de saída do CR.
+     * @param cr entidade com os dados do CR.
+     * @return dados convertidos de forma completa para DTO de saída.
      */
     public CrCompoundResponse toCrCompoundResponse(Cr cr){
         return new CrCompoundResponse(

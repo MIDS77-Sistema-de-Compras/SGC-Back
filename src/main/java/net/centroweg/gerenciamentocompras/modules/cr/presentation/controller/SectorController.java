@@ -12,9 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
 /**
- * Controlador REST responsável pelos endpoints de gerenciamento de bloco.
+ * Controlador REST responsável pelos endpoints de gerenciamento do {@link Sector}.
  */
 @Tag(name = "ENDPOINTS da entidade bloco")
 @RestController
@@ -37,7 +38,7 @@ public class SectorController {
 
     /**
      * Lista todos os blocos cadastrados de forma simples.
-     * @return lista de todos os blocos encontrados.
+     * @return lista de todos os blocos encontrados, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem simples de todos os blocos")
     @GetMapping("/simple")
@@ -47,7 +48,7 @@ public class SectorController {
 
     /**
      * Lista todos os blocos cadastrados de forma completa.
-     * @return lista de todos os blocos encontrados.
+     * @return lista de todos os blocos encontrados, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem completa de todos os blocos")
     @GetMapping("/compound")
@@ -56,22 +57,22 @@ public class SectorController {
     }
 
     /**
-     * Busca um  bloco de forma simples pelo seu identificador.
+     * Busca um bloco de forma simples pelo seu identificador.
      * @param id identificador do bloco.
-     * @return bloco encontrado.
+     * @return bloco encontrado, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem simples de bloco por id")
+    @Operation(description = "ENDPOINT responsável pela busca de forma simples de um bloco pelo seu identificador")
     @GetMapping("/simple/{id}")
     public ResponseEntity<SectorSimpleResponse> findSectorByIdSimple(@PathVariable Long id){
         return ResponseEntity.ok(service.findSectorByIdSimple(id));
     }
 
     /**
-     * Busca um bloco de forma completa por identificador.
+     * Busca um bloco de forma completa pelo seu identificador.
      * @param id identificador do bloco.
-     * @return bloco encontrado.
+     * @return bloco encontrado, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem completa de bloco por id")
+    @Operation(description = "ENDPOINT responsável pela busca de forma completa de um bloco pelo seu identificador")
     @GetMapping("/compound/{id}")
     public ResponseEntity<SectorCompoundResponse> findSectorByIdCompound(@PathVariable Long id){
         return ResponseEntity.ok(service.findSectorByIdCompound(id));

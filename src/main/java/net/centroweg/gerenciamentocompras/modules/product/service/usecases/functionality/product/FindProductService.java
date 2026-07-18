@@ -20,9 +20,10 @@ public class FindProductService {
     private final IProductMapper productMapper;
 
     /**
-     * Busca um produto pelo ID.
+     * Busca um produto no banco de dados pelo ID informado.
      * @param id identificador do produto.
-     * @return produto encontrado.
+     * @return produto encontrado, caso exista.
+     * @throws ProductNotFoundException caso nenhum produto seja encontrado.
      */
     public ProductResponse findById(Long id) {
         Product product = productRepository.findById(id)
@@ -31,17 +32,17 @@ public class FindProductService {
     }
 
     /**
-     * Retorna todos os produtos cadastrados no banco de dados.
-     * @return lista com todos os produtos encontrados.
+     * Lista todos os produtos cadastrados no banco de dados.
+     * @return lista com todos os produtos encontrados, caso exista.
      */
     public List<ProductResponse> findAll() {
         return productMapper.toResponseList(productRepository.findAll());
     }
 
     /**
-     * Busca um produto pelo nome.
+     * Busca um produto no banco de dados pelo nome informado.
      * @param name nome do produto.
-     * @return produto encontrado.
+     * @return lista com todos os produtos encontrados, caso existam.
      */
     public List<ProductResponse> findByName(String name) {
         return productMapper.toResponseList(

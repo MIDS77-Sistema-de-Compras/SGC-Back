@@ -33,7 +33,7 @@ public class Role implements RoleLevels {
         return this.name;
     }
 
-    /** Relacionamento JPA - usuário que possuem a role */
+    /** Relacionamento JPA - usuários que possuem a role */
     @OneToMany(mappedBy = "role")
     private List<User> users;
 

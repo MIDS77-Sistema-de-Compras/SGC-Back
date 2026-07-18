@@ -10,6 +10,6 @@ public record RequestRequest(
         @NotNull(message = "A filial/CR é obrigatória.")
         Long crBranchId,
 
-        @Size(max = 2, message = "Apenas 3 usuários incluindo você pode ser atribuido a uma solicitação")
+        @Size(max = 2, message = "Apenas 3 usuários incluindo você podem ser atribuídos a uma solicitação")
         List<Long> userIds
 ) {}

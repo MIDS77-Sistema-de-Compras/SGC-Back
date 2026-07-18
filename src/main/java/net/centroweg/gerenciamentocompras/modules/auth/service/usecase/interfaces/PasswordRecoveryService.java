@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.auth.service.usecase.interfaces;
 
 import jakarta.mail.MessagingException;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.exception.InvalidTokenException;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.NewPassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.Recovery;
 
@@ -28,6 +29,7 @@ public interface PasswordRecoveryService {
      * Altera a senha do usuário após validar o token de recuperação.
      * @param newPassword objeto contendo a nova senha.
      * @param token token de recuperação utilizado para autorizar a atualização.
+     * @throws InvalidTokenException caso o token seja inválido ou expirado.
      */
     public void changePasswordWhenValidToken(NewPassword newPassword, String token);
 }

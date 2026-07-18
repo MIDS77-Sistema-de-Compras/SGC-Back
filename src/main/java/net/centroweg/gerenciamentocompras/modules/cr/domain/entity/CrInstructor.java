@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
+/**
+ * Entidade que víncula um usuário a um CR-filial, no sistema de gerenciamento de compras.
+ */
 @Entity
 @Table(name="instructor_cr_branch")
 @AllArgsConstructor
@@ -24,21 +27,17 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 @NoArgsConstructor
 @Setter
 @Getter
-
-/**
- * Entidade que víncula um usuário a uma CR-filial, no sistema de gerenciamento de compras.
- */
 public class CrInstructor {
 
     /**
-     * Identificador único da CR-instrutor.
+     * Identificador único do CR-instrutor, gerado automaticamente pelo banco de dados.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Relacionamento com usuário, vários usuários pertencem a um CR-filial.
+     * Relacionamento com usuário, um CR-instrutor tem vários usuários.
      */
     @OneToMany
     @JoinColumn(name="instructor_cr_branch_id")
@@ -46,7 +45,7 @@ public class CrInstructor {
     private List<User> instructors;
 
     /**
-     * Relacionamento com CR-filial, uma CR-filial tem vários usuários.
+     * Relacionamento com CR-filial, vários CR-instrutores pertencem a um CR-filial.
      */
     @ManyToOne
     @JoinColumn(name="cr_branch")

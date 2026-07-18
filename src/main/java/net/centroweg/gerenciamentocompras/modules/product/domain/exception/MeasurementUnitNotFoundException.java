@@ -5,7 +5,7 @@ import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import net.centroweg.gerenciamentocompras.modules.product.domain.entity.MeasurementUnit;
 
 /**
- * Excessão lançada quando uma {@link MeasurementUnit} não é encontrada no banco de dados.
+ * Exceção lançada quando uma {@link MeasurementUnit} não é encontrada no banco de dados.
  */
 public class MeasurementUnitNotFoundException extends BusinessException {
 

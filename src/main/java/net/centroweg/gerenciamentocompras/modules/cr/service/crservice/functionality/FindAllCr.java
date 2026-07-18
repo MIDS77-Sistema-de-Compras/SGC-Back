@@ -19,7 +19,7 @@ public class FindAllCr {
 
     /**
      * Lista todos os CRs cadastrados no banco de dados.
-     * @return lista com todos os CRs encontrados.
+     * @return lista com todos os CRs encontrados, caso exista.
      */
     public List<CrCompoundResponse> listAll(){
         return crRepository.findAll()

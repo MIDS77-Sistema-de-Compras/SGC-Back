@@ -30,7 +30,7 @@ public class CrBranchServiceImpl implements CrBranchService {
     private final FindAllCrBranch findAllCrBranch;
 
     /**
-     * Componente responsável pela busca por ID do CR-filial.
+     * Componente responsável por buscar um CR-filial pelo ID informado.
      */
     private final FindByIdCrBranch findByIdCrBranch;
 
@@ -45,7 +45,7 @@ public class CrBranchServiceImpl implements CrBranchService {
     private final DeleteCrBranch deleteCrBranch;
 
     /**
-     * Componente responsável por buscar um CR-filial pelo ID da filial.
+     * Componente responsável por buscar um CR-filial pela filial informada.
      */
     private final FindCrBranchByBranch findCrBranchByBranch;
 
@@ -71,7 +71,7 @@ public class CrBranchServiceImpl implements CrBranchService {
 
     /**
      * Lista todos os vínculos CR-filial cadastrados no banco de dados.
-     * @return lista de vínculos encontrados.
+     * @return lista todos os vínculos encontrados, caso exista.
      */
     @Override
     public List<CrBranchResponse> findAll(CrBranchFilterRequest filter) {
@@ -81,7 +81,7 @@ public class CrBranchServiceImpl implements CrBranchService {
     /**
      * Busca um vínculo CR-filial no banco de dados pelo ID informado.
      * @param id identificador do CR-filial.
-     * @return vínculo encontrado.
+     * @return vínculo encontrado, caso exista.
      */
     @Override
     public CrBranchResponse findById(Long id) {
@@ -92,7 +92,7 @@ public class CrBranchServiceImpl implements CrBranchService {
      * Atualiza um vínculo CR-filial existente no banco de dados.
      * @param id identificador do CR-filial.
      * @param request novos dados do CR-filial.
-     * @return vínculo atualizado.
+     * @return vínculo já atualizado.
      */
     @Override
     public CrBranchResponse update(Long id, CrBranchRequest request) {
@@ -113,7 +113,7 @@ public class CrBranchServiceImpl implements CrBranchService {
     /**
      * Lista todos os vínculos CR-filial pertencentes a uma filial cadastrados no banco de dados.
      * @param branchId identificador do CR-filial.
-     * @return lista de vínculos da filial.
+     * @return lista todos os vínculos encontrados, caso exista.
      */
     @Override
     public List<CrBranchResponse> findCrBranchByBranch(Long branchId) {
@@ -124,7 +124,7 @@ public class CrBranchServiceImpl implements CrBranchService {
      * Atribui um usuário responsável a um vínculo CR-filial no banco de dados.
      * @param crBranchId identificador do CR-filial.
      * @param userId identificador do usuário.
-     * @return vínculo atualizado.
+     * @return vínculo já atualizado.
      */
     @Override
     public CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId) {
@@ -134,7 +134,7 @@ public class CrBranchServiceImpl implements CrBranchService {
     /**
      * Remove um usuário responsável de um vínculo CR-filial no banco de dados.
      * @param crBranchId identificador do CR-filial.
-     * @return vínculo atualizado sem o responsável.
+     * @return vínculo já atualizado.
      */
     @Override
     public CrBranchResponse removeCrBranchResponsible(Long crBranchId) {

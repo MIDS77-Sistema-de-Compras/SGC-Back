@@ -20,8 +20,8 @@ public interface MeasurementUnitService {
     );
 
     /**
-     * Lista todas as unidades de medida cadastrados.
-     * @return lista com todas as unidade de medida encontradas.
+     * Lista todas as unidades de medida cadastradas.
+     * @return lista com todas as unidades de medida encontradas.
      */
     List<MeasurementUnitResponse> readMeasurementUnit();
 

@@ -19,7 +19,7 @@ public class CreateMeasurementUnit {
     private final MeasurementUnitMapper measurementUnitMapper;
 
     /**
-     * Cria e persiste uma unidade de medida no banco de dados.
+     * Cria e persiste uma nova unidade de medida no banco de dados.
      * @param request dados da unidade de medida.
      * @return unidade de medida criada.
      */

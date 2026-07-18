@@ -22,7 +22,7 @@ public class SectorMapper {
     /**
      * Converte um DTO de entrada do bloco em uma entidade bloco.
      * @param sector DTO com os dados de entrada do bloco.
-     * @return dados convertidos para uma entidade.
+     * @return dados convertidos para entidade.
      */
     public Sector toEntity(SectorRequest sector){
         return new Sector(sector.name());
@@ -30,8 +30,8 @@ public class SectorMapper {
 
     /**
      * Converte uma entidade bloco em um DTO de saída do bloco.
-     * @param sector entidade com os dados.
-     * @return dados convertidos de forma simples para um DTO de saída.
+     * @param sector entidade com os dados do bloco.
+     * @return dados convertidos de forma simples para DTO de saída.
      */
     public SectorSimpleResponse toResponseSimple(Sector sector){
         return new SectorSimpleResponse(
@@ -41,8 +41,8 @@ public class SectorMapper {
 
     /**
      * Converte uma entidade bloco em um DTO de saída do bloco.
-     * @param sector entidade com os dados.
-     * @return dados convertidos de forma completa para um DTO de saída.
+     * @param sector entidade com os dados do bloco.
+     * @return dados convertidos de forma completa para DTO de saída.
      */
     public SectorCompoundResponse toResponseCompound(Sector sector){
         List<CrSimpleResponse> crSimpleResponse = new ArrayList<>();
@@ -61,7 +61,7 @@ public class SectorMapper {
 
     /**
      * Converte uma lista de entidades bloco em uma lista de DTOs de saída do bloco.
-     * @param sectors lista de entidades com os dados.
+     * @param sectors lista de entidades com os dados do bloco.
      * @return dados convertidos de forma simples para uma lista de DTOs de saída.
      */
     public List<SectorSimpleResponse> toResponseSimpleList(List<Sector> sectors){
@@ -73,7 +73,7 @@ public class SectorMapper {
 
     /**
      * Converte uma lista de entidade bloco em uma lista de DTOs de saída do bloco.
-     * @param sectors lista de entidades com os dados.
+     * @param sectors lista de entidades com os dados do bloco.
      * @return dados convertidos de forma completa para uma lista de DTOs de saída.
      */
     public List<SectorCompoundResponse> toResponseCompoundList(List<Sector> sectors){

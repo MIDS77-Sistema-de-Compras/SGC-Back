@@ -13,9 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 
 /**
- * Controlador REST responsável pelos endpoints de gerenciamento do Centro de Responsabilidade(CR).
+ * Controlador REST responsável pelos endpoints de gerenciamento do {@link Cr}.
  */
 @Tag(name = "ENDPOINTS da entidade CR")
 @RestController
@@ -53,7 +54,7 @@ public class CrController {
      * @param id identificador do CR.
      * @return CR encontrado.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de CR por id")
+    @Operation(description = "ENDPOINT responsável pela listagem de CR por identificador")
     @GetMapping("{id}")
     public ResponseEntity<CrCompoundResponse> listById(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)

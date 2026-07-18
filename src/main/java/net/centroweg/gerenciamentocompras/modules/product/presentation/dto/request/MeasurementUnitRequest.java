@@ -13,12 +13,12 @@ public record MeasurementUnitRequest(
 
     @NotBlank(message = "O nome da unidade de medida não deve ser nulo e nem vazio!")
     @Size(min = 2, max = 50,
-          message = "O nome deve ter entre 2 e 50 caractéres.")
+          message = "O nome deve ter entre 2 e 50 caracteres.")
     String name,
 
     @NotBlank(message = "A abreviação(sigla) não deve ser nula e nem vazia!")
     @Size(min = 1, max = 10,
-          message = "A abreviação deve ter entre 1 e 10 caractéres.")
+          message = "A abreviação deve ter entre 1 e 10 caracteres.")
     String abbreviation
 ) {
 }

@@ -33,7 +33,7 @@ public class CrInstructorServiceImpl implements CrInstructorService {
     private final GetAllCrInstructor getAllCrInstructor;
 
     /**
-     * Componente responsável pela busca de um CR-instrutor pelo ID.
+     * Componente responsável pela busca de um CR-instrutor pelo ID informado.
      */
     private final GetByIdCrInstructor getByIdCrInstructor;
 

@@ -52,6 +52,7 @@ public class ProductController {
      * @param name nome do produto.
      * @return lista com todos os produtos encontrados, caso exista.
      */
+    @Operation(description = "ENDPOINT responsável pela listagem de produtos por nome")
     @GetMapping
     public ResponseEntity<List<ProductResponse>> findAll(@RequestParam(required = false) String name) {
         return ResponseEntity.ok(productService.findAll(name));
@@ -74,7 +75,7 @@ public class ProductController {
     /**
      * Remove um produto.
      * @param id identificador do produto.
-     * @return mensagem de confirmação da remoção.
+     * @return resposta sem conteúdo confirmando a remoção.
      */
     @Operation(description = "ENDPOINT responsável por remover um produto")
     @DeleteMapping("/{id}")

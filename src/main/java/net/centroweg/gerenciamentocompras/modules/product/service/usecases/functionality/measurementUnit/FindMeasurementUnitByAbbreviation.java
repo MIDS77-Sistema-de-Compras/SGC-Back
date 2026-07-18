@@ -19,9 +19,9 @@ public class FindMeasurementUnitByAbbreviation {
     private final MeasurementUnitRepository measurementUnitRepository;
 
     /**
-     * Busca uma unidade de medida pela abreviação.
+     * Busca uma unidade de medida no banco de dados pela abreviação informada.
      * @param abbreviation abreviação(sigla) da unidade de medida.
-     * @return unidade de medida encontrada.
+     * @return unidade de medida encontrada, caso exista.
      * @throws MeasurementUnitNotFoundException caso a unidade de medida não seja encontrada.
      */
     public MeasurementUnitResponse findMeasurementUnitByAbbreviation(String abbreviation) {

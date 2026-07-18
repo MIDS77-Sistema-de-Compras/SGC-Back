@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * Excessão lançada quando uma {@link Notification} não é encontrada no banco de dados.
+ * Exceção lançada quando uma {@link Notification} não é encontrada no banco de dados.
  */
 public class NotificationNotFoundException extends BusinessException {
     public NotificationNotFoundException() {

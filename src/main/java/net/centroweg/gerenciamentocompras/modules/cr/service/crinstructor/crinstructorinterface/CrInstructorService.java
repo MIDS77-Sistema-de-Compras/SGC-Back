@@ -4,6 +4,8 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrInstructorRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrInstructorNotFoundException;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
 /**
@@ -15,6 +17,7 @@ public interface CrInstructorService {
      * Cria e persiste um novo vínculo CR-instrutor no banco de dados.
      * @param request dados do CR-instrutor.
      * @return vínculo criado.
+     * @throws CrBranchNotFoundException se o vínculo CR-filial não for encontrado.
      */
     CrInstructorResponse create(CrInstructorRequest request);
 
@@ -28,6 +31,7 @@ public interface CrInstructorService {
      * Busca um vínculo CR-instrutor no banco de dados pelo ID informado.
      * @param id identificador do CR-instrutor.
      * @return vínculo encontrado.
+     * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
      */
     CrInstructorResponse findById(Long id);
 
@@ -36,6 +40,8 @@ public interface CrInstructorService {
      * @param id identificador do CR-instrutor.
      * @param request novos dados do CR-instrutor.
      * @return vínculo atualizado.
+     * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
+     * @throws CrBranchNotFoundException se o vínculo CR-filial não for encontrado.
      */
     CrInstructorResponse update(Long id, CrInstructorRequest request);
 
@@ -43,6 +49,7 @@ public interface CrInstructorService {
      * Remove um vínculo CR-instrutor do banco de dados.
      * @param id identificador do CR-instrutor.
      * @return mensagem de confirmação da remoção.
+     * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
      */
     MessageDTO delete(Long id);
     

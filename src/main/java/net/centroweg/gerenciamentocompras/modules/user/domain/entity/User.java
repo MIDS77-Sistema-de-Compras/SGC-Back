@@ -58,7 +58,7 @@ public class User {
     private String password;
 
     /**
-     * Ramal para contato inteno com o usuário, não pode ser nulo.
+     * Ramal para contato interno com o usuário, não pode ser nulo.
      */
 
     @Column(nullable = false)

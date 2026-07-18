@@ -26,7 +26,7 @@ public class Sector {
     private Long id;
 
     /**
-     * Nome do bloco.
+     * Nome do bloco, não pode ser nulo e deve ser único.
      */
     @Column(nullable = false, unique = true)
     private String name;
@@ -38,7 +38,7 @@ public class Sector {
     private List<Cr> crs;
 
     /**
-     * Construtor utilizado para crir um novo bloco, sem ID e relacionamento definido.
+     * Construtor utilizado para criar um novo bloco, sem ID e relacionamento definido.
      * @param name nome do bloco.
      */
     public Sector(String name) {

@@ -5,7 +5,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 
 /**
- * DTO de entrada para criar ou atualizar um vínculo entre CR e filial na {@link CrBranch}.
+ * DTO de entrada para criar ou atualizar um vínculo {@link CrBranch}.
  * @param branchId identificador da filial, não deve ser nulo ou vazio.
  * @param crId identificador do CR, não deve ser nulo ou vazio.
  * @param responsibleUsersId identificador do usuário responsável(opcional).

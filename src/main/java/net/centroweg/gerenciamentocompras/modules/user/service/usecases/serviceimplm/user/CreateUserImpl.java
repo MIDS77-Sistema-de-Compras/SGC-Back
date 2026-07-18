@@ -35,6 +35,8 @@ public class CreateUserImpl {
      * Método que cria o usuário
      * @param user DTO que traz as informações do usuário
      * @return usuário já criado
+     * @throws UserNotFoundException caso a role informada não seja encontrada
+     * @throws RoleNotAllowedException caso a role informada seja do tipo ADMIN
      */
 
     public UserResponse createUser(CreateUser user){

@@ -20,10 +20,11 @@ public class UpdateProductService {
     private final IProductMapper productMapper;
 
     /**
-     * Atualiza um produto existente.
+     * Atualiza um produto existente no banco de dados.
      * @param id identificador do produto.
      * @param request novos dados do produto.
      * @return produto já atualizado.
+     * @throws ProductNotFoundException caso nenhum produto seja encontrado.
      */
     public ProductResponse execute(Long id, UpdateProductRequest request) {
         Product product = productRepository.findById(id)

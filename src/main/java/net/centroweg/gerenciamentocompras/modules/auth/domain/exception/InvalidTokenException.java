@@ -4,7 +4,7 @@ import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
 /**
- * Excessão lançado quando algum processo não ocorre como o esperado.
+ * Exceção lançada quando o token é inválido.
  */
 public class InvalidTokenException extends BusinessException {
     public InvalidTokenException(String message) {

@@ -36,7 +36,7 @@ public class UserPrincipal implements UserDetails {
         return userEntity.getPassword();
     }
 
-    /**.
+    /**
      * Identificador utilizado no login.
      * @return e-mail ou CPF que foi utilizado no login.
      */

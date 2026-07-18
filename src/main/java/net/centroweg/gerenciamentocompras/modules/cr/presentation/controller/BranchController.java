@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controlador REST responsável pelos endpoints de gerenciamento de {@link Branch}.
+ * Controlador REST responsável pelos endpoints de gerenciamento da {@link Branch}.
  */
 @Tag(name = "ENDPOINTS da entidade filial")
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class BranchController {
 
     /**
      * Lista todas as filiais cadastradas.
-     * @return lista com todas filiais encontradas.
+     * @return lista todas as filiais encontradas, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todas as filiais")
     @GetMapping
@@ -49,9 +49,9 @@ public class BranchController {
     /**
      * Busca uma filial pelo seu identificador.
      * @param id identificador da filial.
-     * @return filial encontrada.
+     * @return filial encontrada, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de filial por id")
+    @Operation(description = "ENDPOINT responsável pela busca de uma filial pelo identificador")
     @GetMapping("/{id}")
     public ResponseEntity<BranchResponse> findById(@PathVariable Long id){
         return ResponseEntity.status(200)

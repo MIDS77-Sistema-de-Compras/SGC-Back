@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
 /**
- * DTO de entrada para criar um vínculo entre CR e usuário no {@link CrInstructor}.
+ * DTO de entrada para criar um vínculo {@link CrInstructor}.
  * @param instructorIds lista de identificadores dos usuários, não deve ser nula ou vazia e o identificador deve ser positivo.
  * @param crBranchId identificador do CR-filial, não deve ser nulo ou vazio e deve ser positivo.
  */

@@ -19,9 +19,10 @@ public class FindRoleByNameImpl {
     private final RoleRepository repository;
 
     /**
-     * Busca roles contendo o nome pesquisado
+     * Busca a role que corresponde ao nome pesquisado
      * @param name nome pesquisado
-     * @return lista com todas as roles correspondentes ao nome
+     * @return role correspondente ao nome pesquisado
+     * @throws RoleNotFoundException caso a role não seja encontrada
      * @see RoleResponse
      */
     public RoleResponse findRoleByName(String name) {

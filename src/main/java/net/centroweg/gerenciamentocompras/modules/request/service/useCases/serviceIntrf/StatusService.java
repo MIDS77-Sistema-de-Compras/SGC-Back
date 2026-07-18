@@ -29,6 +29,12 @@ public interface StatusService {
      * @return status encontrado
      */
     StatusResponse findStatusById (Long id);
+    /**
+     * Busca um status pelo nome.
+     *
+     * @param name nome do status
+     * @return status encontrado
+     */
     StatusResponse findStatusByName (String name);
     /**
      * Lista todos os status cadastrados.

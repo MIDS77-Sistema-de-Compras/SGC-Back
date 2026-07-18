@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 
 /**
- * Excessão lançada quando um {@link Product} não é encontrado no banco de dados.
+ * Exceção lançada quando um {@link Product} não é encontrado no banco de dados.
  */
 public class ProductNotFoundException extends BusinessException {
 

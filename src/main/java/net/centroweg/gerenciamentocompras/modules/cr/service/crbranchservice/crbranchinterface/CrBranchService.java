@@ -5,6 +5,11 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Cr
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.BranchNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrNotFoundException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.List;
 
 /**
@@ -16,6 +21,10 @@ public interface CrBranchService {
      * Cria e persiste um novo CR-filial no banco de dados.
      * @param request dados do CR-filial.
      * @return CR-filial criado.
+     * @throws BranchNotFoundException se a filial não for encontrada.
+     * @throws CrNotFoundException se o CR não for encontrado.
+     * @throws CrBranchAlreadyExistsException se já existir um vínculo entre o CR e a filial.
+     * @throws UsernameNotFoundException se o usuário não for encontrado.
      */
     CrBranchResponse create(CrBranchRequest request);
 
@@ -30,6 +39,7 @@ public interface CrBranchService {
      * Busca um CR-filial no banco de dados pelo ID informado.
      * @param id identificador do CR-filial.
      * @return CR-filial encontrado, caso exista.
+     * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */
     CrBranchResponse findById(Long id);
 
@@ -38,6 +48,10 @@ public interface CrBranchService {
      * @param id identificador do CR-filial.
      * @param request novos dados do CR-filial.
      * @return CR-filial já atualizado.
+     * @throws CrBranchNotFoundException se o vínculo não for encontrado.
+     * @throws BranchNotFoundException se a filial não for encontrada.
+     * @throws CrNotFoundException se o CR não for encontrado.
+     * @throws UsernameNotFoundException se o responsável informado não for encontrado.
      */
     CrBranchResponse update(Long id, CrBranchRequest request);
 
@@ -52,6 +66,7 @@ public interface CrBranchService {
      * Lista todos os CR-filiais que pertencem a uma filial cadastrados no banco de dados.
      * @param branchId identificador da filial.
      * @return lista com os CR-filiais encontrados, caso exista.
+     * @throws BranchNotFoundException se a filial não for encontrada.
      */
     List<CrBranchResponse> findCrBranchByBranch(Long branchId);
 
@@ -60,6 +75,8 @@ public interface CrBranchService {
      * @param crBranchId identificador do CR-filial.
      * @param userId identificador do usuário.
      * @return CR-filial atualizado.
+     * @throws CrBranchNotFoundException se o vínculo não for encontrado.
+     * @throws UsernameNotFoundException se o usuário não for encontrado.
      */
     CrBranchResponse assignCrBranchResponsible(Long crBranchId, Long userId);
 
@@ -67,6 +84,7 @@ public interface CrBranchService {
      * Remove um usuário responsável de um vínculo CR-filial no banco de dados.
      * @param crBranchId identificador do CR-filial.
      * @return CR-filial atualizado sem o usuário.
+     * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */
     CrBranchResponse removeCrBranchResponsible(Long crBranchId);
 }

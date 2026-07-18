@@ -69,6 +69,7 @@ public class AuthenticationController {
      * @param recoveryDto dados necessários para localizar o usuário.
      * @return mensagem informando o envio de e-mail de recuperação.
      */
+    @Operation(description = "ENDPOINT responsável por iniciar o processo de recuperação de senha do usuário")
     @PostMapping("/recovery")
     public ResponseEntity<MessageDTO> sendEmailWithToken(@Valid @RequestBody Recovery recoveryDto){
         try{
@@ -86,6 +87,7 @@ public class AuthenticationController {
      * @param token token de recuperação enviado por e-mail.
      * @return mensagem indicando que a senha foi alterada.
      */
+    @Operation(description = "ENDPOINT responsável por alterar a senha do usuário utilizando um token de recuperação")
     @PostMapping("/recovery/new")
     public ResponseEntity<MessageDTO> validateAndChangePassword(@Valid @RequestBody NewPassword newPasswordDto, @RequestParam String token){
         passwordRecoveryService.changePasswordWhenValidToken(newPasswordDto, token);

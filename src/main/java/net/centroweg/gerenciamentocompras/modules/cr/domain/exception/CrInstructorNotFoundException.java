@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 
 /**
- * Excessão lançada quando um vínculo CR-Instrutor não é encontrado pelo seu identificador.
+ * Exceção lançada quando um vínculo CR-Instrutor não é encontrado pelo seu identificador.
  */
 public class CrInstructorNotFoundException extends BusinessException {
     public CrInstructorNotFoundException(String message){

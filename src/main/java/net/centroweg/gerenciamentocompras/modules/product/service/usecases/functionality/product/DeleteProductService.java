@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 
 /**
- * Caso de uso responsável por deletar um {@link Product}.
+ * Caso de uso responsável por remover um {@link Product}.
  */
 @Service
 @RequiredArgsConstructor
@@ -16,8 +16,9 @@ public class DeleteProductService {
     private final ProductRepository productRepository;
 
     /**
-     * Deleta um produto do banco de dados.
+     * Remove um produto do banco de dados.
      * @param id identificador do produto.
+     * @throws ProductNotFoundException caso nenhum produto seja encontrado.
      */
     public void execute(Long id) {
         if (!productRepository.existsById(id)) {

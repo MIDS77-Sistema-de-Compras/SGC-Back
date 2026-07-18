@@ -20,9 +20,9 @@ public class FindNotificationByOwnUser {
     private final NotificationMapper notificationMapper;
 
     /**
-     * Lista as todas notificações cadastradas no banco de dados pelo usuário responsável.
+     * Lista todas as notificações cadastradas no banco de dados pelo usuário responsável.
      * @param userPrincipal usuário responsável.
-     * @return lista com todas as notificações encontrados.
+     * @return lista com todas as notificações encontradas.
      */
     public List<NotificationResponse> findNotificationsByOwnUser(UserPrincipal userPrincipal) {
         return notificationRepository.findByUserId(userPrincipal.getId())

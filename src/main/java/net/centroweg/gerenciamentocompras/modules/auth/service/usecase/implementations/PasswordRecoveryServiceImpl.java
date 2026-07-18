@@ -99,7 +99,7 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
     }
 
     /**
-     * Atualiza a senha do usuáro após validar o token de recuperação.
+     * Atualiza a senha do usuário após validar o token de recuperação.
      * @param newPassword objeto contendo a nova senha.
      * @param token token de recuperação enviado ao usuário.
      * @throws InvalidTokenException caso o token seja inválido ou expirado.

@@ -31,16 +31,17 @@ public interface ItemRequestProvisionService {
     List<ItemRequestProvisionResponse> findAllProvisionRequestItems(Long requestId);
 
     /** Encontra o item específico da solicitação de serviço.
-     * 
-     * @param id ID do item da solicitação
+     *
+     * @param requestId ID da solicitação
+     * @param itemId ID do item da solicitação
      * @return DTO de resposta ao usuário.
      */
     ItemRequestProvisionResponse findProvisionRequestItemById(Long requestId, Long itemId);
 
     /** Atualiza o item de solicitação de serviço baseado no seu ID
-     * 
+     *
      * @param itemId ID do item da solicitação
-     * @param request DTO de requesto do usuário
+     * @param request DTO de request do usuário
      * @return DTO de resposta ao usuário
      */
     ItemRequestProvisionResponse updateItemFromProvisionRequest(Long itemId, ItemRequestProvisionRequest request);

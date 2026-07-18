@@ -21,7 +21,7 @@ public class FindByIdCrBranch {
     /**
      * Busca um vínculo CR-filial no banco de dados pelo ID informado.
      * @param id identificador do CR-filial.
-     * @return vínculo encontrado.
+     * @return vínculo encontrado, caso exista.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */
     public CrBranchResponse findById(Long id) {

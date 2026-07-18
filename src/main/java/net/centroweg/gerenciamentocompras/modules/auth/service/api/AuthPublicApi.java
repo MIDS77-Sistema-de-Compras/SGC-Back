@@ -12,14 +12,14 @@ public interface AuthPublicApi {
      * Busca um usuário por e-mail ou CPF.
      * @param email e-mail do usuário a ser pesquisado.
      * @param cpf CPF do usuário a ser pesquisado.
-     * @return se encontrado retorna o usuário, caso não encontrado retorna excessão.
+     * @return usuário encontrado, caso exista.
      */
     Optional<User> findByEmailOrCpf(String email, String cpf);
 
     /**
-     * Verifica se o usuário existe por e-mail e retona se existe ou não.
-     * @param email e-mail do usuário a ser procurado.
-     * @return booleano com o resultado da busca pelo usuário.
+     * Verifica se o usuário existe por e-mail.
+     * @param email e-mail do usuário.
+     * @return booleano informando se existe ou não.
      */
     Boolean existsByEmail(String email);
 }

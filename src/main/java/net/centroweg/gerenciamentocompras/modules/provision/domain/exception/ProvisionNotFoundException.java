@@ -5,7 +5,7 @@ import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 
 /**
- * Excessão lançada quando um {@link Provision} não é encontrado no banco de dados.
+ * Exceção lançada quando um {@link Provision} não é encontrado no banco de dados.
  */
 public class ProvisionNotFoundException extends BusinessException {
 

@@ -37,7 +37,7 @@ public class ProductServiceImpl implements IProductService {
     private final UpdateProductService updateProductService;
 
     /**
-     * Componenete responsável por remover um produto.
+     * Componente responsável por remover um produto.
      */
     private final DeleteProductService deleteProductService;
 

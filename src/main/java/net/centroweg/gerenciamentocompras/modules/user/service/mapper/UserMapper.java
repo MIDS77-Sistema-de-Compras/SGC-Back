@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Classe responsável pela conversão entr entidade e DTO.
+ * Classe responsável pela conversão entre entidade e DTO.
  */
 
 @Component

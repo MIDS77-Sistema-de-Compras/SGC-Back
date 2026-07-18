@@ -32,7 +32,7 @@ public class NotificationMapper {
 
     /**
      * Converte uma entidade notificação em um DTO de saída da notificação.
-     * @param notification entidade com os dados.
+     * @param notification entidade com os dados da notificação.
      * @return dados convertidos em um DTO de saída.
      */
     public NotificationResponse toResponse(Notification notification) {

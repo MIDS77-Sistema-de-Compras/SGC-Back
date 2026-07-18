@@ -11,15 +11,15 @@ public interface IProductMapper {
 
     /**
      * Converte uma entidade produto em um DTO de saída do produto.
-     * @param product entidade com os dados.
-     * @return DTO de saída com os dados do produto já convertidos.
+     * @param product entidade com os dados do produto.
+     * @return dados convertidos para DTO de saída.
      */
     ProductResponse toResponse(Product product);
 
     /**
-     * Converte uma lista de entidades de produtos em uma lista de DTOs de saída dos produtos.
-     * @param products lista de entidades com dados.
-     * @return lista de DTOs de saída com os dados da lista de produtos já convertidos.
+     * Converte uma lista de entidades de produto em uma lista de DTOs de saída dos produtos.
+     * @param products lista de entidades com os dados do produto.
+     * @return dados convertidos para uma lista de DTOs de saída.
      */
     List<ProductResponse> toResponseList(List<Product> products);
 

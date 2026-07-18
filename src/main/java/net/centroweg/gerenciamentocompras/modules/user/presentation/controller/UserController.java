@@ -67,8 +67,8 @@ public class UserController {
     }
 
     /**
-     * Busca usuário pelo seu nome.
-     * @return usuário encontrado com status {@code 200 OK}
+     * Busca usuários pelo seu nome.
+     * @return lista de usuários encontrados com status {@code 200 OK}
      */
 
     @Operation(description = "ENDPOINT responsável pela listagem de User por nome")

@@ -21,7 +21,7 @@ public class FindNotificationsByUserServiceImpl {
     /**
      * Lista todas as notificações cadastradas no banco de dados por usuário.
      * @param userId identificador do usuário.
-     * @return lista todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     public List<NotificationResponse> findNotificationsByUser(Long userId) {
         return notificationRepository.findByUserId(userId)

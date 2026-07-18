@@ -20,7 +20,7 @@ public class GetAllCrInstructor {
 
     /**
      * Lista todos os CR-instrutores cadastrados no banco de dados.
-     * @return lista com todos os vínculos encontrados.
+     * @return lista com todos os vínculos encontrados, caso exista.
      */
     public List<CrInstructorResponse> getAll(){
         return crInstructorMapper.toResponseList(crInstructorRepository.findAll());

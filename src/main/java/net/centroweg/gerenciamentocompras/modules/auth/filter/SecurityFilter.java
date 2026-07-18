@@ -34,7 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService customUserDetailsService;
 
     /**
-     * Tratamento de excessões lançadas durante o processo de autenticação.
+     * Tratamento de exceções lançadas durante o processo de autenticação.
      */
     private final HandlerExceptionResolver resolver;
 

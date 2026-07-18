@@ -19,9 +19,9 @@ public class FindMeasurementUnitById {
     private final MeasurementUnitRepository measurementUnitRepository;
 
     /**
-     * Busca uma unidade de medida pelo ID informado.
+     * Busca uma unidade de medida no banco de dados pelo ID informado.
      * @param id identificador da unidade de medida.
-     * @return a unidade de medida encontrada.
+     * @return unidade de medida encontrada, caso exista.
      * @throws MeasurementUnitNotFoundException caso nenhuma unidade de medida seja encontrada.
      */
     public MeasurementUnitResponse findMeasurementUnitById(Long id) {

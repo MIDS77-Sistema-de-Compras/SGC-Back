@@ -9,7 +9,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
 /**
- * Caso de uso responsável pela listagem de um {@link Sector} de forma completa.
+ * Caso de uso responsável pela listagem de todos os {@link Sector} de forma completa.
  */
 @Service
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class FindAllSectorCompound {
 
     /**
      * Lista todos os blocos cadastrados no banco de dados de forma completa.
-     * @return lista com todos os blocos encontrados.
+     * @return lista com todos os blocos encontrados, caso exista.
      */
     public List<SectorCompoundResponse> findAllCompound(){
         return sectorMapper.toResponseCompoundList(repository.findAll());

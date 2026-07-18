@@ -20,6 +20,7 @@ public class DeleteCrInstructor {
      * Remove um vínculo CR-instrutor do banco de dados.
      * @param id identificador do CR-instrutor.
      * @return mensagem de confirmação da remoção.
+     * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
      */
     public MessageDTO delete(Long id){
         if(!crInstructorRepository.existsById(id)){

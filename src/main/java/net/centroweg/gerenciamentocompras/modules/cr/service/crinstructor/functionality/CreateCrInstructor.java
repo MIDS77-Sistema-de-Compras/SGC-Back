@@ -30,6 +30,7 @@ public class CreateCrInstructor {
      * Cria e persiste um novo vínculo CR-instrutor no banco de dados.
      * @param request dados do CR-instrutor.
      * @return vínculo criado.
+     * @throws CrBranchNotFoundException se o vínculo CR-filial não for encontrado.
      */
     public CrInstructorResponse addCrInstructor(CrInstructorRequest request){
         List<User> user = userRepository.findAllById(request.instructorIds());

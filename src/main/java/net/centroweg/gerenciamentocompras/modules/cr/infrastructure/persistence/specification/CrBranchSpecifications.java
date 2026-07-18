@@ -18,7 +18,7 @@ import java.util.Locale;
 public final class CrBranchSpecifications {
 
     /**
-     * Cria uma especificação para filtrar filial de CR pelo código do CR.
+     * Cria uma especificação para filtrar filial de CR pelo código do CR informado.
      * @param crCode código do CR.
      * @return especificação correspondente ao filtro informado, caso exista.
      */
@@ -43,7 +43,7 @@ public final class CrBranchSpecifications {
     }
 
     /**
-     * Cria uma especificação para filtrar filial de CR pelo nome do CR.
+     * Cria uma especificação para filtrar filial de CR pelo nome do CR informado.
      * @param crName nome do CR.
      * @return especificação correspondente ao filtro informado, caso exista.
      */
@@ -68,7 +68,7 @@ public final class CrBranchSpecifications {
     }
 
     /**
-     * Cria uma especificação para filtrar filial de CR pelos responsáveis.
+     * Cria uma especificação para filtrar filial de CR pelos responsáveis informados.
      * @param responsibleNames lista de nomes dos responsáveis.
      * @return especificação correspondente ao filtro informado, caso exista.
      */
@@ -110,7 +110,7 @@ public final class CrBranchSpecifications {
     }
 
     /**
-     * Converte um texto para o padrão utilizado em consultas do tipo like, ignorando diferenças em relação ao tamanho das letras.
+     * Converte um texto para o padrão utilizado em consultas do tipo like, ignorando diferenças de tamanho das letra.
      * @param value texto informado pelo usuário.
      * @return texto formatado para pesquisas utilizando o like.
      */

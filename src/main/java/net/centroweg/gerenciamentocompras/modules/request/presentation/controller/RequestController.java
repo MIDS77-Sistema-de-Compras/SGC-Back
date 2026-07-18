@@ -98,6 +98,7 @@ public class RequestController {
         return ResponseEntity.ok(requestService.updateStatus(id, request));
     }
 
+    @Operation(description = "ENDPOINT responsável pela listagem de todos Request do usuário autenticado")
     @GetMapping("/me")
     public ResponseEntity<List<RequestResponse>> findAllByUser(
             @RequestParam(required = false) String crCode,
@@ -119,16 +120,19 @@ public class RequestController {
                 .body(requestService.uploadAttachments(id, files));
     }
 
+    @Operation(description = "ENDPOINT responsável pela listagem de Request por id do usuário autenticado")
     @GetMapping("/me/{id}")
     public ResponseEntity<RequestResponse> findRequestByIdOwnUser(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.ok(requestService.findRequestByIdOwnUser(id, userPrincipal));
     }
 
+    @Operation(description = "ENDPOINT responsável pela atualização de Request do usuário autenticado")
     @PutMapping("/me/{id}")
     public ResponseEntity<RequestResponse> updateRequestByOwnUser(@Valid @RequestBody RequestRequest request, @PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.ok(requestService.updateRequestByOwnUser(request, id, userPrincipal));
     }
 
+    @Operation(description = "ENDPOINT responsável pelo delete de Request do usuário autenticado")
     @DeleteMapping("/me/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id, @AuthenticationPrincipal UserPrincipal userPrincipal){
         requestService.deleteRequestByOwnUser(id, userPrincipal);

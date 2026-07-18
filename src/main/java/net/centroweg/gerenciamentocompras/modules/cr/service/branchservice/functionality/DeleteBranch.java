@@ -24,6 +24,6 @@ public class DeleteBranch {
      */
     public MessageDTO delete(Long id){
         branchRepository.deleteById(id);
-        return new MessageDTO("Error");
+        return new MessageDTO("Error.");
     }
 }

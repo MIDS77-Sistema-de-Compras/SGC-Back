@@ -54,10 +54,10 @@ public class RoleServiceImpl implements RoleIntrf {
     }
 
     /**
-     * Reutiliza método de busca de role contendo determinado nome
+     * Reutiliza método de busca de role por nome
      * @param name nome pesquisado
-     * @return lista com todas as roles correspondentes a pesquisa
-     * @see FindRoleByNameImpl#findRoleByName(String) 
+     * @return response DTO da role correspondente ao nome pesquisado
+     * @see FindRoleByNameImpl#findRoleByName(String)
      */
     @Override
     public RoleResponse findRoleByName(String name){

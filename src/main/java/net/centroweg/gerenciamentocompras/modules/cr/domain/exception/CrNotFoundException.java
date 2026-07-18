@@ -4,7 +4,7 @@ import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
 /**
- * Exceção lançada quando um Centro de Responsabilidade(CR) não é encontrado pelo seu identificador.
+ * Exceção lançada quando um CR não é encontrado pelo seu identificador.
  */
 public class CrNotFoundException extends BusinessException {
 

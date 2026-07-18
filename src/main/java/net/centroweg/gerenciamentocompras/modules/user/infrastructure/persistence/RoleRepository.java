@@ -17,7 +17,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 
     /**
      * Lista as roles contendo o nome pesquisado
-     * @param name
+     * @param name nome pesquisado
      * @return uma lista de roles
      */
     List<Role> findByNameIgnoringCase(String name);

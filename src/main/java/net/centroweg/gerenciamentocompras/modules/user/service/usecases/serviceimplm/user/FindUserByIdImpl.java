@@ -26,6 +26,7 @@ public class FindUserByIdImpl {
      * Método que busca usuário pelo identificador único
      * @param id identificador único do usuário
      * @return usuário que foi encontrado
+     * @throws UserNotFoundException caso o id não seja encontrado
      */
 
     public UserResponse findUserById(Long id){

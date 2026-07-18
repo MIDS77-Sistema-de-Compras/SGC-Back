@@ -8,7 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
  * @param name nome da filial, não pode ser nulo ou vazio.
  */
 public record BranchRequest (
-        @NotBlank(message = "O nome não da filial não deve ser nulo e nem vazio!")
+        @NotBlank(message = "O nome da filial não deve ser nulo e nem vazio!")
         String name
 ){
 }

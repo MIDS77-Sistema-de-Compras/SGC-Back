@@ -20,10 +20,10 @@ public class CrInstructorMapper {
     private final UserMapper userMapper;
 
     /**
-     * Converte um DTO de entrada do CR-instrutor para uma entidade CR-instrutor.
+     * Converte um DTO de entrada do CR-instrutor em uma entidade CR-instrutor.
      * @param user usuário.
      * @param crBranch dados da CR-filial.
-     * @return dados convertidos para uma entidade.
+     * @return dados convertidos para entidade.
      */
     public CrInstructor toEntity(List<User> user, CrBranch crBranch){
         return new CrInstructor(user, crBranch);
@@ -32,7 +32,7 @@ public class CrInstructorMapper {
     /**
      * Converte uma entidade CR-instrutor em um DTO de saída do CR-instrutor.
      * @param instructor entidade com os dados.
-     * @return dados convertidos para um DTO de saída.
+     * @return dados convertidos para DTO de saída.
      */
     public CrInstructorResponse toResponse(CrInstructor instructor){
         return new CrInstructorResponse(
@@ -44,8 +44,8 @@ public class CrInstructorMapper {
 
     /**
      * Converte uma lista de entidades CR-instrutor em uma lista de DTOs de saída do CR-instrutor.
-     * @param instructors lista de entidades com os dados.
-     * @return dados cnvertidos para uma lista de DTOs de saída.
+     * @param instructors lista de entidades com os dados do CR-instrutor.
+     * @return dados convertidos para uma lista de DTOs de saída.
      */
     public List<CrInstructorResponse> toResponseList(List<CrInstructor> instructors){
         return instructors.stream().map(

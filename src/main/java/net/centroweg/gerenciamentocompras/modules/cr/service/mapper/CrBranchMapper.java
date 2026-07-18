@@ -20,7 +20,7 @@ public class CrBranchMapper {
      * @param branch dados da filial.
      * @param cr dados do CR.
      * @param responsibleUsers usuários responsáveis.
-     * @return dados convertidos para uma entidade.
+     * @return dados convertidos para entidade.
      */
     public CrBranch toEntity(Branch branch, Cr cr, List<User> responsibleUsers) {
         return new CrBranch(
@@ -33,7 +33,7 @@ public class CrBranchMapper {
     /**
      * Converte uma entidade CR-filial em um DTO de saída do CR-filial.
      * @param crBranch entidade com os dados do CR-filial.
-     * @return dados convertidos para um DTO de saída.
+     * @return dados convertidos para DTO de saída.
      */
     public CrBranchResponse toResponse(CrBranch crBranch) {
         List<String> responsibleUsers = crBranch.getResponsibleUsers() != null

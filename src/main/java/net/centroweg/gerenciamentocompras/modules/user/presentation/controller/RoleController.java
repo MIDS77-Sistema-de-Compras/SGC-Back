@@ -59,9 +59,9 @@ public class RoleController {
     }
 
     /**
-     * Lista roles contendo o nome pesquisado
+     * Retorna a role que corresponde ao nome pesquisado
      * @param RoleName nome pesquisado
-     * @return uma lista com todos os nomes correspondentes
+     * @return role com o nome correspondente
      * @see RoleResponse
      */
     @Operation(description = "ENDPOINT responsável pela listagem de Role por nome")

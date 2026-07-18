@@ -29,6 +29,8 @@ public class UpdateCrInstructor {
      * @param id identificador do CR-instrutor.
      * @param request novos dados do CR-instrutor.
      * @return vínculo atualizado.
+     * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
+     * @throws CrBranchNotFoundException se o vínculo CR-filial não for encontrado.
      */
     public CrInstructorResponse update(Long id, CrInstructorRequest request){
         CrInstructor crInstructor = crInstructorRepository.findById(id).orElseThrow(

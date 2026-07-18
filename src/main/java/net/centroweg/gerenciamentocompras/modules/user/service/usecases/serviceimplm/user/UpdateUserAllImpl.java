@@ -32,6 +32,7 @@ public class UpdateUserAllImpl {
      * @param user dados do usuário
      * @param id identificador único do usuário
      * @return usuário já atualizado
+     * @throws UserNotFoundException caso o id não seja encontrado
      */
 
     public UserResponse updateUserAll(Long id, CreateUser user){

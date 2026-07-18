@@ -47,14 +47,20 @@ public class StatusServiceImpl implements StatusService {
         return findStatusByIdService.findStatusById(id);
     }
     /**
-     * Lista todos os status cadastrados.
+     * Busca um status pelo nome.
      *
-     * @return lista de status
+     * @param name nome do status
+     * @return status encontrado
      */
     @Override
     public StatusResponse findStatusByName(String name){
         return findStatusByNameService.findStatusByName(name);
     }
+    /**
+     * Lista todos os status cadastrados.
+     *
+     * @return lista de status
+     */
     @Override
     public List<StatusResponse> findAllStatus() {
         return listStatusService.listStatus();

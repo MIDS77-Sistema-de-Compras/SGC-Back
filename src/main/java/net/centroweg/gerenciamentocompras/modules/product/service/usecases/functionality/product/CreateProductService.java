@@ -19,7 +19,7 @@ public class CreateProductService {
     private final IProductMapper productMapper;
 
     /**
-     * Cria e persiste um produto no banco de dados.
+     * Cria e persiste um novo produto no banco de dados.
      * @param request dados do produto.
      * @return produto criado.
      */

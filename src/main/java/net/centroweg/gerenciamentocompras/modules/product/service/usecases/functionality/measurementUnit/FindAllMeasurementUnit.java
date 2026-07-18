@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.product.service.mapper.MeasurementUnitMapper;
 
 /**
- * Caso de uso responsável pela listagem de {@link MeasurementUnit}.
+ * Caso de uso responsável pela listagem de todas as {@link MeasurementUnit} cadastradas.
  */
 @Service
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class FindAllMeasurementUnit {
     private final MeasurementUnitMapper measurementUnitMapper;
 
     /**
-     * Retorna todas as unidades de medida cadastradas no banco de dados.
-     * @return lista com todas as unidades de medida encontradas.
+     * Lista todas as unidades de medida cadastradas no banco de dados.
+     * @return lista com todas as unidades de medida encontradas, caso exista.
      */
     public List<MeasurementUnitResponse> readMeasurementUnit() {
         List<MeasurementUnit> measurementUnits = measurementUnitRepository.findAll();

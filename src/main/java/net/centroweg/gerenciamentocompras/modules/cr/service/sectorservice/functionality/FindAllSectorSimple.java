@@ -9,7 +9,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
 
 /**
- * Caso de uso responsável pela listagem de um {@link Sector} de forma simples.
+ * Caso de uso responsável pela listagem de todos os {@link Sector} de forma simples.
  */
 @Service
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class FindAllSectorSimple {
 
     /**
      * Retorna todos os blocos cadastrados no banco de dados de forma simples.
-     * @return lista com todos os blocos encontrados.
+     * @return lista com todos os blocos encontrados, caso exista.
      */
     public List<SectorSimpleResponse> findAllSimple(){
         return sectorMapper.toResponseSimpleList(repository.findAll());

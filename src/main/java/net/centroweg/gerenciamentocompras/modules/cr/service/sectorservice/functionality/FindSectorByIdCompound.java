@@ -21,7 +21,8 @@ public class FindSectorByIdCompound {
     /**
      * Busca um bloco no banco de dados pelo ID informado de forma completa.
      * @param id identificador do bloco.
-     * @return bloco encontrado.
+     * @return bloco encontrado, caso exista.
+     * @throws SectorNotFoundException caso nenhum bloco seja encontrado com o ID informado.
      */
     public SectorCompoundResponse findSectorByIdCompound(Long id){
         return sectorMapper.toResponseCompound(repository.findById(id)

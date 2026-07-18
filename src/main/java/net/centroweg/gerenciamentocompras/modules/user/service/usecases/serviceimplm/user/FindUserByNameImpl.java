@@ -10,7 +10,7 @@ import java.io.Serial;
 import java.util.List;
 
 /**
- * Encontrar usuário pelo nome
+ * Encontrar usuários pelo nome
  */
 
 @Service
@@ -25,9 +25,9 @@ public class FindUserByNameImpl {
     private final UserRepository repository;
 
     /**
-     * Método que busca usuário pelo nome
+     * Método que busca usuários pelo nome
      * @param name nome do usuário
-     * @return usuário que foi encontrado
+     * @return lista de usuários que foram encontrados
      */
 
     public List<UserResponse> findUserByName(String name){

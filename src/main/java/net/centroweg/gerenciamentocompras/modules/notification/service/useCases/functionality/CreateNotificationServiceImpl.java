@@ -32,6 +32,8 @@ public class CreateNotificationServiceImpl {
      * Cria e persiste uma notificação no banco de dados.
      * @param request dados da notificação.
      * @return notificação criada.
+     * @throws UserNotFoundException caso nenhum usuário seja encontrado.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
      */
     public NotificationResponse createNotification(NotificationRequest request) {
         User user = userRepository.findById(request.userId())

@@ -21,14 +21,14 @@ public interface NotificationService {
     /**
      * Lista todas as notificações cadastradas no banco de dados por identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     List<NotificationResponse> findNotificationsByUser(Long userId);
 
     /**
      * Lista todas as notificações cadastradas no banco de dados não visualizadas por identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas.
      */
     List<NotificationResponse> findUnviewedNotificationsByUser(Long userId);
 

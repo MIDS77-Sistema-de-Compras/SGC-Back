@@ -24,6 +24,7 @@ public class UpdateSector {
      * @param id identificador do bloco.
      * @param sector novos dados do bloco.
      * @return bloco já atualizado.
+     * @throws SectorNotFoundException caso nenhum bloco seja encontrado com o ID informado.
      */
     public SectorSimpleResponse updateSector(Long id, SectorRequest sector){
         Sector sectorSave = repository.findById(id)

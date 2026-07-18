@@ -20,7 +20,7 @@ public class UpdateMeasurementUnit {
     private final MeasurementUnitMapper measurementUnitMapper;
 
     /**
-     * Atualiza uma unidade de medida existente.
+     * Atualiza uma unidade de medida existente no banco de dados.
      * @param id identificador da unidade de medida.
      * @param request novos dados da unidade de medida.
      * @return unidade de medida já atualizada.

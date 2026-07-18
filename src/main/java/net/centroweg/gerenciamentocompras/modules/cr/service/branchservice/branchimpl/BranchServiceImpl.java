@@ -34,7 +34,7 @@ public class BranchServiceImpl implements BranchService {
     private final UpdateBranch updateBranch;
 
     /**
-     * Componente responsável por buscar uma filial pelo ID.
+     * Componente responsável por buscar uma filial pelo ID informado.
      */
     private final FindByIdBranch findById;
 

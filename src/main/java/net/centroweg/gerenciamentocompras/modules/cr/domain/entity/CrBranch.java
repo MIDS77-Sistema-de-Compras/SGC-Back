@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * Entidade que representa o vínculo entre um Centro de Responsabilidade(CR) e uma filial(branch) no sistema de gerenciamento de compras.
  */
-
 @BatchSize(size = 30)
 @Entity
 @Table(name = "cr_branch")
@@ -23,28 +22,28 @@ import java.util.List;
 public class CrBranch {
 
     /**
-     * Identificador único da CR-filial, gerado automaticamente pelo banco de dados.
+     * Identificador único do CR-filial, gerado automaticamente pelo banco de dados.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Relacionamento com a entidade filial, uma filial pode ter vários CR-filiais.
+     * Relacionamento com a entidade filial, vários CR-filiais pertencem a uma filial.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
     /**
-     * Relacionamento com a entidade CR, uma CR pode ter vários CR-filiais.
+     * Relacionamento com a entidade CR, vários CR-filiais pertencem a um CR.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cr_id")
     private Cr cr;
 
     /**
-     * Relacionamento com a entidade usuário, vários usuários podem ter vários CR-filiais.
+     * Relacionamento com a entidade usuário, vários CR-filiais pertencem a vários usuários.
      */
     @BatchSize(size = 30)
     @ManyToMany

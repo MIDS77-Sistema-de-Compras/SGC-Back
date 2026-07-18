@@ -4,7 +4,7 @@ import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
 /**
- * Excessão lançada quando um vínculo CR-filial não é encontrado pelo seu identificador.
+ * Exceção lançada quando um vínculo CR-filial não é encontrado pelo seu identificador.
  */
 public class CrBranchNotFoundException extends BusinessException {
     public CrBranchNotFoundException(Long id) {

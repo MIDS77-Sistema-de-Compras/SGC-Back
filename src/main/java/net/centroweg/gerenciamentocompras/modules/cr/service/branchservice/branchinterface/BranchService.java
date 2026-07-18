@@ -21,7 +21,7 @@ public interface BranchService {
 
     /**
      * Lista todas as filiais cadastradas no banco de dados.
-     * @return lista de filiais, caso exista.
+     * @return lista todas as filiais, caso exista.
      */
     List<BranchResponse> findAll();
 
@@ -37,7 +37,7 @@ public interface BranchService {
     /**
      * Busca uma filial no banco de dados pelo seu identificador.
      * @param id identificador da filial.
-     * @return a filial encontrada.
+     * @return a filial encontrada, caso exista.
      * @throws BranchNotFoundException se a filial não for encontrada.
      */
     BranchResponse findById(Long id);

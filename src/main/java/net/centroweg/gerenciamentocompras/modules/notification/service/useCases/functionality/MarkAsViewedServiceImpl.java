@@ -22,6 +22,7 @@ public class MarkAsViewedServiceImpl {
      * Marca a notificação como lida e atualiza no banco de dados.
      * @param id identificador da notificação.
      * @return notificação já atualizada.
+     * @throws NotificationNotFoundException caso nenhuma notificação seja encontrada.
      */
     public NotificationResponse markAsViewed(Long id) {
         Notification notification = notificationRepository.findById(id)

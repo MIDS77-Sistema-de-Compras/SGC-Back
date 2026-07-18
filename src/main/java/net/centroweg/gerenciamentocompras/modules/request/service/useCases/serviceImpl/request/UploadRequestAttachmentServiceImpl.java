@@ -40,7 +40,7 @@ public class UploadRequestAttachmentServiceImpl {
 
         if (files == null || files.isEmpty()) {
             throw new InvalidAttachmentException(
-                    "E necessario enviar pelo menos um arquivo."
+                    "É necessário enviar pelo menos um arquivo."
             );
         }
 

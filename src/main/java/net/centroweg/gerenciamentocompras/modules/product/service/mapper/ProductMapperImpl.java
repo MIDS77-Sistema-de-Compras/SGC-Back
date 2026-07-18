@@ -14,9 +14,9 @@ import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.reque
 public class ProductMapperImpl implements IProductMapper {
 
     /**
-     * Converte uma entidade produto em um DTO de saída produto.
-     * @param product entidade com os dados.
-     * @return DTO de saída com os dados do produto já convertidos.
+     * Converte uma entidade produto em um DTO de saída do produto.
+     * @param product entidade com os dados do produto.
+     * @return dados convertidos para DTO de saída.
      */
     @Override
     public ProductResponse toResponse(Product product) {
@@ -31,9 +31,9 @@ public class ProductMapperImpl implements IProductMapper {
     }
 
     /**
-     * Converte uma lista de entidades de produtos em uma lista de DTOs de saída de produtos.
-     * @param products lista de entidades com dados.
-     * @return lista de DTOs de saída com os dados dos produtos já convertidos.
+     * Converte uma lista de entidades de produto em uma lista de DTOs de saída de produto.
+     * @param products lista de entidades com dados do produto.
+     * @return dados convertidos para uma lista de DTOs de saída.
      */
     @Override
     public List<ProductResponse> toResponseList(List<Product> products) {

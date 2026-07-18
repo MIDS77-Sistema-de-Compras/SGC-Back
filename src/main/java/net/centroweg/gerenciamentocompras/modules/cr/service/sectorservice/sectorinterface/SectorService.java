@@ -5,6 +5,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.S
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.SectorSimpleResponse;
 import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.SectorNotFoundException;
 
 /**
  * Interface de serviço para operações de gerenciamento de {@link Sector}.
@@ -34,6 +35,7 @@ public interface SectorService {
      * Busca um bloco no banco de dados pelo ID de forma simples.
      * @param id identificador do bloco.
      * @return bloco encontrado.
+     * @throws SectorNotFoundException se o bloco não for encontrado.
      */
     SectorSimpleResponse findSectorByIdSimple(Long id);
 
@@ -41,6 +43,7 @@ public interface SectorService {
      * Busca um bloco no banco de dados pelo ID de forma completa.
      * @param id identificador do bloco.
      * @return bloco encontrado.
+     * @throws SectorNotFoundException se o bloco não for encontrado.
      */
     SectorCompoundResponse findSectorByIdCompound(Long id);
 
@@ -49,6 +52,7 @@ public interface SectorService {
      * @param id identificador do bloco.
      * @param sector novos dados do bloco.
      * @return bloco já atualizado.
+     * @throws SectorNotFoundException se o bloco não for encontrado.
      */
     SectorSimpleResponse updateSector(Long id, SectorRequest sector);
 

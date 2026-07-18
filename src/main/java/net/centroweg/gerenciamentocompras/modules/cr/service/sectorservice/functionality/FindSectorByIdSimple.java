@@ -21,7 +21,8 @@ public class FindSectorByIdSimple {
     /**
      * Busca um bloco no banco de dados pelo ID de forma simples.
      * @param id identificador do bloco.
-     * @return bloco encontrado.
+     * @return bloco encontrado, caso exista.
+     * @throws SectorNotFoundException caso nenhum bloco seja encontrado com o ID informado.
      */
     public SectorSimpleResponse findByIdSimple(Long id){
         return sectorMapper.toResponseSimple(repository.findById(id)

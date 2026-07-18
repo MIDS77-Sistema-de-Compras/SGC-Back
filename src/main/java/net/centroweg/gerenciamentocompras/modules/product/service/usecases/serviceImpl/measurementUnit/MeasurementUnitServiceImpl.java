@@ -34,7 +34,7 @@ public class MeasurementUnitServiceImpl implements MeasurementUnitService {
     private final UpdateMeasurementUnit update;
 
     /**
-     * Componente responsável por buscar uma unidade de medida pelo ID.
+     * Componente responsável por buscar uma unidade de medida pelo ID informado.
      */
     private final FindMeasurementUnitById findById;
 
@@ -44,7 +44,7 @@ public class MeasurementUnitServiceImpl implements MeasurementUnitService {
     private final FindMeasurementUnitByAbbreviation findByAbbreviation;
 
     /**
-     * Cria uma unidade de medida.
+     * Cria e persiste uma nova unidade de medida no banco de dados.
      * @param request dados da unidade de medida.
      * @return unidade de medida criada.
      */
@@ -54,7 +54,7 @@ public class MeasurementUnitServiceImpl implements MeasurementUnitService {
     }
 
     /**
-     * Lista todas as unidades de medida cadastradas.
+     * Lista todas as unidades de medida cadastradas no banco de dados.
      * @return lista com todas as unidades de medida encontradas.
      */
     @Override
@@ -63,7 +63,7 @@ public class MeasurementUnitServiceImpl implements MeasurementUnitService {
     }
 
     /**
-     * Atualiza uma unidade de medida existente.
+     * Atualiza uma unidade de medida existente no banco de dados.
      * @param id identificador da unidade de medida.
      * @param request novos dados da unidade de medida.
      * @return unidade de medida já atualizada.
@@ -74,9 +74,9 @@ public class MeasurementUnitServiceImpl implements MeasurementUnitService {
     }
 
     /**
-     * Busca uma unidade de medida pelo ID informado.
+     * Busca uma unidade de medida no banco de dados pelo ID informado.
      * @param id identificador da unidade de medida.
-     * @return unidade de medida encontrada.
+     * @return unidade de medida encontrada, caso exista.
      */
     @Override
     public MeasurementUnitResponse findMeasurementUnitById(Long id) {
@@ -84,9 +84,9 @@ public class MeasurementUnitServiceImpl implements MeasurementUnitService {
     }
 
     /**
-     * Busca uma unidade de medida pela abreviação(sigla).
+     * Busca uma unidade de medida no banco de dados pela abreviação(sigla).
      * @param abbreviation abreviação(sigla) da unidade de medida.
-     * @return unidade de medida encontrada.
+     * @return unidade de medida encontrada, caso exista.
      */
     @Override
     public MeasurementUnitResponse findMeasurementUnitByAbbreviation(String abbreviation) {

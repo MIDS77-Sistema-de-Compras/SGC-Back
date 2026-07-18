@@ -62,9 +62,9 @@ public class UserServiceImpl implements UserIntrf {
     }
 
     /**
-     * Implementa interface para encontrar usuário pelo nome
+     * Implementa interface para encontrar usuários pelo nome
      * @param name nome do usuário
-     * @return usuário encontrado
+     * @return lista de usuários encontrados
      */
     @Override
     public List<UserResponse> findUserByName(String name){

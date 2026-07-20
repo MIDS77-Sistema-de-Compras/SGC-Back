@@ -40,6 +40,19 @@ public class RequestBusinessRuleValidator {
      */
     private static final String PENDING_STATUS = "aguardando aprovação";
 
+    private static final Set<String> EDITABLE_STATUSES = Set.of(
+            PENDING_STATUS,
+            "pendente",
+            "em análise",
+            "em analise"
+    );
+
+    private static final Set<String> REQUEST_EDITOR_ROLES = Set.of(
+            normalizeRole(Authorities.DOCENTE),
+            normalizeRole(Authorities.SUPERVISOR),
+            normalizeRole(Authorities.COORDENADOR)
+    );
+
     private static final String ADMIN_ROLE = Authorities.ADMIN;
 
     public void validateCanInactivate(Request request, User currentUser) {
@@ -63,6 +76,27 @@ public class RequestBusinessRuleValidator {
         }
 
         validateActingRole(request, currentUser);
+    }
+
+    public void validateCanEditContent(Request request, User currentUser) {
+        validateRequestIsActive(request);
+
+        if (!EDITABLE_STATUSES.contains(normalize(request.getStatus().getName()))) {
+            throw new RequestNotEditableException();
+        }
+
+        String roleName = currentUser.getRole() != null
+                ? normalize(currentUser.getRole().getName())
+                : "";
+        if (!REQUEST_EDITOR_ROLES.contains(roleName)) {
+            throw new AcessDeniedException();
+        }
+
+        if (isCreator(request, currentUser)) {
+            return;
+        }
+
+        validateUserIsResponsibleForCr(request, currentUser);
     }
 
     public void validateCrCanBeChanged(Request request, User currentUser) {
@@ -120,6 +154,10 @@ public class RequestBusinessRuleValidator {
             return "";
         }
         return value.trim().toLowerCase();
+    }
+
+    private static String normalizeRole(String value) {
+        return value.toLowerCase();
     }
 
     public void validateCanUpdateStatus(Request request, User currentUser) {

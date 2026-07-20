@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serv
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.EditRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
@@ -22,6 +23,9 @@ import java.util.List;
 public class RequestServiceImpl implements RequestService {
 
     private final CreateRequestServiceImpl createRequestService;
+    private final CreateRequestWithAttachmentsServiceImpl createRequestWithAttachmentsService;
+    private final EditRequestContentServiceImpl editRequestContentService;
+    private final EditRequestWithAttachmentsServiceImpl editRequestWithAttachmentsService;
     private final UpdateRequestServiceImpl updateRequestService;
     private final DeleteRequestServiceImpl deleteRequestService;
     private final FindAllRequestServiceImpl findAllRequestService;
@@ -39,6 +43,21 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
         return createRequestService.createRequest(request, userPrincipal);
+    }
+
+    @Override
+    public RequestResponse createRequestWithAttachments(RequestRequest request, List<MultipartFile> files, UserPrincipal userPrincipal) {
+        return createRequestWithAttachmentsService.create(request, files, userPrincipal);
+    }
+
+    @Override
+    public RequestResponse editContent(Long requestId, EditRequestRequest request) {
+        return editRequestContentService.edit(requestId, request);
+    }
+
+    @Override
+    public RequestResponse editContentWithAttachments(Long requestId, EditRequestRequest request, List<MultipartFile> files) {
+        return editRequestWithAttachmentsService.edit(requestId, request, files);
     }
 
     @Override

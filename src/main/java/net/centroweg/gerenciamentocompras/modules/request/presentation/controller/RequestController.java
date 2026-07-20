@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.EditRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
@@ -45,6 +46,18 @@ public class RequestController {
     @CanCreateRequest
     public ResponseEntity<RequestResponse> createRequest(@Valid @AuditParam(value="request") @RequestBody RequestRequest request, @AuditParam("user") @AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request, userPrincipal));
+    }
+
+    @Operation(description = "Cria uma solicitacao com anexos")
+    @PostMapping(value = "/with-attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Auditable(action = "CRIAR_SOLICITACAO", targetFromReturn = true)
+    @CanCreateRequest
+    public ResponseEntity<RequestResponse> createRequestWithAttachments(
+            @Valid @RequestPart("request") RequestRequest request,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(requestService.createRequestWithAttachments(request, files, userPrincipal));
     }
 
     @Operation(description = "ENDPOINT responsável pela listagem de todos Request")
@@ -89,6 +102,25 @@ public class RequestController {
     @Auditable(action = "ATUALIZAR_SOLICITACAO")
     public ResponseEntity<RequestResponse> updateRequest(@Valid @RequestBody UpdateRequestRequest request, @AuditParam("request") @PathVariable Long id){
         return ResponseEntity.ok(requestService.updateRequest(request, id));
+    }
+
+    @Operation(description = "Edita o conteudo completo de uma solicitacao antes da analise")
+    @PutMapping("/{id}/content")
+    @Auditable(action = "EDITAR_SOLICITACAO")
+    public ResponseEntity<RequestResponse> editRequestContent(
+            @AuditParam("request") @PathVariable Long id,
+            @Valid @RequestBody EditRequestRequest request) {
+        return ResponseEntity.ok(requestService.editContent(id, request));
+    }
+
+    @Operation(description = "Edita uma solicitacao e adiciona novos anexos")
+    @PutMapping(value = "/{id}/content-with-attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Auditable(action = "EDITAR_SOLICITACAO")
+    public ResponseEntity<RequestResponse> editRequestContentWithAttachments(
+            @AuditParam("request") @PathVariable Long id,
+            @Valid @RequestPart("request") EditRequestRequest request,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        return ResponseEntity.ok(requestService.editContentWithAttachments(id, request, files));
     }
 
     @Operation(description = "ENDPOINT responsável pelo delete de Request")

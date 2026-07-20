@@ -8,6 +8,8 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Reque
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestCannotBeInactivatedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotEditableException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -96,6 +98,62 @@ class RequestBusinessRuleValidatorTest {
         assertThrows(RequestAlreadyInactiveException.class, () -> validator.validateCanInactivate(request, creator));
     }
 
+    @Test
+    @DisplayName("Deve permitir ao docente criador editar o conteudo enquanto aguarda aprovacao")
+    void shouldAllowCreatorTeacherToEditPendingContent() {
+        User creator = userWithRole(1L, "DOCENTE");
+        Request request = request("Aguardando aprovação", true, creator);
+
+        assertDoesNotThrow(() -> validator.validateCanEditContent(request, creator));
+    }
+
+    @Test
+    @DisplayName("Deve permitir ao supervisor responsavel editar conteudo pendente")
+    void shouldAllowResponsibleSupervisorToEditPendingContent() {
+        User creator = userWithRole(1L, "DOCENTE");
+        User supervisor = userWithRole(2L, "SUPERVISOR");
+        Request request = request("Aguardando aprovação", true, creator);
+        CrBranch crBranch = new CrBranch();
+        crBranch.setResponsibleUsers(List.of(supervisor));
+        request.setCrBranch(crBranch);
+
+        assertDoesNotThrow(() -> validator.validateCanEditContent(request, supervisor));
+    }
+
+    @Test
+    @DisplayName("Deve bloquear qualquer edicao de conteudo depois da aprovacao")
+    void shouldBlockContentEditAfterApproval() {
+        User creator = userWithRole(1L, "DOCENTE");
+        Request request = request("Aprovado", true, creator);
+
+        assertThrows(RequestNotEditableException.class,
+                () -> validator.validateCanEditContent(request, creator));
+    }
+
+    @Test
+    @DisplayName("Deve bloquear comprador mesmo quando for criador de solicitacao pendente")
+    void shouldBlockBuyerFromEditingPendingContent() {
+        User creator = userWithRole(1L, "COMPRADOR");
+        Request request = request("Aguardando aprovação", true, creator);
+
+        assertThrows(AcessDeniedException.class,
+                () -> validator.validateCanEditContent(request, creator));
+    }
+
+    @Test
+    @DisplayName("Deve bloquear supervisor que nao seja responsavel pelo CR")
+    void shouldBlockUnrelatedSupervisorFromEditingPendingContent() {
+        User creator = userWithRole(1L, "DOCENTE");
+        User supervisor = userWithRole(2L, "SUPERVISOR");
+        Request request = request("Aguardando aprovação", true, creator);
+        CrBranch crBranch = new CrBranch();
+        crBranch.setResponsibleUsers(List.of());
+        request.setCrBranch(crBranch);
+
+        assertThrows(AcessDeniedException.class,
+                () -> validator.validateCanEditContent(request, supervisor));
+    }
+
     private Request request(String statusName, boolean active, User creator) {
         Request request = new Request();
         request.setStatus(new Status(statusName, "Status de teste"));
@@ -107,6 +165,12 @@ class RequestBusinessRuleValidatorTest {
     private User user(Long id) {
         User user = new User();
         user.setId(id);
+        return user;
+    }
+
+    private User userWithRole(Long id, String roleName) {
+        User user = user(id);
+        user.setRole(new Role(roleName));
         return user;
     }
 }

@@ -29,6 +29,6 @@ public class ListUserImpl {
      */
 
     public Page<UserResponse> listUser(Pageable pageable){
-        return repository.findAll(pageable).map(mapper::toDTO);
+        return repository.findByDeletedFalse(pageable).map(mapper::toDTO);
     }
 }

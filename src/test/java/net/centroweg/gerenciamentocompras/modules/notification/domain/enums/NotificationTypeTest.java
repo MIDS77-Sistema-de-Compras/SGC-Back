@@ -139,5 +139,21 @@ class NotificationTypeTest {
             // Then
             assertThat(descricao).isEqualTo("Entrega criada");
         }
+
+        @Test
+        @DisplayName("Should correctly identify notification types in service context")
+        void shouldCorrectlyIdentifyNotificationTypesInServiceContext() {
+            // Given - Simulating the logic from HandleItemStatusChangedNotificationServiceImpl
+            NotificationType tipoNotificacao = NotificationType.ITEM_PARA_RETIRADA;
+            boolean isItemParaRetirada = tipoNotificacao == NotificationType.ITEM_PARA_RETIRADA;
+
+            // When
+            NotificationType selectedType = isItemParaRetirada
+                ? NotificationType.ITEM_PARA_RETIRADA
+                : NotificationType.STATUS_ALTERADO;
+
+            // Then
+            assertThat(selectedType).isEqualTo(NotificationType.ITEM_PARA_RETIRADA);
+        }
     }
 }

@@ -113,6 +113,11 @@ public class UserServiceImpl implements UserIntrf {
     }
 
     @Override
+    public UserResponse uploadLoggedUserProfilePicture(UserPrincipal userPrincipal, MultipartFile file) throws IOException {
+        return uploadProfilePicture.uploadLoggedUserProfilePicture(userPrincipal, file);
+    }
+
+    @Override
     public UserResponse findLoggedUser(UserPrincipal userPrincipal) {
         return findLoggedUser.findLoggedUser(userPrincipal);
     }

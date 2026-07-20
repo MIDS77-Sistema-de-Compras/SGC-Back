@@ -64,6 +64,7 @@ public interface UserIntrf {
      */
     UserResponse changeActivationStatus(Long userId, ChangeUserActivationStatus request);
     UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException;
+    UserResponse uploadLoggedUserProfilePicture(UserPrincipal userPrincipal, MultipartFile file) throws IOException;
     UserResponse findLoggedUser(UserPrincipal userPrincipal);
 
     MessageDTO updatePwd(Long id, ChangePassword changePasswordDTO);

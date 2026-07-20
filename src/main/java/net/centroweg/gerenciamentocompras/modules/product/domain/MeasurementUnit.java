@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 /**
  * Entidade que representa uma unidade de medida no sistema de gerenciamento de compras.
@@ -23,6 +24,7 @@ import lombok.Setter;
  * @since 1.0
  */
 
+@BatchSize(size = 30)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

@@ -17,6 +17,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
+import org.hibernate.annotations.BatchSize;
 
 /**
  * Classe representante do módulo serviço, mapeada diretamente com o banco de dados.
@@ -25,6 +26,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
  * @author gabrielEFagundes
  * @version 0.1.0
  */
+@BatchSize(size = 30)
 @Entity
 @Table(name="provision")
 @AllArgsConstructor

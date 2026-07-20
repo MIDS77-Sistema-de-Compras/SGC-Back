@@ -88,7 +88,7 @@ class MonitorItemStatusChangedIntegrationTest {
         rejected = statusRepository.save(new Status("Recusado", "Solicitacao recusada"));
         mixedStatus = statusRepository.save(new Status("PARCIALMENTE_ATENDIDA", "Status para itens com status divergentes"));
 
-        product = productRepository.save(new Product("Produto Teste", "Descrição", 10.0, "TIPO", "PRD-001"));
+        product = productRepository.save(new Product(null, "Produto Teste", "Descrição", 10.0, "TIPO", "PRD-001"));
         unit = measurementUnitRepository.save(new MeasurementUnit("Unidade", "UN"));
     }
 

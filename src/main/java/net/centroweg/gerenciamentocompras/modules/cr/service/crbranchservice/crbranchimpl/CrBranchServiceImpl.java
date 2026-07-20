@@ -7,6 +7,8 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.crbranchinterface.CrBranchService;
 import net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.functionality.*;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,11 +46,11 @@ public class CrBranchServiceImpl implements CrBranchService {
     /**
      * Lista todos os vínculos CR-filial cadastrados.
      *
-     * @return a lista de vínculos
+     * @return a página de vínculos
      */
     @Override
-    public List<CrBranchResponse> findAll(CrBranchFilterRequest filter) {
-        return findAllCrBranch.findAll(filter);
+    public Page<CrBranchResponse> findAll(CrBranchFilterRequest filter, Pageable pageable) {
+        return findAllCrBranch.findAll(filter, pageable);
     }
 
     /**

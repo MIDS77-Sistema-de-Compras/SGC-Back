@@ -12,6 +12,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -35,6 +39,8 @@ class FindAllCrBranchTest {
     @InjectMocks
     private FindAllCrBranch findAllCrBranch;
 
+    private final Pageable pageable = PageRequest.of(0, 20);
+
     @Test
     @DisplayName("Deve enviar Specification ao repository e mapear os resultados")
     void shouldSendSpecificationToRepositoryAndMapResults() {
@@ -43,40 +49,42 @@ class FindAllCrBranchTest {
         CrBranchResponse firstResponse = new CrBranchResponse(1L, "Filial Centro", "Compras", "123456", List.of("Ana Silva"));
         CrBranchResponse secondResponse = new CrBranchResponse(2L, "Filial Norte", "Engenharia", "987654", List.of());
 
-        when(crBranchRepository.findAll(any(Specification.class)))
-                .thenReturn(List.of(firstCrBranch, secondCrBranch));
+        when(crBranchRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(firstCrBranch, secondCrBranch)));
         when(crBranchMapper.toResponse(firstCrBranch)).thenReturn(firstResponse);
         when(crBranchMapper.toResponse(secondCrBranch)).thenReturn(secondResponse);
 
-        List<CrBranchResponse> responses = findAllCrBranch.findAll(
-                new CrBranchFilterRequest("123", "compras", List.of("ana"))
+        Page<CrBranchResponse> responses = findAllCrBranch.findAll(
+                new CrBranchFilterRequest("123", "compras", List.of("ana")),
+                pageable
         );
 
         ArgumentCaptor<Specification<CrBranch>> specificationCaptor =
                 ArgumentCaptor.forClass(Specification.class);
-        verify(crBranchRepository, times(1)).findAll(specificationCaptor.capture());
+        verify(crBranchRepository, times(1)).findAll(specificationCaptor.capture(), any(Pageable.class));
         verify(crBranchMapper, times(1)).toResponse(firstCrBranch);
         verify(crBranchMapper, times(1)).toResponse(secondCrBranch);
 
         assertNotNull(specificationCaptor.getValue());
-        assertEquals(List.of(firstResponse, secondResponse), responses);
+        assertEquals(List.of(firstResponse, secondResponse), responses.getContent());
     }
 
     @Test
     @DisplayName("Deve aceitar filtros vazios ou nulos sem erro")
     void shouldAcceptEmptyOrNullFilters() {
-        when(crBranchRepository.findAll(any(Specification.class)))
-                .thenReturn(List.of());
+        when(crBranchRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(Page.empty());
 
-        List<CrBranchResponse> emptyFieldsResponse = findAllCrBranch.findAll(
-                new CrBranchFilterRequest(null, "", List.of(" "))
+        Page<CrBranchResponse> emptyFieldsResponse = findAllCrBranch.findAll(
+                new CrBranchFilterRequest(null, "", List.of(" ")),
+                pageable
         );
-        List<CrBranchResponse> nullFilterResponse = findAllCrBranch.findAll(null);
+        Page<CrBranchResponse> nullFilterResponse = findAllCrBranch.findAll(null, pageable);
 
-        verify(crBranchRepository, times(2)).findAll(any(Specification.class));
+        verify(crBranchRepository, times(2)).findAll(any(Specification.class), any(Pageable.class));
         assertNotNull(emptyFieldsResponse);
         assertNotNull(nullFilterResponse);
-        assertEquals(0, emptyFieldsResponse.size());
-        assertEquals(0, nullFilterResponse.size());
+        assertEquals(0, emptyFieldsResponse.getContent().size());
+        assertEquals(0, nullFilterResponse.getContent().size());
     }
 }

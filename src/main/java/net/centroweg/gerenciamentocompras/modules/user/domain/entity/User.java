@@ -66,10 +66,23 @@ public class User {
 
     /**
      * Atividade do usuário, se continua trabalhando na empresa, não pode ser nulo.
+     * Controla desativações reversíveis (ex: férias, afastamento temporário).
+     * Não deve ser usado para decidir exclusão — ver {@link #deleted}.
      */
 
     @Column(nullable = false)
     private Boolean active;
+
+    /**
+     * Indica se o usuário foi excluído do sistema.
+     * Diferente de {@link #active}: um usuário pode estar inativo temporariamente
+     * (ex: férias) sem estar excluído, e por isso continua aparecendo nas listagens.
+     * Um usuário excluído nunca deve ser retornado em listagens padrão.
+     * Nunca é nulo; padrão false na criação.
+     */
+
+    @Column(nullable = false)
+    private Boolean deleted = false;
 
     /**
      * Horário de criação do usuário, não pode ser nulo e nem editado.
@@ -90,7 +103,7 @@ public class User {
      *
      * @see Role
      */
-    // EAGER: role precisa estar disponível fora de sessão, em SecurityFilter/UserPrincipal.getAuthorities()
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
@@ -114,11 +127,15 @@ public class User {
         this.password = password;
         this.extensionNumber = extensionNumber;
         this.active = active;
+        this.deleted = false;
     }
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        if (this.deleted == null) {
+            this.deleted = false;
+        }
     }
 }

@@ -2,6 +2,8 @@ package net.centroweg.gerenciamentocompras.modules.request.infrastructure.persis
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.data.jpa.domain.Specification;
@@ -72,6 +74,26 @@ public final class RequestSpecification {
                     criteriaBuilder.lower(name),
                     pattern
             );
+        };
+    }
+
+    public static Specification<Request> statusNameIn(Collection<String> statusNames){
+
+        if (statusNames == null || statusNames.isEmpty()){
+            return Specification.unrestricted();
+        }
+
+        List<String> normalized = statusNames.stream()
+                .map(RequestSpecification::normalizeIgnoreCase)
+                .toList();
+
+        return (root, query, criteriaBuilder) -> {
+            Join<Request, Status> statusJoin =
+                    root.join("status", JoinType.INNER);
+
+            Path<String> name = statusJoin.get("name");
+
+            return criteriaBuilder.lower(name).in(normalized);
         };
     }
 

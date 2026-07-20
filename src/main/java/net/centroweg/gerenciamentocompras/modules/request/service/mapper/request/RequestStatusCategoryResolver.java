@@ -27,7 +27,14 @@ public class RequestStatusCategoryResolver {
             "aguardando aprovacao",
             "aprovado",
             "auto aprovado",
-            "em atendimento"
+            "parcialmente aprovada",
+            "em atendimento",
+            "atrasada",
+            "recebimento parcial",
+            "fundo rotativo",
+            "cd central",
+            "solicitado portal",
+            "parcialmente atendida"
     );
 
     private static final Set<String> CONCLUIDA_NAMES = Set.of(

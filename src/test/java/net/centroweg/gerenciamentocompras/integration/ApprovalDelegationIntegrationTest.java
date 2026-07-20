@@ -267,7 +267,7 @@ class ApprovalDelegationIntegrationTest {
         User requester = saveUser("Solicitante", "solicitante.delegacao@teste.com", "98765432100");
         requester.setRole(roleRepository.save(new Role("DOCENTE")));
         userRepository.save(requester);
-        Status pending = statusRepository.save(new Status("Pendente", "Solicitação pendente"));
+        Status pending = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
         statusRepository.save(new Status("Aprovado", "Solicitação aprovada"));
         ApprovalDelegationResponse response = delegationService.create(immediateRequest());
 

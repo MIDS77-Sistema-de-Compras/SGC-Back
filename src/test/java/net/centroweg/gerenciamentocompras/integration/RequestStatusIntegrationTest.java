@@ -78,6 +78,7 @@ class RequestStatusIntegrationTest {
     private Status cancelled;
     private User requester;
     private User responsible;
+    private User buyer;
 
     @BeforeEach
     void setUp() {
@@ -86,12 +87,13 @@ class RequestStatusIntegrationTest {
 
         requester = saveUser("Solicitante", "solicitante@teste.com", "52998224725", "DOCENTE");
         responsible = saveUser("Responsavel", "responsavel@teste.com", "12345678909", "SUPERVISOR");
+        buyer = saveUser("Comprador", "comprador@teste.com", "98765432101", "COMPRADOR");
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(responsible)));
 
-        pending = statusRepository.save(new Status("Pendente", "Solicitacao pendente"));
+        pending = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
         approved = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada"));
         refused = statusRepository.save(new Status("Recusado", "Solicitacao recusada"));
         inService = statusRepository.save(new Status("Em atendimento", "Solicitacao em atendimento"));
@@ -263,7 +265,7 @@ class RequestStatusIntegrationTest {
                 .satisfies(notification -> {
                     assertThat(notification.getRequestId()).isEqualTo(request.getId());
                     assertThat(notification.getTitle()).isEqualTo("Status da solicitação atualizado");
-                    assertThat(notification.getMessage()).contains("Pendente", "Aprovado");
+                    assertThat(notification.getMessage()).contains("Aguardando aprova&ccedil;&atilde;o", "Aprovado");
                 });
         awaitAnyEmail();
     }
@@ -302,7 +304,7 @@ class RequestStatusIntegrationTest {
         clearInvocations(emailSenderService);
 
         mockMvc.perform(patch("/requests/{id}/status", request.getId())
-                        .with(user(principalOf(responsible)))
+                        .with(user(principalOf(buyer)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -337,7 +339,7 @@ class RequestStatusIntegrationTest {
         clearInvocations(emailSenderService);
 
         mockMvc.perform(patch("/requests/{id}/status", request.getId())
-                        .with(user(principalOf(responsible)))
+                        .with(user(principalOf(buyer)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -394,7 +396,7 @@ class RequestStatusIntegrationTest {
 
     private void patchStatus(Long requestId, String statusName) throws Exception {
         mockMvc.perform(patch("/requests/{id}/status", requestId)
-                        .with(user(principalOf(responsible)))
+                        .with(user(principalOf(buyer)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

@@ -23,11 +23,17 @@ public class CloudinaryService {
 
     private final Cloudinary cloudinary;
 
-    public Map upload(MultipartFile file) throws IOException {
+    public Map<?, ?> upload(MultipartFile file) throws IOException {
         byte[] bytes = validateAndRead(file);
         validateProfilePicture(file, bytes);
 
-        return cloudinary.uploader().upload(bytes, ObjectUtils.emptyMap());
+        return cloudinary.uploader().upload(
+                bytes,
+                ObjectUtils.asMap(
+                        "resource_type", "image",
+                        "folder", "profile-pictures"
+                )
+        );
     }
 
     public Map<?, ?> uploadFile(MultipartFile file) throws IOException {
@@ -73,7 +79,11 @@ public class CloudinaryService {
     private void validateProfilePicture(MultipartFile file, byte[] bytes) {
         String contentType = file.getContentType();
 
-        if (contentType == null || !contentType.startsWith("image/") || !isImage(bytes)) {
+        boolean supportedType = "image/png".equals(contentType)
+                || "image/jpeg".equals(contentType)
+                || "image/webp".equals(contentType);
+
+        if (!supportedType || !matchesImageType(contentType, bytes)) {
             throw new InvalidFileException("A foto de perfil deve ser uma imagem valida.");
         }
     }
@@ -101,6 +111,28 @@ public class CloudinaryService {
     private boolean isImage(byte[] bytes) {
         return startsWith(bytes, new byte[]{(byte) 0x89, 0x50, 0x4E, 0x47})
                 || startsWith(bytes, new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF});
+    }
+
+    private boolean matchesImageType(String contentType, byte[] bytes) {
+        return switch (contentType) {
+            case "image/png" -> startsWith(bytes, new byte[]{
+                    (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
+            });
+            case "image/jpeg" -> startsWith(bytes, new byte[]{
+                    (byte) 0xFF, (byte) 0xD8, (byte) 0xFF
+            });
+            case "image/webp" -> isWebp(bytes);
+            default -> false;
+        };
+    }
+
+    private boolean isWebp(byte[] bytes) {
+        return bytes.length >= 12
+                && startsWith(bytes, "RIFF".getBytes())
+                && bytes[8] == 'W'
+                && bytes[9] == 'E'
+                && bytes[10] == 'B'
+                && bytes[11] == 'P';
     }
 
     private boolean isDocx(byte[] bytes) throws IOException {

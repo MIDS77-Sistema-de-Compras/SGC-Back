@@ -103,7 +103,7 @@ public class User {
      *
      * @see Role
      */
-
+    // EAGER: role precisa estar disponível fora de sessão, em SecurityFilter/UserPrincipal.getAuthorities()
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
@@ -137,5 +137,10 @@ public class User {
         if (this.deleted == null) {
             this.deleted = false;
         }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }

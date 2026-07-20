@@ -81,6 +81,11 @@ public class UpdateItemRequestProductService {
 
         itemRequestProduct.setRequest(request);
         itemRequestProduct.setProduct(product);
+        if (dto.variation() != null) {
+            itemRequestProduct.setVariation(
+                    dto.variation().isBlank() ? null : dto.variation().trim()
+            );
+        }
         itemRequestProduct.setMeasurementUnit(measurementUnit);
         itemRequestProduct.setQuantity(dto.quantity());
         itemRequestProduct.setStatus_id(status);

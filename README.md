@@ -105,6 +105,7 @@ Gerencia os usuários do sistema e seus papéis de acesso.
 | `DELETE` | `/users/userId/{userId}` | Inativa usuário |
 | `PATCH` | `/users/userId/{id}` | Atualiza foto de perfil (upload) |
 | `GET` | `/users/me` | Dados do usuário logado |
+| `PATCH` | `/users/me/profile-picture` | Atualiza a foto do próprio usuário logado |
 | `POST` | `/users/me/change-password` | Altera a senha do usuário logado |
 
 **Roles** — `/role`: `POST`, `GET`, `GET /RoleId/{id}`, `GET /RoleName/{name}`, `PUT /RoleId/{id}`, `DELETE /RoleId/{id}`.

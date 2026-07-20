@@ -86,6 +86,7 @@ class UpdateItemRequestProductServiceTest {
         assertThat(event.getValue().itemType()).isEqualTo(RequestItemType.PRODUCT);
         assertThat(event.getValue().previousStatusName()).isEqualTo("Aprovado");
         assertThat(event.getValue().newStatusName()).isEqualTo("Entregue");
+        assertThat(item.getVariation()).isEqualTo("M8 zincado");
     }
 
     @Test
@@ -121,7 +122,15 @@ class UpdateItemRequestProductServiceTest {
     }
 
     private ItemRequestProductRequest requestDto(String statusName) {
-        return new ItemRequestProductRequest(10L, "Parafuso", "UN", 2.0, statusName, "Obs");
+        return new ItemRequestProductRequest(
+                10L,
+                "Parafuso",
+                "M8 zincado",
+                "UN",
+                2.0,
+                statusName,
+                "Obs"
+        );
     }
 
     private Status status(Long id, String name) {

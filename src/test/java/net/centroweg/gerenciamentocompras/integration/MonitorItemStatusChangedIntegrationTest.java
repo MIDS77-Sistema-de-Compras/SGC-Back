@@ -67,8 +67,8 @@ class MonitorItemStatusChangedIntegrationTest {
     private CrBranch crBranch;
     private User requester;
     private Status pending;
-    private Status approved;
-    private Status rejected;
+    private Status inService;
+    private Status delivered;
     private Status mixedStatus; // PARCIALMENTE_ATENDIDA
     private Product product;
     private MeasurementUnit unit;
@@ -84,8 +84,8 @@ class MonitorItemStatusChangedIntegrationTest {
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(requester)));
 
         pending = statusRepository.save(new Status("Pendente", "Solicitacao pendente"));
-        approved = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada"));
-        rejected = statusRepository.save(new Status("Recusado", "Solicitacao recusada"));
+        inService = statusRepository.save(new Status("Em atendimento", "Solicitacao em atendimento"));
+        delivered = statusRepository.save(new Status("Entregue", "Solicitacao entregue"));
         mixedStatus = statusRepository.save(new Status("PARCIALMENTE_ATENDIDA", "Status para itens com status divergentes"));
 
         product = productRepository.save(new Product("Produto Teste", "Descrição", 10.0, "TIPO", "PRD-001"));
@@ -106,20 +106,20 @@ class MonitorItemStatusChangedIntegrationTest {
         ItemRequestProduct item2 = saveItemRequestProduct(request, product, unit, pending);
 
         // quando: status do primeiro item muda para APROVADO (persistimos a alteração)
-        updateItemStatus(item1, approved);
-        publishItemStatusChangedEvent(item1.getId(), request.getId(), approved.getName());
+        updateItemStatus(item1, inService);
+        publishItemStatusChangedEvent(item1.getId(), request.getId(), inService.getName());
 
         // então: como nem todos os itens têm o mesmo status, o status da solicitação deve ser PARCIALMENTE_ATENDIDA
         Request updated = requestRepository.findById(request.getId()).orElseThrow();
         assertThat(updated.getStatus().getName()).isEqualTo("PARCIALMENTE_ATENDIDA");
 
         // quando: status do segundo item também muda para APROVADO (agora todos os itens são APROVADO)
-        updateItemStatus(item2, approved);
-        publishItemStatusChangedEvent(item2.getId(), request.getId(), approved.getName());
+        updateItemStatus(item2, inService);
+        publishItemStatusChangedEvent(item2.getId(), request.getId(), inService.getName());
 
         // então: agora todos os itens têm status APROVADO, o status da solicitação deve ser APROVADO
         updated = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(updated.getStatus().getName()).isEqualTo("Aprovado");
+        assertThat(updated.getStatus().getName()).isEqualTo("Em atendimento");
     }
 
     @Test
@@ -131,16 +131,16 @@ class MonitorItemStatusChangedIntegrationTest {
         ItemRequestProduct item2 = saveItemRequestProduct(request, product, unit, pending);
 
         // quando: status do primeiro item muda para APROVADO, segundo permanece PENDENTE
-        updateItemStatus(item1, approved);
-        publishItemStatusChangedEvent(item1.getId(), request.getId(), approved.getName());
+        updateItemStatus(item1, inService);
+        publishItemStatusChangedEvent(item1.getId(), request.getId(), inService.getName());
 
         // então: status da solicitação deve ser PARCIALMENTE_ATENDIDA
         Request updated = requestRepository.findById(request.getId()).orElseThrow();
         assertThat(updated.getStatus().getName()).isEqualTo("PARCIALMENTE_ATENDIDA");
 
         // quando: status do segundo item muda para RECUSADO (agora itens são APROVADO e RECUSADO)
-        updateItemStatus(item2, rejected);
-        publishItemStatusChangedEvent(item2.getId(), request.getId(), rejected.getName());
+        updateItemStatus(item2, delivered);
+        publishItemStatusChangedEvent(item2.getId(), request.getId(), delivered.getName());
 
         // então: status da solicitação continua PARCIALMENTE_ATENDIDA
         updated = requestRepository.findById(request.getId()).orElseThrow();
@@ -158,11 +158,11 @@ class MonitorItemStatusChangedIntegrationTest {
         ItemRequestProduct item2 = saveItemRequestProduct(request, product, unit, pending);
 
         // Fazer os itens ficarem com status diferentes -> necessidade de PARCIALMENTE_ATENDIDA
-        updateItemStatus(item1, approved);
+        updateItemStatus(item1, inService);
         // Esperamos que uma exceção StatusNotFoundException seja propagada assim que o listener tentar definir o status misto
         assertThrows(
                 net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException.class,
-                () -> publishItemStatusChangedEvent(item1.getId(), request.getId(), approved.getName())
+                () -> publishItemStatusChangedEvent(item1.getId(), request.getId(), inService.getName())
         );
 
         // Se chegarmos aqui, significa que a exceção ocorreu no primeiro evento, como esperado.
@@ -170,10 +170,23 @@ class MonitorItemStatusChangedIntegrationTest {
     }
 
     @Test
+    @DisplayName("[Integracao] Decisoes da revisao por item nao devem finalizar a solicitacao antes da chamada geral")
+    void shouldNotUpdateRequestStatusForReviewItemDecision() {
+        Status reviewApproved = statusRepository.save(
+                new Status("Aprovado", "Item aprovado na revisao"));
+        Request request = saveRequest(pending);
+        ItemRequestProduct item = saveItemRequestProduct(request, product, unit, pending);
+
+        updateItemStatus(item, reviewApproved);
+        publishItemStatusChangedEvent(item.getId(), request.getId(), reviewApproved.getName());
+
+        Request updated = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(updated.getStatus().getName()).isEqualTo(pending.getName());
+    }
+
+    @Test
     @DisplayName("[Integracao] Atualiza a solicitacao de servico em uma nova transacao depois do commit do item")
     void shouldUpdateProvisionRequestStatusAfterItemTransactionCommit() {
-        Status delivered = statusRepository.save(
-                new Status("Entregue", "Solicitacao entregue"));
         Request request = saveRequest(pending);
         Provision provision = provisionRepository.save(
                 new Provision("Servico Teste", 100.0, "Descricao do servico"));

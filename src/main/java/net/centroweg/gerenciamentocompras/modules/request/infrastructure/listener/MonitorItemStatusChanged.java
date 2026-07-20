@@ -1,5 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.request.infrastructure.listener;
 
+import java.util.Set;
+import java.util.Locale;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +29,7 @@ import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStat
 public class MonitorItemStatusChanged {
 
     private static final String MIXED_STATUS = "PARCIALMENTE_ATENDIDA";
+    private static final Set<String> REVIEW_DECISION_STATUSES = Set.of("aprovado", "recusado");
 
     private final RequestRepository requestRepository;
     private final StatusRepository statusRepository;
@@ -44,6 +48,14 @@ public class MonitorItemStatusChanged {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution=true)
     public void updateRequestStatus(ItemStatusChangedEvent event){
+        // Aprovar/recusar item pertence a etapa de revisao. Nessa etapa, o frontend
+        // envia todas as decisoes e depois conclui o status geral uma unica vez.
+        // Recalcular aqui encerrava a revisao no primeiro item e fazia a chamada final
+        // retornar erro, apesar de as alteracoes dos itens ja terem sido persistidas.
+        if (isReviewDecision(event.newStatusName())) {
+            return;
+        }
+
         Request request = requestRepository.findById(event.requestId())
                 .orElseThrow(RequestNotFoundException::new);
 
@@ -73,5 +85,10 @@ public class MonitorItemStatusChanged {
                     statusRepository.findByNameIgnoreCase(MIXED_STATUS)
                             .orElseThrow(StatusNotFoundException::new));
         }
+    }
+
+    private boolean isReviewDecision(String statusName) {
+        return statusName != null
+                && REVIEW_DECISION_STATUSES.contains(statusName.trim().toLowerCase(Locale.ROOT));
     }
 }

@@ -75,7 +75,6 @@ public class CreateRequestServiceImpl {
         CrBranch crBranch = crPublicApi.findCrBranchById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
-
         List<User> assignedUsers = new ArrayList<>();
         assignedUsers.add(requester);
         if (request.userIds() != null) {

@@ -1,28 +1,33 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.DeliveryPublicApi;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryCreatedNotificationData;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryNotificationRecipient;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryProductNotificationData;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.event.DeliveryCreatedEvent;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.DeliveryCreatedNotificationContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.DeliveryNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.CreateInternalNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.DeliveryCreatedEmailSender;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryCreatedNotificationFlowTest {
@@ -47,7 +52,7 @@ class DeliveryCreatedNotificationFlowTest {
         service.handle(event);
 
         ArgumentCaptor<String> message = ArgumentCaptor.forClass(String.class);
-        verify(createInternalNotificationUseCase).createNotifications(anyString(), message.capture(), eq(10L), eq(List.of(1L, 2L)));
+        verify(createInternalNotificationUseCase).createNotifications(anyString(), message.capture(), eq(NotificationType.ENTREGA_CRIADA), eq(10L), eq(List.of(1L, 2L)));
         assertThat(message.getValue()).doesNotContain("<b>", "<br>", "<table>");
         verify(emailSender).sendEmails(eq(event), same(data), any());
     }

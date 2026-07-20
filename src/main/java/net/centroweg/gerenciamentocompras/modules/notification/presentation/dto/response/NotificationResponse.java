@@ -6,6 +6,7 @@ public record NotificationResponse(
         Long id,
         String title,
         String message,
+        String notificationType,
         Boolean viewed,
         LocalDateTime createdAt,
         Long userId,

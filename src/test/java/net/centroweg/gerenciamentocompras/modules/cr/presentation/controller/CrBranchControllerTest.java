@@ -201,7 +201,7 @@ class CrBranchControllerTest {
 
         mockMvc.perform(get("/cr-branches"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.content.length()").value(1));
     }
 
     @Test

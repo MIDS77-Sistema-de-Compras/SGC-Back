@@ -12,6 +12,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestListItemResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.RequestService;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
@@ -150,7 +151,7 @@ public class RequestController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Page<RequestResponse>> findAllByUser(
+    public ResponseEntity<Page<RequestListItemResponse>> findAllByUser(
             @RequestParam(required = false) String crCode,
             @RequestParam(required = false) String statusName,
             @RequestParam(required = false) String supervisorName,

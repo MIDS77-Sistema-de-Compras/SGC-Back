@@ -284,7 +284,7 @@ class AuditAnnotationsTest {
     // ---------------------------------------------------------------------
 
     @Nested
-    @DisplayName("ItemRequestProvisionController")
+    @DisplayName("ItemRequestProvisionController (documenta ausência de auditoria no DELETE)")
     class ItemRequestProvisionAnnotations {
 
         @Test
@@ -297,14 +297,15 @@ class AuditAnnotationsTest {
         }
 
         @Test
-        @DisplayName("PUT updateItem -> @Auditable(ATUALIZAR_ITEM_SERVIÇO); @AuditParam(\"request\") no DTO")
+        @DisplayName("PUT updateItem -> @Auditable(ATUALIZAR_ITEM_SERVIÇO), com @AuditParam(\"request\") sobre o DTO")
         void update() {
             assertAuditable(ItemRequestProvisionController.class, "updateItem", "ATUALIZAR_ITEM_SERVIÇO", false);
             Method m = method(ItemRequestProvisionController.class, "updateItem");
             int idx = auditParamIndex(m, "request");
             assertThat(idx).isNotEqualTo(-1);
+            // Mesmo padrão do ItemRequestProduct: a anotação está sobre o DTO, não sobre o Long itemId (param 0).
             assertThat(m.getParameters()[idx].getType()).isNotEqualTo(Long.class);
-            assertThat(hasAuditParam(m, 0, "request")).isFalse();
+            assertThat(hasAuditParam(m, 0, "request")).as("o Long itemId NÃO está anotado hoje").isFalse();
         }
 
         @Test

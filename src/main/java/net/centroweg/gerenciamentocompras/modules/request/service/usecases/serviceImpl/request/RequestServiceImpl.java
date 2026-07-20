@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestListItemResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.RequestService;
 import org.springframework.data.domain.Pageable;
@@ -76,7 +77,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Page<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable) {
+    public Page<RequestListItemResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable) {
         return findAllByUser.findAllByUser(filter, userPrincipal, pageable);
     }
 

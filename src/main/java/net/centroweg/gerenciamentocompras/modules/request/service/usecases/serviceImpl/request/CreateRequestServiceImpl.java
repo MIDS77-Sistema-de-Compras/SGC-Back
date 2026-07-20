@@ -11,6 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.service.api.CrPublicApi;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -87,6 +88,7 @@ public class CreateRequestServiceImpl {
                 notificationService.createNotification(new NotificationRequest(
                         "Nova solicitação vinculada ao seu CR",
                         "Ha uma nova solicitacao vinculada ao seu CR " + crBranch.getCr().getName() + ".",
+                        NotificationType.SOLICITACAO_VINCULADA_CR,
                         responsible.getId(),
                         savedRequest.getId()
                 ));

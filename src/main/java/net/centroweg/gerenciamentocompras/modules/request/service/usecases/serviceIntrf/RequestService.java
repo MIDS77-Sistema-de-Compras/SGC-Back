@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestListItemResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,7 @@ public interface RequestService {
     RequestResponse editContentWithAttachments(Long requestId, EditRequestRequest request, List<MultipartFile> files);
     Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable, UserPrincipal userPrincipal);
     RequestResponse findRequestById(Long id);
-    Page<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable);
+    Page<RequestListItemResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable);
     RequestResponse updateRequest(UpdateRequestRequest request, Long id);
     void deleteRequest(Long id);
     RequestResponse updateFeedback(UpdateFeedback feedback, Long id);

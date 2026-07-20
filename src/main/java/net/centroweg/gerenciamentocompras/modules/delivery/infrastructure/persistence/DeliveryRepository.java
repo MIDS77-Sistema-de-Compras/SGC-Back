@@ -17,20 +17,24 @@ import jakarta.persistence.LockModeType;
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     @Override
-    @EntityGraph(attributePaths = {"request", "receivers", "receivers.user"})
+    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
     Optional<Delivery> findById(Long id);
+
+    @Override
+    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
+    List<Delivery> findAll();
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select delivery from Delivery delivery where delivery.id = :id")
     Optional<Delivery> findByIdForUpdate(@Param("id") Long id);
 
-    @EntityGraph(attributePaths = {"request", "receivers", "receivers.user"})
+    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
     List<Delivery> findByActiveTrue();
 
-    @EntityGraph(attributePaths = {"request", "receivers", "receivers.user"})
+    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
     List<Delivery> findByRequestId(Long requestId);
 
-    @EntityGraph(attributePaths = {"request", "receivers", "receivers.user"})
+    @EntityGraph(attributePaths = {"request", "status", "receivers", "receivers.user"})
     @Query("select distinct delivery from Delivery delivery join delivery.receivers receiver where receiver.user.id = :receiverId")
     List<Delivery> findByReceiverId(@Param("receiverId") Long receiverId);
 

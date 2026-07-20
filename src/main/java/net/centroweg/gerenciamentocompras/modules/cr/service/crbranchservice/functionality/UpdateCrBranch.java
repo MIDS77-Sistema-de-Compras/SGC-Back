@@ -17,6 +17,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class UpdateCrBranch {
     private final BranchRepository branchRepository;
     private final UserPublicApi userPublicApi;
     private final CrBranchMapper crBranchMapper;
-    private final ValidateCrBranchSupervisors validateCrBranchSupervisors;
+    private final ValidateCrBranchResponsibles validateCrBranchResponsibles;
 
     /**
      * Atualiza os dados de um vínculo CR-filial existente.
@@ -51,8 +52,10 @@ public class UpdateCrBranch {
      * @throws CrNotFoundException se o CR não for encontrado
      * @throws UsernameNotFoundException se o responsável informado não for encontrado
      */
+    @Transactional
     public CrBranchResponse update(Long id, CrBranchRequest request) {
-        CrBranch crBranch = crBranchRepository.findById(id)
+        CrBranch crBranch = crBranchRepository.findAllByIdForUpdate(List.of(id)).stream()
+                .findFirst()
                 .orElseThrow(() -> new CrBranchNotFoundException(id));
 
         Branch branch = branchRepository.findById(request.branchId())
@@ -66,7 +69,7 @@ public class UpdateCrBranch {
             user = userPublicApi.findUsersByIds(request.responsibleUsersId());
         }
 
-        validateCrBranchSupervisors.validate(user);
+        validateCrBranchResponsibles.validate(user);
 
         crBranch.setBranch(branch);
         crBranch.setCr(cr);

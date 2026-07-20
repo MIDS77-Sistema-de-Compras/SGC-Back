@@ -1,12 +1,13 @@
 package net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence;
 
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
-import java.util.List;
-import java.util.Optional;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
  * Repositório de acesso aos dados da entidade
@@ -20,10 +21,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Consulta personalizada que busca o usuário por e-mail ou CPF.
+     * Carrega a role junto (JOIN) porque este método é usado pelo filtro de
+     * segurança a cada requisição — evita um select extra por request.
      * @param email endereço de email do usuário
      * @param cpf cpf do usuário
      * @return Opcional o retorno de um usuário, só retorna se encontrar.
      */
+    @EntityGraph(attributePaths = "role")
     Optional<User> findByEmailOrCpf(String email, String cpf);
 
     /**

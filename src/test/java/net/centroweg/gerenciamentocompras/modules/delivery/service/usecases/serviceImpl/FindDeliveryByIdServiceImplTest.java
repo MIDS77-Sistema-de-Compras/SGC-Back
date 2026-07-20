@@ -1,29 +1,28 @@
 package net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl;
 
-import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Delivery;
-import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
-import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
+import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Delivery;
+import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.delivery.infrastructure.persistence.DeliveryRepository;
+import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
 import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.delivery;
 import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.request;
 import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.status;
 import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serviceImpl.DeliveryServiceTestFixtures.user;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class FindDeliveryByIdServiceImplTest {
@@ -37,7 +36,7 @@ class FindDeliveryByIdServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        service = new FindDeliveryByIdServiceImpl(deliveryRepository, new DeliveryMapper(statusPublicApi));
+        service = new FindDeliveryByIdServiceImpl(deliveryRepository, new DeliveryMapper());
         Request request = request();
         Status status = status();
         org.mockito.Mockito.lenient().when(statusPublicApi.findById(status.getId())).thenReturn(Optional.of(status));

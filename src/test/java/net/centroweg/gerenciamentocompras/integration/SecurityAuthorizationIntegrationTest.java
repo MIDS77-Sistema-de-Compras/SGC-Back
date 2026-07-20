@@ -13,6 +13,9 @@ import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProvisionService;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
@@ -27,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
@@ -35,6 +39,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -76,6 +83,9 @@ class SecurityAuthorizationIntegrationTest {
 
     @Autowired
     private MeasurementUnitRepository measurementUnitRepository;
+
+    @MockitoBean
+    private ItemRequestProvisionService itemRequestProvisionService;
 
     private CrBranch crBranch;
     private Map<String, UserPrincipal> principalsByRole;
@@ -183,6 +193,48 @@ class SecurityAuthorizationIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(notUnauthorizedOrForbidden());
+    }
+
+    @Test
+    @DisplayName("PUT de item de servico exige COMPRADOR e nao executa o service quando negado")
+    void shouldProtectProvisionItemUpdateByRole() throws Exception {
+        String body = """
+                {
+                    "requestId": 10,
+                    "provisionId": 20,
+                    "statusId": 30,
+                    "additionalInformation": "Atualizacao do item"
+                }
+                """;
+
+        mockMvc.perform(put("/item-provision-requests/request/{itemId}", 99L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isUnauthorized());
+        verifyNoInteractions(itemRequestProvisionService);
+
+        mockMvc.perform(put("/item-provision-requests/request/{itemId}", 99L)
+                        .with(user(principalsByRole.get(Authorities.DOCENTE)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(itemRequestProvisionService);
+
+        ItemRequestProvisionRequest request = new ItemRequestProvisionRequest(
+                10L, 20L, 30L, "Atualizacao do item"
+        );
+        ItemRequestProvisionResponse response = new ItemRequestProvisionResponse(
+                99L, 10L, 20L, "Entregue", "Atualizacao do item"
+        );
+        when(itemRequestProvisionService.updateItemFromProvisionRequest(99L, request)).thenReturn(response);
+
+        mockMvc.perform(put("/item-provision-requests/request/{itemId}", 99L)
+                        .with(user(principalsByRole.get(Authorities.COMPRADOR)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+
+        verify(itemRequestProvisionService).updateItemFromProvisionRequest(99L, request);
     }
 
     @Test

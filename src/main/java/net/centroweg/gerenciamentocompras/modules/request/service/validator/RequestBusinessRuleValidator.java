@@ -1,13 +1,17 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.validator;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.*;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
+import java.util.Set;
+
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Set;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.CrNotEditableException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyInactiveException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestCannotBeInactivatedException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotEditableException;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 
 @Component
 public class RequestBusinessRuleValidator {

@@ -21,6 +21,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,34 @@ class ApprovalDelegationIntegrationTest {
         assertThat(userRepository.findById(delegator.getId()).orElseThrow().getActive()).isFalse();
         assertThat(responsibleIds(firstBranch.getId())).contains(delegate.getId());
         assertThat(responsibleIds(secondBranch.getId())).contains(delegate.getId());
+    }
+
+    @Test
+    void shouldAddDelegateWhenInactiveDelegatorLeavesRoomForTwoActiveSupervisors() {
+        User secondActiveSupervisor = saveUser("Segundo Supervisor", "segundo.supervisor@teste.com", "98765432100");
+        firstBranch.setResponsibleUsers(new ArrayList<>(List.of(delegator, secondActiveSupervisor)));
+        crBranchRepository.saveAndFlush(firstBranch);
+
+        ApprovalDelegationResponse response = delegationService.create(immediateRequest());
+
+        entityManager.flush();
+        entityManager.clear();
+        CrBranch activeBranch = crBranchRepository.findById(firstBranch.getId()).orElseThrow();
+        assertThat(userRepository.findById(delegator.getId()).orElseThrow().getActive()).isFalse();
+        assertThat(activeBranch.getResponsibleUsers()).extracting(User::getId)
+                .containsExactlyInAnyOrder(delegator.getId(), secondActiveSupervisor.getId(), delegate.getId());
+        assertThat(activeBranch.getResponsibleUsers().stream()
+                .filter(responsible -> Boolean.TRUE.equals(responsible.getActive()))
+                .filter(responsible -> Authorities.SUPERVISOR.equals(responsible.getRole().getName())))
+                .hasSize(2);
+
+        expireAndFinish(response.id());
+
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(userRepository.findById(delegator.getId()).orElseThrow().getActive()).isTrue();
+        assertThat(responsibleIds(firstBranch.getId()))
+                .containsExactlyInAnyOrder(delegator.getId(), secondActiveSupervisor.getId());
     }
 
     @Test
@@ -238,7 +267,7 @@ class ApprovalDelegationIntegrationTest {
         User requester = saveUser("Solicitante", "solicitante.delegacao@teste.com", "98765432100");
         requester.setRole(roleRepository.save(new Role("DOCENTE")));
         userRepository.save(requester);
-        Status pending = statusRepository.save(new Status("Pendente", "Solicitação pendente"));
+        Status pending = statusRepository.save(new Status("Aguardando aprovação", "Solicitação aguardando aprovação"));
         statusRepository.save(new Status("Aprovado", "Solicitação aprovada"));
         ApprovalDelegationResponse response = delegationService.create(immediateRequest());
 

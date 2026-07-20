@@ -1,8 +1,5 @@
 package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
-import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
-import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
-import net.centroweg.gerenciamentocompras.shared.security.annotation.AdminOnly;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +25,9 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.NewPassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.Recovery;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
+import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.AdminOnly;
 
 @Tag(name = "ENDPOINTS de autenticação")
 @RestController

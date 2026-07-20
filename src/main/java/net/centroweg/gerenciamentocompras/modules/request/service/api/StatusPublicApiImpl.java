@@ -1,13 +1,13 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.api;
 
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 
 @Service
 @RequiredArgsConstructor

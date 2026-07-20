@@ -1,5 +1,25 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import org.mockito.Mock;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import jakarta.mail.MessagingException;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.listener.RequestStatusChangedEventListener;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.url.RequestFrontendUrlBuilder;
@@ -15,20 +35,6 @@ import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.Reques
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RequestStatusNotificationFlowTest {

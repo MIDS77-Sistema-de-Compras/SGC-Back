@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,13 +18,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
 import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -35,13 +32,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
-import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
-import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
-import net.centroweg.gerenciamentocompras.config.security.WebSecurityConfig;
 import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
+import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;

@@ -1,22 +1,23 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.mapper.request;
 
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.RequestAttachment;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
-import org.springframework.stereotype.Component;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.RequestAttachment;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

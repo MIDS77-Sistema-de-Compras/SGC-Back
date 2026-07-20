@@ -1,17 +1,11 @@
 package net.centroweg.gerenciamentocompras.integration;
 
-import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
-import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleItemStatusChangedNotificationUseCase;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
-import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
-import org.junit.jupiter.api.BeforeAll;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,12 +14,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleItemStatusChangedNotificationUseCase;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 
 @SpringBootTest
 @ActiveProfiles("test")

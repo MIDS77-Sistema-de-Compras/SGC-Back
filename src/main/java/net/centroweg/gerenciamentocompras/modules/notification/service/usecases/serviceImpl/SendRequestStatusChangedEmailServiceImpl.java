@@ -1,17 +1,17 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.RequestStatusEmailContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.RequestStatusChangedEmailSender;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestStatusNotificationData;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service

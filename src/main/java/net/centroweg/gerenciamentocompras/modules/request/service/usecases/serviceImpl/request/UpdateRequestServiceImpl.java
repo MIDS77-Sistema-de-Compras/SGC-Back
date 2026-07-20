@@ -1,9 +1,14 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.service.api.CrPublicApi;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
@@ -19,9 +24,6 @@ import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +72,7 @@ public class UpdateRequestServiceImpl {
                 notificationService.createNotification(new NotificationRequest(
                         "Status da solicitação atualizado",
                         "A solicitação #" + savedRequest.getId() + " teve o status alterado para " + status.getName() + ".",
+                        NotificationType.STATUS_ALTERADO,
                         responsible.getId(),
                         savedRequest.getId()
                 ));

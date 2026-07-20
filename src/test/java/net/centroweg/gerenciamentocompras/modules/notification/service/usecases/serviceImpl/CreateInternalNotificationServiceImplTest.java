@@ -1,24 +1,25 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationData;
 import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserNotificationData;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CreateInternalNotificationServiceImplTest {
@@ -38,7 +39,7 @@ class CreateInternalNotificationServiceImplTest {
         var service = new CreateInternalNotificationServiceImpl(
                 notificationRepository, userPublicApi, requestPublicApi, new NotificationMapper());
 
-        service.createNotifications("Titulo", "Mensagem", 10L, java.util.Arrays.asList(1L, 1L, null, 2L));
+        service.createNotifications("Titulo", "Mensagem", NotificationType.NOTIFICACAO_TESTE, 10L, java.util.Arrays.asList(1L, 1L, null, 2L));
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<Notification>> notifications = ArgumentCaptor.forClass(List.class);

@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.mail.MessagingException;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.listener.RequestStatusChangedEventListener;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.url.RequestFrontendUrlBuilder;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.RequestStatusEmailContentFactory;
@@ -58,7 +59,7 @@ class RequestStatusNotificationFlowTest {
 
         service.handle(event("Em atendimento", null));
 
-        verify(createInternalNotificationUseCase).createNotifications(anyString(), anyString(), eq(10L), eq(List.of(1L, 2L)));
+        verify(createInternalNotificationUseCase).createNotifications(anyString(), anyString(), eq(NotificationType.STATUS_ALTERADO), eq(10L), eq(List.of(1L, 2L)));
         verify(emailSender).sendEmails(any(), same(data));
     }
 
@@ -121,7 +122,7 @@ class RequestStatusNotificationFlowTest {
                 requestPublicApi, createInternalNotificationUseCase, new RequestStatusInternalNotificationFactory(),
                 new RequestNotificationRecipientDeduplicator(), emailSender);
         service.handle(event(status, null));
-        verify(createInternalNotificationUseCase).createNotifications(anyString(), contains(status), eq(10L), eq(List.of(1L)));
+        verify(createInternalNotificationUseCase).createNotifications(anyString(), contains(status), eq(NotificationType.STATUS_ALTERADO), eq(10L), eq(List.of(1L)));
         verify(emailSender).sendEmails(any(), same(data));
     }
 

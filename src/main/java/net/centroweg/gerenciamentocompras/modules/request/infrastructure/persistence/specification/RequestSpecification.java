@@ -106,6 +106,8 @@ public final class RequestSpecification {
         String pattern = containsIgnoreCase(supervisorName);
 
         return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+
             Join<Request, CrBranch> crBranchJoin =
                     root.join("crBranch", JoinType.INNER);
 

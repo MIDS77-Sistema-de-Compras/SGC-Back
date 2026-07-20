@@ -92,59 +92,59 @@ class CrBranchFilterIntegrationTest {
     void withoutParametersShouldReturnAll() throws Exception {
         mockMvc.perform(get("/cr-branches"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(3));
+                .andExpect(jsonPath("$.content.length()").value(3));
     }
 
     @Test
     void shouldFilterOnlyByCrCode() throws Exception {
         mockMvc.perform(get("/cr-branches").param("crCode", "123456"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(matchingCrBranch.getId()))
-                .andExpect(jsonPath("$[0].crCode").value("123456"));
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(matchingCrBranch.getId()))
+                .andExpect(jsonPath("$.content[0].crCode").value("123456"));
     }
 
     @Test
     void shouldFilterByPartialCrCode() throws Exception {
         mockMvc.perform(get("/cr-branches").param("crCode", "345"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(matchingCrBranch.getId()))
-                .andExpect(jsonPath("$[0].crCode").value("123456"));
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(matchingCrBranch.getId()))
+                .andExpect(jsonPath("$.content[0].crCode").value("123456"));
     }
 
     @Test
     void shouldFilterOnlyByCrName() throws Exception {
         mockMvc.perform(get("/cr-branches").param("crName", "Compras"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(matchingCrBranch.getId()))
-                .andExpect(jsonPath("$[0].crName").value("CR Compras Digitais"));
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(matchingCrBranch.getId()))
+                .andExpect(jsonPath("$.content[0].crName").value("CR Compras Digitais"));
     }
 
     @Test
     void shouldFilterCrNameIgnoringCase() throws Exception {
         mockMvc.perform(get("/cr-branches").param("crName", "compras digitais"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(matchingCrBranch.getId()));
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(matchingCrBranch.getId()));
     }
 
     @Test
     void shouldFilterOnlyByResponsibleName() throws Exception {
         mockMvc.perform(get("/cr-branches").param("responsibleName", "Ana"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(matchingCrBranch.getId()))
-                .andExpect(jsonPath("$[0].responsibleUsersName[0]").value("Ana Silva"));
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(matchingCrBranch.getId()))
+                .andExpect(jsonPath("$.content[0].responsibleUsersName[0]").value("Ana Silva"));
     }
 
     @Test
     void shouldFilterResponsibleNameIgnoringCase() throws Exception {
         mockMvc.perform(get("/cr-branches").param("responsibleName", "ana silva"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(matchingCrBranch.getId()));
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(matchingCrBranch.getId()));
     }
 
     @Test
@@ -154,8 +154,8 @@ class CrBranchFilterIntegrationTest {
                         .param("crName", "Compras")
                         .param("responsibleName", "Ana"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(matchingCrBranch.getId()));
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(matchingCrBranch.getId()));
     }
 
     @Test
@@ -165,16 +165,16 @@ class CrBranchFilterIntegrationTest {
                         .param("crName", "Engenharia")
                         .param("responsibleName", "Ana"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+                .andExpect(jsonPath("$.content.length()").value(0));
     }
 
     @Test
     void crBranchWithoutResponsibleShouldNotCauseError() throws Exception {
         mockMvc.perform(get("/cr-branches").param("crCode", "555000"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(withoutResponsibleCrBranch.getId()))
-                .andExpect(jsonPath("$[0].responsibleUsersName").isEmpty());
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].id").value(withoutResponsibleCrBranch.getId()))
+                .andExpect(jsonPath("$.content[0].responsibleUsersName").isEmpty());
     }
 
     private User createUser(String name, String cpf, String email) {

@@ -22,8 +22,6 @@ public class DeliveryMapper {
                 .map(this::toReceiverDTO)
                 .toList();
 
-        // O status da entrega já vem na própria entidade (associação obrigatória);
-        // usá-lo direto evita uma consulta redundante por entrega na listagem.
         Status status = delivery.getStatus();
 
         return new DeliveryResponse(

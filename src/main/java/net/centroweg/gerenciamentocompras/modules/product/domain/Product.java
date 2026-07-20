@@ -1,18 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.product.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 
 
@@ -28,12 +18,12 @@ import lombok.Setter;
  * @since 1.0
  */
 
+@BatchSize(size = 30)
 @Entity
 @Table(name = "product")
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Product {
@@ -57,7 +47,6 @@ public class Product {
      */
 
     @Column(nullable = false)
-    @NonNull
     private String name;
     /**
      * Descrição detalhada do produto.
@@ -67,7 +56,6 @@ public class Product {
      * <p>Utilize este campo para informações adicionais sobre o produto,
      * como especificações técnicas, material, aplicações, entre outros.</p>
      */
-    @NonNull
     private String description;
 
     /**
@@ -79,7 +67,6 @@ public class Product {
      * Exemplo: {@code 29.90}.</p>
      */
     @Column(nullable = false)
-    @NonNull
     private Double price;
     /**
      * Tipo ou categoria do produto.
@@ -90,7 +77,6 @@ public class Product {
      * Exemplo: "Matéria-Prima", "Insumo", "Produto Acabado".</p>
      */
     @Column(nullable = false)
-    @NonNull
     private String type;
     /**
      * Código identificador único do produto.
@@ -101,7 +87,6 @@ public class Product {
      * Exemplo: {@code "PRD-00123"}.</p>
      */
     @Column(unique = true, nullable = false)
-    @NonNull
     private String code;
 
 }

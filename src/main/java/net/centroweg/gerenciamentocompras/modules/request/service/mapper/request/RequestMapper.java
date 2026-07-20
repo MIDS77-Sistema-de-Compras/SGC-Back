@@ -88,6 +88,7 @@ public class RequestMapper {
                 item.getId(),
                 item.getRequest().getId(),
                 item.getProduct() != null ? item.getProduct().getName() : null,
+                item.getVariation(),
                 item.getMeasurementUnit() != null ? item.getMeasurementUnit().getName() : null,
                 item.getQuantity(),
                 item.getStatus_id() != null ? item.getStatus_id().getName() : null,

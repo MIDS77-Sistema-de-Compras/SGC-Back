@@ -120,6 +120,7 @@ public class CreateRequestServiceImpl {
             ItemRequestProduct item = new ItemRequestProduct();
             item.setRequest(requestToSave);
             item.setProduct(product);
+            item.setVariation(normalizeVariation(productRequest.variation()));
             item.setMeasurementUnit(measurementUnit);
             item.setQuantity(productRequest.quantity());
             item.setStatus_id(status);
@@ -141,6 +142,10 @@ public class CreateRequestServiceImpl {
 
     private String generateRequestProductCode() {
         return "REQ-" + UUID.randomUUID().toString().replace("-", "");
+    }
+
+    private String normalizeVariation(String variation) {
+        return variation == null || variation.isBlank() ? null : variation.trim();
     }
 
     private void addProvisionItems(RequestRequest request, Request requestToSave, Status status) {

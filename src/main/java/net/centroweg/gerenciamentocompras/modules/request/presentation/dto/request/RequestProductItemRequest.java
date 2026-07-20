@@ -9,6 +9,9 @@ public record RequestProductItemRequest(
         @NotBlank(message = "O nome do produto é obrigatorio.")
         String productName,
 
+        @Size(max = 100, message = "A variação excede o limite máximo permitido (100 caracteres).")
+        String variation,
+
         @NotBlank(message = "A unidade de medida é obrigatoria.")
         String measurementUnit,
 

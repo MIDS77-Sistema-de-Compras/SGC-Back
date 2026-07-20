@@ -97,30 +97,6 @@ public class UpdateRequestStatusServiceImpl {
         return requestMapper.toDTO(savedRequest);
     }
 
-    private void notifyRequester(Request request, boolean approved, String justification) {
-        String title = approved
-                ? "Solicitação aprovada"
-                : "Solicitação recusada";
-
-        String message;
-        if (approved) {
-            message = "A sua solicitação #" + request.getId() + " foi aprovada.";
-        } else {
-            message = "A sua solicitação #" + request.getId() + " foi recusada.";
-            if (StringUtils.hasText(justification)) {
-                message += " Justificativa: " + justification;
-            }
-        }
-
-        for (User requester : request.getCreatedByUsers()) {
-            notificationService.createNotification(new NotificationRequest(
-                    title,
-                    message,
-                    requester.getId(),
-                    request.getId()
-            ));
-        }
-    }
 
     private boolean isStatus(Status status, String expectedStatus) {
         return status.getName() != null

@@ -1,9 +1,13 @@
 package net.centroweg.gerenciamentocompras.integration;
 
 import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
+import net.centroweg.gerenciamentocompras.modules.provision.infrastructure.persistence.ProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
@@ -30,6 +34,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,13 +51,16 @@ class MonitorItemStatusChangedIntegrationTest {
     @Autowired private RequestRepository requestRepository;
     @Autowired private StatusRepository statusRepository;
     @Autowired private ItemRequestProductRepository itemRequestProductRepository;
+    @Autowired private ItemRequestProvisionRepository itemRequestProvisionRepository;
     @Autowired private ProductRepository productRepository;
+    @Autowired private ProvisionRepository provisionRepository;
     @Autowired private MeasurementUnitRepository measurementUnitRepository;
     @Autowired private BranchRepository branchRepository;
     @Autowired private CrRepository crRepository;
     @Autowired private CrBranchRepository crBranchRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private RoleRepository roleRepository;
+    @Autowired private PlatformTransactionManager transactionManager;
 
     private Branch branch;
     private Cr cr;
@@ -160,6 +169,42 @@ class MonitorItemStatusChangedIntegrationTest {
         // Não precisamos testar o segundo evento porque a exceção já interrompeu o fluxo.
     }
 
+    @Test
+    @DisplayName("[Integracao] Atualiza a solicitacao de servico em uma nova transacao depois do commit do item")
+    void shouldUpdateProvisionRequestStatusAfterItemTransactionCommit() {
+        Status delivered = statusRepository.save(
+                new Status("Entregue", "Solicitacao entregue"));
+        Request request = saveRequest(pending);
+        Provision provision = provisionRepository.save(
+                new Provision("Servico Teste", 100.0, "Descricao do servico"));
+        ItemRequestProvision item = itemRequestProvisionRepository.save(
+                new ItemRequestProvision(request, provision, pending, null));
+
+        new TransactionTemplate(transactionManager).executeWithoutResult(transactionStatus -> {
+            ItemRequestProvision managedItem = itemRequestProvisionRepository.findById(item.getId())
+                    .orElseThrow();
+            managedItem.setStatus(delivered);
+            itemRequestProvisionRepository.save(managedItem);
+
+            eventPublisher.publishEvent(new ItemStatusChangedEvent(
+                    request.getId(),
+                    managedItem.getId(),
+                    RequestItemType.PROVISION,
+                    provision.getName(),
+                    null,
+                    null,
+                    null,
+                    pending.getName(),
+                    delivered.getName(),
+                    null,
+                    LocalDateTime.now()
+            ));
+        });
+
+        Request updated = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(updated.getStatus().getName()).isEqualTo(delivered.getName());
+    }
+
     private Request saveRequest(Status status) {
         Request request = new Request(crBranch, status);
         request.setRequestDate(LocalDateTime.of(2026, 6, 26, 10, 0));
@@ -209,6 +254,7 @@ class MonitorItemStatusChangedIntegrationTest {
 
     private void cleanDatabase() {
         itemRequestProductRepository.deleteAll();
+        itemRequestProvisionRepository.deleteAll();
         requestRepository.deleteAll();
         crBranchRepository.deleteAll();
         statusRepository.deleteAll();
@@ -217,6 +263,7 @@ class MonitorItemStatusChangedIntegrationTest {
         userRepository.deleteAll();
         roleRepository.deleteAll();
         productRepository.deleteAll();
+        provisionRepository.deleteAll();
         measurementUnitRepository.deleteAll();
     }
 }

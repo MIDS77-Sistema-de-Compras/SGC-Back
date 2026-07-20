@@ -2,15 +2,14 @@ package net.centroweg.gerenciamentocompras.modules.cr.service.mapper;
 
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
-import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrInstructorResponse;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 
 @Component
 @RequiredArgsConstructor

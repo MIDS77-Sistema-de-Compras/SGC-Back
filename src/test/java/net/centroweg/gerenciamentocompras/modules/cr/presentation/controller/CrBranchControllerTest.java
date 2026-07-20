@@ -6,8 +6,11 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrRepository;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +24,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -49,11 +54,17 @@ class CrBranchControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     private MockMvc mockMvc;
 
     private Branch branch;
     private Cr cr;
     private User user;
+    private Role supervisorRole;
+    private Role coordinatorRole;
+    private Role docenteRole;
 
     @BeforeEach
     void setUp() {
@@ -64,11 +75,16 @@ class CrBranchControllerTest {
 
         crBranchRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
         crRepository.deleteAll();
         branchRepository.deleteAll();
 
         branch = branchRepository.save(new Branch("Filial Centro"));
         cr = crRepository.save(new Cr("TI", "7940", false));
+
+        supervisorRole = roleRepository.save(new Role(Authorities.SUPERVISOR));
+        coordinatorRole = roleRepository.save(new Role(Authorities.COORDENADOR));
+        docenteRole = roleRepository.save(new Role(Authorities.DOCENTE));
 
         user = new User();
         user.setName("João");
@@ -79,6 +95,7 @@ class CrBranchControllerTest {
         user.setActive(true);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
+        user.setRole(supervisorRole);
         user = userRepository.save(user);
     }
 
@@ -86,6 +103,7 @@ class CrBranchControllerTest {
     void tearDown() {
         crBranchRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
         crRepository.deleteAll();
         branchRepository.deleteAll();
     }
@@ -105,6 +123,60 @@ class CrBranchControllerTest {
                 .andExpect(jsonPath("$.branchName").value("Filial Centro"))
                 .andExpect(jsonPath("$.crName").value("TI"))
                 .andExpect(jsonPath("$.crCode").value("7940"));
+    }
+
+    @Test
+    void shouldCreateCrBranchWithTwoSupervisorsAndOneCoordinator() throws Exception {
+        User secondSupervisor = createUser("Maria", "98765432100", "maria@centroweg.com.br", supervisorRole);
+        User coordinator = createUser("Carlos", "98765432101", "carlos@centroweg.com.br", coordinatorRole);
+
+        mockMvc.perform(post("/cr-branches")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody(branch, cr, List.of(user, secondSupervisor, coordinator))))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.responsibleUsersName.length()").value(3));
+    }
+
+    @Test
+    void shouldRejectThreeActiveSupervisorsOnCreate() throws Exception {
+        User secondSupervisor = createUser("Maria", "98765432100", "maria@centroweg.com.br", supervisorRole);
+        User thirdSupervisor = createUser("Pedro", "98765432101", "pedro@centroweg.com.br", supervisorRole);
+
+        mockMvc.perform(post("/cr-branches")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody(branch, cr, List.of(user, secondSupervisor, thirdSupervisor))))
+                .andExpect(status().isConflict());
+
+        assertThat(crBranchRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    void shouldRejectTwoCoordinatorsOnCreate() throws Exception {
+        User firstCoordinator = createUser("Carlos", "98765432100", "carlos@centroweg.com.br", coordinatorRole);
+        User secondCoordinator = createUser("Ana", "98765432101", "ana@centroweg.com.br", coordinatorRole);
+
+        mockMvc.perform(post("/cr-branches")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody(branch, cr, List.of(firstCoordinator, secondCoordinator))))
+                .andExpect(status().isConflict());
+
+        assertThat(crBranchRepository.findAll()).isEmpty();
+    }
+
+    @Test
+    void shouldRejectForbiddenResponsibleRoleOnCreate() throws Exception {
+        User docente = createUser("Docente", "98765432100", "docente@centroweg.com.br", docenteRole);
+
+        mockMvc.perform(post("/cr-branches")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody(branch, cr, List.of(docente))))
+                .andExpect(status().isBadRequest());
+
+        assertThat(crBranchRepository.findAll()).isEmpty();
     }
 
     @Test
@@ -162,6 +234,38 @@ class CrBranchControllerTest {
     }
 
     @Test
+    void shouldUpdateCrBranchToValidResponsibles() throws Exception {
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, new ArrayList<>(List.of(user))));
+        User secondSupervisor = createUser("Maria", "98765432100", "maria@centroweg.com.br", supervisorRole);
+        User coordinator = createUser("Carlos", "98765432101", "carlos@centroweg.com.br", coordinatorRole);
+
+        mockMvc.perform(put("/cr-branches/{id}", saved.getId())
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody(branch, cr, List.of(user, secondSupervisor, coordinator))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responsibleUsersName.length()").value(3));
+    }
+
+    @Test
+    void shouldNotChangeCrBranchWhenUpdateResponsiblesAreInvalid() throws Exception {
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, new ArrayList<>(List.of(user))));
+        User docente = createUser("Docente", "98765432100", "docente@centroweg.com.br", docenteRole);
+
+        mockMvc.perform(put("/cr-branches/{id}", saved.getId())
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody(branch, cr, List.of(docente))))
+                .andExpect(status().isBadRequest());
+
+        CrBranch persisted = crBranchRepository.findAllByResponsibleUserId(user.getId()).stream()
+                .filter(candidate -> candidate.getId().equals(saved.getId()))
+                .findFirst()
+                .orElseThrow();
+        assertThat(persisted.getResponsibleUsers()).extracting(User::getId).containsExactly(user.getId());
+    }
+
+    @Test
     void shouldDeleteCrBranch() throws Exception {
         CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, null));
 
@@ -193,6 +297,82 @@ class CrBranchControllerTest {
     }
 
     @Test
+    void shouldAssignSecondSupervisorWithinLimit() throws Exception {
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, new ArrayList<>(List.of(user))));
+        User secondSupervisor = createUser("Maria", "98765432100", "maria@centroweg.com.br", supervisorRole);
+
+        mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), secondSupervisor.getId())
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responsibleUsersName.length()").value(2));
+    }
+
+    @Test
+    void shouldRejectThirdSupervisorAssignment() throws Exception {
+        User secondSupervisor = createUser("Maria", "98765432100", "maria@centroweg.com.br", supervisorRole);
+        User thirdSupervisor = createUser("Pedro", "98765432101", "pedro@centroweg.com.br", supervisorRole);
+        CrBranch saved = crBranchRepository.save(new CrBranch(
+                branch, cr, new ArrayList<>(List.of(user, secondSupervisor))
+        ));
+
+        mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), thirdSupervisor.getId())
+                        .with(csrf()))
+                .andExpect(status().isConflict());
+
+        assertThat(crBranchRepository.findAllByResponsibleUserId(user.getId()).stream()
+                .filter(candidate -> candidate.getId().equals(saved.getId()))
+                .findFirst()
+                .orElseThrow()
+                .getResponsibleUsers())
+                .extracting(User::getId)
+                .containsExactly(user.getId(), secondSupervisor.getId());
+    }
+
+    @Test
+    void shouldAssignFirstCoordinator() throws Exception {
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, new ArrayList<>()));
+        User coordinator = createUser("Carlos", "98765432100", "carlos@centroweg.com.br", coordinatorRole);
+
+        mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), coordinator.getId())
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responsibleUsersName[0]").value("Carlos"));
+    }
+
+    @Test
+    void shouldRejectSecondCoordinatorAssignment() throws Exception {
+        User firstCoordinator = createUser("Carlos", "98765432100", "carlos@centroweg.com.br", coordinatorRole);
+        User secondCoordinator = createUser("Ana", "98765432101", "ana@centroweg.com.br", coordinatorRole);
+        CrBranch saved = crBranchRepository.save(new CrBranch(
+                branch, cr, new ArrayList<>(List.of(firstCoordinator))
+        ));
+
+        mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), secondCoordinator.getId())
+                        .with(csrf()))
+                .andExpect(status().isConflict());
+
+        assertThat(crBranchRepository.findAllByResponsibleUserId(firstCoordinator.getId()).stream()
+                .filter(candidate -> candidate.getId().equals(saved.getId()))
+                .findFirst()
+                .orElseThrow()
+                .getResponsibleUsers())
+                .extracting(User::getId)
+                .containsExactly(firstCoordinator.getId());
+    }
+
+    @Test
+    void shouldRejectDocenteAssignment() throws Exception {
+        CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, new ArrayList<>()));
+        User docente = createUser("Docente", "98765432100", "docente@centroweg.com.br", docenteRole);
+
+        mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), docente.getId())
+                        .with(csrf()))
+                .andExpect(status().isBadRequest());
+
+        assertThat(crBranchRepository.findAllByResponsibleUserId(docente.getId())).isEmpty();
+    }
+
+    @Test
     void shouldRemoveResponsible() throws Exception {
         CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
 
@@ -205,7 +385,7 @@ class CrBranchControllerTest {
     @Test
     void shouldAddResponsibleWithoutReplacingExisting() throws Exception {
         CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, List.of(user)));
-        User secondUser = createUser("Maria", "98765432100", "maria@centroweg.com.br");
+        User secondUser = createUser("Maria", "98765432100", "maria@centroweg.com.br", supervisorRole);
 
         mockMvc.perform(put("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), secondUser.getId())
                         .with(csrf()))
@@ -215,7 +395,7 @@ class CrBranchControllerTest {
 
     @Test
     void shouldRemoveOnlyGivenResponsible() throws Exception {
-        User secondUser = createUser("Maria", "98765432100", "maria@centroweg.com.br");
+        User secondUser = createUser("Maria", "98765432100", "maria@centroweg.com.br", supervisorRole);
         CrBranch saved = crBranchRepository.save(new CrBranch(branch, cr, List.of(user, secondUser)));
 
         mockMvc.perform(delete("/cr-branches/{crBranchId}/responsible/{userId}", saved.getId(), user.getId())
@@ -225,7 +405,7 @@ class CrBranchControllerTest {
                 .andExpect(jsonPath("$.responsibleUsersName[0]").value("Maria"));
     }
 
-    private User createUser(String name, String cpf, String email) {
+    private User createUser(String name, String cpf, String email, Role role) {
         User newUser = new User();
         newUser.setName(name);
         newUser.setCpf(cpf);
@@ -235,6 +415,22 @@ class CrBranchControllerTest {
         newUser.setActive(true);
         newUser.setCreatedAt(LocalDateTime.now());
         newUser.setUpdatedAt(LocalDateTime.now());
+        newUser.setRole(role);
         return userRepository.save(newUser);
+    }
+
+    private String requestBody(Branch requestBranch, Cr requestCr, List<User> responsibles) {
+        String responsibleIds = responsibles.stream()
+                .map(User::getId)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
+        return """
+                {
+                    "branchId": %d,
+                    "crId": %d,
+                    "responsibleUsersId": [%s]
+                }
+                """.formatted(requestBranch.getId(), requestCr.getId(), responsibleIds);
     }
 }

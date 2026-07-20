@@ -5,7 +5,6 @@ package net.centroweg.gerenciamentocompras.modules.product.presentation.dto.resp
  *
  * @author Ana Beatriz de Oliveira Ribeiro
  * @since 2026
->>>>>>> 0b1edfa ([API-125] docs/ adiciona documentação de unidades de medida)
  */
 public record MeasurementUnitResponse(
 

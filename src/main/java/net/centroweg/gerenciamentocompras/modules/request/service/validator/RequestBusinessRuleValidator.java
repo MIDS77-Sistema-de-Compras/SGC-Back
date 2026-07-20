@@ -1,13 +1,17 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.validator;
 
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
-import net.centroweg.gerenciamentocompras.modules.request.domain.exception.*;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
+import java.util.Set;
+
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Set;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.CrNotEditableException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyInactiveException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestCannotBeInactivatedException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotEditableException;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 
 @Component
 public class RequestBusinessRuleValidator {
@@ -25,6 +29,16 @@ public class RequestBusinessRuleValidator {
             "entregue",
             "cancelado"
     );
+
+    /**
+     * Único status em que o supervisor/coordenador ainda pode decidir a solicitação.
+     * Qualquer outro — Aprovado, Recusado, Auto-aprovado, Parcialmente aprovada, ou
+     * qualquer status que o comprador já tenha atribuído depois disso (Em atendimento,
+     * Entregue, etc.) — significa que a etapa dele já terminou. A checagem é negativa
+     * (não é mais o pendente) em vez de listar cada status "final", que cresceria a cada
+     * novo status adicionado ao fluxo do comprador.
+     */
+    private static final String PENDING_STATUS = "aguardando aprovação";
 
     private static final String ADMIN_ROLE = Authorities.ADMIN;
 
@@ -110,17 +124,39 @@ public class RequestBusinessRuleValidator {
 
     public void validateCanUpdateStatus(Request request, User currentUser) {
         validateRequestIsActive(request);
+
+        if (!isPurchasingStage(currentUser) && isFinalizedForSupervisor(request)) {
+            throw new RequestNotEditableException();
+        }
+
         validateActingRole(request, currentUser);
     }
 
     public void validateCanEditItems(Request request, User currentUser) {
         validateRequestIsActive(request);
 
+        if (!isPurchasingStage(currentUser) && isFinalizedForSupervisor(request)) {
+            throw new RequestNotEditableException();
+        }
+
         if (isCreator(request, currentUser)) {
             return;
         }
 
         validateActingRole(request, currentUser);
+    }
+
+    /**
+     * Comprador e administrador continuam podendo editar itens/status depois que o
+     * supervisor finaliza a solicitação — é justamente a etapa deles que começa ali.
+     */
+    private boolean isPurchasingStage(User currentUser) {
+        return hasRole(currentUser, Authorities.COMPRADOR) || hasRole(currentUser, ADMIN_ROLE);
+    }
+
+    private boolean isFinalizedForSupervisor(Request request) {
+        String statusName = normalize(request.getStatus().getName());
+        return !statusName.equals(PENDING_STATUS);
     }
 
     private void validateActingRole(Request request, User currentUser) {

@@ -1,21 +1,17 @@
 package net.centroweg.gerenciamentocompras.modules.auth.service;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 class JwtServiceTest {
 

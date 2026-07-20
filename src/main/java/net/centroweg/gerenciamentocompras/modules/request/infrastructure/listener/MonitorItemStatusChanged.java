@@ -1,10 +1,11 @@
 package net.centroweg.gerenciamentocompras.modules.request.infrastructure.listener;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
@@ -40,16 +41,28 @@ public class MonitorItemStatusChanged {
 
      * @param event O evento escutado pelo metodo
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution=true)
     public void updateRequestStatus(ItemStatusChangedEvent event){
         Request request = requestRepository.findById(event.requestId())
                 .orElseThrow(RequestNotFoundException::new);
 
-        boolean allMatch = request.getItemRequestProducts().stream()
-                .allMatch(item -> item.getStatus_id()
-                                   .getName()
-                                   .equalsIgnoreCase(event.newStatusName()));
+        boolean hasProducts = !request.getItemRequestProducts().isEmpty();
+
+        // Uma solicitacao eh so-produtos ou so-servicos, nunca as duas — por isso da pra
+        // decidir qual lista checar pela que nao esta vazia. allMatch numa lista vazia
+        // (Java) da "true" por padrao, entao sem o isEmpty() aqui uma solicitacao de
+        // servico (produtos vazio) acabava "batendo" mesmo com so 1 item alterado.
+        boolean allMatch = hasProducts
+                ? request.getItemRequestProducts().stream()
+                        .allMatch(item -> item.getStatus_id()
+                                           .getName()
+                                           .equalsIgnoreCase(event.newStatusName()))
+                : !request.getItemRequestProvisions().isEmpty()
+                        && request.getItemRequestProvisions().stream()
+                                .allMatch(item -> item.getStatus()
+                                                   .getName()
+                                                   .equalsIgnoreCase(event.newStatusName()));
 
         if (allMatch) {
             request.setStatus(

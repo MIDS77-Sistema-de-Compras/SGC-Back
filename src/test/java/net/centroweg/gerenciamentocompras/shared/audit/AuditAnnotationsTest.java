@@ -280,7 +280,7 @@ class AuditAnnotationsTest {
     }
 
     // ---------------------------------------------------------------------
-    // ItemRequestProvisionController  (achado: DELETE sem @Auditable)
+    // ItemRequestProvisionController  (PUT auditado; DELETE sem @Auditable)
     // ---------------------------------------------------------------------
 
     @Nested

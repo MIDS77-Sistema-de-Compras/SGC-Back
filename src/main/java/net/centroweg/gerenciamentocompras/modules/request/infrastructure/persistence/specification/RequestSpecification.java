@@ -1,5 +1,13 @@
 package net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.specification;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
@@ -9,11 +17,6 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-import org.springframework.data.jpa.domain.Specification;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Locale;
 
 @NoArgsConstructor
 public final class RequestSpecification {
@@ -71,6 +74,26 @@ public final class RequestSpecification {
                     criteriaBuilder.lower(name),
                     pattern
             );
+        };
+    }
+
+    public static Specification<Request> statusNameIn(Collection<String> statusNames){
+
+        if (statusNames == null || statusNames.isEmpty()){
+            return Specification.unrestricted();
+        }
+
+        List<String> normalized = statusNames.stream()
+                .map(RequestSpecification::normalizeIgnoreCase)
+                .toList();
+
+        return (root, query, criteriaBuilder) -> {
+            Join<Request, Status> statusJoin =
+                    root.join("status", JoinType.INNER);
+
+            Path<String> name = statusJoin.get("name");
+
+            return criteriaBuilder.lower(name).in(normalized);
         };
     }
 

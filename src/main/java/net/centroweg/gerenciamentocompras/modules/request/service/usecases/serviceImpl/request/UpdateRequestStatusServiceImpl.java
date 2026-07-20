@@ -1,5 +1,13 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.NotificationService;
@@ -15,16 +23,8 @@ import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestS
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.CompradorRequestAccessValidator;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
-import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +56,7 @@ public class UpdateRequestStatusServiceImpl {
                 .orElseThrow(StatusNotFoundException::new);
 
         boolean isRefused = isStatus(newStatus, REFUSED_STATUS);
+        boolean isApproved = isStatus(newStatus, APPROVED_STATUS);
 
         Status previousStatus = request.getStatus();
         Long previousStatusId = previousStatus != null ? previousStatus.getId() : null;
@@ -68,6 +69,13 @@ public class UpdateRequestStatusServiceImpl {
 
         if (justification != null) {
             request.setFeedback(justification);
+        }
+
+        // Aprovar/recusar pela lista decide a solicitação inteira num clique só, sem passar
+        // pela tela de item a item — sem isso os itens ficariam presos em "Aguardando
+        // aprovação" pra sempre, incoerentes com o status já finalizado da solicitação.
+        if (isApproved || isRefused) {
+            cascadeStatusToItems(request, newStatus);
         }
 
         Request savedRequest = requestRepository.save(request);
@@ -89,33 +97,14 @@ public class UpdateRequestStatusServiceImpl {
         return requestMapper.toDTO(savedRequest);
     }
 
-    private void notifyRequester(Request request, boolean approved, String justification) {
-        String title = approved
-                ? "Solicitação aprovada"
-                : "Solicitação recusada";
-
-        String message;
-        if (approved) {
-            message = "A sua solicitação #" + request.getId() + " foi aprovada.";
-        } else {
-            message = "A sua solicitação #" + request.getId() + " foi recusada.";
-            if (StringUtils.hasText(justification)) {
-                message += " Justificativa: " + justification;
-            }
-        }
-
-        for (User requester : request.getCreatedByUsers()) {
-            notificationService.createNotification(new NotificationRequest(
-                    title,
-                    message,
-                    requester.getId(),
-                    request.getId()
-            ));
-        }
-    }
 
     private boolean isStatus(Status status, String expectedStatus) {
         return status.getName() != null
                 && status.getName().trim().equalsIgnoreCase(expectedStatus);
+    }
+
+    private void cascadeStatusToItems(Request request, Status status) {
+        request.getItemRequestProducts().forEach(item -> item.setStatus_id(status));
+        request.getItemRequestProvisions().forEach(item -> item.setStatus(status));
     }
 }

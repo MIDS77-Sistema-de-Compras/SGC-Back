@@ -1,5 +1,10 @@
 package net.centroweg.gerenciamentocompras.shared.audit.service.usecases.serviceImpl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.shared.audit.domain.entity.AuditLog;
 import net.centroweg.gerenciamentocompras.shared.audit.infrastructure.persistence.AuditLogRepository;
@@ -7,12 +12,6 @@ import net.centroweg.gerenciamentocompras.shared.audit.infrastructure.specificat
 import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.request.AuditLogFilterRequest;
 import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.response.AuditLogDTOResponse;
 import net.centroweg.gerenciamentocompras.shared.audit.service.mapper.AuditLogMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

@@ -1,20 +1,23 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.functionality;
 
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
-import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchFilterRequest;
-import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
-import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapper;
+import java.util.Collections;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
+import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchFilterRequest;
+import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
+import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapper;
 
-import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.*;
+import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.crCodeContain;
+import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.crNameContain;
+import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.crResponsibleNameIn;
 
 /**
  * Caso de uso responsável por listar todos os vínculos entre CR e filial.

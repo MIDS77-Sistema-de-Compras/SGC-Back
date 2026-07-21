@@ -65,7 +65,7 @@ public class CreateCrBranch {
             users = userPublicApi.findUsersByIds(request.responsibleUsersId());
         }
 
-        validateCrBranchResponsibles.validate(users);
+        validateCrBranchResponsibles.validate(cr, users);
 
         CrBranch crBranch = crBranchMapper.toEntity(branch, cr, users);
         crBranchRepository.save(crBranch);

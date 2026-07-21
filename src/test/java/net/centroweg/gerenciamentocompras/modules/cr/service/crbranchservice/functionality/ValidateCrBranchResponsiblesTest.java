@@ -1,6 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.functionality;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.InvalidCrBranchResponsibleRoleException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.InvalidCrMasterResponsibleException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.MaxActiveSupervisorsException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.MaxCrBranchCoordinatorsException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
@@ -70,6 +72,48 @@ class ValidateCrBranchResponsiblesTest {
     @DisplayName("Deve aceitar um coordenador")
     void shouldAcceptOneCoordinator() {
         assertDoesNotThrow(() -> validator.validate(List.of(user(Authorities.COORDENADOR, true))));
+    }
+
+    @Test
+    @DisplayName("CR Master deve aceitar exatamente um coordenador ativo")
+    void shouldAcceptOneActiveCoordinatorForMasterCr() {
+        Cr masterCr = new Cr("CR Master", "9999", true);
+
+        assertDoesNotThrow(() -> validator.validate(
+                masterCr,
+                List.of(user(Authorities.COORDENADOR, true))
+        ));
+    }
+
+    @Test
+    @DisplayName("CR Master não deve aceitar supervisor")
+    void shouldRejectSupervisorForMasterCr() {
+        Cr masterCr = new Cr("CR Master", "9999", true);
+
+        assertThrows(InvalidCrMasterResponsibleException.class, () -> validator.validate(
+                masterCr,
+                List.of(user(Authorities.SUPERVISOR, true))
+        ));
+    }
+
+    @Test
+    @DisplayName("CR Master não deve aceitar coordenador inativo")
+    void shouldRejectInactiveCoordinatorForMasterCr() {
+        Cr masterCr = new Cr("CR Master", "9999", true);
+
+        assertThrows(InvalidCrMasterResponsibleException.class, () -> validator.validate(
+                masterCr,
+                List.of(user(Authorities.COORDENADOR, false))
+        ));
+    }
+
+    @Test
+    @DisplayName("CR Master deve exigir um coordenador")
+    void shouldRequireCoordinatorForMasterCr() {
+        Cr masterCr = new Cr("CR Master", "9999", true);
+
+        assertThrows(InvalidCrMasterResponsibleException.class,
+                () -> validator.validate(masterCr, List.of()));
     }
 
     @Test

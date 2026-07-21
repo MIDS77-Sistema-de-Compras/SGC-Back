@@ -1,7 +1,9 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.functionality;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.InvalidCrBranchResponsibleRoleException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.InvalidCrMasterResponsibleException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.MaxActiveSupervisorsException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.MaxCrBranchCoordinatorsException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
@@ -159,6 +161,19 @@ class AssignCrBranchResponsibleTest {
         assignCrBranchResponsible.assignCrBranchResponsible(30L, 10L);
 
         assertThat(crBranch.getResponsibleUsers()).containsExactly(supervisor);
+        verify(crBranchRepository, never()).save(crBranch);
+    }
+
+    @Test
+    void shouldRejectSupervisorForMasterCr() {
+        crBranch.setCr(new Cr("CR Master", "9999", true));
+        User supervisor = user(10L, Authorities.SUPERVISOR, true);
+        when(userPublicApi.findUserById(10L)).thenReturn(Optional.of(supervisor));
+
+        assertThrows(InvalidCrMasterResponsibleException.class,
+                () -> assignCrBranchResponsible.assignCrBranchResponsible(30L, 10L));
+
+        assertThat(crBranch.getResponsibleUsers()).isEmpty();
         verify(crBranchRepository, never()).save(crBranch);
     }
 

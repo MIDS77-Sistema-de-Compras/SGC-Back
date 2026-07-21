@@ -13,7 +13,7 @@ public class RequestStatusChangedEventListener {
 
     private final HandleRequestStatusChangedNotificationUseCase useCase;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onRequestStatusChanged(RequestStatusChangedEvent event) {
         useCase.handle(event);
     }

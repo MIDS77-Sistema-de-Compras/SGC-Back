@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,5 +69,18 @@ class UserPublicApiImplTest {
 
         verify(changeUserActivationStatus).changeActivationStatusFromPublicApi(10L, false);
         verifyNoInteractions(userRepository);
+    }
+
+    @Test
+    void shouldReturnOnlyIdsOfActiveBuyers() {
+        User firstBuyer = new User();
+        firstBuyer.setId(20L);
+        User secondBuyer = new User();
+        secondBuyer.setId(21L);
+        when(userRepository.findByRole_NameIgnoreCaseAndActiveTrueAndDeletedFalse("COMPRADOR"))
+                .thenReturn(List.of(firstBuyer, secondBuyer));
+
+        assertThat(publicApi.findActiveUserIdsByRole("COMPRADOR"))
+                .containsExactly(20L, 21L);
     }
 }

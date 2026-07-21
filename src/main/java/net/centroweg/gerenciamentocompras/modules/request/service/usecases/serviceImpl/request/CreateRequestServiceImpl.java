@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
@@ -80,6 +82,17 @@ public class CreateRequestServiceImpl {
 
         if (isSupervisor) {
             eventPublisher.publishEvent(new RequestApprovedEvent(savedRequest.getId()));
+            eventPublisher.publishEvent(new RequestStatusChangedEvent(
+                    savedRequest.getId(),
+                    null,
+                    null,
+                    status.getId(),
+                    status.getName(),
+                    null,
+                    requester.getId(),
+                    requester.getName(),
+                    LocalDateTime.now()
+            ));
         }
 
         if (crBranch.getResponsibleUsers() != null) {

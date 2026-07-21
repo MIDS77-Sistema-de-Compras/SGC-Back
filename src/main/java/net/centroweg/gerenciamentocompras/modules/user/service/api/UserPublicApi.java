@@ -15,6 +15,7 @@ public interface UserPublicApi {
     Optional<User> findByEmail(String email);
     Optional<User> findByEmailOrCpf(String email, String cpf);
     List<UserNotificationData> findNotificationDataByIds(Collection<Long> userIds);
+    List<Long> findActiveUserIdsByRole(String roleName);
     Optional<User> findUserById(Long id);
     List<User> findUsersByIds(Collection<Long> ids);
     Optional<UserSummaryPublicResponse> findUserSummaryById(Long id);

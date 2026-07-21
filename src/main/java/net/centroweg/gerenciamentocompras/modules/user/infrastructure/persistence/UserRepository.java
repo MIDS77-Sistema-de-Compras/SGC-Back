@@ -38,6 +38,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return uma lista de usuário dos quais o nome correspondem a pesquisa.
      */
     List<User> findByNameIgnoringCase(String name);
+    List<User> findByRole_NameIgnoreCaseAndActiveTrueAndDeletedFalse(String roleName);
     Boolean existsByEmail(String email);
     Boolean existsByCpf(String cpf);
     Optional<User> findByName(String name);

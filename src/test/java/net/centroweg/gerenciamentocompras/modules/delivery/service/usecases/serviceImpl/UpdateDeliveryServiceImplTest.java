@@ -13,6 +13,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import org.mockito.Mock;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -48,6 +50,9 @@ class UpdateDeliveryServiceImplTest {
     @Mock
     private DeliveryItemResolver deliveryItemResolver;
 
+    @Mock
+    private CompleteRequestOnDeliveryStatusServiceImpl completeRequestOnDeliveryStatusService;
+
     private UpdateDeliveryServiceImpl service;
     private Request request;
     private Status status;
@@ -62,7 +67,8 @@ class UpdateDeliveryServiceImplTest {
                 statusPublicApi,
                 new DeliveryReceiverValidator(userPublicApi),
                 deliveryItemResolver,
-                new DeliveryMapper()
+                new DeliveryMapper(),
+                completeRequestOnDeliveryStatusService
         );
         request = request();
         status = status();
@@ -86,6 +92,7 @@ class UpdateDeliveryServiceImplTest {
 
         assertThat(response.deliveryLocation()).isEqualTo("Almoxarifado");
         assertThat(response.receivers()).hasSize(2);
+        verify(completeRequestOnDeliveryStatusService).apply(delivery);
     }
 
     @Test
@@ -116,6 +123,7 @@ class UpdateDeliveryServiceImplTest {
                 .first()
                 .extracting("confirmed")
                 .isEqualTo(false);
+        verify(completeRequestOnDeliveryStatusService).apply(delivery);
     }
 
     @Test
@@ -126,5 +134,6 @@ class UpdateDeliveryServiceImplTest {
 
         assertThatThrownBy(() -> service.update(100L, updateRequest(List.of(1L, 2L))))
                 .isInstanceOf(DeliveryAlreadyInactiveException.class);
+        verifyNoInteractions(completeRequestOnDeliveryStatusService);
     }
 }

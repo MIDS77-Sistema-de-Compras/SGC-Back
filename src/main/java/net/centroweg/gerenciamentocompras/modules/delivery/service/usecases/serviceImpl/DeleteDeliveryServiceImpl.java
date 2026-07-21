@@ -17,6 +17,7 @@ public class DeleteDeliveryServiceImpl {
 
     private final DeliveryRepository deliveryRepository;
     private final StatusPublicApi statusPublicApi;
+    private final CompleteRequestOnDeliveryStatusServiceImpl completeRequestOnDeliveryStatusService;
 
     @Transactional
     public void delete(Long id) {
@@ -27,6 +28,7 @@ public class DeleteDeliveryServiceImpl {
         delivery.setActive(false);
         applyCancelledStatus(delivery);
         deliveryRepository.save(delivery);
+        completeRequestOnDeliveryStatusService.apply(delivery);
     }
 
     private void ensureActive(Delivery delivery) {

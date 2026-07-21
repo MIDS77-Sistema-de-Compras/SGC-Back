@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -40,6 +41,7 @@ class ConfirmDeliveryReceiverServiceImplTest {
     @Mock DeliveryRepository deliveryRepository;
     @Mock StatusPublicApi statusPublicApi;
     @Mock CurrentUserService currentUserService;
+    @Mock CompleteRequestOnDeliveryStatusServiceImpl completeRequestOnDeliveryStatusService;
 
     private ConfirmDeliveryReceiverServiceImpl service;
     private Status pending;
@@ -49,7 +51,8 @@ class ConfirmDeliveryReceiverServiceImplTest {
     @BeforeEach
     void setUp() {
         service = new ConfirmDeliveryReceiverServiceImpl(
-                deliveryRepository, statusPublicApi, currentUserService, new DeliveryMapper());
+                deliveryRepository, statusPublicApi, currentUserService, new DeliveryMapper(),
+                completeRequestOnDeliveryStatusService);
         pending = status();
         first = user(1L, "Primeiro", true);
         second = user(2L, "Segundo", true);
@@ -69,6 +72,7 @@ class ConfirmDeliveryReceiverServiceImplTest {
         assertThat(response.receivers().getFirst().confirmedAt()).isNotNull();
         assertThat(response.receivers().getFirst().observation()).isEqualTo("conferido");
         assertThat(delivery.getDeliveredAt()).isNull();
+        verify(completeRequestOnDeliveryStatusService).apply(delivery);
     }
 
     @Test
@@ -84,6 +88,7 @@ class ConfirmDeliveryReceiverServiceImplTest {
         assertThat(response.statusName()).isEqualTo("Entregue");
         assertThat(response.deliveredAt()).isEqualTo(response.receivers().get(1).confirmedAt());
         assertThat(response.receivers()).allMatch(value -> Boolean.TRUE.equals(value.confirmed()));
+        verify(completeRequestOnDeliveryStatusService).apply(delivery);
     }
 
     @Test
@@ -102,6 +107,7 @@ class ConfirmDeliveryReceiverServiceImplTest {
         assertThat(delivery.getReceivers().getFirst().getConfirmedAt()).isEqualTo(original);
         assertThat(delivery.getReceivers().getFirst().getObservation()).isEqualTo("original");
         verify(deliveryRepository, never()).save(any());
+        verifyNoInteractions(completeRequestOnDeliveryStatusService);
     }
 
     @Test
@@ -115,6 +121,7 @@ class ConfirmDeliveryReceiverServiceImplTest {
                 .isInstanceOf(DeliveryStatusNotFoundException.class);
         assertThat(delivery.getReceivers().get(1).getConfirmed()).isFalse();
         assertThat(delivery.getDeliveredAt()).isNull();
+        verifyNoInteractions(completeRequestOnDeliveryStatusService);
     }
 
     @Test

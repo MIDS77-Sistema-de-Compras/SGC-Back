@@ -33,6 +33,7 @@ public class ConfirmDeliveryReceiverServiceImpl {
     private final StatusPublicApi statusPublicApi;
     private final CurrentUserService currentUserService;
     private final DeliveryMapper deliveryMapper;
+    private final CompleteRequestOnDeliveryStatusServiceImpl completeRequestOnDeliveryStatusService;
 
     @Transactional
     public DeliveryResponse confirmReceiver(Long deliveryId, Long userId, ConfirmDeliveryReceiverRequest request) {
@@ -75,7 +76,9 @@ public class ConfirmDeliveryReceiverServiceImpl {
             }
         }
 
-        return deliveryMapper.toDTO(deliveryRepository.save(delivery));
+        Delivery savedDelivery = deliveryRepository.save(delivery);
+        completeRequestOnDeliveryStatusService.apply(savedDelivery);
+        return deliveryMapper.toDTO(savedDelivery);
     }
 
     private void ensureActive(Delivery delivery) {

@@ -99,7 +99,7 @@ public class CreateRequestServiceImpl {
                 notificationService.createNotification(new NotificationRequest(
                         "Nova solicitação vinculada ao seu CR",
                         "Ha uma nova solicitacao vinculada ao seu CR " + crBranch.getCr().getName() + ".",
-                        NotificationType.SOLICITACAO_VINCULADA_CR,
+                        NotificationType.SOLICITACAO_VINCULADA_CR.toString(),
                         responsible.getId(),
                         savedRequest.getId()
                 ));

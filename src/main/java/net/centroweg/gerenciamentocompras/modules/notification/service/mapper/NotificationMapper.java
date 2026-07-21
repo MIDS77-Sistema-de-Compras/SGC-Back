@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.mapper;
 import org.springframework.stereotype.Component;
 
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 
@@ -13,7 +14,7 @@ public class NotificationMapper {
         Notification notification = new Notification();
         notification.setTitle(request.title());
         notification.setMessage(request.message());
-        notification.setNotificationType(request.notificationType());
+        notification.setNotificationType(NotificationType.valueOf(request.notificationType()));
         notification.setUserId(request.userId());
         notification.setRequestId(request.requestId());
         return notification;

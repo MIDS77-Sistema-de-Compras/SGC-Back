@@ -13,5 +13,22 @@ public enum NotificationType {
     SOLICITACAO_VINCULADA_CR("SOLICITACAO_VINCULADA_CR"),
     NOTIFICACAO_TESTE ("NOTIFICACAO_TESTE"); // apenas para casos de testes
 
-    NotificationType(String name) {}
+    /**
+     * Valor textual do tipo, usado ao expor a notificação nos DTOs de request/response.
+     */
+    private final String value;
+
+    NotificationType(String value) {
+        this.value = value;
+    }
+
+    /**
+     * Retorna o valor textual do tipo de notificação.
+     *
+     * @return o valor textual associado a este tipo
+     */
+    @Override
+    public String toString() {
+        return value;
+    }
 }

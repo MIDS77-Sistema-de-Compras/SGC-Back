@@ -147,7 +147,12 @@
 			<artifactId>bucket4j_jdk17-core</artifactId>
 			<version>8.13.0</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

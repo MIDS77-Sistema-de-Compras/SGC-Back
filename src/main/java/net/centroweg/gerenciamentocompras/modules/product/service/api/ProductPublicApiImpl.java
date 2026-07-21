@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
 import net.centroweg.gerenciamentocompras.modules.product.service.CreateProductService;
+import net.centroweg.gerenciamentocompras.shared.util.NameNormalizer;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -29,7 +30,7 @@ public class ProductPublicApiImpl implements ProductPublicApi {
 
     @Override
     public Optional<Product> findByNameIgnoreCase(String name) {
-        return productRepository.findByNameIgnoreCase(name);
+        return productRepository.findByNameIgnoreCase(NameNormalizer.normalize(name));
     }
 
     @Override

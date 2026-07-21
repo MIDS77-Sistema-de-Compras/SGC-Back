@@ -96,6 +96,31 @@ public class ProductIntegrationTest {
     }
 
     @Test
+    @DisplayName("[Integração] Deve normalizar o nome e rejeitar duplicidade com HTTP 409")
+    void shouldNormalizeNameAndRejectDuplicate() throws Exception {
+        CreateProductRequest first = new CreateProductRequest(
+                "  Notebook   Dell  ", "Descrição", 100.0, "Tipo", "COD-NOTE-01"
+        );
+        CreateProductRequest duplicate = new CreateProductRequest(
+                "notebook dell", "Descrição", 100.0, "Tipo", "COD-NOTE-02"
+        );
+
+        mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(first)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Notebook Dell"));
+
+        mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(duplicate)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Já existe um produto cadastrado com esse nome."));
+
+        assertEquals(1, productRepository.count());
+    }
+
+    @Test
     @DisplayName("[Integração] Deve retornar 400 (Bad Request) ao criar produto inválido")
     void shouldReturnBadRequestWhenCreatingInvalidProduct() throws Exception {
         CreateProductRequest request = new CreateProductRequest(

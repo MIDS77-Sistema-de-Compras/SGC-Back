@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,13 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 @Getter
 @Setter
 @Entity
+@Table(
+        name = "item_request_product",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uq_item_request_product_request_product",
+                columnNames = {"request_id", "product_id"}
+        )
+)
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemRequestProduct {

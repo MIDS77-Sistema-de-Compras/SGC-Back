@@ -10,7 +10,13 @@ import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 
 @Entity
-@Table(name = "item_request_service")
+@Table(
+        name = "item_request_service",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uq_item_request_service_request_provision",
+                columnNames = {"request_id", "provision_id"}
+        )
+)
 @AllArgsConstructor
 @RequiredArgsConstructor
 @NoArgsConstructor

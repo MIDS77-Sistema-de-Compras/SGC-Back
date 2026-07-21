@@ -17,6 +17,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestProvisionItemNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
@@ -27,9 +28,11 @@ import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestI
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.irprovision.ItemRequestProvisionMapper;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditInfo;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.shared.persistence.UniqueConstraintViolationDetector;
 import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +66,14 @@ public class UpdateItemRequestProvisionServiceImpl {
         Provision provision = provisionPublicApi.findById(requestDto.provisionId())
             .orElseThrow(() -> new ProvisionNotFoundException());
 
+        if (itemRequestProvisionRepository.existsByRequestIdAndProvisionIdAndIdNot(
+                originalRequest.getId(),
+                provision.getId(),
+                itemId
+        )) {
+            throw new ItemRequestProvisionAlreadyExistsException();
+        }
+
         Status status = statusRepository.findById(requestDto.statusId())
             .orElseThrow(() -> new StatusNotFoundException());
 
@@ -76,7 +87,19 @@ public class UpdateItemRequestProvisionServiceImpl {
             item.setAdditionalInformation(requestDto.additionalInformation().trim());
         }
 
-        ItemRequestProvision saved = itemRequestProvisionRepository.save(item);
+        ItemRequestProvision saved;
+        try {
+            saved = itemRequestProvisionRepository.save(item);
+            itemRequestProvisionRepository.flush();
+        } catch (DataIntegrityViolationException exception) {
+            if (UniqueConstraintViolationDetector.isConstraintViolation(
+                    exception,
+                    "uq_item_request_service_request_provision"
+            )) {
+                throw new ItemRequestProvisionAlreadyExistsException();
+            }
+            throw exception;
+        }
         if (statusChanged) {
             eventPublisher.publishEvent(new ItemStatusChangedEvent(
                     originalRequest.getId(),

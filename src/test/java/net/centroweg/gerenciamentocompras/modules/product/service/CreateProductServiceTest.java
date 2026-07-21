@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
@@ -59,5 +60,19 @@ class CreateProductServiceTest {
         assertEquals("COD01", response.code());
 
         verify(productRepository, times(1)).save(any(Product.class));
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar nome normalizado duplicado sem salvar")
+    void mustRejectDuplicateNormalizedNameWithoutSaving() {
+        CreateProductRequest request = new CreateProductRequest(
+                "  Notebook   Dell  ", "Descrição", 10.0, "Tipo", "COD02"
+        );
+        when(productRepository.existsByNameIgnoreCase("Notebook Dell")).thenReturn(true);
+
+        assertThrows(ProductAlreadyExistsException.class, () -> createProductService.execute(request));
+
+        verify(productRepository).existsByNameIgnoreCase("Notebook Dell");
+        verify(productRepository, never()).save(any(Product.class));
     }
 }

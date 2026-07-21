@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
@@ -17,7 +18,10 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
+import net.centroweg.gerenciamentocompras.shared.persistence.UniqueConstraintViolationDetector;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ public class CreateRequestProductService {
     private final ItemRequestProductMapper itemRequestProductMapper;
     private final RequestPublicApi requestPublicApi;
 
+    @Transactional
     public ItemRequestProductResponse create(ItemRequestProductRequest dto) {
 
         Request request = requestRepository.findById(dto.requestId())
@@ -36,6 +41,10 @@ public class CreateRequestProductService {
 
         Product product = requestPublicApi.findProuctByNameIgnoreCase(dto.productName())
                 .orElseThrow(ProductNotFoundException::new);
+
+        if (itemRequestProductRepository.existsByRequestIdAndProductId(request.getId(), product.getId())) {
+            throw new ItemRequestProductAlreadyExistsException();
+        }
 
         MeasurementUnit measurementUnit = requestPublicApi.findMeasurementByNameIgnoreCase(dto.measurementUnit())
                 .orElseThrow(MeasurementUnitNotFoundException::new);
@@ -51,6 +60,18 @@ public class CreateRequestProductService {
                 status
         );
 
-        return itemRequestProductMapper.toResponse(itemRequestProductRepository.save(itemRequestProduct));
+        try {
+            ItemRequestProduct savedItem = itemRequestProductRepository.save(itemRequestProduct);
+            itemRequestProductRepository.flush();
+            return itemRequestProductMapper.toResponse(savedItem);
+        } catch (DataIntegrityViolationException exception) {
+            if (UniqueConstraintViolationDetector.isConstraintViolation(
+                    exception,
+                    "uq_item_request_product_request_product"
+            )) {
+                throw new ItemRequestProductAlreadyExistsException();
+            }
+            throw exception;
+        }
     }
 }

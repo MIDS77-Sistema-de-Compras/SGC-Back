@@ -6,6 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
@@ -170,6 +171,19 @@ class UpdateItemRequestProvisionServiceImplTest {
         verify(itemRepository, never()).save(any());
         verify(eventPublisher, never()).publishEvent(any());
         assertThat(item.getRequest()).isSameAs(request);
+    }
+
+    @Test
+    void shouldRejectUpdateToProvisionAlreadyPresentInRequest() {
+        when(itemRepository.findById(99L)).thenReturn(Optional.of(item));
+        when(currentUserService.getCurrentUser()).thenReturn(currentUser);
+        when(provisionPublicApi.findById(20L)).thenReturn(Optional.of(provision));
+        when(itemRepository.existsByRequestIdAndProvisionIdAndIdNot(10L, 20L, 99L)).thenReturn(true);
+
+        assertThrows(ItemRequestProvisionAlreadyExistsException.class, () -> service.updateItem(99L, requestDto(2L)));
+
+        verify(itemRepository, never()).save(any());
+        verify(eventPublisher, never()).publishEvent(any());
     }
 
     private void arrangeSuccessfulUpdate(Status status) {

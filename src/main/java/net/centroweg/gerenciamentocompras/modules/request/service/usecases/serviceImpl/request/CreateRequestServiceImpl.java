@@ -1,11 +1,15 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
@@ -20,12 +24,16 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.exception.Measu
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.InsufficientProvisionDataException;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.service.api.ProvisionPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestProductItemRequest;
@@ -39,6 +47,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
+import net.centroweg.gerenciamentocompras.shared.persistence.UniqueConstraintViolationDetector;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +67,7 @@ public class CreateRequestServiceImpl {
     private final ProvisionPublicApi provisionPublicApi;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
 
         User requester = userPublicApi.findByEmail(userPrincipal.getUsername())
@@ -88,7 +98,25 @@ public class CreateRequestServiceImpl {
         addProductItems(request, requestToSave, status);
         addProvisionItems(request, requestToSave, status);
 
-        Request savedRequest = requestRepository.save(requestToSave);
+        Request savedRequest;
+        try {
+            savedRequest = requestRepository.save(requestToSave);
+            requestRepository.flush();
+        } catch (DataIntegrityViolationException exception) {
+            if (UniqueConstraintViolationDetector.isConstraintViolation(
+                    exception,
+                    "uq_item_request_product_request_product"
+            )) {
+                throw new ItemRequestProductAlreadyExistsException();
+            }
+            if (UniqueConstraintViolationDetector.isConstraintViolation(
+                    exception,
+                    "uq_item_request_service_request_provision"
+            )) {
+                throw new ItemRequestProvisionAlreadyExistsException();
+            }
+            throw exception;
+        }
 
         if (isSupervisor) {
             eventPublisher.publishEvent(new RequestApprovedEvent(savedRequest.getId()));
@@ -112,8 +140,12 @@ public class CreateRequestServiceImpl {
             return;
         }
 
+        Set<Long> addedProductIds = new HashSet<>();
         for (RequestProductItemRequest productRequest : request.products()) {
             Product product = findOrCreateProduct(productRequest);
+            if (!addedProductIds.add(product.getId())) {
+                throw new ItemRequestProductAlreadyExistsException();
+            }
             MeasurementUnit measurementUnit = requestPublicApi.findMeasurementByNameIgnoreCase(productRequest.measurementUnit())
                     .orElseThrow(MeasurementUnitNotFoundException::new);
 
@@ -148,8 +180,12 @@ public class CreateRequestServiceImpl {
             return;
         }
 
+        Set<Long> addedProvisionIds = new HashSet<>();
         for (RequestProvisionItemRequest provisionRequest : request.provisions()) {
             Provision provision = findOrCreateProvision(provisionRequest);
+            if (!addedProvisionIds.add(provision.getId())) {
+                throw new ItemRequestProvisionAlreadyExistsException();
+            }
 
             ItemRequestProvision item = new ItemRequestProvision(
                     requestToSave,
@@ -164,7 +200,7 @@ public class CreateRequestServiceImpl {
     private Provision findOrCreateProvision(RequestProvisionItemRequest provisionRequest) {
         if (provisionRequest.provisionId() != null) {
             return provisionPublicApi.findById(provisionRequest.provisionId())
-                    .orElseGet(() -> createProvision(provisionRequest));
+                    .orElseThrow(ProvisionNotFoundException::new);
         }
 
         return createProvision(provisionRequest);
@@ -173,6 +209,10 @@ public class CreateRequestServiceImpl {
     private Provision createProvision(RequestProvisionItemRequest provisionRequest) {
         if (!hasProvisionCreationData(provisionRequest)) {
             throw new InsufficientProvisionDataException();
+        }
+
+        if (provisionPublicApi.findByNameIgnoreCase(provisionRequest.name()).isPresent()) {
+            throw new ProvisionAlreadyExistsException();
         }
 
         return provisionPublicApi.createProvision(

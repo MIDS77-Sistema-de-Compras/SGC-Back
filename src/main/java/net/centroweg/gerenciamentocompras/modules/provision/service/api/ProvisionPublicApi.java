@@ -20,6 +20,14 @@ public interface ProvisionPublicApi {
     Optional<Provision> findById(Long id);
 
     /**
+     * Busca uma provisão pelo nome normalizado, sem diferenciar maiúsculas de minúsculas.
+     *
+     * @param name nome da provisão
+     * @return a provisão, se existir
+     */
+    Optional<Provision> findByNameIgnoreCase(String name);
+
+    /**
      * Cria e persiste uma nova provisão a partir dos dados informados.
      *
      * @param name        nome da provisão

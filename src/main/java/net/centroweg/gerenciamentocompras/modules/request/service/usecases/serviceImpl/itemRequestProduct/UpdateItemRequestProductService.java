@@ -16,6 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
@@ -31,7 +32,9 @@ import net.centroweg.gerenciamentocompras.modules.request.service.validator.Requ
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditInfo;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
+import net.centroweg.gerenciamentocompras.shared.persistence.UniqueConstraintViolationDetector;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @Service
 @RequiredArgsConstructor
@@ -67,6 +70,14 @@ public class UpdateItemRequestProductService {
                 requestPublicApi.findProuctByNameIgnoreCase(dto.productName())
                         .orElseThrow(()-> new ProductNotFoundException());
 
+        if (itemRequestProductRepository.existsByRequestIdAndProductIdAndIdNot(
+                request.getId(),
+                product.getId(),
+                id
+        )) {
+            throw new ItemRequestProductAlreadyExistsException();
+        }
+
         MeasurementUnit measurementUnit =
                 requestPublicApi
                         .findMeasurementByNameIgnoreCase(dto.measurementUnit())
@@ -86,7 +97,19 @@ public class UpdateItemRequestProductService {
         itemRequestProduct.setStatus_id(status);
         itemRequestProduct.setAdditionalInformations(dto.additionalInformations());
 
-        ItemRequestProduct saved = itemRequestProductRepository.save(itemRequestProduct);
+        ItemRequestProduct saved;
+        try {
+            saved = itemRequestProductRepository.save(itemRequestProduct);
+            itemRequestProductRepository.flush();
+        } catch (DataIntegrityViolationException exception) {
+            if (UniqueConstraintViolationDetector.isConstraintViolation(
+                    exception,
+                    "uq_item_request_product_request_product"
+            )) {
+                throw new ItemRequestProductAlreadyExistsException();
+            }
+            throw exception;
+        }
         if (statusChanged) {
             eventPublisher.publishEvent(new ItemStatusChangedEvent(
                     request.getId(),

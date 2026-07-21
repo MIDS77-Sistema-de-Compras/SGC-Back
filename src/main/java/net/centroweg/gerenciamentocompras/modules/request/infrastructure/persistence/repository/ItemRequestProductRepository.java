@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemRequestProductRepository extends JpaRepository<ItemRequestProduct, Long> {
 
+    boolean existsByRequestIdAndProductId(Long requestId, Long productId);
 
+    boolean existsByRequestIdAndProductIdAndIdNot(Long requestId, Long productId, Long id);
 }

@@ -71,6 +71,7 @@ class MonitorItemStatusChangedIntegrationTest {
     private Status rejected;
     private Status mixedStatus; // PARCIALMENTE_ATENDIDA
     private Product product;
+    private Product secondProduct;
     private MeasurementUnit unit;
 
     @BeforeEach
@@ -89,6 +90,7 @@ class MonitorItemStatusChangedIntegrationTest {
         mixedStatus = statusRepository.save(new Status("PARCIALMENTE_ATENDIDA", "Status para itens com status divergentes"));
 
         product = productRepository.save(new Product(null, "Produto Teste", "Descrição", 10.0, "TIPO", "PRD-001"));
+        secondProduct = productRepository.save(new Product(null, "Segundo Produto", "Descrição", 10.0, "TIPO", "PRD-002"));
         unit = measurementUnitRepository.save(new MeasurementUnit("Unidade", "UN"));
     }
 
@@ -103,7 +105,7 @@ class MonitorItemStatusChangedIntegrationTest {
         // dado: solicitação com dois itens, ambos com status PENDENTE
         Request request = saveRequest(pending);
         ItemRequestProduct item1 = saveItemRequestProduct(request, product, unit, pending);
-        ItemRequestProduct item2 = saveItemRequestProduct(request, product, unit, pending);
+        ItemRequestProduct item2 = saveItemRequestProduct(request, secondProduct, unit, pending);
 
         // quando: status do primeiro item muda para APROVADO (persistimos a alteração)
         updateItemStatus(item1, approved);
@@ -128,7 +130,7 @@ class MonitorItemStatusChangedIntegrationTest {
         // dado: solicitação com dois itens, ambos com status PENDENTE
         Request request = saveRequest(pending);
         ItemRequestProduct item1 = saveItemRequestProduct(request, product, unit, pending);
-        ItemRequestProduct item2 = saveItemRequestProduct(request, product, unit, pending);
+        ItemRequestProduct item2 = saveItemRequestProduct(request, secondProduct, unit, pending);
 
         // quando: status do primeiro item muda para APROVADO, segundo permanece PENDENTE
         updateItemStatus(item1, approved);
@@ -155,7 +157,7 @@ class MonitorItemStatusChangedIntegrationTest {
 
         Request request = saveRequest(pending);
         ItemRequestProduct item1 = saveItemRequestProduct(request, product, unit, pending);
-        ItemRequestProduct item2 = saveItemRequestProduct(request, product, unit, pending);
+        ItemRequestProduct item2 = saveItemRequestProduct(request, secondProduct, unit, pending);
 
         // Fazer os itens ficarem com status diferentes -> necessidade de PARCIALMENTE_ATENDIDA
         updateItemStatus(item1, approved);

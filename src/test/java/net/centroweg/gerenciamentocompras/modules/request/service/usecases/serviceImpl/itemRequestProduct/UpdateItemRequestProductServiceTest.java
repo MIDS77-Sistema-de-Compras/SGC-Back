@@ -6,6 +6,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
@@ -105,6 +106,19 @@ class UpdateItemRequestProductServiceTest {
         when(requestPublicApi.findProuctByNameIgnoreCase("Parafuso")).thenReturn(Optional.empty());
 
         assertThrows(ProductNotFoundException.class, () -> service.update(99L, requestDto("Entregue")));
+
+        verify(itemRepository, never()).save(any());
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
+    @Test
+    void shouldRejectUpdateToProductAlreadyPresentInRequest() {
+        when(itemRepository.findById(99L)).thenReturn(Optional.of(item));
+        when(requestRepository.findById(10L)).thenReturn(Optional.of(request));
+        when(requestPublicApi.findProuctByNameIgnoreCase("Parafuso")).thenReturn(Optional.of(product));
+        when(itemRepository.existsByRequestIdAndProductIdAndIdNot(10L, 20L, 99L)).thenReturn(true);
+
+        assertThrows(ItemRequestProductAlreadyExistsException.class, () -> service.update(99L, requestDto("Entregue")));
 
         verify(itemRepository, never()).save(any());
         verify(eventPublisher, never()).publishEvent(any());

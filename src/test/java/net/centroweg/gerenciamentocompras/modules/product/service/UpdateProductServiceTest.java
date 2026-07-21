@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.UpdateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
@@ -64,6 +65,7 @@ class UpdateProductServiceTest {
 
         verify(productRepository, times(1)).findById(productId);
         verify(productRepository, times(1)).save(existingProduct);
+        verify(productRepository).existsByNameIgnoreCaseAndIdNot("Produto Alterado", productId);
     }
 
     @Test
@@ -77,6 +79,22 @@ class UpdateProductServiceTest {
         assertThrows(ProductNotFoundException.class, () -> updateProductService.execute(productId, request));
 
         verify(productRepository, times(1)).findById(productId);
+        verify(productRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar atualizacao para o nome de outro produto sem salvar")
+    void mustRejectUpdateToNameUsedByAnotherProduct() {
+        Long productId = 1L;
+        Product existingProduct = Product.builder().id(productId).name("Produto A").build();
+        UpdateProductRequest request = new UpdateProductRequest(
+                "  produto   b  ", "Descrição", 15.0, "Tipo", "COD02"
+        );
+        when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
+        when(productRepository.existsByNameIgnoreCaseAndIdNot("produto b", productId)).thenReturn(true);
+
+        assertThrows(ProductAlreadyExistsException.class, () -> updateProductService.execute(productId, request));
+
         verify(productRepository, never()).save(any());
     }
 }

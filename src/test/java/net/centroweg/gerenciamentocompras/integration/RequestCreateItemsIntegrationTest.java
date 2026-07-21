@@ -40,6 +40,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
@@ -255,43 +256,25 @@ class RequestCreateItemsIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve criar Request e cadastrar servico quando servico nao existir")
-    void shouldCreateRequestAndProvisionWhenProvisionDoesNotExist() throws Exception {
-        String response = mockMvc.perform(post("/requests")
+    @DisplayName("Deve retornar erro quando provisionId informado nao existir")
+    void shouldRejectUnknownProvisionEvenWhenCreationDataIsSent() throws Exception {
+        mockMvc.perform(post("/requests")
                         .with(authentication(authAs(requester)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newProvisionRequestJson(99999L)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.products.length()").value(0))
-                .andExpect(jsonPath("$.provisions.length()").value(1))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isNotFound());
 
-        Long requestId = objectMapper.readTree(response).get("id").asLong();
-        Provision createdProvision = provisionRepository.findAll()
-                .stream()
-                .filter(savedProvision -> "Instalacao eletrica".equals(savedProvision.getName()))
-                .findFirst()
-                .orElseThrow();
-
-        assertEquals(2, provisionRepository.count());
-        assertEquals("Servico de instalacao eletrica", createdProvision.getDescription());
-        assertEquals(1, itemRequestProvisionRepository.findAllByRequestId(requestId).size());
-        assertEquals(createdProvision.getId(), itemRequestProvisionRepository.findAllByRequestId(requestId).get(0).getProvision().getId());
-        assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
-        verify(notificationEmailService).sendNotificationEmail(anyString(), anyString(), anyString(), anyString(), anyLong());
+        assertEquals(1, provisionRepository.count());
     }
 
     @Test
-    @DisplayName("Deve retornar erro quando servico nao existir e dados forem insuficientes")
+    @DisplayName("Deve retornar erro quando provisionId informado nao existir")
     void shouldRejectUnknownProvisionWithoutCreationData() throws Exception {
         mockMvc.perform(post("/requests")
                         .with(authentication(authAs(requester)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(provisionRequestJson(99999L)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Dados insuficientes para criar o servi\u00E7o."));
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -318,6 +301,72 @@ class RequestCreateItemsIntegrationTest {
         assertEquals(2, provisionRepository.count());
         assertEquals(1, itemRequestProvisionRepository.findAllByRequestId(requestId).size());
         assertEquals(createdProvision.getId(), itemRequestProvisionRepository.findAllByRequestId(requestId).get(0).getProvision().getId());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @DisplayName("Deve rejeitar produtos duplicados e fazer rollback da solicitacao completa")
+    void shouldRejectDuplicateProductsAndRollbackRequestCreation() throws Exception {
+        mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(requester)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "crBranchId": %d,
+                                    "userIds": [],
+                                    "products": [
+                                        {
+                                            "productName": "  Produto   temporario ",
+                                            "measurementUnit": "KG",
+                                            "quantity": 1,
+                                            "additionalInformations": "Primeiro item temporario"
+                                        },
+                                        {
+                                            "productName": "produto temporario",
+                                            "measurementUnit": "KG",
+                                            "quantity": 2,
+                                            "additionalInformations": "Segundo item temporario"
+                                        }
+                                    ],
+                                    "provisions": null
+                                }
+                                """.formatted(crBranch.getId())))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Este produto já foi adicionado à solicitação."));
+
+        assertEquals(0, requestRepository.count());
+        assertEquals(0, itemRequestProductRepository.count());
+        assertEquals(1, productRepository.count());
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar servico repetido na mesma solicitacao")
+    void shouldRejectDuplicateProvisionsInTheSameRequest() throws Exception {
+        mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(requester)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "crBranchId": %d,
+                                    "userIds": [],
+                                    "products": null,
+                                    "provisions": [
+                                        {
+                                            "provisionId": %d,
+                                            "additionalInformation": "Primeiro item de servico"
+                                        },
+                                        {
+                                            "provisionId": %d,
+                                            "additionalInformation": "Segundo item de servico"
+                                        }
+                                    ]
+                                }
+                                """.formatted(crBranch.getId(), provision.getId(), provision.getId())))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Este serviço já foi adicionado à solicitação."));
+
+        assertEquals(0, requestRepository.count());
+        assertEquals(0, itemRequestProvisionRepository.count());
     }
 
     private User saveUser(String name, String cpf, String email, String extension) {

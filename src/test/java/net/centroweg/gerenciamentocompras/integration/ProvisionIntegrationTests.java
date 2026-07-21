@@ -36,6 +36,7 @@ import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
 import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
 import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.controller.ProvisionController;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
@@ -107,6 +108,19 @@ class ProvisionIntegrationTests {
             .andExpect(jsonPath("$.description").value("Monthly office supplies provision"));
 
         verify(provisionService, times(1)).createProvision(any(ProvisionRequest.class));
+    }
+
+    @Test
+    @DisplayName("Create Provision Test - Should return 409 when name already exists")
+    void createProvision_shouldReturn409_whenNameAlreadyExists() throws Exception {
+        when(provisionService.createProvision(any(ProvisionRequest.class)))
+                .thenThrow(new ProvisionAlreadyExistsException());
+
+        mockMvc.perform(post("/provisions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validRequest)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Já existe um serviço cadastrado com esse nome."));
     }
 
     @Test

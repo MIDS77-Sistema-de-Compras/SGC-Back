@@ -1,6 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -12,11 +14,13 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.exception.Measu
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.InsufficientProvisionDataException;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.service.api.ProvisionPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestProductItemRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestProvisionItemRequest;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
@@ -96,8 +100,13 @@ public class RequestItemsAssembler {
     ) {
         if (provisions == null) return;
 
+        Set<Long> addedProvisionIds = new HashSet<>();
         for (RequestProvisionItemRequest provisionRequest : provisions) {
             Provision provision = findOrCreateProvision(provisionRequest);
+            if (!addedProvisionIds.add(provision.getId())) {
+                throw new ItemRequestProvisionAlreadyExistsException();
+            }
+
             ItemRequestProvision item = new ItemRequestProvision(
                     request,
                     provision,
@@ -110,10 +119,8 @@ public class RequestItemsAssembler {
 
     private Provision findOrCreateProvision(RequestProvisionItemRequest request) {
         if (request.provisionId() != null) {
-            Provision existing = provisionPublicApi.findById(request.provisionId()).orElse(null);
-            if (existing != null && matches(existing, request)) {
-                return existing;
-            }
+            return provisionPublicApi.findById(request.provisionId())
+                    .orElseThrow(ProvisionNotFoundException::new);
         }
 
         if (!hasText(request.name()) || request.totalValue() == null || !hasText(request.description())) {
@@ -125,16 +132,6 @@ public class RequestItemsAssembler {
                 request.totalValue(),
                 request.description().trim()
         );
-    }
-
-    private boolean matches(Provision provision, RequestProvisionItemRequest request) {
-        if (!hasText(request.name()) && request.totalValue() == null && !hasText(request.description())) {
-            return true;
-        }
-
-        return provision.getName().equals(request.name())
-                && provision.getTotalValue().equals(request.totalValue())
-                && provision.getDescription().equals(request.description());
     }
 
     private String normalizeVariation(String variation) {

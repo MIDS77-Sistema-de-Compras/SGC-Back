@@ -19,6 +19,8 @@ public interface ProvisionPublicApi {
      */
     Optional<Provision> findById(Long id);
 
+    Optional<Provision> findByNameIgnoreCase(String name);
+
     /**
      * Cria e persiste uma nova provisão a partir dos dados informados.
      *

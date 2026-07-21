@@ -60,4 +60,18 @@ class CreateProductServiceTest {
 
         verify(productRepository, times(1)).save(any(Product.class));
     }
+
+    @Test
+    @DisplayName("Must not create a product with a duplicate name")
+    void mustNotCreateProductWithDuplicateName() {
+        CreateProductRequest request = new CreateProductRequest("  product   a  ", "description", 10.0, "type", "CODE02");
+
+        when(productRepository.findByNameIgnoreCase("product a"))
+                .thenReturn(java.util.Optional.of(Product.builder().id(1L).name("Product A").build()));
+
+        assertThrows(net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductAlreadyExistsException.class,
+                () -> createProductService.execute(request));
+
+        verify(productRepository, never()).save(any(Product.class));
+    }
 }

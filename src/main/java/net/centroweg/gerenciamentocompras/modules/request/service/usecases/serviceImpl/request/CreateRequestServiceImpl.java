@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
@@ -45,6 +46,7 @@ public class CreateRequestServiceImpl {
     private final RequestItemsAssembler requestItemsAssembler;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
 
         User requester = userPublicApi.findByEmail(userPrincipal.getUsername())

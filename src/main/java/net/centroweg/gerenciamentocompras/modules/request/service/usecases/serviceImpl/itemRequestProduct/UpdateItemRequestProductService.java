@@ -16,6 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
@@ -82,6 +83,11 @@ public class UpdateItemRequestProductService {
         Product product =
                 requestPublicApi.findProuctByNameIgnoreCase(dto.productName())
                         .orElseThrow(()-> new ProductNotFoundException());
+
+        if (itemRequestProductRepository.existsByRequestIdAndProductIdAndIdNot(
+                request.getId(), product.getId(), itemRequestProduct.getId())) {
+            throw new ItemRequestProductAlreadyExistsException();
+        }
 
         MeasurementUnit measurementUnit =
                 requestPublicApi

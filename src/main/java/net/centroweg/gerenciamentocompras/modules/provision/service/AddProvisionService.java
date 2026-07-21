@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.provision.service;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.provision.infrastructure.persistence.ProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
@@ -31,11 +32,25 @@ public class AddProvisionService {
      * @see ProvisionMapper#toEntity(ProvisionRequest)
      */
     public ProvisionResponse saveNewProvision(ProvisionRequest request){
+        String normalizedName = normalizeName(request.name());
+        if (provisionRepository.findByNameIgnoreCase(normalizedName).isPresent()) {
+            throw new ProvisionAlreadyExistsException();
+        }
+
+        ProvisionRequest normalizedRequest = new ProvisionRequest(
+            normalizedName,
+            request.totalValue(),
+            request.description()
+        );
+
         return provisionMapper.toResponse(
             provisionRepository.save(
-                provisionMapper.toEntity(request)
+                provisionMapper.toEntity(normalizedRequest)
             )
         );
     }
 
+    private String normalizeName(String name) {
+        return name.trim().replaceAll("\\s+", " ");
+    }
 }

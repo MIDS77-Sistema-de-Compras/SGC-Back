@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serv
 
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.EditRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
@@ -19,6 +20,9 @@ import java.util.List;
 public interface RequestService {
 
     RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal);
+    RequestResponse createRequestWithAttachments(RequestRequest request, List<MultipartFile> files, UserPrincipal userPrincipal);
+    RequestResponse editContent(Long requestId, EditRequestRequest request);
+    RequestResponse editContentWithAttachments(Long requestId, EditRequestRequest request, List<MultipartFile> files);
     Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable, UserPrincipal userPrincipal);
     RequestResponse findRequestById(Long id);
     Page<RequestListItemResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable);

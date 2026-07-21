@@ -108,7 +108,7 @@ class RequestMeListIntegrationTest {
         Request savedRequest = requestRepository.save(request);
 
         itemRequestProductRepository.save(
-                new ItemRequestProduct(null, savedRequest, product, unit, 2.0, pending, "obs")
+                new ItemRequestProduct(null, savedRequest, product, unit, 2.0, null, pending, "obs")
         );
     }
 

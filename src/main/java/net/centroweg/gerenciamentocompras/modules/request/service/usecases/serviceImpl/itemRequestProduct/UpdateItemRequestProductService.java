@@ -16,6 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
@@ -60,8 +61,23 @@ public class UpdateItemRequestProductService {
                 requestRepository.findById(dto.requestId())
                         .orElseThrow(()-> new RequestNotFoundException());
 
+        if (itemRequestProduct.getRequest() == null
+                || !Objects.equals(itemRequestProduct.getRequest().getId(), request.getId())) {
+            throw new AcessDeniedException();
+        }
+
         User currentUser = currentUserService.getCurrentUser();
-        requestBusinessRuleValidator.validateCanEditItems(request, currentUser);
+
+        boolean contentChanged = !sameText(itemRequestProduct.getProduct().getName(), dto.productName())
+                || (dto.variation() != null && !sameText(itemRequestProduct.getVariation(), dto.variation()))
+                || !sameText(itemRequestProduct.getMeasurementUnit().getName(), dto.measurementUnit())
+                || !Objects.equals(itemRequestProduct.getQuantity(), dto.quantity())
+                || !Objects.equals(itemRequestProduct.getAdditionalInformations(), dto.additionalInformations());
+        if (contentChanged) {
+            requestBusinessRuleValidator.validateCanEditContent(request, currentUser);
+        } else {
+            requestBusinessRuleValidator.validateCanEditItems(request, currentUser);
+        }
 
         Product product =
                 requestPublicApi.findProuctByNameIgnoreCase(dto.productName())
@@ -109,5 +125,13 @@ public class UpdateItemRequestProductService {
         }
 
         return itemRequestProductMapper.toResponse(saved);
+    }
+
+    private boolean sameText(String first, String second) {
+        return normalizeOptional(first).equalsIgnoreCase(normalizeOptional(second));
+    }
+
+    private String normalizeOptional(String value) {
+        return value == null ? "" : value.trim();
     }
 }

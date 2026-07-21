@@ -8,7 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.Noti
 public record NotificationRequest(
         @NotBlank String title,
         @NotBlank String message,
-        @NotNull NotificationType notificationType,
+        @NotNull String notificationType,
         @NotNull @Positive Long userId,
         @NotNull @Positive Long requestId
 ) {

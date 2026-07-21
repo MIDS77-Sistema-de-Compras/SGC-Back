@@ -20,7 +20,6 @@ public record RequestProvisionItemRequest(
         @Size(min = 10, max = 100, message = "A descrição do item deve conter entre 10 e 100 caractéres.")
         String description,
 
-        @NotBlank(message = "As informações adicionais não podem estar em branco.")
         @Size(max = 255, message = "Informações adicionais excedem o limite máximo permitido (255 caractéres)")
         String additionalInformation
 ) {

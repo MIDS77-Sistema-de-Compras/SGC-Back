@@ -113,10 +113,18 @@ public interface RequestRepository extends JpaRepository<Request, Long> , JpaSpe
             """)
     List<Request> fetchProductNames(@Param("ids") List<Long> ids);
 
+    @Query("""
+            select distinct request from Request request
+            left join fetch request.itemRequestProvisions item
+            left join fetch item.provision
+            where request.id in :ids
+            """)
+    List<Request> fetchProvisionNames(@Param("ids") List<Long> ids);
+
     /**
      * Inicializa só o necessário para a resposta ENXUTA de listagem
-     * ({@code RequestListItemResponse}): o CR (para o código) e os produtos
-     * (para nome e contagem). Não toca em itens de serviço, anexos nem solicitantes.
+     * ({@code RequestListItemResponse}): o CR, os produtos e os serviços
+     * (para nome e contagem). Não toca em anexos nem solicitantes.
      *
      * @param ids ids das solicitações da página atual
      */
@@ -126,5 +134,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> , JpaSpe
         }
         fetchCrBranches(ids);
         fetchProductNames(ids);
+        fetchProvisionNames(ids);
     }
 }

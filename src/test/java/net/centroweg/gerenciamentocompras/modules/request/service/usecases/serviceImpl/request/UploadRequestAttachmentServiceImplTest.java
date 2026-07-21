@@ -10,6 +10,8 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.shared.cloudinary.CloudinaryService;
+import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
+import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +52,12 @@ class UploadRequestAttachmentServiceImplTest {
 
     @Mock
     private RequestMapper requestMapper;
+
+    @Mock
+    private CurrentUserService currentUserService;
+
+    @Mock
+    private RequestBusinessRuleValidator requestBusinessRuleValidator;
 
     @InjectMocks
     private UploadRequestAttachmentServiceImpl uploadRequestAttachmentService;

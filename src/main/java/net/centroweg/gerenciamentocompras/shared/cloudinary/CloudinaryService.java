@@ -3,6 +3,10 @@ package net.centroweg.gerenciamentocompras.shared.cloudinary;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -47,6 +51,18 @@ public class CloudinaryService {
                         "folder", "request-attachments",
                         "use_filename", true,
                         "unique_filename", true
+                )
+        );
+    }
+
+    public void deleteFile(String publicId, String resourceType) throws IOException {
+        if (publicId == null || publicId.isBlank()) return;
+
+        cloudinary.uploader().destroy(
+                publicId,
+                ObjectUtils.asMap(
+                        "resource_type", resourceType == null || resourceType.isBlank() ? "image" : resourceType,
+                        "invalidate", true
                 )
         );
     }
@@ -100,6 +116,7 @@ public class CloudinaryService {
             case "image/png", "image/jpeg" -> isImage(bytes);
             case "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ->
                     isDocx(bytes);
+            case "text/csv", "application/csv", "application/vnd.ms-excel" -> isCsv(bytes);
             default -> false;
         };
 
@@ -152,6 +169,22 @@ public class CloudinaryService {
         }
 
         return hasContentTypes && hasDocument;
+    }
+
+    private boolean isCsv(byte[] bytes) {
+        for (byte value : bytes) {
+            if (value == 0) return false;
+        }
+
+        try {
+            StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(ByteBuffer.wrap(bytes));
+            return true;
+        } catch (CharacterCodingException exception) {
+            return false;
+        }
     }
 
     private boolean startsWith(byte[] bytes, byte[] prefix) {

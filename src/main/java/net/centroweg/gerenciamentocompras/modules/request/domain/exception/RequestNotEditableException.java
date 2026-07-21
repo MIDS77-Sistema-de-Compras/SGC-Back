@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class RequestNotEditableException extends BusinessException {
     public RequestNotEditableException() {
-        super("Solicitação não pode ser editada após aprovação.", HttpStatus.UNPROCESSABLE_CONTENT);
+        super("A solicitação não pode ser editada depois de passar pela análise.", HttpStatus.UNPROCESSABLE_CONTENT);
     }
 }

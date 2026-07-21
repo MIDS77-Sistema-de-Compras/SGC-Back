@@ -22,4 +22,12 @@ public record RequestProductItemRequest(
         @Size(max = 255, message = "Informações adicionais excedem o limite máximo permitido (255 caractéres)")
         String additionalInformations
 ) {
+        public RequestProductItemRequest(
+                String productName,
+                String measurementUnit,
+                Double quantity,
+                String additionalInformations
+        ) {
+                this(productName, null, measurementUnit, quantity, additionalInformations);
+        }
 }

@@ -78,6 +78,7 @@ class FindAllRequestServiceImplTest {
 
         verify(requestMapper).toDTO(firstRequest);
         verify(requestMapper).toDTO(secondRequest);
+        verify(requestRepository).initializeForResponse(anyList());
         verify(requestRepository, never()).findAll();
         verifyNoMoreInteractions(requestRepository, requestMapper);
     }
@@ -99,6 +100,7 @@ class FindAllRequestServiceImplTest {
 
         verify(requestRepository).findAll(specificationCaptor.capture(), any(Pageable.class));
         assertNotNull(specificationCaptor.getValue());
+        verify(requestRepository).initializeForResponse(anyList());
         verify(requestRepository, never()).findAll();
         verifyNoMoreInteractions(requestRepository, requestMapper);
     }

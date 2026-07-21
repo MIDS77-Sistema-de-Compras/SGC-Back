@@ -3,10 +3,12 @@ package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serv
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestFilterRequest;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.EditRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateFeedback;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.UpdateRequestStatus;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestListItemResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.RequestService;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,9 @@ import java.util.List;
 public class RequestServiceImpl implements RequestService {
 
     private final CreateRequestServiceImpl createRequestService;
+    private final CreateRequestWithAttachmentsServiceImpl createRequestWithAttachmentsService;
+    private final EditRequestContentServiceImpl editRequestContentService;
+    private final EditRequestWithAttachmentsServiceImpl editRequestWithAttachmentsService;
     private final UpdateRequestServiceImpl updateRequestService;
     private final DeleteRequestServiceImpl deleteRequestService;
     private final FindAllRequestServiceImpl findAllRequestService;
@@ -42,6 +47,21 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    public RequestResponse createRequestWithAttachments(RequestRequest request, List<MultipartFile> files, UserPrincipal userPrincipal) {
+        return createRequestWithAttachmentsService.create(request, files, userPrincipal);
+    }
+
+    @Override
+    public RequestResponse editContent(Long requestId, EditRequestRequest request) {
+        return editRequestContentService.edit(requestId, request);
+    }
+
+    @Override
+    public RequestResponse editContentWithAttachments(Long requestId, EditRequestRequest request, List<MultipartFile> files) {
+        return editRequestWithAttachmentsService.edit(requestId, request, files);
+    }
+
+    @Override
     public Page<RequestResponse> findAllRequest(RequestFilterRequest filter, Pageable pageable, UserPrincipal userPrincipal) {
         return findAllRequestService.findAllRequest(filter, pageable, userPrincipal);
     }
@@ -57,7 +77,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Page<RequestResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable) {
+    public Page<RequestListItemResponse> findAllByUser(RequestFilterRequest filter, UserPrincipal userPrincipal, Pageable pageable) {
         return findAllByUser.findAllByUser(filter, userPrincipal, pageable);
     }
 

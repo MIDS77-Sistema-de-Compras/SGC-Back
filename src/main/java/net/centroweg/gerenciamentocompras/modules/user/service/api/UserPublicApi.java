@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserSumma
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface UserPublicApi {
 
@@ -21,5 +22,6 @@ public interface UserPublicApi {
     Optional<UserSummaryPublicResponse> findUserSummaryById(Long id);
     UserSummaryPublicResponse getAuthenticatedUserSummary();
     void changeUserActivationStatus(Long userId, boolean active);
+    Set<Long> findUserIdsWithEmailNotificationsDisabled(Collection<Long> userIds);
 
 }

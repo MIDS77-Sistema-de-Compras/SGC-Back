@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +25,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.service.event.Deliver
 import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.DeliveryCreatedNotificationContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.DeliveryNotificationRecipientDeduplicator;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.EmailNotificationPreferenceFilter;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.CreateInternalNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.DeliveryCreatedEmailSender;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
@@ -36,6 +38,7 @@ class DeliveryCreatedNotificationFlowTest {
     @Mock CreateInternalNotificationUseCase createInternalNotificationUseCase;
     @Mock DeliveryCreatedEmailSender emailSender;
     @Mock EmailSenderService externalEmailSender;
+    @Mock EmailNotificationPreferenceFilter preferenceFilter;
 
     @Test
     void shouldUseCentralPersistenceForDistinctReceivers() {
@@ -63,8 +66,10 @@ class DeliveryCreatedNotificationFlowTest {
                 new DeliveryNotificationRecipient(1L, "Ana", " ANA@TESTE.COM "),
                 new DeliveryNotificationRecipient(2L, "Clone", "ana@teste.com")));
         var content = new DeliveryCreatedNotificationContentFactory().build(data);
+        when(preferenceFilter.filterEnabled(any(), any()))
+                .thenAnswer(invocation -> List.copyOf((Collection<?>) invocation.getArgument(0)));
         var sender = new SendDeliveryCreatedEmailServiceImpl(
-                externalEmailSender, new DeliveryNotificationRecipientDeduplicator());
+                externalEmailSender, new DeliveryNotificationRecipientDeduplicator(), preferenceFilter);
 
         sender.sendEmails(event(), data, content);
 

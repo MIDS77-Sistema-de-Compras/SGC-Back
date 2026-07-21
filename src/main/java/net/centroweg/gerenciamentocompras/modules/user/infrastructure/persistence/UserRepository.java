@@ -19,6 +19,8 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    List<User> findAllByIdInAndEmailNotificationsEnabledFalse(java.util.Collection<Long> ids);
+
     Optional<User> findByEmail(String email);
 
     /**

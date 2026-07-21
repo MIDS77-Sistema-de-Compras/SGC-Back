@@ -112,6 +112,14 @@ public class User {
     private String profilePicture;
 
     /**
+     * Preferência do usuário para receber notificações por e-mail.
+     * Não afeta e-mails transacionais (ex.: recuperação de senha).
+     */
+
+    @Column(name = "email_notifications_enabled", nullable = false, columnDefinition = "boolean default true")
+    private Boolean emailNotificationsEnabled = true;
+
+    /**
      * Cria um novo usuário com os dados obrigatórios.
      * @param name nome completo do usuário
      * @param cpf cpf do usuário

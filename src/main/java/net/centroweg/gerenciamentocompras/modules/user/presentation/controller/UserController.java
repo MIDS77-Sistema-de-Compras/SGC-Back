@@ -5,11 +5,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangeUserActivationStatus;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.ChangePassword;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
-import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.UpdateUser;
+import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.*;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
+import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.user.UpdateEmailNotificationPreferenceImpl;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
@@ -50,6 +48,7 @@ public class UserController {
      */
 
     private final UserIntrf user;
+    private final UpdateEmailNotificationPreferenceImpl updateEmailNotificationPreferenceImpl;
 
     /**
      * Cria um novo usuário no sistema.
@@ -166,6 +165,17 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> findLoggedUser(@AuthenticationPrincipal UserPrincipal userPrincipal){
         return ResponseEntity.status(200).body(user.findLoggedUser(userPrincipal));
+    }
+
+    @Operation(description = "ENDPOINT responsável por atualizar a preferência de notificações por e-mail do usuário logado")
+    @PatchMapping("/me/email-notifications")
+    @Auditable(action = "ATUALIZAR_PREFERENCIA_DE_EMAIL")
+    public ResponseEntity<MessageDTO> updateEmailNotificationPreference(
+            @AuditParam(value = "user") @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody @Valid UpdateEmailNotificationPreference preference
+    ) {
+        Long userId = user.findLoggedUser(userPrincipal).id();
+        return ResponseEntity.status(200).body(updateEmailNotificationPreferenceImpl.updatePreference(userId, preference));
     }
 
     @Operation(description = "ENDPOINT responsável por alterar a senha do usuário logado")

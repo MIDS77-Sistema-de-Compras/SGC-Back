@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -27,13 +29,15 @@ import net.centroweg.gerenciamentocompras.shared.annotation.RateLimit;
 @Component
 public class RateLimitAspect {
     private final List<Map<String, Bucket>> profiles;
+    private final Environment environment;
 
     @Autowired
-    public RateLimitAspect(@Qualifier("loginBucket") Bucket loginBucket, @Qualifier("recoveryBucket") Bucket recoveryBucket){
+    public RateLimitAspect(@Qualifier("loginBucket") Bucket loginBucket, @Qualifier("recoveryBucket") Bucket recoveryBucket, Environment environment){
         this.profiles = List.of(
             Map.of("login", loginBucket),
             Map.of("recovery", recoveryBucket)
         );
+        this.environment = environment;
     }
 
     /**
@@ -45,6 +49,10 @@ public class RateLimitAspect {
      */
     @Around("@annotation(rateLimit)")
     public Object applyRateLimit(ProceedingJoinPoint joinPoint, RateLimit rateLimit) throws Throwable {
+        // ignores if it's on test environment
+        if(this.environment.acceptsProfiles(Profiles.of("test")))
+            return joinPoint.proceed();
+
         AtomicReference<Bucket> bucket = new AtomicReference<>();
         this.profiles.forEach(index -> {
             if (index.containsKey(rateLimit.profile())) {

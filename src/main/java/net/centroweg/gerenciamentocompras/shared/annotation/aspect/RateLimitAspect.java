@@ -17,6 +17,12 @@ import io.github.bucket4j.Bucket;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import net.centroweg.gerenciamentocompras.shared.annotation.RateLimit;
 
+/**
+ * Aspect contendo o método executado antes de cada método com a anotação {@code @RateLimit}
+ *
+ * @author gabrielEFagundes
+ * @since 21/07/2026
+ */
 @Aspect
 @Component
 public class RateLimitAspect {
@@ -30,6 +36,13 @@ public class RateLimitAspect {
         );
     }
 
+    /**
+     * Método executado antes de cada método anotado com {@code @RateLimit}
+     * @param joinPoint Utilizado para a execução do método anotado, em caso de sucesso
+     * @param rateLimit Anotação utilizada para extrair o profile escolhido.
+     * @return {@code Object} Uma {@code ResponseEntity} contendo uma {@code MessageDTO} OU o método anotado
+     * @throws Throwable Possível {@code IllegalArgumentException}, caso um profile inexistente seja escolhido
+     */
     @Around("@annotation(rateLimit)")
     public Object applyRateLimit(ProceedingJoinPoint joinPoint, RateLimit rateLimit) throws Throwable {
         AtomicReference<Bucket> bucket = new AtomicReference<>();
@@ -41,11 +54,20 @@ public class RateLimitAspect {
 
         Bucket profileBucket = bucket.get();
 
+        if(profileBucket == null){
+            throw new IllegalArgumentException("""
+                    Chosen profile probably doesn't exist. Consider looking inside the class Bucket4jConfig
+                    and choose an existing profile in there.
+                    
+                    @RateLimit("%s")
+                    ~~~~~~~~~~^^%s^^ HERE
+                    """.formatted(rateLimit.profile(), "^".repeat(rateLimit.profile().length())));
+        }
+
         if (profileBucket.tryConsume(1)) {
             return joinPoint.proceed();
         }
 
-        System.out.println("You consumed all your tokens brother.");
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
                 new MessageDTO("Muitas requisições em um curto período de tempo! Tente novamente em alguns instantes.")
         );

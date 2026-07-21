@@ -14,20 +14,30 @@ import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
 public class UserPublicApiImpl implements UserPublicApi {
-    
+
     private final UserRepository userRepository;
     private final CurrentUserService currentUserService;
     private final ChangeUserActivationStatusImpl changeUserActivationStatus;
 
     @Override
+    public Set<Long> findUserIdsWithEmailNotificationsDisabled(Collection<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) return Set.of();
+        return userRepository.findAllByIdInAndEmailNotificationsEnabledFalse(userIds).stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
     public Boolean existsByEmail(String email){
         return userRepository.existsByEmail(email);
     }
-    
+
     @Override
     public Optional<User> findByEmail(String email){
         return userRepository.findByEmail(email);

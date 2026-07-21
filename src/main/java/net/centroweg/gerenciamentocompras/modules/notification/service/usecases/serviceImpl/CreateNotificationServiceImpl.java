@@ -7,6 +7,7 @@ import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.em
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.response.NotificationResponse;
 import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.EmailNotificationPreferenceFilter;
 import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.CreateInternalNotificationUseCase;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class CreateNotificationServiceImpl {
     private final NotificationMapper notificationMapper;
     private final NotificationEmailService notificationEmailService;
     private final UserPublicApi userPublicApi;
+    private final EmailNotificationPreferenceFilter preferenceFilter;
 
     public NotificationResponse createNotification(NotificationRequest request) {
         Notification saved = createInternalNotificationService.createNotification(request);
@@ -26,13 +28,15 @@ public class CreateNotificationServiceImpl {
                 .findFirst()
                 .orElseThrow(() -> new NotificationRecipientNotFoundException(saved.getUserId()));
 
-        notificationEmailService.sendNotificationEmail(
-                user.name(),
-                user.email(),
-                saved.getTitle(),
-                saved.getMessage(),
-                saved.getRequestId()
-        );
+        if (preferenceFilter.isEnabled(saved.getUserId())) {
+            notificationEmailService.sendNotificationEmail(
+                    user.name(),
+                    user.email(),
+                    saved.getTitle(),
+                    saved.getMessage(),
+                    saved.getRequestId()
+            );
+        }
 
         return notificationMapper.toResponse(saved);
     }

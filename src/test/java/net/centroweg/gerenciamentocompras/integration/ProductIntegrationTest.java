@@ -96,6 +96,33 @@ public class ProductIntegrationTest {
     }
 
     @Test
+    @DisplayName("[Integration] Must reject duplicate product names")
+    void shouldRejectDuplicateProductName() throws Exception {
+        CreateProductRequest first = new CreateProductRequest(
+                "Notebook Dell", "first product", 100.0, "type", "DUP-001"
+        );
+        CreateProductRequest duplicate = new CreateProductRequest(
+                " notebook   dell ", "second product", 200.0, "type", "DUP-002"
+        );
+
+        mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(first)))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(duplicate)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value(
+                        new net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductAlreadyExistsException().getMessage()
+                ));
+
+        assertEquals(1, productRepository.count());
+    }
+
+    @Test
     @DisplayName("[Integração] Deve retornar 400 (Bad Request) ao criar produto inválido")
     void shouldReturnBadRequestWhenCreatingInvalidProduct() throws Exception {
         CreateProductRequest request = new CreateProductRequest(

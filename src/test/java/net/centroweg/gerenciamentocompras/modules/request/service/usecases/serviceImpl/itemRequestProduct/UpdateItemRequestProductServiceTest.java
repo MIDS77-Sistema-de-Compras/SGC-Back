@@ -116,6 +116,20 @@ class UpdateItemRequestProductServiceTest {
         verify(eventPublisher, never()).publishEvent(any());
     }
 
+    @Test
+    void shouldNotSaveOrPublishWhenAnotherItemUsesTheProduct() {
+        when(itemRepository.findById(99L)).thenReturn(Optional.of(item));
+        when(requestRepository.findById(10L)).thenReturn(Optional.of(request));
+        when(requestPublicApi.findProuctByNameIgnoreCase("Parafuso")).thenReturn(Optional.of(product));
+        when(itemRepository.existsByRequestIdAndProductIdAndIdNot(10L, 20L, 99L)).thenReturn(true);
+
+        assertThrows(net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException.class,
+                () -> service.update(99L, requestDto("Entregue")));
+
+        verify(itemRepository, never()).save(any());
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
     private void arrangeSuccessfulUpdate(Status status) {
         when(itemRepository.findById(99L)).thenReturn(Optional.of(item));
         when(requestRepository.findById(10L)).thenReturn(Optional.of(request));

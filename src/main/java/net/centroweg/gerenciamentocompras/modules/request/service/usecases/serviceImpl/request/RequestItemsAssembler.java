@@ -1,6 +1,9 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -12,11 +15,15 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.exception.Measu
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.InsufficientProvisionDataException;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.service.api.ProvisionPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestProductItemRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestProvisionItemRequest;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
@@ -60,7 +67,12 @@ public class RequestItemsAssembler {
     ) {
         if (products == null) return;
 
+        Set<String> productNames = new HashSet<>();
         for (RequestProductItemRequest productRequest : products) {
+            if (!productNames.add(normalizeNameKey(productRequest.productName()))) {
+                throw new ItemRequestProductAlreadyExistsException();
+            }
+
             Product product = findOrCreateProduct(productRequest);
             MeasurementUnit measurementUnit = requestPublicApi
                     .findMeasurementByNameIgnoreCase(productRequest.measurementUnit())
@@ -96,7 +108,10 @@ public class RequestItemsAssembler {
     ) {
         if (provisions == null) return;
 
+        Set<Long> provisionIds = new HashSet<>();
+        Set<String> provisionNames = new HashSet<>();
         for (RequestProvisionItemRequest provisionRequest : provisions) {
+            validateUniqueProvision(provisionRequest, provisionIds, provisionNames);
             Provision provision = findOrCreateProvision(provisionRequest);
             ItemRequestProvision item = new ItemRequestProvision(
                     request,
@@ -110,31 +125,42 @@ public class RequestItemsAssembler {
 
     private Provision findOrCreateProvision(RequestProvisionItemRequest request) {
         if (request.provisionId() != null) {
-            Provision existing = provisionPublicApi.findById(request.provisionId()).orElse(null);
-            if (existing != null && matches(existing, request)) {
-                return existing;
-            }
+            return provisionPublicApi.findById(request.provisionId())
+                    .orElseThrow(ProvisionNotFoundException::new);
         }
 
         if (!hasText(request.name()) || request.totalValue() == null || !hasText(request.description())) {
             throw new InsufficientProvisionDataException();
         }
 
+        String normalizedName = normalizeName(request.name());
+        if (provisionPublicApi.findByNameIgnoreCase(normalizedName).isPresent()) {
+            throw new ProvisionAlreadyExistsException();
+        }
+
         return provisionPublicApi.createProvision(
-                request.name().trim(),
+                normalizedName,
                 request.totalValue(),
                 request.description().trim()
         );
     }
 
-    private boolean matches(Provision provision, RequestProvisionItemRequest request) {
-        if (!hasText(request.name()) && request.totalValue() == null && !hasText(request.description())) {
-            return true;
+    private void validateUniqueProvision(
+            RequestProvisionItemRequest provisionRequest,
+            Set<Long> provisionIds,
+            Set<String> provisionNames
+    ) {
+        if (provisionRequest.provisionId() == null && !hasText(provisionRequest.name())) {
+            return;
         }
 
-        return provision.getName().equals(request.name())
-                && provision.getTotalValue().equals(request.totalValue())
-                && provision.getDescription().equals(request.description());
+        boolean isDuplicated = provisionRequest.provisionId() != null
+                ? !provisionIds.add(provisionRequest.provisionId())
+                : !provisionNames.add(normalizeNameKey(provisionRequest.name()));
+
+        if (isDuplicated) {
+            throw new ItemRequestProvisionAlreadyExistsException();
+        }
     }
 
     private String normalizeVariation(String variation) {
@@ -143,5 +169,13 @@ public class RequestItemsAssembler {
 
     private boolean hasText(String value) {
         return value != null && !value.isBlank();
+    }
+
+    private String normalizeName(String name) {
+        return name.trim().replaceAll("\\s+", " ");
+    }
+
+    private String normalizeNameKey(String name) {
+        return normalizeName(name).toLowerCase(Locale.ROOT);
     }
 }

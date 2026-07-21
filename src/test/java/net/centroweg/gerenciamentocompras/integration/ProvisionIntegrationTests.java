@@ -110,6 +110,21 @@ class ProvisionIntegrationTests {
     }
 
     @Test
+    @DisplayName("Create Provision Test - Should return 409 when name already exists")
+    void createProvision_shouldReturn409_whenNameAlreadyExists() throws Exception {
+        net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException exception =
+                new net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException();
+        when(provisionService.createProvision(any(ProvisionRequest.class))).thenThrow(exception);
+
+        mockMvc.perform(post("/provisions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validRequest)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value(exception.getMessage()));
+    }
+
+    @Test
     @DisplayName("Create Provision Test - Should return 400 if name is blank")
     void createProvision_shouldReturn400_whenNameIsBlank() throws Exception {
         ProvisionRequest invalidRequest = new ProvisionRequest(

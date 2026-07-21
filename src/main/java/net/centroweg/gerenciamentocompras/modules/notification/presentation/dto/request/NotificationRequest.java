@@ -18,10 +18,10 @@ public record NotificationRequest(
         @NotBlank(message = "A mensagem da notificação não deve ser nula e nem vazia!")
         String message,
         @NotNull(message = "O identificador do usuário não deve ser nulo e nem vazio!")
-        @Positive(message = "O identificador do usuário deve ser positivo!")
+        @Positive(message = "O identificador do usuário deve ser maior ou igual a zero!")
         Long userId,
         @NotNull(message = "O identificador da solicitação não deve ser nulo e nem vazio!")
-        @Positive(message = "O identificador da solicitação deve ser positivo!")
+        @Positive(message = "O identificador da solicitação deve ser maior ou igual a zero!")
         Long requestId
 ) {
 }

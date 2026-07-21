@@ -21,7 +21,7 @@ public class findAllBranch {
 
     /**
      * Retorna todas as filiais cadastradas no banco de dados.
-     * @return lista todas as filiais encontradas, caso exista.
+     * @return lista com todas as filiais encontradas, caso exista.
      */
     public List<BranchResponse> listAll(){
         List<Branch> branches = branchRepository.findAll();

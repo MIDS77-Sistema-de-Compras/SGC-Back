@@ -14,7 +14,7 @@ import java.util.List;
 import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.*;
 
 /**
- * Caso de uso responsável por listar todos os vínculos entre CR e filial.
+ * Caso de uso responsável por listar todos os vínculos {@link CrBranch}.
  */
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class FindAllCrBranch {
 
     /**
      * Lista todos os vínculos CR-filial cadastrados no banco de dados.
-     * @return lista de vínculos encontrados, caso exista.
+     * @return lista com todos os vínculos encontrados, caso exista.
      */
     @Transactional(readOnly = true)
     public List<CrBranchResponse> findAll(

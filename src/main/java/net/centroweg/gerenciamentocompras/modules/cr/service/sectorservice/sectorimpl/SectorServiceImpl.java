@@ -44,7 +44,7 @@ public class SectorServiceImpl implements SectorService {
     private final FindSectorByIdCompound findByIdCompound;
 
     /**
-     * Componente responsável pela atualização de um bloco existente.
+     * Componente responsável por atualizar um bloco existente.
      */
     private final UpdateSector update;
 
@@ -65,7 +65,7 @@ public class SectorServiceImpl implements SectorService {
 
     /**
      * Lista todos os blocos cadastrados no banco de dados de forma simples.
-     * @return lista com todos os blocos encontrados.
+     * @return lista com todos os blocos encontrados, caso exista.
      */
     @Override
     public List<SectorSimpleResponse> findAllSectorSimple(){
@@ -74,7 +74,7 @@ public class SectorServiceImpl implements SectorService {
 
     /**
      * Lista todos os blocos cadastrados no banco de dados de forma completa.
-     * @return lista com todos os blocos encontrados.
+     * @return lista com todos os blocos encontrados, caso exista.
      */
     @Override
     public List<SectorCompoundResponse> findAllSectorCompound(){
@@ -82,9 +82,9 @@ public class SectorServiceImpl implements SectorService {
     }
 
     /**
-     * Busca um bloco pelo ID informado de forma simples.
+     * Busca um bloco no banco de dados pelo ID informado de forma simples.
      * @param id identificador do bloco.
-     * @return bloco encontrado.
+     * @return bloco encontrado, caso exista.
      */
     @Override
     public SectorSimpleResponse findSectorByIdSimple(Long id){
@@ -92,9 +92,9 @@ public class SectorServiceImpl implements SectorService {
     }
 
     /**
-     * Busca um bloco pelo ID informado de forma completa.
+     * Busca um bloco no banco de dados pelo ID informado de forma completa.
      * @param id identificador do bloco.
-     * @return bloco encontrado.
+     * @return bloco encontrado, caso exista.
      */
     @Override
     public SectorCompoundResponse findSectorByIdCompound(Long id){

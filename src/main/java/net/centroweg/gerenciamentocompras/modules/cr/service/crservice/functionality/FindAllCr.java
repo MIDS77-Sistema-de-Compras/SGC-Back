@@ -9,7 +9,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 
 /**
- * Caso de uso responsável por listar todos os {@link Cr}.
+ * Caso de uso responsável por listar todos os {@link Cr} cadastrados.
  */
 @Service
 @RequiredArgsConstructor

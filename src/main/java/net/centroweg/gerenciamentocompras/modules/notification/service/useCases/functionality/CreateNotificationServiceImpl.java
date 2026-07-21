@@ -29,7 +29,7 @@ public class CreateNotificationServiceImpl {
     private final NotificationEmailService notificationEmailService;
 
     /**
-     * Cria e persiste uma notificação no banco de dados.
+     * Cria e persiste uma nova notificação no banco de dados.
      * @param request dados da notificação.
      * @return notificação criada.
      * @throws UserNotFoundException caso nenhum usuário seja encontrado.

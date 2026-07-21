@@ -9,37 +9,37 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrInstruct
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 
 /**
- * Interface de serviço para operações de gerenciamento de {@link CrInstructor}.
+ * Interface de serviço para operações de gerenciamento do vínculo {@link CrInstructor}.
  */
 public interface CrInstructorService {
 
     /**
      * Cria e persiste um novo vínculo CR-instrutor no banco de dados.
-     * @param request dados do CR-instrutor.
+     * @param request dados do vínculo.
      * @return vínculo criado.
      * @throws CrBranchNotFoundException se o vínculo CR-filial não for encontrado.
      */
     CrInstructorResponse create(CrInstructorRequest request);
 
     /**
-     * Lista todos os vínculos CR-instrutor cadastrados no banco de dados.
-     * @return lista com todos os vínculos encontrados.
+     * Lista todos os vínculos CR-instrutores cadastrados no banco de dados.
+     * @return lista com todos os vínculos encontrados, caso exista.
      */
     List<CrInstructorResponse> findAll();
 
     /**
      * Busca um vínculo CR-instrutor no banco de dados pelo ID informado.
-     * @param id identificador do CR-instrutor.
-     * @return vínculo encontrado.
+     * @param id identificador do vínculo.
+     * @return vínculo encontrado, caso exista.
      * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
      */
     CrInstructorResponse findById(Long id);
 
     /**
      * Atualiza um vínculo CR-instrutor existente no banco de dados.
-     * @param id identificador do CR-instrutor.
-     * @param request novos dados do CR-instrutor.
-     * @return vínculo atualizado.
+     * @param id identificador do vínculo.
+     * @param request novos dados do vínculo.
+     * @return vínculo já atualizado.
      * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
      * @throws CrBranchNotFoundException se o vínculo CR-filial não for encontrado.
      */
@@ -47,7 +47,7 @@ public interface CrInstructorService {
 
     /**
      * Remove um vínculo CR-instrutor do banco de dados.
-     * @param id identificador do CR-instrutor.
+     * @param id identificador do vínculo.
      * @return mensagem de confirmação da remoção.
      * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
      */

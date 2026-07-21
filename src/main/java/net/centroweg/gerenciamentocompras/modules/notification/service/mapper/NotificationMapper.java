@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 
 /**
- * Componente responsável pela conversão entre a entidade({@link Notification}) e seus DTOs de entrada({@link NotificationRequest}) ou saída({@link NotificationResponse}).
+ * Componente responsável pela conversão entre a entidade({@link Notification}) e seus DTOs de entrada({@link NotificationRequest}) e saída({@link NotificationResponse}).
  */
 @Component
 public class NotificationMapper {

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Caso de uso responsável por atribuir um usuário responsável a um vínculo CR-filial.
+ * Caso de uso responsável por atribuir um usuário responsável a um vínculo {@link CrBranch}.
  */
 @Service
 @RequiredArgsConstructor
@@ -25,9 +25,9 @@ public class AssignCrBranchResponsible {
 
     /**
      * Atribui um usuário responsável por um vínculo CR-filial no banco de dados.
-     * @param crBranchId identificador da CR-filial.
+     * @param crBranchId identificador do vínculo.
      * @param userId identificador do usuário.
-     * @return vínculo atualizado.
+     * @return vínculo já atualizado.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      * @throws UsernameNotFoundException se o usuário não for encontrado.
      */

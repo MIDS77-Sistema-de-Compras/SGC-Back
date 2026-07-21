@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructor
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
 /**
- * Caso de uso responsável por buscar um {@link CrInstructor} pelo seu identificador.
+ * Caso de uso responsável por buscar um vínculo {@link CrInstructor} pelo seu identificador.
  */
 @Service
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class GetByIdCrInstructor {
     private final CrInstructorMapper crInstructorMapper;
 
     /**
-     * Busca um CR-instrutor no banco de dados pelo ID informado.
-     * @param id identificador do CR-instrutor.
+     * Busca um vínculo CR-instrutor no banco de dados pelo ID informado.
+     * @param id identificador do vínculo.
      * @return vínculo encontrado, caso exista.
      * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
      */

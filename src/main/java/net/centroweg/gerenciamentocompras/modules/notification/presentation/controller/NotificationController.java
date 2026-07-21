@@ -14,9 +14,9 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * Controlador REST responsável pelos endpoints de gerenciamento de {@link Notification}.
+ * Controlador REST responsável pelos endpoints de gerenciamento da {@link Notification}.
  */
-@Tag(name = "ENDPOINTS da entidade de notificações")
+@Tag(name = "ENDPOINTS da entidade notificações")
 @RequiredArgsConstructor
 @RequestMapping("/notifications")
 @RestController
@@ -27,7 +27,7 @@ public class NotificationController {
     /**
      * Lista todas as notificações cadastradas pelo identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de notificações por usuário")
     @GetMapping("/user/{userId}")
@@ -39,7 +39,7 @@ public class NotificationController {
     /**
      * Lista todas as notificações cadastradas do usuário logado.
      * @param userPrincipal dados do usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de notificações do próprio usuário logado")
     @GetMapping("/me")
@@ -63,7 +63,7 @@ public class NotificationController {
     /**
      * Lista todas as notificações não visualizadas por usuário.
      * @param userId identificador do usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de notificações não visualizadas por usuário")
     @GetMapping("user/{userId}/unviewed")

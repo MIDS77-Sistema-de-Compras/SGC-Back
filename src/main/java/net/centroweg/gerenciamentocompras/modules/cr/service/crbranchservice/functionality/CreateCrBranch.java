@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Caso de uso responsável por criar um novo vínculo entre CR e filial.
+ * Caso de uso responsável por criar um novo vínculo {@link CrBranch}.
  */
 @Service
 @RequiredArgsConstructor
@@ -33,8 +33,8 @@ public class CreateCrBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Cria e persiste um novo vínculo entre CR e filial no banco de dados.
-     * @param request dados do CR-filial.
+     * Cria e persiste um novo vínculo CR-filial no banco de dados.
+     * @param request dados do vínculo.
      * @return vínculo criado.
      * @throws BranchNotFoundException se a filial não for encontrada.
      * @throws CrNotFoundException se o CR não for encontrado.

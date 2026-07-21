@@ -25,7 +25,7 @@ public class CrServiceImpl implements CrService {
     private final CreateCr createCr;
 
     /**
-     * Componente responsável pela listagem dos CRs.
+     * Componente responsável pela listagem de todos os CRs cadastrados.
      */
     private final FindAllCr findAllCr;
 
@@ -35,7 +35,7 @@ public class CrServiceImpl implements CrService {
     private final FindById findById;
 
     /**
-     * Componente responsável pela atualização de um CR.
+     * Componente responsável por atualizar um CR.
      */
     private final UpdateCr updateCr;
 
@@ -47,7 +47,7 @@ public class CrServiceImpl implements CrService {
     /**
      * Cria e persiste um novo CR no banco de dados.
      * @param dto dados do CR.
-     * @param userPrincipal dados do usuário que será atribuído ao CR.
+     * @param userPrincipal dados do usuário que será atribuído.
      * @return CR criado.
      */
     @Override
@@ -57,7 +57,7 @@ public class CrServiceImpl implements CrService {
 
     /**
      * Lista todos os CRs cadastrados no banco de dados.
-     * @return lista com todos os CRs encontrados.
+     * @return lista com todos os CRs encontrados, caso exista.
      */
     @Override
     public List<CrCompoundResponse> listAll(){
@@ -67,7 +67,7 @@ public class CrServiceImpl implements CrService {
     /**
      * Busca um CR no banco de dados pelo ID informado.
      * @param id identificador do CR.
-     * @return CR encontrado.
+     * @return CR encontrado, caso exista.
      */
     @Override
     public CrCompoundResponse listById(Long id){
@@ -76,7 +76,7 @@ public class CrServiceImpl implements CrService {
 
     /**
      * Atualiza um CR existente no banco de dados.
-     * @param id  identificador do CR.
+     * @param id identificador do CR.
      * @param dto novos dados do CR.
      * @return CR já atualizado.
      */

@@ -10,7 +10,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * Caso de uso responsável pela listagem de {@link Notification} pelo usuário responsável pela solicitação.
+ * Caso de uso responsável pela listagem de {@link Notification} pelo usuário responsável.
  */
 @Service
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class FindNotificationByOwnUser {
     /**
      * Lista todas as notificações cadastradas no banco de dados pelo usuário responsável.
      * @param userPrincipal usuário responsável.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     public List<NotificationResponse> findNotificationsByOwnUser(UserPrincipal userPrincipal) {
         return notificationRepository.findByUserId(userPrincipal.getId())

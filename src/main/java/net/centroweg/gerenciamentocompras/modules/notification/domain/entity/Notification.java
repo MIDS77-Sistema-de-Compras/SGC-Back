@@ -28,7 +28,7 @@ public class Notification {
     private Long id;
 
     /**
-     * Titulo da notificação, não pode ser nulo.
+     * Título da notificação, não pode ser nulo.
      */
     @Column(nullable = false)
     private String title;
@@ -52,14 +52,14 @@ public class Notification {
     private LocalDateTime createdAt;
 
     /**
-     * Relacionamento com a entidade usuário, uma notificação tem apenas um usuário.
+     * Relacionamento com a entidade usuário, várias notificação pertencem a um usuário.
      */
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     /**
-     * Relacionamento com a entidade solicitação, uma notificação tem apenas uma solicitação.
+     * Relacionamento com a entidade solicitação, várias notificação pertencem a uma solicitação.
      */
     @ManyToOne
     @JoinColumn(name = "request_id")

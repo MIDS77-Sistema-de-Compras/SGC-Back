@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Caso de uso responsável por atualizar um vínculo entre CR e filial.
+ * Caso de uso responsável por atualizar um vínculo {@link CrBranch}.
  */
 @Service
 @RequiredArgsConstructor
@@ -33,10 +33,10 @@ public class UpdateCrBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Atualiza os dados de um vínculo CR-filial existente no banco de dados.
-     * @param id identificador do CR-filial.
-     * @param request novos dados do CR-filial.
-     * @return vínculo atualizado.
+     * Atualiza um vínculo CR-filial existente no banco de dados.
+     * @param id identificador do vínculo.
+     * @param request novos dados do vínculo.
+     * @return vínculo já atualizado.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      * @throws BranchNotFoundException se a filial não for encontrada.
      * @throws CrNotFoundException se o CR não for encontrado.

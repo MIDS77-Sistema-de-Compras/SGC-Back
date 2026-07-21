@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import org.springframework.stereotype.Service;
 
 /**
- * Caso de uso responsável por remover um vínculo entre CR e filial.
+ * Caso de uso responsável por remover um vínculo {@link CrBranch}.
  */
 @Service
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class DeleteCrBranch {
 
     /**
      * Remove um vínculo CR-filial do banco de dados.
-     * @param id identificador do CR-filial.
+     * @param id identificador do vínculo.
      * @return mensagem de confirmação da remoção.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */
@@ -28,6 +28,6 @@ public class DeleteCrBranch {
         CrBranch crBranch = crBranchRepository.findById(id)
                 .orElseThrow(() -> new CrBranchNotFoundException(id));
         crBranchRepository.delete(crBranch);
-        return new MessageDTO("Deletado");
+        return new MessageDTO("Deletado!");
     }
 }

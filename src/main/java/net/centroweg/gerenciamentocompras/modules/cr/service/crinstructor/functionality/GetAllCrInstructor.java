@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructor
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
 /**
- * Caso de uso responsável pela listagem de todos os {@link CrInstructor}.
+ * Caso de uso responsável pela listagem de todos os vínculos {@link CrInstructor}.
  */
 @Service
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ public class GetAllCrInstructor {
     private final CrInstructorMapper crInstructorMapper;
 
     /**
-     * Lista todos os CR-instrutores cadastrados no banco de dados.
+     * Lista todos os vínculos CR-instrutores cadastrados no banco de dados.
      * @return lista com todos os vínculos encontrados, caso exista.
      */
     public List<CrInstructorResponse> getAll(){

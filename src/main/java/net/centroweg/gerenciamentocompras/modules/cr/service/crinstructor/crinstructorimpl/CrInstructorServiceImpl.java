@@ -23,33 +23,33 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 public class CrInstructorServiceImpl implements CrInstructorService {
 
     /**
-     * Componente responsável pela criação de um CR-instrutor.
+     * Componente responsável pela criação de um vínculo CR-instrutor.
      */
     private final CreateCrInstructor createCrInstructor;
 
     /**
-     * Componente responsável pela listagem dos CR-instrurores.
+     * Componente responsável pela listagem de todos os vínculos CR-instrurores cadastrados.
      */
     private final GetAllCrInstructor getAllCrInstructor;
 
     /**
-     * Componente responsável pela busca de um CR-instrutor pelo ID informado.
+     * Componente responsável pela busca de um vínculo CR-instrutor pelo ID informado.
      */
     private final GetByIdCrInstructor getByIdCrInstructor;
 
     /**
-     * Componente responsável pela atualização de um CR-instrutor.
+     * Componente responsável por atualizar um vínculo CR-instrutor.
      */
     private final UpdateCrInstructor updateCrInstructor;
 
     /**
-     * Componente responsável por remover um CR-instrutor.
+     * Componente responsável por remover um vínculo CR-instrutor.
      */
     private final DeleteCrInstructor deleteCrInstructor;
 
     /**
      * Cria e persiste um novo vínculo CR-instrutor no banco de dados.
-     * @param request dados do CR-instrutor.
+     * @param request dados do vínculo.
      * @return vínculo criado.
      */
     @Override
@@ -59,7 +59,7 @@ public class CrInstructorServiceImpl implements CrInstructorService {
 
     /**
      * Lista todos os vínculos CR-instrutores cadastrados no banco de dados.
-     * @return lista com todos os vínculos encontrados.
+     * @return lista com todos os vínculos encontrados, caso exista.
      */
     @Override
     public List<CrInstructorResponse> findAll() {
@@ -68,7 +68,7 @@ public class CrInstructorServiceImpl implements CrInstructorService {
 
     /**
      * Busca um vínculo CR-instrutor no banco de dados pelo ID informado.
-     * @param id identificador do CR-instrutor.
+     * @param id identificador do vínculo.
      * @return vínculo encontrado, caso exista.
      */
     @Override
@@ -78,8 +78,8 @@ public class CrInstructorServiceImpl implements CrInstructorService {
 
     /**
      * Atualiza um vínculo CR-instrutor existente no banco de dados.
-     * @param id identificador do CR-instrutor.
-     * @param request novos dados do CR-instrutor.
+     * @param id identificador do vínculo.
+     * @param request novos dados do vínculo.
      * @return vínculo já atualizado.
      */
     @Override
@@ -88,7 +88,7 @@ public class CrInstructorServiceImpl implements CrInstructorService {
     }
 
     /**
-     * Remove um vínculo do banco de dados.
+     * Remove um vínculo CR-instrutor do banco de dados.
      * @param id identificador do vínculo.
      * @return mensagem de confirmação da remoção.
      */

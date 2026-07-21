@@ -15,7 +15,7 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
 
 /**
- * Caso de uso responsável pela criação de um novo {@link CrInstructor}.
+ * Caso de uso responsável pela criação de um novo vínculo {@link CrInstructor}.
  */
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class CreateCrInstructor {
 
     /**
      * Cria e persiste um novo vínculo CR-instrutor no banco de dados.
-     * @param request dados do CR-instrutor.
+     * @param request dados do vínculo.
      * @return vínculo criado.
      * @throws CrBranchNotFoundException se o vínculo CR-filial não for encontrado.
      */

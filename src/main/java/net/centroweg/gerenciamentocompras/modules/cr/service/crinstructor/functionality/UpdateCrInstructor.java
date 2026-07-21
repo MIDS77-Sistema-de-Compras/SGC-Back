@@ -13,7 +13,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrInstructor
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 
 /**
- * Caso de uso responsável por atualizar um {@link CrInstructor}.
+ * Caso de uso responsável por atualizar um vínculo {@link CrInstructor}.
  */
 @Service
 @RequiredArgsConstructor
@@ -25,10 +25,10 @@ public class UpdateCrInstructor {
     private final CrBranchRepository crBranchRepository;
 
     /**
-     * Atualiza um CR-instrutor existente no banco de dados.
-     * @param id identificador do CR-instrutor.
-     * @param request novos dados do CR-instrutor.
-     * @return vínculo atualizado.
+     * Atualiza um vínculo CR-instrutor existente no banco de dados.
+     * @param id identificador do vínculo.
+     * @param request novos dados do vínculo.
+     * @return vínculo já atualizado.
      * @throws CrInstructorNotFoundException se o vínculo não for encontrado.
      * @throws CrBranchNotFoundException se o vínculo CR-filial não for encontrado.
      */

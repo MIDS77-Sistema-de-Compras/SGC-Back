@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapp
 import org.springframework.stereotype.Service;
 
 /**
- * Caso de uso responsável por buscar um vínculo entre CR e filial pelo seu identificador.
+ * Caso de uso responsável por buscar um vínculo {@link CrBranch} pelo seu identificador.
  */
 @Service
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class FindByIdCrBranch {
 
     /**
      * Busca um vínculo CR-filial no banco de dados pelo ID informado.
-     * @param id identificador do CR-filial.
+     * @param id identificador do vínculo.
      * @return vínculo encontrado, caso exista.
      * @throws CrBranchNotFoundException se o vínculo não for encontrado.
      */

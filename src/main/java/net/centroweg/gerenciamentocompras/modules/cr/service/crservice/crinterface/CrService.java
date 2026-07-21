@@ -26,21 +26,21 @@ public interface CrService {
 
     /**
      * Lista todos os CRs cadastrados no banco de dados.
-     * @return lista de todos os CRs encontrados.
+     * @return lista com todos os CRs encontrados, caso exista.
      */
     List<CrCompoundResponse> listAll();
 
     /**
      * Busca um CR no banco de dados pelo ID informado.
      * @param id identificador do CR.
-     * @return CR encontrado.
+     * @return CR encontrado, caso exista.
      * @throws CrNotFoundException se o CR não for encontrado.
      */
     CrCompoundResponse listById(Long id);
 
     /**
      * Atualiza um CR existente no banco de dados.
-     * @param id  identificador do CR.
+     * @param id identificador do CR.
      * @param dto novos dados do CR.
      * @return CR já atualizado.
      * @throws CrNotFoundException se o CR não for encontrado.

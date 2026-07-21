@@ -70,6 +70,11 @@ class UpdateItemRequestProductServiceTest {
         request.setId(10L);
         product = Product.builder().id(20L).name("Parafuso").description("Descrição do Parafuso").code("P-1").price(1.0).type("Insumo").build();
         unit = new MeasurementUnit(30L, "Unidade", "UN");
+        item.setRequest(request);
+        item.setProduct(product);
+        item.setMeasurementUnit(unit);
+        item.setQuantity(2.0);
+        item.setAdditionalInformations("Obs");
     }
 
     @Test
@@ -86,6 +91,7 @@ class UpdateItemRequestProductServiceTest {
         assertThat(event.getValue().itemType()).isEqualTo(RequestItemType.PRODUCT);
         assertThat(event.getValue().previousStatusName()).isEqualTo("Aprovado");
         assertThat(event.getValue().newStatusName()).isEqualTo("Entregue");
+        assertThat(item.getVariation()).isEqualTo("M8 zincado");
     }
 
     @Test
@@ -110,6 +116,20 @@ class UpdateItemRequestProductServiceTest {
         verify(eventPublisher, never()).publishEvent(any());
     }
 
+    @Test
+    void shouldNotSaveOrPublishWhenAnotherItemUsesTheProduct() {
+        when(itemRepository.findById(99L)).thenReturn(Optional.of(item));
+        when(requestRepository.findById(10L)).thenReturn(Optional.of(request));
+        when(requestPublicApi.findProuctByNameIgnoreCase("Parafuso")).thenReturn(Optional.of(product));
+        when(itemRepository.existsByRequestIdAndProductIdAndIdNot(10L, 20L, 99L)).thenReturn(true);
+
+        assertThrows(net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException.class,
+                () -> service.update(99L, requestDto("Entregue")));
+
+        verify(itemRepository, never()).save(any());
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
     private void arrangeSuccessfulUpdate(Status status) {
         when(itemRepository.findById(99L)).thenReturn(Optional.of(item));
         when(requestRepository.findById(10L)).thenReturn(Optional.of(request));
@@ -121,7 +141,15 @@ class UpdateItemRequestProductServiceTest {
     }
 
     private ItemRequestProductRequest requestDto(String statusName) {
-        return new ItemRequestProductRequest(10L, "Parafuso", "UN", 2.0, statusName, "Obs");
+        return new ItemRequestProductRequest(
+                10L,
+                "Parafuso",
+                "M8 zincado",
+                "UN",
+                2.0,
+                statusName,
+                "Obs"
+        );
     }
 
     private Status status(Long id, String name) {

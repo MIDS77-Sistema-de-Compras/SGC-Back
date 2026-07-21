@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.infrastructure.persistence.ProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
@@ -36,11 +37,19 @@ public class UpdateProvisionService {
             new ProvisionNotFoundException()
         );
 
-        provision.setName(request.name());
+        String normalizedName = normalizeName(request.name());
+        if (provisionRepository.existsByNameIgnoreCaseAndIdNot(normalizedName, id)) {
+            throw new ProvisionAlreadyExistsException();
+        }
+
+        provision.setName(normalizedName);
         provision.setTotalValue(request.totalValue());
         provision.setDescription(request.description());
 
         return provisionMapper.toResponse(provisionRepository.save(provision));
     }
 
+    private String normalizeName(String name) {
+        return name.trim().replaceAll("\\s+", " ");
+    }
 }

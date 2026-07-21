@@ -8,6 +8,7 @@ import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserSumma
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface UserPublicApi {
 
@@ -15,10 +16,12 @@ public interface UserPublicApi {
     Optional<User> findByEmail(String email);
     Optional<User> findByEmailOrCpf(String email, String cpf);
     List<UserNotificationData> findNotificationDataByIds(Collection<Long> userIds);
+    List<Long> findActiveUserIdsByRole(String roleName);
     Optional<User> findUserById(Long id);
     List<User> findUsersByIds(Collection<Long> ids);
     Optional<UserSummaryPublicResponse> findUserSummaryById(Long id);
     UserSummaryPublicResponse getAuthenticatedUserSummary();
     void changeUserActivationStatus(Long userId, boolean active);
+    Set<Long> findUserIdsWithEmailNotificationsDisabled(Collection<Long> userIds);
 
 }

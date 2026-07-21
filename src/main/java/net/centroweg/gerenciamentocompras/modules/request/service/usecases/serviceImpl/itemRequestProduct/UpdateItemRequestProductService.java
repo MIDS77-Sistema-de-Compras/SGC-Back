@@ -16,6 +16,8 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
@@ -60,12 +62,32 @@ public class UpdateItemRequestProductService {
                 requestRepository.findById(dto.requestId())
                         .orElseThrow(()-> new RequestNotFoundException());
 
+        if (itemRequestProduct.getRequest() == null
+                || !Objects.equals(itemRequestProduct.getRequest().getId(), request.getId())) {
+            throw new AcessDeniedException();
+        }
+
         User currentUser = currentUserService.getCurrentUser();
-        requestBusinessRuleValidator.validateCanEditItems(request, currentUser);
+
+        boolean contentChanged = !sameText(itemRequestProduct.getProduct().getName(), dto.productName())
+                || (dto.variation() != null && !sameText(itemRequestProduct.getVariation(), dto.variation()))
+                || !sameText(itemRequestProduct.getMeasurementUnit().getName(), dto.measurementUnit())
+                || !Objects.equals(itemRequestProduct.getQuantity(), dto.quantity())
+                || !Objects.equals(itemRequestProduct.getAdditionalInformations(), dto.additionalInformations());
+        if (contentChanged) {
+            requestBusinessRuleValidator.validateCanEditContent(request, currentUser);
+        } else {
+            requestBusinessRuleValidator.validateCanEditItems(request, currentUser);
+        }
 
         Product product =
                 requestPublicApi.findProuctByNameIgnoreCase(dto.productName())
                         .orElseThrow(()-> new ProductNotFoundException());
+
+        if (itemRequestProductRepository.existsByRequestIdAndProductIdAndIdNot(
+                request.getId(), product.getId(), itemRequestProduct.getId())) {
+            throw new ItemRequestProductAlreadyExistsException();
+        }
 
         MeasurementUnit measurementUnit =
                 requestPublicApi
@@ -81,6 +103,11 @@ public class UpdateItemRequestProductService {
 
         itemRequestProduct.setRequest(request);
         itemRequestProduct.setProduct(product);
+        if (dto.variation() != null) {
+            itemRequestProduct.setVariation(
+                    dto.variation().isBlank() ? null : dto.variation().trim()
+            );
+        }
         itemRequestProduct.setMeasurementUnit(measurementUnit);
         itemRequestProduct.setQuantity(dto.quantity());
         itemRequestProduct.setStatus_id(status);
@@ -104,5 +131,13 @@ public class UpdateItemRequestProductService {
         }
 
         return itemRequestProductMapper.toResponse(saved);
+    }
+
+    private boolean sameText(String first, String second) {
+        return normalizeOptional(first).equalsIgnoreCase(normalizeOptional(second));
+    }
+
+    private String normalizeOptional(String value) {
+        return value == null ? "" : value.trim();
     }
 }

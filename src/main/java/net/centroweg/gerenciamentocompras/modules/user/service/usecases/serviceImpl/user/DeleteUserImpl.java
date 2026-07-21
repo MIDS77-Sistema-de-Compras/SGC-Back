@@ -37,6 +37,7 @@ public class DeleteUserImpl {
                 SystemRole.from(userSearched.getRole().getName())
         );
 
+        userSearched.setDeleted(true);
         userSearched.setActive(false);
 
         userRepository.save(userSearched);

@@ -13,4 +13,6 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequ
 public interface ItemRequestProvisionRepository extends JpaRepository<ItemRequestProvision, Long> {
     List<ItemRequestProvision> findAllByRequestId(@Param("requestId") Long requestId);
     Optional<ItemRequestProvision> findByIdAndRequestId(Long id, @Param("requestId") Long requestId);
+    boolean existsByRequestIdAndProvisionId(Long requestId, Long provisionId);
+    boolean existsByRequestIdAndProvisionIdAndIdNot(Long requestId, Long provisionId, Long id);
 }

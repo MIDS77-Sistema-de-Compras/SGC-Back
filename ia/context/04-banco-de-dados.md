@@ -20,7 +20,7 @@
 | `CrInstructor` | `instructor_cr_branch` | cr | instructors (N) + crBranch |
 | `Request` | `requests` | request | requestDate, crBranch, status, active, feedback, createdByUsers (N:N), itens e anexos |
 | `Status` | `status` | request | name único, description; implementa `StatusIntrf` |
-| `ItemRequestProduct` | (default) | request | request + product + measurementUnit + quantity + status |
+| `ItemRequestProduct` | (default) | request | request + product + variation + measurementUnit + quantity + status |
 | `ItemRequestProvision` | `item_request_service` | request | request + provision + status |
 | `RequestAttachment` | `request_attachments` | request | metadados do anexo no Cloudinary (url, publicId, size…) |
 | `Provision` | `provision` | provision | name, totalValue, description |

@@ -52,6 +52,7 @@ class ItemRequestProductIntegrationTest {
         validRequest = new ItemRequestProductRequest(
                 1L,
                 "Parafuso",
+                "M8 zincado",
                 "UN",
                 10.0,
                 "EM_ANDAMENTO",
@@ -62,6 +63,7 @@ class ItemRequestProductIntegrationTest {
                 1L,
                 1L,
                 "Parafuso",
+                "M8 zincado",
                 "UN",
                 10.0,
                 "EM_ANDAMENTO",
@@ -84,6 +86,7 @@ class ItemRequestProductIntegrationTest {
                 .andExpect(jsonPath("$.itemRequestProduct").value(1L))
                 .andExpect(jsonPath("$.requestId").value(1L))
                 .andExpect(jsonPath("$.productName").value("Parafuso"))
+                .andExpect(jsonPath("$.variation").value("M8 zincado"))
                 .andExpect(jsonPath("$.measurementUnit").value("UN"))
                 .andExpect(jsonPath("$.quantity").value(10.0))
                 .andExpect(jsonPath("$.statusName").value("EM_ANDAMENTO"))

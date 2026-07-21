@@ -1,14 +1,16 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.DeliveryPublicApi;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.event.DeliveryCreatedEvent;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.DeliveryCreatedNotificationContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.DeliveryNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.CreateInternalNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.DeliveryCreatedEmailSender;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleDeliveryCreatedNotificationUseCase;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class HandleDeliveryCreatedNotificationServiceImpl implements HandleDeliv
     public void handle(DeliveryCreatedEvent event) {
         var delivery = deliveryPublicApi.findNotificationDataById(event.deliveryId());
         var content = contentFactory.build(delivery);
-        createInternalNotificationUseCase.createNotifications(content.title(), content.internalMessage(), event.requestId(),
+        createInternalNotificationUseCase.createNotifications(content.title(), content.internalMessage(), NotificationType.ENTREGA_CRIADA, event.requestId(),
                 recipientDeduplicator.distinctUserIds(delivery.recipients()));
         emailSender.sendEmails(event, delivery, content);
     }

@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.usecases
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusEmailContent;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.EmailNotificationPreferenceFilter;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.ItemStatusChangedEmailSender;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
@@ -21,6 +22,7 @@ public class SendItemStatusChangedEmailServiceImpl implements ItemStatusChangedE
 
     private final EmailSenderService emailSenderService;
     private final RequestNotificationRecipientDeduplicator recipientDeduplicator;
+    private final EmailNotificationPreferenceFilter preferenceFilter;
 
     @Async
     @Override
@@ -39,7 +41,9 @@ public class SendItemStatusChangedEmailServiceImpl implements ItemStatusChangedE
                         event.newStatusName()
                 ));
 
-        recipientDeduplicator.distinctEmailRecipients(recipients)
+        preferenceFilter.filterEnabled(
+                        recipientDeduplicator.distinctEmailRecipients(recipients),
+                        RequestNotificationRecipient::userId)
                 .forEach(recipient -> sendToRecipient(event, recipient, content));
     }
 

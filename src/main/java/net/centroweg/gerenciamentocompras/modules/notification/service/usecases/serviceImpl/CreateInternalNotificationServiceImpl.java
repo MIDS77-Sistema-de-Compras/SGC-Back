@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.usecases
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.exception.NotificationRecipientNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
@@ -38,6 +39,7 @@ public class CreateInternalNotificationServiceImpl implements CreateInternalNoti
         return createNotifications(
                 notificationRequest.title(),
                 notificationRequest.message(),
+                NotificationType.valueOf(notificationRequest.notificationType()),
                 notificationRequest.requestId(),
                 List.of(notificationRequest.userId())
         ).getFirst();
@@ -48,6 +50,7 @@ public class CreateInternalNotificationServiceImpl implements CreateInternalNoti
     public List<Notification> createNotifications(
             String title,
             String message,
+            NotificationType notificationType,
             Long requestId,
             Collection<Long> userIds
     ) {
@@ -62,11 +65,13 @@ public class CreateInternalNotificationServiceImpl implements CreateInternalNoti
 
         List<Notification> notifications = distinctIds.stream()
                 .map(userId -> notificationMapper.toEntity(
-                        title,
-                        message,
-                        requireUser(usersById, userId).userId(),
-                        requestId
-                ))
+                        new NotificationRequest(
+                            title,
+                            message,
+                            notificationType.toString(),
+                            requireUser(usersById, userId).userId(),
+                            requestId
+                )))
                 .toList();
 
         return notificationRepository.saveAll(notifications);

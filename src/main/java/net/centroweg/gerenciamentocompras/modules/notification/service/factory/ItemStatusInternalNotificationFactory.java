@@ -96,4 +96,8 @@ public class ItemStatusInternalNotificationFactory {
                 .orElse("Nao informado");
         return formatter.valueOrNotInformed(receivers);
     }
+
+    public boolean isForRetrieval(ItemStatusChangedEvent event){
+        return formatter.isDelivered(event.newStatusName());
+    }
 }

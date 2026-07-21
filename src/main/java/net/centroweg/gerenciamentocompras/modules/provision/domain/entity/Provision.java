@@ -18,7 +18,7 @@ import lombok.Setter;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 
 /**
- * Entidade que representa o módulo serviço, mapeada diretamente com o banco de dados, no sistema de gerenciamento de compras.
+ * Entidade que representa um serviço(provision) no sistema de gerenciamento de compras.
  */
 @Entity
 @Table(name="provision")

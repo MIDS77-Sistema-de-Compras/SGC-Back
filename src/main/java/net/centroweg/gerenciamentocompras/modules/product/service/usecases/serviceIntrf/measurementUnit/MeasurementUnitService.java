@@ -11,7 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Measurem
 public interface MeasurementUnitService {
 
     /**
-     * Cria uma nova unidade de medida.
+     * Cria e persiste uma nova unidade de medida no banco de dados.
      * @param request dados da unidade de medida.
      * @return unidade de medida criada.
      */
@@ -20,13 +20,13 @@ public interface MeasurementUnitService {
     );
 
     /**
-     * Lista todas as unidades de medida cadastradas.
-     * @return lista com todas as unidades de medida encontradas.
+     * Lista todas as unidades de medida cadastradas no banco de dados.
+     * @return lista com todas as unidades de medida encontradas, caso exista.
      */
     List<MeasurementUnitResponse> readMeasurementUnit();
 
     /**
-     * Atualiza uma unidade de medida existente.
+     * Atualiza uma unidade de medida existente no banco de dados.
      * @param id identificador da unidade de medida.
      * @param request novos dados da unidade de medida.
      * @return unidade de medida já atualizada.
@@ -37,16 +37,16 @@ public interface MeasurementUnitService {
     );
 
     /**
-     * Busca uma unidade de medida pelo ID.
+     * Busca uma unidade de medida no banco de dados pelo ID informado.
      * @param id identificador da unidade de medida.
-     * @return unidade de medida encontrada.
+     * @return unidade de medida encontrada, caso exista.
      */
     MeasurementUnitResponse findMeasurementUnitById(Long id);
 
     /**
-     * Busca uma unidade de medida pela abreviação(sigla).
+     * Busca uma unidade de medida no banco de dados pela abreviação(sigla).
      * @param abbreviation abreviação(sigla) da unidade de medida.
-     * @return unidade de medida encontrada.
+     * @return unidade de medida encontrada, caso exista.
      */
     MeasurementUnitResponse findMeasurementUnitByAbbreviation(
         String abbreviation

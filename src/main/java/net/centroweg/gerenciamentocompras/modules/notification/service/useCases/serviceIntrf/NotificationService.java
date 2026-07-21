@@ -7,7 +7,7 @@ import java.util.List;
 import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
 
 /**
- * Interface de serviço para operações de gerenciamento de {@link Notification}.
+ * Interface de serviço para operações de gerenciamento da {@link Notification}.
  */
 public interface NotificationService {
 
@@ -21,14 +21,14 @@ public interface NotificationService {
     /**
      * Lista todas as notificações cadastradas no banco de dados por identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     List<NotificationResponse> findNotificationsByUser(Long userId);
 
     /**
      * Lista todas as notificações cadastradas no banco de dados não visualizadas por identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     List<NotificationResponse> findUnviewedNotificationsByUser(Long userId);
 
@@ -42,7 +42,7 @@ public interface NotificationService {
     /**
      * Listar todas as notificações cadastradas no banco de dados pelo dono da solicitação.
      * @param userPrincipal usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     List<NotificationResponse> findByOwnUser (UserPrincipal userPrincipal);
 }

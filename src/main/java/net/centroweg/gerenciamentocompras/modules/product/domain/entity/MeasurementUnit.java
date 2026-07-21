@@ -23,7 +23,7 @@ import lombok.Setter;
 public class MeasurementUnit {
 
     /**
-     * Identificador único da unidade de medida, gerado automáticamente pelo banco de dados.
+     * Identificador único da unidade de medida, gerado automaticamente pelo banco de dados.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class MeasurementUnit {
     private String name;
 
     /**
-     * Abreviação da unidade de medida, não pode ser nulo.
+     * Abreviação da unidade de medida, não pode ser nula.
      */
     @Column(nullable = false)
     private String abbreviation;

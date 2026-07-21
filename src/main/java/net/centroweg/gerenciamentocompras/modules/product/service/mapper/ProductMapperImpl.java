@@ -31,7 +31,7 @@ public class ProductMapperImpl implements IProductMapper {
     }
 
     /**
-     * Converte uma lista de entidades de produto em uma lista de DTOs de saída de produto.
+     * Converte uma lista de entidades de produto em uma lista de DTOs de saída do produto.
      * @param products lista de entidades com dados do produto.
      * @return dados convertidos para uma lista de DTOs de saída.
      */

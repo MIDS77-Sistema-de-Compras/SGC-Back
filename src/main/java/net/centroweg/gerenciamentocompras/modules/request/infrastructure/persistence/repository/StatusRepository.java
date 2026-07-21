@@ -3,29 +3,25 @@ package net.centroweg.gerenciamentocompras.modules.request.infrastructure.persis
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
+
 /**
- * Interface responsável pelo acesso e manipulação
- * dos dados da entidade {@link Status}.
- *
- * <p>Utiliza o Spring Data JPA para fornecer operações
- * de persistência no banco de dados.</p>
- *
- * @author André
- * @since 1.0
+ * Repositório de acesso a dados da entidade {@link Status}.
  */
 @Repository
 public interface StatusRepository extends JpaRepository<Status, Long> {
 
-    Optional<Status> findByNameIgnoreCase(String name);
     /**
-     * Verifica se já existe um status cadastrado
-     * com o nome informado.
-     *
-     * @param name nome do status
-     * @return {@code true} caso exista um status com o nome informado,
-     *         caso contrário {@code false}
+     * Busca um status no banco de dados pelo nome informado, sem distinção entre maiúsculas e minúsculas.
+     * @param name nome do status.
+     * @return status encontrado, caso exista.
+     */
+    Optional<Status> findByNameIgnoreCase(String name);
+
+    /**
+     * Verifica se já existe um status cadastrado no banco de dados com o nome informado.
+     * @param name nome do status.
+     * @return booleano
      */
     Boolean existsByName (String name);
 

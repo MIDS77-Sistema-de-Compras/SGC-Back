@@ -1,7 +1,6 @@
-package net.centroweg.gerenciamentocompras.modules.provision.service;
+package net.centroweg.gerenciamentocompras.modules.provision.service.usecases.functionality;
 
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
@@ -11,11 +10,7 @@ import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.res
 import net.centroweg.gerenciamentocompras.modules.provision.service.mapper.ProvisionMapper;
 
 /**
- * Classe responsável por atualizar os serviços no banco de dados.
- * @author gabrielEFagundes
- * @version 0.1.0
- * @see ProvisionRepository
- * @see ProvisionMapper
+ * Caso de uso responsável pela atualização de um {@link Provision}.
  */
 @Service
 @RequiredArgsConstructor
@@ -25,11 +20,11 @@ public class UpdateProvisionService {
     private final ProvisionMapper provisionMapper;
 
     /**
-     * Método responsável por atualizar a entidade {@code Provision} por ID.
-     * @param id O ID da {@code Provision} desejada.
-     * @param request A requisição do usuário.
-     * @return ProvisionResponse A entidade atualizada no banco de dados, como DTO de resposta.
-     * @throws ProvisionNotFoundException Se a {@code Provision} não for encontrada.
+     * Atualiza um serviço existente no banco de dados.
+     * @param id identificador do serviço.
+     * @param request novos dados do serviço.
+     * @return serviço já atualizado.
+     * @throws ProvisionNotFoundException caso nenhum serviço seja encontrado.
      */
     public ProvisionResponse updateProvision(Long id, ProvisionRequest request){
         Provision provision = provisionRepository.findById(id).orElseThrow(() -> 

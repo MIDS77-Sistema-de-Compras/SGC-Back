@@ -41,7 +41,7 @@ public class ProductController {
      * @param id identificador do produto.
      * @return produto encontrado, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de um produto por id")
+    @Operation(description = "ENDPOINT responsável pela busca de um produto por id")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));

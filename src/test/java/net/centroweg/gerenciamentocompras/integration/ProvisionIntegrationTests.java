@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -38,7 +37,7 @@ import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.controller.ProvisionController;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
-import net.centroweg.gerenciamentocompras.modules.provision.service.interfaces.ProvisionService;
+import net.centroweg.gerenciamentocompras.modules.provision.service.usecases.serviceintrf.ProvisionService;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;

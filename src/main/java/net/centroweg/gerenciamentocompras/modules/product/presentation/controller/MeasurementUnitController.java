@@ -44,7 +44,7 @@ public class MeasurementUnitController {
 
     /**
      * Lista todas as unidades de medida cadastradas.
-     * @return lista com todas as unidades de medida encontradas.
+     * @return lista com todas as unidades de medida encontradas, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todas as unidades de medida")
     @GetMapping

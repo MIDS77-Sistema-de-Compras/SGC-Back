@@ -42,7 +42,7 @@ public class FindProductService {
     /**
      * Busca um produto no banco de dados pelo nome informado.
      * @param name nome do produto.
-     * @return lista com todos os produtos encontrados, caso existam.
+     * @return lista com todos os produtos encontrados, caso exista.
      */
     public List<ProductResponse> findByName(String name) {
         return productMapper.toResponseList(

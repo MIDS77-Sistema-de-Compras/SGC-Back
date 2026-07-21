@@ -13,21 +13,21 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     /**
-     * Busca um produto pelo seu código identificador único.
+     * Busca um produto no banco de dados pelo código identificador único informado.
      * @param code código do produto.
      * @return produto encontrado, caso exista.
      */
     Optional<Product> findByCode(String code);
 
     /**
-     * Busca uma lista de produtos cujo nome contenha o trecho informado, sem distinção entre maiúsculas e minúsculas.
+     * Lista todos os produtos cadastrados no banco de dados cujo nome contenha o trecho informado, sem distinção entre maiúsculas e minúsculas.
      * @param name nome do produto, não necessariamente completo.
      * @return lista com todos os produtos encontrados, caso exista.
      */
     List<Product> findByNameContainingIgnoreCase(String name);
 
     /**
-     * Busca um produto pelo nome.
+     * Busca um produto no bnaco de dados pelo nome informado.
      * @param name nome do produto.
      * @return produto encontrado, caso exista.
      */

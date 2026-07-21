@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
-import net.centroweg.gerenciamentocompras.modules.provision.service.interfaces.ProvisionService;
+import net.centroweg.gerenciamentocompras.modules.provision.service.usecases.serviceintrf.ProvisionService;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 
 /**
@@ -44,9 +44,8 @@ public class ProvisionController {
     }
 
     /**
-     * Método responsável por buscar todos os serviços no banco de dados.
-     * @return {@code ResponseEntity<List<ProvisionResponse>>} Uma resposta de status HTTP com a lista de serviços.
-     * @see ProvisionService#getAllProvisions()
+     * Lista todos os serviços cadastrados com o nome informado.
+     * @return lista com todos os serviços encontrados, caso exista.
      */
     @Operation(description = "ENDPOINT responsável pela listagem de todos os serviços")
     @GetMapping
@@ -56,12 +55,11 @@ public class ProvisionController {
     }
 
     /**
-     * Método responsável por buscar o serviço correspondente com o ID no banco de dados.
-     * @param id O ID do serviço desejado.
-     * @return {@code ResponseEntity<ProvisionResponse>} Uma resposta de status HTTP com o serviço encontrado.
-     * @see ProvisionService#getProvisionById(Long)
+     * Busca um serviço pelo seu identificador.
+     * @param id identificador do serviço.
+     * @return serviço encontrado, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de Provision por id")
+    @Operation(description = "ENDPOINT responsável pela busca de um serviço por id")
     @GetMapping("/{id}")
     public ResponseEntity<ProvisionResponse> listProvisionById(@PathVariable("id") Long id){
         return ResponseEntity.status(HttpStatus.OK)
@@ -69,13 +67,12 @@ public class ProvisionController {
     }
 
     /**
-     * Método responsável por atualizar o serviço correspondente com o ID no banco de dados.
-     * @param id O ID do serviço desejado.
-     * @param request O corpo da requisição inserido pelo usuário.
-     * @return {@code ResponseEntity<ProvisionResponse>} Uma resposta de status HTTP com o corpo do serviço atualizado.
-     * @see ProvisionService#updateProvision(Long, ProvisionRequest)
+     * Atualiza um serviço existente.
+     * @param id identificador do serviço.
+     * @param request novos dados do serviço.
+     * @return serviço já atualizado.
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de Provision")
+    @Operation(description = "ENDPOINT responsável pela atualização de um serviço")
     @PutMapping("/{id}")
     public ResponseEntity<ProvisionResponse> updateProvision(@PathVariable("id") Long id, @Valid @RequestBody ProvisionRequest request){
         return ResponseEntity.status(HttpStatus.OK)
@@ -83,12 +80,11 @@ public class ProvisionController {
     }
 
     /**
-     * Método responsável por deletar o serviço correspondente com o ID no banco de dados.
-     * @param id O ID do serviço desejado.
-     * @return {@code ResponseEntity<Void>} Uma resposta de status HTTP sem corpo.
-     * @see ProvisionService#deleteProvision(Long)
+     * Remove um serviço.
+     * @param id identificador do serviço.
+     * @return resposta sem conteúdo confirmando a remoção.
      */
-    @Operation(description = "ENDPOINT responsável pelo delete de Provision")
+    @Operation(description = "ENDPOINT responsável por remover um serviço")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProvision(@PathVariable("id") Long id){
         provisionService.deleteProvision(id);

@@ -1,9 +1,13 @@
 package net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response;
 
+import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
+
 /**
- * DTO responsável por retornar dados específicos do serviço.
- * @author gabrielEFagundes
- * @version 0.1.0
+ * DTO de saída com os dados de um {@link Provision}.
+ * @param id identificador do serviço.
+ * @param name nome do serviço.
+ * @param totalValue valor total do serviço em reais(BRL).
+ * @param description descrição do serviço.
  */
 public record ProvisionResponse(
     Long id,

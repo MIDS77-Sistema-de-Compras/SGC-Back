@@ -1,16 +1,13 @@
-package net.centroweg.gerenciamentocompras.modules.provision.service;
+package net.centroweg.gerenciamentocompras.modules.provision.service.usecases.functionality;
 
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.infrastructure.persistence.ProvisionRepository;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 
 /**
- * Classe responsável por remover serviços do banco de dados.
- * @author gabrielEFagundes
- * @version 0.1.0
- * @see ProvisionRepository
+ * Caso de uso responsável por remover um {@link Provision}.
  */
 @Service
 @RequiredArgsConstructor
@@ -19,9 +16,9 @@ public class DeleteProvisionService {
     private final ProvisionRepository provisionRepository;
 
     /**
-     * Método responsável por deletar a entidade {@code Provision} com base em seu ID.
-     * @param id O ID da {@code Provision} desejada.
-     * @throws ProvisionNotFoundException Se a {@code Provision} não for encontrada no banco de dados.
+     * Remove um serviço do banco de dados.
+     * @param id identificador do serviço.
+     * @throws ProvisionNotFoundException caso nenhum serviço seja encontrado.
      */
     public void  deleteProvisionById(Long id){
         if(!provisionRepository.existsById(id)){

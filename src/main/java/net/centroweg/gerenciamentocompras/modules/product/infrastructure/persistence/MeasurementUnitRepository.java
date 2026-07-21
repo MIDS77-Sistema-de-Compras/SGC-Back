@@ -11,14 +11,14 @@ public interface MeasurementUnitRepository
         extends JpaRepository<MeasurementUnit, Long> {
 
     /**
-     * Busca uma unidade de medida pela abreviação.
+     * Busca uma unidade de medida no banco de dados pela abreviação informada.
      * @param abbreviation sigla da unidade de medida.
      * @return unidade de medida encontrada, caso exista.
      */
     Optional<MeasurementUnit> findByAbbreviation(String abbreviation);
 
     /**
-     * Busca uma unidade de medida pelo nome.
+     * Busca uma unidade de medida no banco de dados pelo nome informado.
      * @param name nome da unidade de medida.
      * @return unidade de medida encontrada, caso exista.
      */

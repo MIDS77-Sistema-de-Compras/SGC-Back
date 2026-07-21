@@ -42,7 +42,7 @@ public class ProductServiceImpl implements IProductService {
     private final DeleteProductService deleteProductService;
 
     /**
-     * Cria um produto.
+     * Cria e persiste um novo produto no banco de dados.
      * @param request dados do produto.
      * @return produto criado.
      */
@@ -52,9 +52,9 @@ public class ProductServiceImpl implements IProductService {
     }
 
     /**
-     * Busca um produto pelo ID informado.
+     * Busca um produto no banco de dados pelo ID informado.
      * @param id identificador do produto.
-     * @return produto encontrado.
+     * @return produto encontrado, caso exista.
      */
     @Override
     public ProductResponse findById(Long id) {
@@ -64,7 +64,7 @@ public class ProductServiceImpl implements IProductService {
     /**
      * Lista todos os produtos cadastrados pelo nome informado.
      * @param name nome do produto
-     * @return lista com todos os produtos encontrados.
+     * @return lista com todos os produtos encontrados, caso exista.
      */
     @Override
     public List<ProductResponse> findAll(String name) {
@@ -75,7 +75,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     /**
-     * Atualiza um produto existente.
+     * Atualiza um produto existente no banco de dados.
      * @param id identificador do produto.
      * @param request novos dados do produto.
      * @return produto já atualizado.
@@ -86,7 +86,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     /**
-     * Deleta um produto.
+     * Deleta um produto do banco de dados.
      * @param id identificador do produto.
      */
     @Override

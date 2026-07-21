@@ -17,7 +17,7 @@ public interface IProductMapper {
     ProductResponse toResponse(Product product);
 
     /**
-     * Converte uma lista de entidades de produto em uma lista de DTOs de saída dos produtos.
+     * Converte uma lista de entidades de produto em uma lista de DTOs de saída do produto.
      * @param products lista de entidades com os dados do produto.
      * @return dados convertidos para uma lista de DTOs de saída.
      */

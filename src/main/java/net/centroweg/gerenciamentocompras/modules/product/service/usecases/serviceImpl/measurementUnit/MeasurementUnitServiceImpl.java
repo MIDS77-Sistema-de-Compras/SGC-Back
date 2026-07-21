@@ -55,7 +55,7 @@ public class MeasurementUnitServiceImpl implements MeasurementUnitService {
 
     /**
      * Lista todas as unidades de medida cadastradas no banco de dados.
-     * @return lista com todas as unidades de medida encontradas.
+     * @return lista com todas as unidades de medida encontradas, caso exista.
      */
     @Override
     public List<MeasurementUnitResponse> readMeasurementUnit() {

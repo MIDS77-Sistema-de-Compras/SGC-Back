@@ -1,35 +1,33 @@
 package net.centroweg.gerenciamentocompras.modules.provision.service.mapper;
 
 import java.util.List;
-
 import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
 
-/** 
- * O mapper para serviços.
- * @author gabrielEFagundes
- * @version 1.0
+/**
+ * Interface que isola a camada de apresentação da camada de domínio, evitando exposição pela API.
  */
 public interface ProvisionMapper {
-    /** 
-     * Transforma um {@code ProvisionRequest} em uma entidade {@code Provision}
-     * @param request A requisição do usuário.
-     * @return Provision A entidade {@code Provision} pura.
+
+    /**
+     * Converte um DTO de entrada do serviço em uma entidade serviço.
+     * @param request DTO de entrada com os dados.
+     * @return dados convertidos para entidade.
      */
     Provision toEntity(ProvisionRequest request);
 
-    /** 
-     * Transforma um {@code Provision} em uma entidade {@code ProvisionResponse}
-     * @param provision A entidade {@code Provision}
-     * @return ProvisionResponse O DTO de resposta de {@code Provision}
+    /**
+     * Converte uma entidade serviço em um DTO de saída do serviço.
+     * @param provision entidade com os dados do serviço.
+     * @return dados convertidos para DTO de saída.
      */
     ProvisionResponse toResponse(Provision provision);
 
-    /** 
-     * Transforma uma lista de {@code Provision} em uma lista de {@code ProvisionResponse}
-     * @param provisionList Uma lista de entidades {@code Provision}
-     * @return List<ProvisionResponse> Uma lista de {@code ProvisionResponse}
+    /**
+     * Converte uma lista de entidades serviço em uma lista de DTOs de saída do serviço.
+     * @param provisionList lista de entidades com os dados do serviço.
+     * @return dados convertidos para uma lista de DTOs de saída.
      */
     List<ProvisionResponse> toResponse(List<Provision> provisionList);
 }

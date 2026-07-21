@@ -24,12 +24,12 @@ public class NotificationServiceImpl implements NotificationService {
     private final CreateNotificationServiceImpl createNotificationService;
 
     /**
-     * Componente responsável pela listagem de notificações por usuário.
+     * Componente responsável pela listagem de todas as notificações cadastradas por usuário.
      */
     private final FindNotificationsByUserServiceImpl findNotificationsByUserService;
 
     /**
-     * Componente responsável pela listagem de notificações não visualizadas por usuário.
+     * Componente responsável pela listagem de todos as notificações cadastradas não visualizadas por usuário.
      */
     private final FindUnviewedNotificationsByUserServiceImpl findUnviewedNotificationsByUserService;
 
@@ -54,9 +54,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Lista notificações cadastradas no banco de dados pelo identificador do usuário.
+     * Lista todas as notificações cadastradas no banco de dados pelo identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     @Override
     public List<NotificationResponse> findNotificationsByUser(Long userId) {
@@ -64,9 +64,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Lista notificações cadastradas no banco de dados não visualizadas pelo identificador do usuário.
+     * Lista todas as notificações cadastradas no banco de dados não visualizadas pelo identificador do usuário.
      * @param userId identificador do usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     @Override
     public List<NotificationResponse> findUnviewedNotificationsByUser(Long userId) {
@@ -84,9 +84,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Lista notificações cadastradas no banco de dados pertencentes ao dono da solicitação.
+     * Lista todas as notificações cadastradas no banco de dados pertencentes ao usuário logado.
      * @param userPrincipal usuário.
-     * @return lista com todas as notificações encontradas.
+     * @return lista com todas as notificações encontradas, caso exista.
      */
     @Override
     public List<NotificationResponse> findByOwnUser(UserPrincipal userPrincipal){

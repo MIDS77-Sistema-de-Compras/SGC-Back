@@ -34,6 +34,7 @@ import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPub
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestStatusNotificationData;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
 
@@ -41,6 +42,7 @@ import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderServic
 class RequestStatusNotificationFlowTest {
 
     @Mock RequestPublicApi requestPublicApi;
+    @Mock UserPublicApi userPublicApi;
     @Mock CreateInternalNotificationUseCase createInternalNotificationUseCase;
     @Mock RequestStatusChangedEmailSender emailSender;
     @Mock EmailSenderService externalEmailSender;
@@ -54,12 +56,31 @@ class RequestStatusNotificationFlowTest {
                 new RequestNotificationRecipient(2L, "Bia", "bia@teste.com")));
         when(requestPublicApi.findStatusNotificationDataById(10L)).thenReturn(data);
         var service = new HandleRequestStatusChangedNotificationServiceImpl(
-                requestPublicApi, createInternalNotificationUseCase, new RequestStatusInternalNotificationFactory(),
+                requestPublicApi, userPublicApi, createInternalNotificationUseCase, new RequestStatusInternalNotificationFactory(),
                 new RequestNotificationRecipientDeduplicator(), emailSender);
 
         service.handle(event("Em atendimento", null));
 
         verify(createInternalNotificationUseCase).createNotifications(anyString(), anyString(), eq(NotificationType.STATUS_ALTERADO), eq(10L), eq(List.of(1L, 2L)));
+        verify(emailSender).sendEmails(any(), same(data));
+    }
+
+    @Test
+    void shouldIncludeActiveBuyersWhenRequestEntersPurchaseFlow() {
+        var data = data(List.of(new RequestNotificationRecipient(1L, "Ana", "ana@teste.com")));
+        when(requestPublicApi.findStatusNotificationDataById(10L)).thenReturn(data);
+        when(userPublicApi.findActiveUserIdsByRole("COMPRADOR")).thenReturn(List.of(50L, 51L));
+        var service = new HandleRequestStatusChangedNotificationServiceImpl(
+                requestPublicApi, userPublicApi, createInternalNotificationUseCase,
+                new RequestStatusInternalNotificationFactory(),
+                new RequestNotificationRecipientDeduplicator(), emailSender);
+
+        service.handle(event("Parcialmente aprovada", null));
+
+        verify(createInternalNotificationUseCase).createNotifications(
+                anyString(), anyString(), eq(NotificationType.STATUS_ALTERADO), eq(10L),
+                eq(List.of(1L, 50L, 51L))
+        );
         verify(emailSender).sendEmails(any(), same(data));
     }
 
@@ -119,7 +140,7 @@ class RequestStatusNotificationFlowTest {
         var data = data(List.of(new RequestNotificationRecipient(1L, "Ana", "ana@teste.com")));
         when(requestPublicApi.findStatusNotificationDataById(10L)).thenReturn(data);
         var service = new HandleRequestStatusChangedNotificationServiceImpl(
-                requestPublicApi, createInternalNotificationUseCase, new RequestStatusInternalNotificationFactory(),
+                requestPublicApi, userPublicApi, createInternalNotificationUseCase, new RequestStatusInternalNotificationFactory(),
                 new RequestNotificationRecipientDeduplicator(), emailSender);
         service.handle(event(status, null));
         verify(createInternalNotificationUseCase).createNotifications(anyString(), contains(status), eq(NotificationType.STATUS_ALTERADO), eq(10L), eq(List.of(1L)));

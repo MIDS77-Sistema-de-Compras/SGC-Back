@@ -70,6 +70,11 @@ class UpdateItemRequestProductServiceTest {
         request.setId(10L);
         product = Product.builder().id(20L).name("Parafuso").description("Descrição do Parafuso").code("P-1").price(1.0).type("Insumo").build();
         unit = new MeasurementUnit(30L, "Unidade", "UN");
+        item.setRequest(request);
+        item.setProduct(product);
+        item.setMeasurementUnit(unit);
+        item.setQuantity(2.0);
+        item.setAdditionalInformations("Obs");
     }
 
     @Test

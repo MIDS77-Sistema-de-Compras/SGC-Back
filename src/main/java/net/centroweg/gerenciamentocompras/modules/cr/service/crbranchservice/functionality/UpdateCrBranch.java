@@ -69,7 +69,7 @@ public class UpdateCrBranch {
             user = userPublicApi.findUsersByIds(request.responsibleUsersId());
         }
 
-        validateCrBranchResponsibles.validate(user);
+        validateCrBranchResponsibles.validate(cr, user);
 
         crBranch.setBranch(branch);
         crBranch.setCr(cr);

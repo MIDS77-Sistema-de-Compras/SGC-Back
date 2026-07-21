@@ -50,6 +50,17 @@ public interface CrBranchRepository extends JpaRepository<CrBranch, Long>, JpaSp
     boolean existsByCrMasterTrueAndResponsibleUsersId(Long userId);
 
     /**
+     * Carrega os CRs Master e todos os responsáveis para correção de dados legados.
+     */
+    @EntityGraph(attributePaths = {"cr", "responsibleUsers", "responsibleUsers.role"})
+    @Query("select distinct crBranch from CrBranch crBranch where crBranch.cr.master = true")
+    List<CrBranch> findAllMasterWithResponsibles();
+
+    @EntityGraph(attributePaths = {"cr", "responsibleUsers", "responsibleUsers.role"})
+    @Query("select distinct crBranch from CrBranch crBranch where crBranch.cr.id = :crId")
+    List<CrBranch> findAllByCrIdWithResponsibles(@Param("crId") Long crId);
+
+    /**
      * Busca todas as filiais pelas quais o usuário é responsável, carregando a lista completa
      * de responsáveis para evitar consultas repetidas durante a criação da delegação.
      */

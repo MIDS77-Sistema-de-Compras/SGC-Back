@@ -65,8 +65,6 @@ public class CreateRequestServiceImpl {
         CrBranch crBranch = crPublicApi.findCrBranchById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
-        // Deduplica por id: o solicitante entra sempre uma vez e não é duplicado
-        // caso venha também em userIds (evita chave repetida em request_users).
         Map<Long, User> assignedUsersById = new LinkedHashMap<>();
         assignedUsersById.put(requester.getId(), requester);
         if (request.userIds() != null) {

@@ -41,10 +41,8 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // Persistido como texto (nome do enum). ORDINAL é frágil: adicionar/reordenar
-    // um valor do enum quebra os dados e a check constraint existentes no banco.
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "notification_type", nullable = false, length = 50)
     private NotificationType notificationType;
 
     @Column(name = "user_id", nullable = false)

@@ -10,6 +10,8 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.C
 import net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.crbranchinterface.CrBranchService;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
 import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManageCr;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,10 +54,11 @@ public class CrBranchController {
      */
     @Operation(description = "ENDPOINT responsável pela listagem de CR-Branch")
     @GetMapping
-    public ResponseEntity<List<CrBranchResponse>> findAll(
+    public ResponseEntity<Page<CrBranchResponse>> findAll(
             @RequestParam(required = false) String crCode,
             @RequestParam(required = false) String crName,
-            @RequestParam(required = false) List<String> responsibleName
+            @RequestParam(required = false) List<String> responsibleName,
+            Pageable pageable
     ) {
         CrBranchFilterRequest filter =
                 new CrBranchFilterRequest(
@@ -65,7 +68,7 @@ public class CrBranchController {
                 );
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(crBranchService.findAll(filter));
+                .body(crBranchService.findAll(filter, pageable));
     }
 
     /**

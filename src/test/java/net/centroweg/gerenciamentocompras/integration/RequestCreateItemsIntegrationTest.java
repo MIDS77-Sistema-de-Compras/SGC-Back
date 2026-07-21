@@ -39,6 +39,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
@@ -129,6 +130,7 @@ class RequestCreateItemsIntegrationTest {
                 .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"))
                 .andExpect(jsonPath("$.products.length()").value(1))
                 .andExpect(jsonPath("$.products[0].productName").value("Parafuso"))
+                .andExpect(jsonPath("$.products[0].variation").value("M8 zincado"))
                 .andExpect(jsonPath("$.products[0].measurementUnit").value("Quilograma"))
                 .andExpect(jsonPath("$.provisions.length()").value(0))
                 .andReturn()
@@ -143,6 +145,7 @@ class RequestCreateItemsIntegrationTest {
         assertEquals(1, savedItems.size());
         assertEquals(1, productRepository.count());
         assertEquals(requestId, savedItems.get(0).getRequest().getId());
+        assertEquals("M8 zincado", savedItems.get(0).getVariation());
         assertEquals("Aguardando aprovação", savedItems.get(0).getStatus_id().getName());
         assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
     }
@@ -256,31 +259,17 @@ class RequestCreateItemsIntegrationTest {
 
     @Test
     @DisplayName("Deve criar Request e cadastrar servico quando servico nao existir")
-    void shouldCreateRequestAndProvisionWhenProvisionDoesNotExist() throws Exception {
-        String response = mockMvc.perform(post("/requests")
+    void shouldRejectUnknownProvisionIdEvenWhenCreationDataIsProvided() throws Exception {
+        mockMvc.perform(post("/requests")
                         .with(authentication(authAs(requester)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newProvisionRequestJson(99999L)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.products.length()").value(0))
-                .andExpect(jsonPath("$.provisions.length()").value(1))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+                .andExpect(status().isNotFound());
 
-        Long requestId = objectMapper.readTree(response).get("id").asLong();
-        Provision createdProvision = provisionRepository.findAll()
-                .stream()
-                .filter(savedProvision -> "Instalacao eletrica".equals(savedProvision.getName()))
-                .findFirst()
-                .orElseThrow();
-
-        assertEquals(2, provisionRepository.count());
-        assertEquals("Servico de instalacao eletrica", createdProvision.getDescription());
-        assertEquals(1, itemRequestProvisionRepository.findAllByRequestId(requestId).size());
-        assertEquals(createdProvision.getId(), itemRequestProvisionRepository.findAllByRequestId(requestId).get(0).getProvision().getId());
-        assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
-        verify(notificationEmailService).sendNotificationEmail(anyString(), anyString(), anyString(), anyString(), anyLong());
+        assertEquals(1, provisionRepository.count());
+        assertEquals(0, requestRepository.count());
+        assertEquals(0, itemRequestProvisionRepository.count());
+        assertEquals(0, notificationRepository.count());
     }
 
     @Test
@@ -290,8 +279,7 @@ class RequestCreateItemsIntegrationTest {
                         .with(authentication(authAs(requester)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(provisionRequestJson(99999L)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Dados insuficientes para criar o servi\u00E7o."));
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -320,6 +308,85 @@ class RequestCreateItemsIntegrationTest {
         assertEquals(createdProvision.getId(), itemRequestProvisionRepository.findAllByRequestId(requestId).get(0).getProvision().getId());
     }
 
+    @Test
+    void shouldRejectDuplicateProductsInTheSameRequest() throws Exception {
+        mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(requester)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "crBranchId": %d,
+                                    "userIds": [],
+                                    "products": [
+                                        {"productName": "Parafuso", "measurementUnit": "KG", "quantity": 1, "additionalInformations": "first item"},
+                                        {"productName": " parafuso ", "measurementUnit": "KG", "quantity": 2, "additionalInformations": "second item"}
+                                    ],
+                                    "provisions": null
+                                }
+                                """.formatted(crBranch.getId())))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value(
+                        new net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProductAlreadyExistsException().getMessage()
+                ));
+
+        assertEquals(0, requestRepository.count());
+        assertEquals(0, itemRequestProductRepository.count());
+        assertEquals(0, notificationRepository.count());
+    }
+
+    @Test
+    void shouldRejectDuplicateProvisionIdsInTheSameRequest() throws Exception {
+        mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(requester)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "crBranchId": %d,
+                                    "userIds": [],
+                                    "products": null,
+                                    "provisions": [
+                                        {"provisionId": %d, "additionalInformation": "first service"},
+                                        {"provisionId": %d, "additionalInformation": "second service"}
+                                    ]
+                                }
+                                """.formatted(crBranch.getId(), provision.getId(), provision.getId())))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value(
+                        new net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProvisionAlreadyExistsException().getMessage()
+                ));
+
+        assertEquals(0, requestRepository.count());
+        assertEquals(0, itemRequestProvisionRepository.count());
+        assertEquals(0, notificationRepository.count());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void shouldRejectDuplicateNewProvisionNamesInTheSameRequestAndRollbackTheNewProvision() throws Exception {
+        mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(requester)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "crBranchId": %d,
+                                    "userIds": [],
+                                    "products": null,
+                                    "provisions": [
+                                        {"name": "New service", "totalValue": 100, "description": "valid service description", "additionalInformation": "first service"},
+                                        {"name": " new   SERVICE ", "totalValue": 200, "description": "another valid description", "additionalInformation": "second service"}
+                                    ]
+                                }
+                                """.formatted(crBranch.getId())))
+                .andExpect(status().isConflict());
+
+        assertEquals(1, provisionRepository.count());
+        assertEquals(0, requestRepository.count());
+        assertEquals(0, itemRequestProvisionRepository.count());
+        assertEquals(0, notificationRepository.count());
+    }
+
     private User saveUser(String name, String cpf, String email, String extension) {
         User user = new User(name, cpf, email, "Senha@123", extension, true);
         user.setRole(roleRepository.save(new Role("ADMIN")));
@@ -342,6 +409,7 @@ class RequestCreateItemsIntegrationTest {
                     "products": [
                         {
                             "productName": "%s",
+                            "variation": "M8 zincado",
                             "measurementUnit": "%s",
                             "quantity": 10,
                             "additionalInformations": "Comprar com urgencia"

@@ -4,6 +4,8 @@ import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.Cr
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
 public interface CrBranchService {
 
     CrBranchResponse create(CrBranchRequest request);
-    List<CrBranchResponse> findAll(CrBranchFilterRequest filter);
+    Page<CrBranchResponse> findAll(CrBranchFilterRequest filter, Pageable pageable);
     CrBranchResponse findById(Long id);
     CrBranchResponse update(Long id, CrBranchRequest request);
     MessageDTO delete(Long id);

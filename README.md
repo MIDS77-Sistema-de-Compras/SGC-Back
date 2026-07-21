@@ -105,6 +105,7 @@ Gerencia os usuários do sistema e seus papéis de acesso.
 | `DELETE` | `/users/userId/{userId}` | Inativa usuário |
 | `PATCH` | `/users/userId/{id}` | Atualiza foto de perfil (upload) |
 | `GET` | `/users/me` | Dados do usuário logado |
+| `PATCH` | `/users/me/profile-picture` | Atualiza a foto do próprio usuário logado |
 | `POST` | `/users/me/change-password` | Altera a senha do usuário logado |
 
 **Roles** — `/role`: `POST`, `GET`, `GET /RoleId/{id}`, `GET /RoleName/{name}`, `PUT /RoleId/{id}`, `DELETE /RoleId/{id}`.
@@ -328,15 +329,17 @@ CLOUDINARY_API_SECRET=<...>
 MAIL_USERNAME=<...>
 MAIL_PASSWORD=<...>
 
-# Rota do frontend usada nos e-mails enviados aos solicitantes
-REQUESTER_REQUEST_URL_TEMPLATE=http://localhost:3000/docente/solicitacoes/{requestId}
+# Template da rota do frontend usada nos e-mails enviados aos solicitantes
+REQUESTER_REQUEST_URL_TEMPLATE=https://sgc-front-nine.vercel.app/solicitacoes/{requestId}
 
-# Rota do frontend usada nos e-mails genéricos enviados aos responsáveis/coordenadores
-COORDINATOR_REQUESTS_URL=http://localhost:3000/coordenador/solicitacoes
+# Template da rota do frontend usada nos e-mails enviados para a tela de gestão
+COORDINATOR_REQUEST_URL_TEMPLATE=https://sgc-front-nine.vercel.app/solicitacoes/gestao/{requestId}
 
 # Opcional
 PORT=8080
 ```
+
+Os dois templates devem conter `{requestId}`, que o backend substitui pelo ID real da solicitação. Os e-mails recebem a URL direta da solicitação; o frontend é responsável pelo login e pelo redirecionamento posterior. O backend não gera URLs de `/login` nem o parâmetro `returnTo`.
 
 **Profiles:** `dev` (padrão — `ddl-auto=update`, Swagger ON), `prod` (`ddl-auto=validate`, Swagger OFF) e `test` (H2, `ddl-auto=create-drop`).
 

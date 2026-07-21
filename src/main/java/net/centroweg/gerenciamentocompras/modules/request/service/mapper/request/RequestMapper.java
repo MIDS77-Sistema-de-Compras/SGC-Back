@@ -1,22 +1,24 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.mapper.request;
 
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.RequestAttachment;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.RequestRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
-import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
-import org.springframework.stereotype.Component;
-import net.centroweg.gerenciamentocompras.modules.request.domain.entity.RequestAttachment;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestListItemResponse;
+import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestResponse;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -69,6 +71,31 @@ public class RequestMapper {
         );
     }
 
+    /**
+     * Converte para o DTO enxuto de listagem, sem tocar em anexos, itens de serviço
+     * ou solicitantes — apenas o que a tela de lista exibe.
+     */
+    public RequestListItemResponse toListItemDTO(Request request) {
+        List<String> productNames = request.getItemRequestProducts()
+                .stream()
+                .map(item -> item.getProduct() != null ? item.getProduct().getName() : null)
+                .toList();
+
+        String crCode = request.getCrBranch() != null && request.getCrBranch().getCr() != null
+                ? request.getCrBranch().getCr().getCode()
+                : null;
+
+        return new RequestListItemResponse(
+                request.getId(),
+                request.getRequestDate(),
+                request.getUpdatedAt(),
+                crCode,
+                request.getStatus().getName(),
+                statusCategoryResolver.resolve(request.getStatus().getName()),
+                productNames
+        );
+    }
+
     public RequestAttachmentResponse toAttachmentDTO(
             RequestAttachment attachment
     ) {
@@ -87,6 +114,7 @@ public class RequestMapper {
                 item.getId(),
                 item.getRequest().getId(),
                 item.getProduct() != null ? item.getProduct().getName() : null,
+                item.getVariation(),
                 item.getMeasurementUnit() != null ? item.getMeasurementUnit().getName() : null,
                 item.getQuantity(),
                 item.getStatus_id() != null ? item.getStatus_id().getName() : null,

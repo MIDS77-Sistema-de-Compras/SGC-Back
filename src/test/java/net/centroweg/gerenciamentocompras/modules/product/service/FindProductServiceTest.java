@@ -71,8 +71,8 @@ class FindProductServiceTest {
     @Test
     @DisplayName("Deve listar todos os produtos com sucesso")
     void mustFindAllProductsSuccessfully() {
-        Product p1 = Product.builder().id(1L).name("P1").price(10.0).type("T1").code("C1").build();
-        Product p2 = Product.builder().id(2L).name("P2").price(20.0).type("T2").code("C2").build();
+        Product p1 = Product.builder().id(1L).name("P1").description("Descrição de P1").price(10.0).type("T1").code("C1").build();
+        Product p2 = Product.builder().id(2L).name("P2").description("Descrição de P2").price(20.0).type("T2").code("C2").build();
         List<Product> products = List.of(p1, p2);
 
         ProductResponse r1 = new ProductResponse(1L, "P1", null, 10.0, "T1", "C1");
@@ -95,7 +95,7 @@ class FindProductServiceTest {
     @DisplayName("Deve buscar produtos por nome com sucesso")
     void mustFindProductsByNameSuccessfully() {
         String nameQuery = "PROD";
-        Product p1 = Product.builder().id(1L).name("PRODUTO A").price(10.0).type("T1").code("C1").build();
+        Product p1 = Product.builder().id(1L).name("PRODUTO A").description("Descrição do produto A").price(10.0).type("T1").code("C1").build();
         List<Product> products = List.of(p1);
 
         ProductResponse r1 = new ProductResponse(1L, "PRODUTO A", null, 10.0, "T1", "C1");

@@ -1,17 +1,23 @@
 package net.centroweg.gerenciamentocompras.shared.cloudinary;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.shared.exception.InvalidFileException;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+
+import lombok.RequiredArgsConstructor;
+import net.centroweg.gerenciamentocompras.shared.exception.InvalidFileException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +27,17 @@ public class CloudinaryService {
 
     private final Cloudinary cloudinary;
 
-    public Map upload(MultipartFile file) throws IOException {
+    public Map<?, ?> upload(MultipartFile file) throws IOException {
         byte[] bytes = validateAndRead(file);
         validateProfilePicture(file, bytes);
 
-        return cloudinary.uploader().upload(bytes, ObjectUtils.emptyMap());
+        return cloudinary.uploader().upload(
+                bytes,
+                ObjectUtils.asMap(
+                        "resource_type", "image",
+                        "folder", "profile-pictures"
+                )
+        );
     }
 
     public Map<?, ?> uploadFile(MultipartFile file) throws IOException {
@@ -39,6 +51,18 @@ public class CloudinaryService {
                         "folder", "request-attachments",
                         "use_filename", true,
                         "unique_filename", true
+                )
+        );
+    }
+
+    public void deleteFile(String publicId, String resourceType) throws IOException {
+        if (publicId == null || publicId.isBlank()) return;
+
+        cloudinary.uploader().destroy(
+                publicId,
+                ObjectUtils.asMap(
+                        "resource_type", resourceType == null || resourceType.isBlank() ? "image" : resourceType,
+                        "invalidate", true
                 )
         );
     }
@@ -71,7 +95,11 @@ public class CloudinaryService {
     private void validateProfilePicture(MultipartFile file, byte[] bytes) {
         String contentType = file.getContentType();
 
-        if (contentType == null || !contentType.startsWith("image/") || !isImage(bytes)) {
+        boolean supportedType = "image/png".equals(contentType)
+                || "image/jpeg".equals(contentType)
+                || "image/webp".equals(contentType);
+
+        if (!supportedType || !matchesImageType(contentType, bytes)) {
             throw new InvalidFileException("A foto de perfil deve ser uma imagem valida.");
         }
     }
@@ -88,6 +116,7 @@ public class CloudinaryService {
             case "image/png", "image/jpeg" -> isImage(bytes);
             case "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ->
                     isDocx(bytes);
+            case "text/csv", "application/csv", "application/vnd.ms-excel" -> isCsv(bytes);
             default -> false;
         };
 
@@ -99,6 +128,28 @@ public class CloudinaryService {
     private boolean isImage(byte[] bytes) {
         return startsWith(bytes, new byte[]{(byte) 0x89, 0x50, 0x4E, 0x47})
                 || startsWith(bytes, new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF});
+    }
+
+    private boolean matchesImageType(String contentType, byte[] bytes) {
+        return switch (contentType) {
+            case "image/png" -> startsWith(bytes, new byte[]{
+                    (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
+            });
+            case "image/jpeg" -> startsWith(bytes, new byte[]{
+                    (byte) 0xFF, (byte) 0xD8, (byte) 0xFF
+            });
+            case "image/webp" -> isWebp(bytes);
+            default -> false;
+        };
+    }
+
+    private boolean isWebp(byte[] bytes) {
+        return bytes.length >= 12
+                && startsWith(bytes, "RIFF".getBytes())
+                && bytes[8] == 'W'
+                && bytes[9] == 'E'
+                && bytes[10] == 'B'
+                && bytes[11] == 'P';
     }
 
     private boolean isDocx(byte[] bytes) throws IOException {
@@ -118,6 +169,22 @@ public class CloudinaryService {
         }
 
         return hasContentTypes && hasDocument;
+    }
+
+    private boolean isCsv(byte[] bytes) {
+        for (byte value : bytes) {
+            if (value == 0) return false;
+        }
+
+        try {
+            StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(ByteBuffer.wrap(bytes));
+            return true;
+        } catch (CharacterCodingException exception) {
+            return false;
+        }
     }
 
     private boolean startsWith(byte[] bytes, byte[] prefix) {

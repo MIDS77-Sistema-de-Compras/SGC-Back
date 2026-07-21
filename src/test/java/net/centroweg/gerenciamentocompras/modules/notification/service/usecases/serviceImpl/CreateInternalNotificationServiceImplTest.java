@@ -1,49 +1,105 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
-import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
-import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
-import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationData;
-import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
-import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserNotificationData;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Notification;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
+import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
+import net.centroweg.gerenciamentocompras.modules.notification.service.mapper.NotificationMapper;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.CreateInternalNotificationUseCase;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl.CreateInternalNotificationServiceImpl;
+import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.persistence.NotificationRepository;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
+import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserNotificationData;
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationData;
 
 @ExtendWith(MockitoExtension.class)
 class CreateInternalNotificationServiceImplTest {
 
-    @Mock NotificationRepository notificationRepository;
-    @Mock UserPublicApi userPublicApi;
-    @Mock RequestPublicApi requestPublicApi;
+    @Mock
+    private NotificationRepository notificationRepository;
+
+    @Mock
+    private UserPublicApi userPublicApi;
+
+    @Mock
+    private RequestPublicApi requestPublicApi;
+
+    @Mock
+    private NotificationMapper notificationMapper;
+
+    @InjectMocks
+    private CreateInternalNotificationServiceImpl createInternalNotificationService;
 
     @Test
-    void shouldPersistOneNotificationPerDistinctNonNullUserId() {
-        when(requestPublicApi.findNotificationDataById(10L)).thenReturn(new RequestNotificationData(10L, List.of()));
-        when(userPublicApi.findNotificationDataByIds(any())).thenReturn(List.of(
-                new UserNotificationData(1L, "Ana", "ana@teste.com"),
-                new UserNotificationData(2L, "Bia", "bia@teste.com")
-        ));
-        when(notificationRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        var service = new CreateInternalNotificationServiceImpl(
-                notificationRepository, userPublicApi, requestPublicApi, new NotificationMapper());
+    @DisplayName("Should persist notifications with correct ITEM_PARA_RETIRADA type")
+    void shouldPersistNotificationsWithCorrectItemParaRetiradaType() {
+        // Given
+        String title = "Item disponível para retirada";
+        String message = "Seu item está disponível para retirada na loja";
+        NotificationType notificationType = NotificationType.ITEM_PARA_RETIRADA;
+        Long requestId = 10L;
+        Long userId = 456L;
+        UserNotificationData userData = new UserNotificationData(userId, "João Silva", "joao@email.com");
+        Notification expectedNotification = new Notification();
+        expectedNotification.setTitle(title);
+        expectedNotification.setMessage(message);
+        expectedNotification.setNotificationType(notificationType);
+        expectedNotification.setUserId(userId);
+        expectedNotification.setRequestId(requestId);
 
-        service.createNotifications("Titulo", "Mensagem", 10L, java.util.Arrays.asList(1L, 1L, null, 2L));
+        when(requestPublicApi.findNotificationDataById(eq(requestId)))
+                .thenReturn(new RequestNotificationData(
+                        requestId,
+                        List.of()
+                ));
+        when(userPublicApi.findNotificationDataByIds(eq(new LinkedHashSet<>(List.of(userId)))))
+                .thenReturn(List.of(userData));
+        when(notificationMapper.toEntity(any(NotificationRequest.class)))
+                .thenReturn(expectedNotification);
+        when(notificationRepository.saveAll(any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
+        // When
+        createInternalNotificationService.createNotifications(
+                title,
+                message,
+                notificationType,
+                requestId,
+                List.of(userId)
+        );
+
+        // Then
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<Notification>> notifications = ArgumentCaptor.forClass(List.class);
-        verify(notificationRepository).saveAll(notifications.capture());
-        assertThat(notifications.getValue()).extracting(Notification::getUserId).containsExactly(1L, 2L);
-        assertThat(notifications.getValue()).extracting(Notification::getRequestId).containsOnly(10L);
+        var notificationsCaptor = ArgumentCaptor.forClass(List.class);
+        verify(notificationRepository).saveAll(notificationsCaptor.capture());
+
+        List<Notification> savedNotifications = notificationsCaptor.getValue();
+        assertThat(savedNotifications).hasSize(1);
+
+        Notification savedNotification = savedNotifications.get(0);
+        assertThat(savedNotification.getTitle()).isEqualTo(title);
+        assertThat(savedNotification.getMessage()).isEqualTo(message);
+        assertThat(savedNotification.getUserId()).isEqualTo(userId);
+        assertThat(savedNotification.getRequestId()).isEqualTo(requestId);
+        assertThat(savedNotification.getNotificationType()).isEqualTo(notificationType);
     }
 }

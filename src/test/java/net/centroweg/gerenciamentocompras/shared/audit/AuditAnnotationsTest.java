@@ -280,11 +280,11 @@ class AuditAnnotationsTest {
     }
 
     // ---------------------------------------------------------------------
-    // ItemRequestProvisionController  (achados: PUT/DELETE sem @Auditable)
+    // ItemRequestProvisionController  (PUT auditado; DELETE sem @Auditable)
     // ---------------------------------------------------------------------
 
     @Nested
-    @DisplayName("ItemRequestProvisionController (documenta ausência de auditoria em PUT/DELETE)")
+    @DisplayName("ItemRequestProvisionController (documenta ausência de auditoria no DELETE)")
     class ItemRequestProvisionAnnotations {
 
         @Test
@@ -297,12 +297,15 @@ class AuditAnnotationsTest {
         }
 
         @Test
-        @DisplayName("PUT updateItem -> NÃO auditado (sem @Auditable)")
+        @DisplayName("PUT updateItem -> @Auditable(ATUALIZAR_ITEM_SERVIÇO), com @AuditParam(\"request\") sobre o DTO")
         void update() {
-            // ACHADO: ao contrário do pedido, updateItem não possui @Auditable.
-            assertThat(method(ItemRequestProvisionController.class, "updateItem").getAnnotation(Auditable.class))
-                    .as("hoje updateItem NÃO tem @Auditable")
-                    .isNull();
+            assertAuditable(ItemRequestProvisionController.class, "updateItem", "ATUALIZAR_ITEM_SERVIÇO", false);
+            Method m = method(ItemRequestProvisionController.class, "updateItem");
+            int idx = auditParamIndex(m, "request");
+            assertThat(idx).isNotEqualTo(-1);
+            // Mesmo padrão do ItemRequestProduct: a anotação está sobre o DTO, não sobre o Long itemId (param 0).
+            assertThat(m.getParameters()[idx].getType()).isNotEqualTo(Long.class);
+            assertThat(hasAuditParam(m, 0, "request")).as("o Long itemId NÃO está anotado hoje").isFalse();
         }
 
         @Test

@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.product.service;
 
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
+import net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.response.ProductResponse;
@@ -16,8 +17,13 @@ public class CreateProductService {
     private final IProductMapper productMapper;
 
     public ProductResponse execute(CreateProductRequest request) {
+        String normalizedName = normalizeName(request.name());
+        if (productRepository.findByNameIgnoreCase(normalizedName).isPresent()) {
+            throw new ProductAlreadyExistsException();
+        }
+
         Product product = Product.builder()
-                .name(request.name())
+                .name(normalizedName)
                 .description(request.description())
                 .price(request.price())
                 .type(request.type())
@@ -27,4 +33,7 @@ public class CreateProductService {
         return productMapper.toResponse(productRepository.save(product));
     }
 
+    private String normalizeName(String name) {
+        return name.trim().replaceAll("\\s+", " ");
+    }
 }

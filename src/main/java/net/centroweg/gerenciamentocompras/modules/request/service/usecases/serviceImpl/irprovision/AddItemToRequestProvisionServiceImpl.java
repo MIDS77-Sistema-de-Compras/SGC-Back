@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.provision.service.api.Provisio
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.ItemRequestProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.StatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
@@ -34,6 +35,10 @@ public class AddItemToRequestProvisionServiceImpl {
 
         Provision provision = provisionPublicApi.findById(requestDto.provisionId())
             .orElseThrow(() -> new ProvisionNotFoundException());
+
+        if (itemRequestProvisionRepository.existsByRequestIdAndProvisionId(request.getId(), provision.getId())) {
+            throw new ItemRequestProvisionAlreadyExistsException();
+        }
 
         Status status = statusRepository.findById(requestDto.statusId())
             .orElseThrow(() -> new StatusNotFoundException());

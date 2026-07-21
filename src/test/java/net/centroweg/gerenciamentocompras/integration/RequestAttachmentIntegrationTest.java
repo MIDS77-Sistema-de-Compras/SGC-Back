@@ -1,5 +1,31 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
+
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
@@ -13,37 +39,14 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.shared.cloudinary.CloudinaryService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
+import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@WithMockUser
+@WithMockUser(username = "docente@test.com", roles = "DOCENTE")
 class RequestAttachmentIntegrationTest {
 
     @Autowired
@@ -67,6 +70,12 @@ class RequestAttachmentIntegrationTest {
     @Autowired
     private CrRepository crRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @MockitoBean
     private CloudinaryService cloudinaryService;
 
@@ -88,12 +97,17 @@ class RequestAttachmentIntegrationTest {
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         CrBranch crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
-        Status status = statusRepository.save(new Status("EM_ANDAMENTO", "Solicitacao aguardando aprovacao"));
+        Status status = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
+        Role role = roleRepository.save(new Role("DOCENTE"));
+        User creator = new User("Docente", "12345678901", "docente@test.com", "senha", "1234", true);
+        creator.setRole(role);
+        creator = userRepository.save(creator);
 
         request = new Request(crBranch, status);
         request.setRequestDate(LocalDateTime.of(2026, 6, 18, 10, 0));
         request.setUpdatedAt(LocalDateTime.of(2026, 6, 18, 10, 0));
         request.setActive(true);
+        request.getCreatedByUsers().add(creator);
         request = requestRepository.save(request);
     }
 
@@ -140,5 +154,7 @@ class RequestAttachmentIntegrationTest {
         statusRepository.deleteAll();
         crRepository.deleteAll();
         branchRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 }

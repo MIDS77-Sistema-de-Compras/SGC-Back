@@ -1,13 +1,13 @@
 package net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceImpl.role;
 
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateRole;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
-import org.springframework.stereotype.Service;
 
 /** Classe de gerenciamento de criação de role */
 

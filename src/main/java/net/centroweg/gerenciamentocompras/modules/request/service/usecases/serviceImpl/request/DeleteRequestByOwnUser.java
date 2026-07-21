@@ -1,14 +1,14 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request;
 
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestAlreadyApprovedException;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
-import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

@@ -3,12 +3,9 @@ package net.centroweg.gerenciamentocompras.modules.delivery.service.mapper;
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Delivery;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.DeliveryReceiver;
-import net.centroweg.gerenciamentocompras.modules.delivery.domain.exception.DeliveryStatusNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryReceiverResponse;
 import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.response.DeliveryResponse;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.StatusPublicData;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
@@ -18,8 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeliveryMapper {
 
-    private final StatusPublicApi statusPublicApi;
-
     public DeliveryResponse toDTO(Delivery delivery) {
         List<DeliveryReceiverResponse> receivers = delivery.getReceivers()
                 .stream()
@@ -27,8 +22,7 @@ public class DeliveryMapper {
                 .map(this::toReceiverDTO)
                 .toList();
 
-        Status status = statusPublicApi.findById(delivery.getStatus().getId())
-                .orElseThrow(DeliveryStatusNotFoundException::new);
+        Status status = delivery.getStatus();
 
         return new DeliveryResponse(
                 delivery.getId(),

@@ -1,5 +1,33 @@
 package net.centroweg.gerenciamentocompras.integration;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
@@ -19,35 +47,6 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -79,6 +78,7 @@ class RequestStatusIntegrationTest {
     private Status cancelled;
     private User requester;
     private User responsible;
+    private User buyer;
 
     @BeforeEach
     void setUp() {
@@ -87,12 +87,13 @@ class RequestStatusIntegrationTest {
 
         requester = saveUser("Solicitante", "solicitante@teste.com", "52998224725", "DOCENTE");
         responsible = saveUser("Responsavel", "responsavel@teste.com", "12345678909", "SUPERVISOR");
+        buyer = saveUser("Comprador", "comprador@teste.com", "98765432101", "COMPRADOR");
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(responsible)));
 
-        pending = statusRepository.save(new Status("Pendente", "Solicitacao pendente"));
+        pending = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
         approved = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada"));
         refused = statusRepository.save(new Status("Recusado", "Solicitacao recusada"));
         inService = statusRepository.save(new Status("Em atendimento", "Solicitacao em atendimento"));
@@ -264,7 +265,14 @@ class RequestStatusIntegrationTest {
                 .satisfies(notification -> {
                     assertThat(notification.getRequestId()).isEqualTo(request.getId());
                     assertThat(notification.getTitle()).isEqualTo("Status da solicitação atualizado");
-                    assertThat(notification.getMessage()).contains("Pendente", "Aprovado");
+                    assertThat(notification.getMessage()).contains("Aguardando aprova&ccedil;&atilde;o", "Aprovado");
+                });
+        assertThat(notificationRepository.findByUserId(buyer.getId()))
+                .hasSize(1)
+                .first()
+                .satisfies(notification -> {
+                    assertThat(notification.getRequestId()).isEqualTo(request.getId());
+                    assertThat(notification.getMessage()).contains("Aprovado");
                 });
         awaitAnyEmail();
     }
@@ -303,7 +311,7 @@ class RequestStatusIntegrationTest {
         clearInvocations(emailSenderService);
 
         mockMvc.perform(patch("/requests/{id}/status", request.getId())
-                        .with(user(principalOf(responsible)))
+                        .with(user(principalOf(buyer)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -326,7 +334,9 @@ class RequestStatusIntegrationTest {
         verify(emailSenderService, timeout(5000)).sendEmail(emailCaptor.capture(), htmlCaptor.capture());
         assertThat(emailCaptor.getValue().getSendTo()).isEqualTo("solicitante@teste.com");
         assertThat(emailCaptor.getValue().getSubject()).contains("Em atendimento");
-        assertThat(htmlCaptor.getValue()).contains("Em atendimento", "/docente/solicitacoes/" + request.getId());
+        assertThat(htmlCaptor.getValue())
+                .contains("Em atendimento", "/solicitacoes/" + request.getId())
+                .doesNotContain("/docente/solicitacoes");
     }
 
     @Test
@@ -336,7 +346,7 @@ class RequestStatusIntegrationTest {
         clearInvocations(emailSenderService);
 
         mockMvc.perform(patch("/requests/{id}/status", request.getId())
-                        .with(user(principalOf(responsible)))
+                        .with(user(principalOf(buyer)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -393,7 +403,7 @@ class RequestStatusIntegrationTest {
 
     private void patchStatus(Long requestId, String statusName) throws Exception {
         mockMvc.perform(patch("/requests/{id}/status", requestId)
-                        .with(user(principalOf(responsible)))
+                        .with(user(principalOf(buyer)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

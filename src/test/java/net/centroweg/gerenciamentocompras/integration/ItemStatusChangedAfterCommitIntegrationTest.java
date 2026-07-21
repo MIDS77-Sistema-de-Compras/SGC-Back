@@ -1,9 +1,11 @@
 package net.centroweg.gerenciamentocompras.integration;
 
-import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleItemStatusChangedNotificationUseCase;
-import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
-import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
@@ -12,11 +14,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleItemStatusChangedNotificationUseCase;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
+import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -24,6 +25,7 @@ class ItemStatusChangedAfterCommitIntegrationTest {
 
     @Autowired private ApplicationEventPublisher eventPublisher;
     @Autowired private PlatformTransactionManager transactionManager;
+    @Autowired private static RequestRepository repository;
     @MockitoBean private HandleItemStatusChangedNotificationUseCase notificationUseCase;
 
     @Test
@@ -48,7 +50,7 @@ class ItemStatusChangedAfterCommitIntegrationTest {
 
     private ItemStatusChangedEvent event() {
         return new ItemStatusChangedEvent(
-                10L, 99L, RequestItemType.PRODUCT, "Parafuso", "P-1", 2.0, "UN",
+                1L, 1L, RequestItemType.PRODUCT, "Parafuso", "P-1", 2.0, "UN",
                 "Aprovado", "Entregue", null, LocalDateTime.now()
         );
     }

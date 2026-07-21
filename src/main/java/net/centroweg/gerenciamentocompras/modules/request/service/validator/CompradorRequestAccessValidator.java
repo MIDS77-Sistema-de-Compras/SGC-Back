@@ -7,23 +7,44 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 /**
  * Validador responsável por restringir o acesso do comprador às solicitações.
  *
- * <p>O comprador só pode visualizar ou alterar solicitações com status
- * "Aprovado". Usuários de outras roles não são afetados.</p>
+ * <p>O comprador só pode visualizar ou alterar solicitações já finalizadas pelo
+ * supervisor/coordenador com um resultado que gera trabalho de compra: "Aprovado",
+ * "Auto-aprovado" ou "Parcialmente aprovada". "Recusado" fica de fora (nada a comprar).
+ * A partir da entrada, o comprador segue conduzindo a solicitação por seus próprios
+ * status (em atendimento, atrasada, entregue etc.) — por isso esses também precisam
+ * estar liberados aqui: essa validação roda a cada chamada com o status ATUAL da
+ * solicitação, então travar nos 3 status de entrada impediria o segundo PATCH em diante
+ * (ex.: Em atendimento -> Entregue). Usuários de outras roles não são afetados.</p>
  */
 @Component
 public class CompradorRequestAccessValidator {
 
-    private static final String APPROVED_STATUS = "aprovado";
+    private static final Set<String> ALLOWED_STATUSES = Set.of(
+            "aprovado",
+            "auto_aprovado",
+            "parcialmente_aprovada",
+            "em atendimento",
+            "atrasada",
+            "recebimento_parcial",
+            "fundo_rotativo",
+            "cd_central",
+            "solicitado_portal",
+            "parcialmente_atendida",
+            "entregue",
+            "pedido cancelado"
+    );
 
     /**
      * Valida o acesso do usuário autenticado à solicitação informada.
      *
      * @param request solicitação alvo
      * @throws RequestNotApprovedForCompradorException se um comprador tentar
-     *         acessar uma solicitação cujo status não é "Aprovado"
+     *         acessar uma solicitação fora do fluxo de compra
      */
     public void validate(Request request) {
         if (!isCompradorAuthenticated()) {
@@ -34,7 +55,7 @@ public class CompradorRequestAccessValidator {
                 ? request.getStatus().getName().trim().toLowerCase()
                 : "";
 
-        if (!APPROVED_STATUS.equals(statusName)) {
+        if (!ALLOWED_STATUSES.contains(statusName)) {
             throw new RequestNotApprovedForCompradorException();
         }
     }

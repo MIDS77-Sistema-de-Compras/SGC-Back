@@ -110,7 +110,7 @@ class AuditLogIntegrationTest {
 
     private long criarUsuarioComoAdmin() throws Exception {
         CreateUser request = new CreateUser(
-                "Usuario Alvo", "alvo@teste.com", NEW_USER_CPF,
+                "Usuario Alvo", "alvo@sc.senai.br", NEW_USER_CPF,
                 "Senha@123", "2000", true, "COMPRADOR");
 
         String response = mockMvc.perform(post("/users")
@@ -145,7 +145,7 @@ class AuditLogIntegrationTest {
         auditLogRepository.deleteAll(); // isola o log da atualização
 
         CreateUser update = new CreateUser(
-                "Usuario Alvo Editado", "alvo@teste.com", NEW_USER_CPF,
+                "Usuario Alvo Editado", "alvo@sc.senai.br", NEW_USER_CPF,
                 "Senha@123", "3000", true, "COMPRADOR");
 
         mockMvc.perform(put("/users/userId/{id}", createdId)
@@ -182,7 +182,7 @@ class AuditLogIntegrationTest {
     @DisplayName("Endpoint auditado com principal cujo e-mail não está no banco não gera log e não quebra a requisição")
     void endpointAuditadoComPrincipalInexistenteNaoGeraLog() throws Exception {
         CreateUser request = new CreateUser(
-                "Usuario Alvo", "alvo@teste.com", NEW_USER_CPF,
+                "Usuario Alvo", "alvo@sc.senai.br", NEW_USER_CPF,
                 "Senha@123", "2000", true, "COMPRADOR");
 
         // "usuario-sem-email" não corresponde a nenhum usuário persistido. O aspecto de auditoria

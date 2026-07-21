@@ -42,7 +42,7 @@ class ListUserImplTest {
         UserResponse resp1 = new UserResponse(1L, "User 1", "...", "...", "...", true, null, null, "ADMIN", null);
         UserResponse resp2 = new UserResponse(2L, "User 2", "...", "...", "...", true, null, null, "ADMIN", null);
 
-        when(repository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(user1, user2)));
+        when(repository.findByDeletedFalse(pageable)).thenReturn(new PageImpl<>(List.of(user1, user2)));
         when(mapper.toDTO(user1)).thenReturn(resp1);
         when(mapper.toDTO(user2)).thenReturn(resp2);
 
@@ -52,7 +52,7 @@ class ListUserImplTest {
         assertEquals(2, result.getTotalElements());
         assertEquals("User 1", result.getContent().get(0).name());
 
-        verify(repository, times(1)).findAll(pageable);
+        verify(repository, times(1)).findByDeletedFalse(pageable);
         verify(mapper, times(1)).toDTO(user1);
         verify(mapper, times(1)).toDTO(user2);
     }
@@ -62,12 +62,12 @@ class ListUserImplTest {
     void deveRetornarListaVaziaQuandoNaoHouverUsuarios() {
         Pageable pageable = Pageable.unpaged();
 
-        when(repository.findAll(pageable)).thenReturn(new PageImpl<>(List.of()));
+        when(repository.findByDeletedFalse(pageable)).thenReturn(new PageImpl<>(List.of()));
 
         Page<UserResponse> result = listUserImpl.listUser(pageable);
 
         assertTrue(result.isEmpty());
-        verify(repository, times(1)).findAll(pageable);
+        verify(repository, times(1)).findByDeletedFalse(pageable);
         verifyNoMoreInteractions(mapper);
     }
 }

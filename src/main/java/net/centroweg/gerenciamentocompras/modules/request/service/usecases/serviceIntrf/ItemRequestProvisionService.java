@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf;
 
 import java.util.List;
-import java.util.Optional;
 
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;

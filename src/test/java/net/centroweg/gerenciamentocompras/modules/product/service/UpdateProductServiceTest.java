@@ -79,4 +79,20 @@ class UpdateProductServiceTest {
         verify(productRepository, times(1)).findById(productId);
         verify(productRepository, never()).save(any());
     }
+
+    @Test
+    @DisplayName("Must not update product with a duplicate name")
+    void mustNotUpdateProductWithDuplicateName() {
+        Long productId = 1L;
+        UpdateProductRequest request = new UpdateProductRequest("  Product   B  ", "description", 15.0, "type", "CODE01");
+        Product existingProduct = Product.builder().id(productId).name("Product A").build();
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
+        when(productRepository.existsByNameIgnoreCaseAndIdNot("Product B", productId)).thenReturn(true);
+
+        assertThrows(net.centroweg.gerenciamentocompras.modules.product.domain.exception.ProductAlreadyExistsException.class,
+                () -> updateProductService.execute(productId, request));
+
+        verify(productRepository, never()).save(any());
+    }
 }

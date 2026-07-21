@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.controll
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.ItemRequestProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceIntrf.ItemRequestProvisionService;
+import net.centroweg.gerenciamentocompras.shared.security.annotation.CanManagePurchaseItems;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -76,5 +79,24 @@ class ItemRequestProvisionControllerTest {
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         verify(service, times(1)).deleteItemFromProvisionRequest(1L);
+    }
+
+    @Test
+    @DisplayName("Deve proteger somente o PUT de atualizacao")
+    void deveProtegerSomenteAtualizacao() throws NoSuchMethodException {
+        Method updateItem = ItemRequestProvisionController.class.getMethod(
+                "updateItem", Long.class, ItemRequestProvisionRequest.class
+        );
+        Method addItem = ItemRequestProvisionController.class.getMethod(
+                "addItem", ItemRequestProvisionRequest.class
+        );
+        Method findAllItems = ItemRequestProvisionController.class.getMethod("findAllItems", Long.class);
+        Method deleteItem = ItemRequestProvisionController.class.getMethod("deleteItem", Long.class);
+
+        assertThat(ItemRequestProvisionController.class.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
+        assertThat(updateItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
+        assertThat(addItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
+        assertThat(findAllItems.isAnnotationPresent(CanManagePurchaseItems.class)).isFalse();
+        assertThat(deleteItem.isAnnotationPresent(CanManagePurchaseItems.class)).isTrue();
     }
 }

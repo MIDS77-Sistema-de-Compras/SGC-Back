@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -17,32 +16,31 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.MediaType;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
-import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
-import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
 import net.centroweg.gerenciamentocompras.config.security.WebSecurityConfig;
 import net.centroweg.gerenciamentocompras.modules.auth.filter.SecurityFilter;
+import net.centroweg.gerenciamentocompras.modules.auth.service.CustomUserDetailsService;
+import net.centroweg.gerenciamentocompras.modules.auth.service.JwtService;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.controller.ProvisionController;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.request.ProvisionRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.presentation.dto.response.ProvisionResponse;
 import net.centroweg.gerenciamentocompras.modules.provision.service.interfaces.ProvisionService;
 import tools.jackson.databind.ObjectMapper;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @WebMvcTest(ProvisionController.class)
 @Import({WebSecurityConfig.class, SecurityFilter.class})
@@ -109,6 +107,21 @@ class ProvisionIntegrationTests {
             .andExpect(jsonPath("$.description").value("Monthly office supplies provision"));
 
         verify(provisionService, times(1)).createProvision(any(ProvisionRequest.class));
+    }
+
+    @Test
+    @DisplayName("Create Provision Test - Should return 409 when name already exists")
+    void createProvision_shouldReturn409_whenNameAlreadyExists() throws Exception {
+        net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException exception =
+                new net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException();
+        when(provisionService.createProvision(any(ProvisionRequest.class))).thenThrow(exception);
+
+        mockMvc.perform(post("/provisions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validRequest)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value(exception.getMessage()));
     }
 
     @Test

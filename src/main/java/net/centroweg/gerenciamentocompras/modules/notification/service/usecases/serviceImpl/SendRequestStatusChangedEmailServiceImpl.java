@@ -1,17 +1,19 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.RequestStatusEmailContentFactory;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.EmailNotificationPreferenceFilter;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.RequestStatusChangedEmailSender;
-import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestStatusNotificationData;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.shared.email.model.DefaultEmail;
 import net.centroweg.gerenciamentocompras.shared.email.service.EmailSenderService;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -21,6 +23,7 @@ public class SendRequestStatusChangedEmailServiceImpl implements RequestStatusCh
     private final EmailSenderService emailSenderService;
     private final RequestNotificationRecipientDeduplicator recipientDeduplicator;
     private final RequestStatusEmailContentFactory emailFactory;
+    private final EmailNotificationPreferenceFilter preferenceFilter;
 
     @Async
     @Override
@@ -29,7 +32,10 @@ public class SendRequestStatusChangedEmailServiceImpl implements RequestStatusCh
                 .filter(recipient -> recipient.email() == null || recipient.email().isBlank())
                 .forEach(recipient -> log.info("Solicitante sem e-mail. requestId={}, userId={}, novoStatus={}",
                         event.requestId(), recipient.userId(), event.newStatusName()));
-        recipientDeduplicator.distinctEmailRecipients(request.recipients()).forEach(recipient -> {
+        preferenceFilter.filterEnabled(
+                recipientDeduplicator.distinctEmailRecipients(request.recipients()),
+                RequestNotificationRecipient::userId
+        ).forEach(recipient -> {
             try {
                 var content = emailFactory.build(event, request, recipient.userName());
                 emailSenderService.sendEmail(new DefaultEmail(content.subject(), recipient.email()), content.html());

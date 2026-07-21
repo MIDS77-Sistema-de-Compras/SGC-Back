@@ -1,9 +1,15 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.DeliveryPublicApi;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryNotificationData;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusEmailContent;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusEmailContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.ItemStatusInternalNotificationContent;
@@ -16,10 +22,6 @@ import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPub
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationData;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.ItemStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestItemType;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -43,9 +45,14 @@ public class HandleItemStatusChangedNotificationServiceImpl implements HandleIte
         List<Long> userIds = recipientDeduplicator.distinctUserIds(request.recipients());
 
         try {
+            NotificationType notificationType = internalNotificationFactory.isForRetrieval(event) ?
+                    NotificationType.ITEM_PARA_RETIRADA :
+                    NotificationType.STATUS_ALTERADO;
+
             createInternalNotificationUseCase.createNotifications(
                     internalContent.title(),
                     internalContent.message(),
+                    notificationType,
                     event.requestId(),
                     userIds
             );

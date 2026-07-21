@@ -1,20 +1,23 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.functionality;
 
+import java.util.Collections;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.CrBranchRepository;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.request.CrBranchFilterRequest;
 import net.centroweg.gerenciamentocompras.modules.cr.presentation.dto.response.CrBranchResponse;
 import net.centroweg.gerenciamentocompras.modules.cr.service.mapper.CrBranchMapper;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.*;
+import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.crCodeContain;
+import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.crNameContain;
+import static net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.specification.CrBranchSpecifications.crResponsibleNameIn;
 
 /**
  * Caso de uso responsável por listar todos os vínculos entre CR e filial.
@@ -27,13 +30,14 @@ public class FindAllCrBranch {
     private final CrBranchMapper crBranchMapper;
 
     /**
-     * Lista todos os vínculos CR-filial cadastrados.
+     * Lista todos os vínculos CR-filial cadastrados, paginados.
      *
-     * @return a lista de vínculos (vazia se não houver nenhum)
+     * @return a página de vínculos (vazia se não houver nenhum)
      */
     @Transactional(readOnly = true)
-    public List<CrBranchResponse> findAll(
-            CrBranchFilterRequest filter
+    public Page<CrBranchResponse> findAll(
+            CrBranchFilterRequest filter,
+            Pageable pageable
     ) {
         CrBranchFilterRequest safeFilter = filter != null
                 ? filter
@@ -46,9 +50,7 @@ public class FindAllCrBranch {
                         crResponsibleNameIn(safeFilter.responsibleName())
                 );
 
-        return crBranchRepository.findAll(specification)
-                .stream()
-                .map(crBranchMapper::toResponse)
-                .toList();
+        return crBranchRepository.findAll(specification, pageable)
+                .map(crBranchMapper::toResponse);
     }
 }

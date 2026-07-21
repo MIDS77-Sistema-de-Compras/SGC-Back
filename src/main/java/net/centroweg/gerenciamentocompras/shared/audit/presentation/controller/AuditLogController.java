@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.request.AuditLogFilterRequest;
 import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.response.AuditLogDTOResponse;
 import net.centroweg.gerenciamentocompras.shared.audit.service.usecases.serviceIntrf.AuditLogService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Tag(name = "ENDPOINT da entidade AUDITLOG")
 @RestController
@@ -23,13 +24,14 @@ public class AuditLogController {
 
     private final AuditLogService auditLogService;
 
-    @Operation(description = "ENDPOINT responsável pela listagem de todos os registros")
+    @Operation(description = "ENDPOINT responsável pela listagem dos registros de auditoria mais recentes (limitada por 'limit', padrão 100)")
     @GetMapping
-    public ResponseEntity<List<AuditLogDTOResponse>> findAll(
+    public ResponseEntity<Page<AuditLogDTOResponse>> findAll(
             @RequestParam(required = false) String typeAction,
             @RequestParam(required = false) String agentEmail,
             @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate
+            @RequestParam(required = false) LocalDateTime endDate,
+            Pageable pageable
     ){
 
         AuditLogFilterRequest filter = new AuditLogFilterRequest(
@@ -40,6 +42,6 @@ public class AuditLogController {
         );
 
         return ResponseEntity.status(200)
-                .body(auditLogService.findAll(filter));
+                .body(auditLogService.findAll(filter, pageable));
     }
 }

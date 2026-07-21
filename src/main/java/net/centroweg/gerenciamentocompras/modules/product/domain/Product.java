@@ -2,6 +2,7 @@ package net.centroweg.gerenciamentocompras.modules.product.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 
 
@@ -17,6 +18,7 @@ import lombok.*;
  * @since 1.0
  */
 
+@BatchSize(size = 30)
 @Entity
 @Table(name = "product")
 @Getter

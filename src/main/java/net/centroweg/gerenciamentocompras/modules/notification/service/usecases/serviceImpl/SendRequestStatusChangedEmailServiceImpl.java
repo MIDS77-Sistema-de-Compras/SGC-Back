@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
+import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class SendRequestStatusChangedEmailServiceImpl implements RequestStatusCh
                         event.requestId(), recipient.userId(), event.newStatusName()));
         preferenceFilter.filterEnabled(
                 recipientDeduplicator.distinctEmailRecipients(request.recipients()),
-                net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient::userId
+                RequestNotificationRecipient::userId
         ).forEach(recipient -> {
             try {
                 var content = emailFactory.build(event, request, recipient.userName());

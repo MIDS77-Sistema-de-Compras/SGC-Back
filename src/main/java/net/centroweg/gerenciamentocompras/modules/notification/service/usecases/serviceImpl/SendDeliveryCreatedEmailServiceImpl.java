@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.usecases
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryCreatedNotificationData;
+import net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryNotificationRecipient;
 import net.centroweg.gerenciamentocompras.modules.delivery.service.event.DeliveryCreatedEvent;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.DeliveryCreatedNotificationContent;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.DeliveryNotificationRecipientDeduplicator;
@@ -27,7 +28,7 @@ public class SendDeliveryCreatedEmailServiceImpl implements DeliveryCreatedEmail
     public void sendEmails(DeliveryCreatedEvent event, DeliveryCreatedNotificationData delivery, DeliveryCreatedNotificationContent content) {
         preferenceFilter.filterEnabled(
                 recipientDeduplicator.distinctEmails(delivery.recipients()),
-                net.centroweg.gerenciamentocompras.modules.delivery.service.api.dto.DeliveryNotificationRecipient::userId
+                DeliveryNotificationRecipient::userId
         ).forEach(recipient -> {
             try {
                 emailSenderService.sendEmail(new DefaultEmail(content.emailSubject(), recipient.email()), content.emailHtml());

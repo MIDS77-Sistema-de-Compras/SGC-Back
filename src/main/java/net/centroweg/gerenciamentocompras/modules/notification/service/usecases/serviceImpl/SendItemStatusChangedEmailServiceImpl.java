@@ -43,7 +43,7 @@ public class SendItemStatusChangedEmailServiceImpl implements ItemStatusChangedE
 
         preferenceFilter.filterEnabled(
                         recipientDeduplicator.distinctEmailRecipients(recipients),
-                        net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient::userId)
+                        RequestNotificationRecipient::userId)
                 .forEach(recipient -> sendToRecipient(event, recipient, content));
     }
 

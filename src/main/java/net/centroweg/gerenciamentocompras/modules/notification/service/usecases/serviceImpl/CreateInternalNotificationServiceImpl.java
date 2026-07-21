@@ -11,6 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPub
 import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
 import net.centroweg.gerenciamentocompras.modules.user.service.api.dto.UserNotificationData;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.CreateInternalNotificationUseCase;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Persiste notificações internas sem acionar o envio genérico de e-mail.
@@ -35,14 +37,14 @@ public class CreateInternalNotificationServiceImpl implements CreateInternalNoti
 
     @Override
     @Transactional
-    public Notification createNotification(NotificationRequest notificationRequest) {
+    public Optional<Notification> createNotification(NotificationRequest notificationRequest) {
         return createNotifications(
                 notificationRequest.title(),
                 notificationRequest.message(),
                 NotificationType.valueOf(notificationRequest.notificationType()),
                 notificationRequest.requestId(),
                 List.of(notificationRequest.userId())
-        ).getFirst();
+        ).stream().findFirst();
     }
 
     @Override
@@ -54,10 +56,20 @@ public class CreateInternalNotificationServiceImpl implements CreateInternalNoti
             Long requestId,
             Collection<Long> userIds
     ) {
-        requestPublicApi.findNotificationDataById(requestId);
+        if (requestId != null) {
+            requestPublicApi.findNotificationDataById(requestId);
+        }
 
         LinkedHashSet<Long> distinctIds = new LinkedHashSet<>(userIds);
         distinctIds.remove(null);
+
+        if (notificationType != NotificationType.ALERTA_ADMINISTRATIVO) {
+            distinctIds.removeAll(userPublicApi.findActiveUserIdsByRole(Authorities.ADMIN));
+        }
+
+        if (distinctIds.isEmpty()) {
+            return List.of();
+        }
 
         Map<Long, UserNotificationData> usersById = new LinkedHashMap<>();
         userPublicApi.findNotificationDataByIds(distinctIds)

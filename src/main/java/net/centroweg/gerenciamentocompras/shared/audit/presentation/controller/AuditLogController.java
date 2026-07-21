@@ -8,6 +8,8 @@ import net.centroweg.gerenciamentocompras.shared.audit.presentation.dto.response
 import net.centroweg.gerenciamentocompras.shared.audit.service.usecases.serviceIntrf.AuditLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +33,7 @@ public class AuditLogController {
             @RequestParam(required = false) String agentEmail,
             @RequestParam(required = false) LocalDateTime startDate,
             @RequestParam(required = false) LocalDateTime endDate,
+            @PageableDefault(size = 100, sort = "timestamp", direction = Sort.Direction.DESC)
             Pageable pageable
     ){
 

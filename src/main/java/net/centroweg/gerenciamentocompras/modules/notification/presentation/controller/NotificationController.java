@@ -8,6 +8,8 @@ import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.NotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,7 +34,10 @@ public class NotificationController {
 
     @Operation(description = "ENDPOINT responsável pela listagem de Notification do próprio usuário logado")
     @GetMapping("/me")
-    public ResponseEntity<Page<NotificationResponse>> findByOwnUser(@AuthenticationPrincipal UserPrincipal userPrincipal, Pageable pageable) {
+    public ResponseEntity<Page<NotificationResponse>> findByOwnUser(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PageableDefault(size = 100, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(notificationService.findByOwnUser(userPrincipal, pageable));
     }

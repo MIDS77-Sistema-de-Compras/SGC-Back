@@ -203,21 +203,21 @@ class NotificationIntegrationTest {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    @DisplayName("[Integracao] Deve gerar notificacao ao criar uma solicitacao")
-    void deveGerarNotificacaoAoCriarSolicitacao() throws Exception {
+    @DisplayName("[Integracao] Administrador nao deve receber notificacao comum ao criar solicitacao")
+    void administradorNaoDeveReceberNotificacaoComumAoCriarSolicitacao() throws Exception {
         mockMvc.perform(post("/requests")
                         .with(authentication(authAs(user)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestJson(crBranch.getId())))
                 .andExpect(status().isCreated());
 
-        assertEquals(1, notificationRepository.findByUserId(user.getId()).size());
+        assertEquals(0, notificationRepository.findByUserId(user.getId()).size());
     }
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    @DisplayName("[Integracao] Deve gerar notificacao ao mudar o status de uma solicitacao")
-    void deveGerarNotificacaoAoMudarStatus() throws Exception {
+    @DisplayName("[Integracao] Administrador deve receber apenas alerta ao atualizar solicitacao")
+    void administradorDeveReceberApenasAlertaAoAtualizarSolicitacao() throws Exception {
         statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
 
         String response = mockMvc.perform(post("/requests")
@@ -243,7 +243,41 @@ class NotificationIntegrationTest {
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isOk());
 
-        assertEquals(2, notificationRepository.findByUserId(user.getId()).size());
+        List<Notification> notifications = notificationRepository.findByUserId(user.getId());
+        assertEquals(1, notifications.size());
+        assertEquals(NotificationType.ALERTA_ADMINISTRATIVO, notifications.getFirst().getNotificationType());
+    }
+
+    @Test
+    @DisplayName("[Integracao] Administrador deve receber alerta ao desativar usuario")
+    void administradorDeveReceberAlertaAoDesativarUsuario() throws Exception {
+        Role compradorRole = roleRepository.save(new Role("COMPRADOR"));
+        User targetUser = new User(
+                "Usuario Alvo",
+                "11144477735",
+                "usuario.alvo@teste.com",
+                "Senha@123",
+                "5678",
+                true
+        );
+        targetUser.setRole(compradorRole);
+        targetUser = userRepository.save(targetUser);
+
+        mockMvc.perform(patch("/users/userId/{id}/active", targetUser.getId())
+                        .with(authentication(authAs(user)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"active\":false}"))
+                .andExpect(status().isOk());
+
+        List<Notification> notifications = notificationRepository.findByUserId(user.getId());
+        assertEquals(1, notifications.size());
+        assertEquals(NotificationType.ALERTA_ADMINISTRATIVO, notifications.getFirst().getNotificationType());
+
+        mockMvc.perform(get("/notifications/me")
+                        .with(authentication(authAs(user))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].notificationType").value("ALERTA_ADMINISTRATIVO"));
     }
 
     private String productRequestJson(Long crBranchId) {

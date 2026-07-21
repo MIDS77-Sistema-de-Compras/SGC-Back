@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.http.ResponseEntity;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,8 @@ import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import net.centroweg.gerenciamentocompras.shared.audit.domain.entity.AuditLog;
 import net.centroweg.gerenciamentocompras.shared.audit.infrastructure.persistence.AuditLogRepository;
 import net.centroweg.gerenciamentocompras.shared.audit.service.api.AuditLogPublicApi;
+import net.centroweg.gerenciamentocompras.shared.audit.service.event.AuditAlertCreatedEvent;
+import net.centroweg.gerenciamentocompras.shared.audit.service.policy.AuditAlertPolicy;
 import net.centroweg.gerenciamentocompras.shared.security.ImpersonationDetails;
 
 @Aspect
@@ -33,6 +36,8 @@ public class AuditLogAspect {
 
     private final AuditLogRepository auditLogRepository;
     private final AuditLogPublicApi auditLogPublicApi;
+    private final AuditAlertPolicy auditAlertPolicy;
+    private final ApplicationEventPublisher eventPublisher;
 
     @AfterReturning(pointcut = "@annotation(auditable)", returning = "result")
     public void logAction(JoinPoint joinPoint, Auditable auditable, Object result){
@@ -67,7 +72,16 @@ public class AuditLogAspect {
                     + " logado na conta de " + agent.getName() + ".");
         }
 
-        auditLogRepository.save(auditLog);
+        AuditLog savedAuditLog = auditLogRepository.save(auditLog);
+
+        if (auditAlertPolicy.isAlert(savedAuditLog.getTypeAction())) {
+            eventPublisher.publishEvent(new AuditAlertCreatedEvent(
+                    savedAuditLog.getId(),
+                    savedAuditLog.getTypeAction(),
+                    savedAuditLog.getUserAgent().getName(),
+                    savedAuditLog.getRequest() == null ? null : savedAuditLog.getRequest().getId()
+            ));
+        }
 
     }
 

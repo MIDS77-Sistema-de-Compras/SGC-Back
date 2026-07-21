@@ -10,14 +10,21 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.data.jpa.domain.Specification;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
+/**
+ * Classe utilitária responsável por construir {@link Specification}s dinâmicas para filtragem de {@link Request}.
+ */
 @NoArgsConstructor
 public final class RequestSpecification {
 
+    /**
+     * Filtra requisições criadas por um usuário com o e-mail informado.
+     * @param email e-mail do usuário criador.
+     * @return specification correspondente ao filtro, ou irrestrita caso o e-mail seja vazio.
+     */
     public static Specification<Request> createdByUser(String email) {
         if (isBlank(email)) {
             return Specification.unrestricted();
@@ -31,6 +38,11 @@ public final class RequestSpecification {
         };
     }
 
+    /**
+     * Filtra requisições cujo código do CR contenha o trecho informado, sem distinção entre maiúsculas e minúsculas.
+     * @param crCode trecho do código do CR.
+     * @return specification correspondente ao filtro, ou irrestrita caso o código seja vazio.
+     */
     public static Specification<Request> crCodeContain(String crCode){
         if(isBlank(crCode)){
             return Specification.unrestricted();
@@ -54,6 +66,11 @@ public final class RequestSpecification {
         };
     }
 
+    /**
+     * Filtra requisições cujo nome do status seja igual ao informado, sem distinção entre maiúsculas e minúsculas.
+     * @param statusName nome do status.
+     * @return specification correspondente ao filtro, ou irrestrita caso o nome seja vazio.
+     */
     public static Specification<Request> statusNameEquals(String statusName){
 
         if (isBlank(statusName)){
@@ -74,6 +91,11 @@ public final class RequestSpecification {
         };
     }
 
+    /**
+     * Filtra requisições cuja filial tenha um supervisor com nome contendo o trecho informado, sem distinção entre maiúsculas e minúsculas.
+     * @param supervisorName trecho do nome do supervisor.
+     * @return specification correspondente ao filtro, ou irrestrita caso o nome seja vazio.
+     */
     public static Specification<Request> supervisorNameContain(String  supervisorName){
 
         if(isBlank(supervisorName)){
@@ -98,6 +120,12 @@ public final class RequestSpecification {
         };
     }
 
+    /**
+     * Filtra requisições cuja data de criação esteja dentro do intervalo informado.
+     * @param startDate data inicial do intervalo (inclusiva), ou {@code null} para não limitar o início.
+     * @param endDate data final do intervalo (inclusiva), ou {@code null} para não limitar o fim.
+     * @return specification correspondente ao filtro, ou irrestrita caso ambas as datas sejam nulas.
+     */
     public static Specification<Request> requestDateBetween(
             LocalDate startDate,
             LocalDate endDate

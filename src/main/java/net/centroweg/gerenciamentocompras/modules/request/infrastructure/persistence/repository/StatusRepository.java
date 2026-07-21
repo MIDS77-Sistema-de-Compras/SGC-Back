@@ -21,7 +21,7 @@ public interface StatusRepository extends JpaRepository<Status, Long> {
     /**
      * Verifica se já existe um status cadastrado no banco de dados com o nome informado.
      * @param name nome do status.
-     * @return booleano
+     * @return booleano que indica se existe ou não.
      */
     Boolean existsByName (String name);
 

@@ -49,6 +49,9 @@ public class ItemRequestProduct {
 
     private Double quantity;
 
+    @Column(length = 100)
+    private String variation;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Status status_id;

@@ -65,8 +65,13 @@ public class FindAllRequestServiceImpl {
 
         );
 
-        return requestRepository.findAll(specification, pageable)
-                .map(requestMapper::toDTO);
+        Page<Request> page = requestRepository.findAll(specification, pageable);
+
+        requestRepository.initializeForResponse(
+                page.getContent().stream().map(Request::getId).toList()
+        );
+
+        return page.map(requestMapper::toDTO);
     }
 
     private boolean isComprador(UserPrincipal userPrincipal) {

@@ -152,6 +152,16 @@ public class UserController {
         return ResponseEntity.status(200).body(user.uploadProfilePicture(id, file));
     }
 
+    @Operation(description = "ENDPOINT responsavel pela edicao da foto de perfil do usuario logado")
+    @PatchMapping("/me/profile-picture")
+    @Auditable(action = "ATUALIZAR_FOTO_DE_PERFIL")
+    public ResponseEntity<UserResponse> updateLoggedUserProfilePicture(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        return ResponseEntity.ok(user.uploadLoggedUserProfilePicture(userPrincipal, file));
+    }
+
     @Operation(description = "ENDPOINT responsável por listar usuário logado")
     @GetMapping("/me")
     public ResponseEntity<UserResponse> findLoggedUser(@AuthenticationPrincipal UserPrincipal userPrincipal){

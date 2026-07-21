@@ -16,6 +16,7 @@ import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincip
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.CrBranchNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.cr.service.api.CrPublicApi;
+import net.centroweg.gerenciamentocompras.modules.notification.domain.enums.NotificationType;
 import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.request.NotificationRequest;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.NotificationService;
 import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit;
@@ -65,6 +66,7 @@ public class CreateRequestServiceImpl {
     private final NotificationService notificationService;
     private final RequestPublicApi requestPublicApi;
     private final ProvisionPublicApi provisionPublicApi;
+    private final RequestItemsAssembler requestItemsAssembler;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
@@ -84,7 +86,6 @@ public class CreateRequestServiceImpl {
         CrBranch crBranch = crPublicApi.findCrBranchById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
-
         List<User> assignedUsers = new ArrayList<>();
         assignedUsers.add(requester);
         if (request.userIds() != null) {
@@ -95,8 +96,12 @@ public class CreateRequestServiceImpl {
 
         Request requestToSave = requestMapper.toEntity(request, crBranch, status);
         requestToSave.setCreatedByUsers(assignedUsers);
-        addProductItems(request, requestToSave, status);
-        addProvisionItems(request, requestToSave, status);
+        requestItemsAssembler.addItems(
+                requestToSave,
+                status,
+                request.products(),
+                request.provisions()
+        );
 
         Request savedRequest;
         try {
@@ -127,6 +132,7 @@ public class CreateRequestServiceImpl {
                 notificationService.createNotification(new NotificationRequest(
                         "Nova solicitação vinculada ao seu CR",
                         "Ha uma nova solicitacao vinculada ao seu CR " + crBranch.getCr().getName() + ".",
+                        NotificationType.SOLICITACAO_VINCULADA_CR.toString(),
                         responsible.getId(),
                         savedRequest.getId()
                 ));

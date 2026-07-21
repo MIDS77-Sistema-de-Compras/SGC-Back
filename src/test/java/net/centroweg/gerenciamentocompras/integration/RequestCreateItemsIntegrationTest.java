@@ -130,6 +130,7 @@ class RequestCreateItemsIntegrationTest {
                 .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"))
                 .andExpect(jsonPath("$.products.length()").value(1))
                 .andExpect(jsonPath("$.products[0].productName").value("Parafuso"))
+                .andExpect(jsonPath("$.products[0].variation").value("M8 zincado"))
                 .andExpect(jsonPath("$.products[0].measurementUnit").value("Quilograma"))
                 .andExpect(jsonPath("$.provisions.length()").value(0))
                 .andReturn()
@@ -144,6 +145,7 @@ class RequestCreateItemsIntegrationTest {
         assertEquals(1, savedItems.size());
         assertEquals(1, productRepository.count());
         assertEquals(requestId, savedItems.get(0).getRequest().getId());
+        assertEquals("M8 zincado", savedItems.get(0).getVariation());
         assertEquals("Aguardando aprovação", savedItems.get(0).getStatus_id().getName());
         assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
     }
@@ -391,6 +393,7 @@ class RequestCreateItemsIntegrationTest {
                     "products": [
                         {
                             "productName": "%s",
+                            "variation": "M8 zincado",
                             "measurementUnit": "%s",
                             "quantity": 10,
                             "additionalInformations": "Comprar com urgencia"

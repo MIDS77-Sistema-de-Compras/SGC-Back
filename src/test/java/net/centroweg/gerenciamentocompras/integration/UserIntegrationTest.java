@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.LogIn;
+import net.centroweg.gerenciamentocompras.shared.cloudinary.CloudinaryService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,9 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -63,6 +67,9 @@ public class UserIntegrationTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @MockitoBean
+    private CloudinaryService cloudinaryService;
 
     private static final String CPF_VALIDO = "52998224725";
 
@@ -313,6 +320,36 @@ public class UserIntegrationTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Admin Teste"))
                 .andExpect(jsonPath("$.email").value("admin@sc.senai.br"));
+    }
+
+    @Test
+    @DisplayName("[Integração] Usuário logado deve atualizar a própria foto de perfil")
+    void shouldUpdateLoggedUserProfilePicture() throws Exception {
+        Long id = criarUsuarioEObterIdRetornado();
+        User userEntity = userRepository.findById(id).orElseThrow();
+        UserPrincipal userPrincipal = new UserPrincipal(userEntity);
+        MockMultipartFile picture = new MockMultipartFile(
+                "file",
+                "perfil.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, 0x01}
+        );
+        String secureUrl = "https://res.cloudinary.com/test/profile-pictures/perfil.jpg";
+        doReturn(java.util.Map.of("secure_url", secureUrl)).when(cloudinaryService).upload(picture);
+
+        mockMvc.perform(multipart("/users/me/profile-picture")
+                        .file(picture)
+                        .with(user(userPrincipal))
+                        .with(request -> {
+                            request.setMethod("PATCH");
+                            return request;
+                        }))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userProfile").value(secureUrl));
+
+        entityManager.clear();
+        assertEquals(secureUrl, userRepository.findById(id).orElseThrow().getProfilePicture());
     }
 
     @Test

@@ -29,7 +29,7 @@ public class ProductPublicApiImpl implements ProductPublicApi {
 
     @Override
     public Optional<Product> findByNameIgnoreCase(String name) {
-        return productRepository.findByNameIgnoreCase(normalizeName(name));
+        return productRepository.findFirstByNameIgnoreCase(name);
     }
 
     @Override
@@ -47,7 +47,4 @@ public class ProductPublicApiImpl implements ProductPublicApi {
                 .orElseThrow(ProductNotFoundException::new);
     }
 
-    private String normalizeName(String name) {
-        return name.trim().replaceAll("\\s+", " ");
-    }
 }

@@ -50,6 +50,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrity(DataIntegrityViolationException exception) {
+        // Loga a causa mais específica (nome da constraint / mensagem do banco) para
+        // identificar exatamente qual violação gerou o 409, sem expor detalhes ao cliente.
+        log.warn("Violação de integridade de dados: {}", exception.getMostSpecificCause().getMessage());
         return buildResponse(HttpStatus.CONFLICT, "Conflito de dados: este registro já existe ou possui dependências.", null);
     }
 

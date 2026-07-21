@@ -12,10 +12,14 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.MeasurementUnit
 import net.centroweg.gerenciamentocompras.modules.product.domain.Product;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.MeasurementUnitRepository;
 import net.centroweg.gerenciamentocompras.modules.product.infrastructure.persistence.ProductRepository;
+import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
+import net.centroweg.gerenciamentocompras.modules.provision.infrastructure.persistence.ProvisionRepository;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProvision;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
+import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.StatusRepository;
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
@@ -55,6 +59,7 @@ class RequestMeListIntegrationTest {
     @Autowired private WebApplicationContext context;
     @Autowired private NotificationRepository notificationRepository;
     @Autowired private ItemRequestProductRepository itemRequestProductRepository;
+    @Autowired private ItemRequestProvisionRepository itemRequestProvisionRepository;
     @Autowired private RequestRepository requestRepository;
     @Autowired private StatusRepository statusRepository;
     @Autowired private CrBranchRepository crBranchRepository;
@@ -62,6 +67,7 @@ class RequestMeListIntegrationTest {
     @Autowired private CrRepository crRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private ProductRepository productRepository;
+    @Autowired private ProvisionRepository provisionRepository;
     @Autowired private MeasurementUnitRepository measurementUnitRepository;
     @Autowired private RoleRepository roleRepository;
 
@@ -70,6 +76,8 @@ class RequestMeListIntegrationTest {
     private MockMvc mockMvc;
     private User joao;
     private User maria;
+    private CrBranch crBranch;
+    private Status pending;
 
     @BeforeEach
     void setUp() {
@@ -91,9 +99,9 @@ class RequestMeListIntegrationTest {
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("CR Tecnologia", "7940", false));
-        CrBranch crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(joao)));
+        crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(joao)));
 
-        Status pending = statusRepository.save(new Status("Pendente", "Solicitacao pendente"));
+        pending = statusRepository.save(new Status("Pendente", "Solicitacao pendente"));
 
         Product product = productRepository.save(
                 new Product(null, "Parafuso M8", "Rosca fina", 1.0, "Insumo", "PRD-001")
@@ -118,7 +126,7 @@ class RequestMeListIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integração] GET /requests/me devolve o DTO enxuto: código do CR resolvido, nomes de produto e sem coleções pesadas")
+    @DisplayName("[Integração] GET /requests/me devolve o DTO enxuto com nomes dos itens e sem coleções pesadas")
     void shouldReturnLeanListItemsForLoggedUser() throws Exception {
         mockMvc.perform(get("/requests/me")
                         .with(user(new UserPrincipal(joao)))
@@ -129,9 +137,43 @@ class RequestMeListIntegrationTest {
                 .andExpect(jsonPath("$.content[0].crCode").value("7940"))
                 .andExpect(jsonPath("$.content[0].statusName").value("Pendente"))
                 .andExpect(jsonPath("$.content[0].productNames[0]").value("Parafuso M8"))
+                .andExpect(jsonPath("$.content[0].provisionNames").isEmpty())
                 // O DTO enxuto não expõe as coleções pesadas da listagem.
                 .andExpect(jsonPath("$.content[0].provisions").doesNotExist())
                 .andExpect(jsonPath("$.content[0].attachments").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("[Integração] GET /requests/me devolve nomes e quantidade de serviços")
+    void shouldReturnProvisionNamesForServiceRequest() throws Exception {
+        itemRequestProductRepository.deleteAll();
+        requestRepository.deleteAll();
+
+        Request serviceRequest = new Request(crBranch, pending);
+        serviceRequest.setRequestDate(LocalDateTime.of(2026, 6, 16, 10, 30));
+        serviceRequest.setActive(true);
+        serviceRequest.setCreatedByUsers(new ArrayList<>(List.of(joao)));
+        serviceRequest = requestRepository.save(serviceRequest);
+
+        for (String name : List.of("Instalação", "Manutenção", "Treinamento")) {
+            Provision provision = provisionRepository.save(
+                    new Provision(name, 100.0, "Serviço solicitado")
+            );
+            itemRequestProvisionRepository.save(
+                    new ItemRequestProvision(serviceRequest, provision, pending, null)
+            );
+        }
+
+        mockMvc.perform(get("/requests/me")
+                        .with(user(new UserPrincipal(joao)))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].productNames").isEmpty())
+                .andExpect(jsonPath("$.content[0].provisionNames.length()").value(3))
+                .andExpect(jsonPath("$.content[0].provisionNames[0]").value("Instalação"))
+                .andExpect(jsonPath("$.content[0].provisionNames[1]").value("Manutenção"))
+                .andExpect(jsonPath("$.content[0].provisionNames[2]").value("Treinamento"));
     }
 
     @Test
@@ -145,6 +187,7 @@ class RequestMeListIntegrationTest {
     }
 
     private void cleanDatabase() {
+        itemRequestProvisionRepository.deleteAll();
         itemRequestProductRepository.deleteAll();
         notificationRepository.deleteAll();
         requestRepository.deleteAll();
@@ -153,6 +196,7 @@ class RequestMeListIntegrationTest {
         crRepository.deleteAll();
         branchRepository.deleteAll();
         productRepository.deleteAll();
+        provisionRepository.deleteAll();
         measurementUnitRepository.deleteAll();
         userRepository.deleteAll();
         roleRepository.deleteAll();

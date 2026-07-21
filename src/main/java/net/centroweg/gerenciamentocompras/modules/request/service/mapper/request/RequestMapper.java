@@ -72,13 +72,18 @@ public class RequestMapper {
     }
 
     /**
-     * Converte para o DTO enxuto de listagem, sem tocar em anexos, itens de serviço
-     * ou solicitantes — apenas o que a tela de lista exibe.
+     * Converte para o DTO enxuto de listagem, sem tocar em anexos ou solicitantes —
+     * apenas o que a tela de lista exibe.
      */
     public RequestListItemResponse toListItemDTO(Request request) {
         List<String> productNames = request.getItemRequestProducts()
                 .stream()
                 .map(item -> item.getProduct() != null ? item.getProduct().getName() : null)
+                .toList();
+
+        List<String> provisionNames = request.getItemRequestProvisions()
+                .stream()
+                .map(item -> item.getProvision() != null ? item.getProvision().getName() : null)
                 .toList();
 
         String crCode = request.getCrBranch() != null && request.getCrBranch().getCr() != null
@@ -92,7 +97,8 @@ public class RequestMapper {
                 crCode,
                 request.getStatus().getName(),
                 statusCategoryResolver.resolve(request.getStatus().getName()),
-                productNames
+                productNames,
+                provisionNames
         );
     }
 

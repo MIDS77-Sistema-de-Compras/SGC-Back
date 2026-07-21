@@ -9,8 +9,8 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.RequestStatusCa
  * Versão enxuta de {@link RequestResponse} para a listagem de solicitações.
  *
  * <p>A tela de listagem mostra apenas o código do CR, a data, o status e a quantidade
- * de produtos (mais os nomes, usados na busca). Este DTO carrega só isso — sem itens de
- * serviço, anexos ou solicitantes —, evitando que a listagem materialize e serialize
+ * de produtos ou serviços (mais os nomes, usados na busca). Este DTO carrega só isso —
+ * sem anexos ou solicitantes —, evitando que a listagem materialize e serialize
  * coleções que ela não exibe. O código do CR já vem resolvido, dispensando o cliente de
  * buscar a lista de CR-filiais só para traduzir o id.</p>
  */
@@ -21,5 +21,6 @@ public record RequestListItemResponse(
         String crCode,
         String statusName,
         RequestStatusCategory statusCategory,
-        List<String> productNames
+        List<String> productNames,
+        List<String> provisionNames
 ) {}

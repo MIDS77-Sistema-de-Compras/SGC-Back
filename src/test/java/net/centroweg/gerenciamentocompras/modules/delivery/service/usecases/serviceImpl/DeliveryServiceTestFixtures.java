@@ -35,6 +35,12 @@ final class DeliveryServiceTestFixtures {
         return status;
     }
 
+    static Status cancelledStatus() {
+        Status status = new Status("Pedido cancelado", "Entrega cancelada");
+        status.setId(40L);
+        return status;
+    }
+
     static User user(Long id, String name, Boolean active) {
         User user = new User(name, "52998224725", name.toLowerCase() + "@teste.com", "Senha@123", "1234", active);
         user.setId(id);

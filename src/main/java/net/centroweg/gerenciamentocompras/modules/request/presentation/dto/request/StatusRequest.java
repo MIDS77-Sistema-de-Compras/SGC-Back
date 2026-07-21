@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 /**
  * DTO responsável por receber os dados de criação
@@ -11,6 +12,7 @@ import jakarta.validation.constraints.Size;
  *
  * @param name nome do status
  * @param description descrição do status
+ * @param color cor do status em hexadecimal (ex.: "#103D85"); opcional
  *
  * @author André
  * @since 1.0
@@ -23,7 +25,13 @@ public record StatusRequest(
 
         @NotBlank(message = "O status deve conter uma descrição.")
         @Size(min = 10, max = 100, message = "A descrição deve conter entre 10 e 100 caracteres.")
-        String description
+        String description,
+
+        @Pattern(regexp = "^#[0-9A-Fa-f]{6}$", message = "A cor deve ser um hexadecimal no formato #RRGGBB.")
+        String color
 
 ) {
+        public StatusRequest(String name, String description) {
+                this(name, description, null);
+        }
 }

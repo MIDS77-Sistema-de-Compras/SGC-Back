@@ -33,6 +33,7 @@ public class EditStatusService {
 
         status.setName(statusRequest.name());
         status.setDescription(statusRequest.description());
+        status.setColor(statusRequest.color());
 
         Status updatedStatus = statusRepository.save(status);
         return statusMapper.toResponse(updatedStatus);

@@ -13,6 +13,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -29,7 +30,9 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 @Entity
-@Table(name = "requests")
+@Table(name = "requests", indexes = {
+        @Index(name = "idx_requests_request_date", columnList = "request_date")
+})
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -60,7 +63,10 @@ public class Request {
     @JoinTable(
             name = "request_users",
             joinColumns = @JoinColumn(name = "request_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+            inverseJoinColumns = @JoinColumn(name = "user_id"),
+            indexes = {
+                    @Index(name = "idx_request_users_user_id", columnList = "user_id")
+            }
     )
     List<User> createdByUsers = new ArrayList<>();
 

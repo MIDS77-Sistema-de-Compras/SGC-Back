@@ -22,6 +22,7 @@ import static net.centroweg.gerenciamentocompras.modules.delivery.service.usecas
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,12 +34,15 @@ class DeleteDeliveryServiceImplTest {
     @Mock
     private StatusPublicApi statusPublicApi;
 
+    @Mock
+    private CompleteRequestOnDeliveryStatusServiceImpl completeRequestOnDeliveryStatusService;
+
     private DeleteDeliveryServiceImpl service;
     private Delivery delivery;
 
     @BeforeEach
     void setUp() {
-        service = new DeleteDeliveryServiceImpl(deliveryRepository, statusPublicApi);
+        service = new DeleteDeliveryServiceImpl(deliveryRepository, statusPublicApi, completeRequestOnDeliveryStatusService);
         Request request = request();
         Status status = status();
         User firstReceiver = user(1L, "Primeiro", true);
@@ -57,6 +61,7 @@ class DeleteDeliveryServiceImplTest {
         assertThat(delivery.getActive()).isFalse();
         assertThat(delivery.getStatus()).isSameAs(cancelled);
         verify(deliveryRepository).save(delivery);
+        verify(completeRequestOnDeliveryStatusService).apply(delivery);
     }
 
     @Test
@@ -70,6 +75,7 @@ class DeleteDeliveryServiceImplTest {
         assertThat(delivery.getActive()).isFalse();
         assertThat(delivery.getStatus()).isSameAs(original);
         verify(deliveryRepository).save(delivery);
+        verify(completeRequestOnDeliveryStatusService).apply(delivery);
     }
 
     @Test
@@ -79,5 +85,6 @@ class DeleteDeliveryServiceImplTest {
 
         assertThatThrownBy(() -> service.delete(100L))
                 .isInstanceOf(DeliveryAlreadyInactiveException.class);
+        verifyNoInteractions(completeRequestOnDeliveryStatusService);
     }
 }

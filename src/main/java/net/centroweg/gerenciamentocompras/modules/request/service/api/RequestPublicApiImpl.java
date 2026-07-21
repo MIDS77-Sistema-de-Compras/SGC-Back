@@ -12,6 +12,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Reque
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProductRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.ItemRequestProvisionRepository;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
+import net.centroweg.gerenciamentocompras.modules.request.service.usecases.serviceImpl.request.ConcludeRequestServiceImpl;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationData;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestNotificationRecipient;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestStatusNotificationData;
@@ -33,6 +34,12 @@ public class RequestPublicApiImpl implements RequestPublicApi {
     private final RequestRepository requestRepository;
     private final ItemRequestProductRepository itemRequestProductRepository;
     private final ItemRequestProvisionRepository itemRequestProvisionRepository;
+    private final ConcludeRequestServiceImpl concludeRequestServiceImpl;
+
+    @Override
+    public void concludeRequest(Long requestId) {
+        concludeRequestServiceImpl.concludeRequest(requestId);
+    }
 
     @Override
     public Optional<Product> findProuctByNameIgnoreCase(String name) {

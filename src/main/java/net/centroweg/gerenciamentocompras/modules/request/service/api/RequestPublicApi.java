@@ -25,4 +25,7 @@ public interface RequestPublicApi {
     Optional<Request> findRequestById(Long requestId);
     List<ItemRequestProduct> findItemProductsByIds(Collection<Long> ids);
     List<ItemRequestProvision> findItemProvisionsByIds(Collection<Long> ids);
+
+    /** Marca a solicitação vinculada como "Concluída" (idempotente), disparando o fluxo padrão de notificação quando o status realmente muda. */
+    void concludeRequest(Long requestId);
 }

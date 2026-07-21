@@ -25,7 +25,8 @@ public class StatusMapperImpl implements IStatusMapper {
     public Status toEntity(StatusRequest statusRequest) {
         return new Status(
                 statusRequest.name(),
-                statusRequest.description()
+                statusRequest.description(),
+                statusRequest.color()
         );
     }
     /**
@@ -38,7 +39,8 @@ public class StatusMapperImpl implements IStatusMapper {
         return new StatusResponse(
                 status.getId(),
                 status.getName(),
-                status.getDescription()
+                status.getDescription(),
+                status.getColor()
         );
     }
 }

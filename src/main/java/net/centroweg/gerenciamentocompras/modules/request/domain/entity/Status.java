@@ -28,11 +28,20 @@ public class Status implements StatusIntrf {
     @Column(nullable = false)
     private String description;
 
+    @Column
+    private String color;
+
     @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemRequestProvision> itemRequestProvisions = new ArrayList<>();
 
     public Status(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public Status(String name, String description, String color) {
+        this.name = name;
+        this.description = description;
+        this.color = color;
     }
 }

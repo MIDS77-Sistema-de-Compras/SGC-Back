@@ -10,7 +10,11 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import net.centroweg.gerenciamentocompras.modules.request.service.validator.RequestBusinessRuleValidator;
 import net.centroweg.gerenciamentocompras.shared.cloudinary.CloudinaryService;
+import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
+import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
+import net.centroweg.gerenciamentocompras.modules.request.domain.exception.AcessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -29,6 +33,8 @@ public class UploadRequestAttachmentServiceImpl {
     private final RequestAttachmentRepository attachmentRepository;
     private final CloudinaryService cloudinaryService;
     private final RequestMapper requestMapper;
+    private final CurrentUserService currentUserService;
+    private final RequestBusinessRuleValidator validator;
 
     @Transactional
     public List<RequestAttachmentResponse> uploadAttachments(
@@ -37,6 +43,35 @@ public class UploadRequestAttachmentServiceImpl {
     ) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(RequestNotFoundException::new);
+
+        validator.validateCanEditContent(request, currentUserService.getCurrentUser());
+
+        return uploadFiles(request, files);
+    }
+
+    @Transactional
+    public List<RequestAttachmentResponse> uploadInitialAttachments(
+            Long requestId,
+            List<MultipartFile> files,
+            UserPrincipal userPrincipal
+    ) {
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(RequestNotFoundException::new);
+
+        boolean isCreator = request.getCreatedByUsers().stream()
+                .anyMatch(user -> user.getId().equals(userPrincipal.getId()));
+        if (!isCreator) {
+            throw new AcessDeniedException();
+        }
+
+        if (files == null || files.isEmpty()) {
+            return List.of();
+        }
+
+        return uploadFiles(request, files);
+    }
+
+    private List<RequestAttachmentResponse> uploadFiles(Request request, List<MultipartFile> files) {
 
         if (files == null || files.isEmpty()) {
             throw new InvalidAttachmentException(

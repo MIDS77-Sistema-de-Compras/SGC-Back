@@ -72,7 +72,7 @@ public class UpdateRequestServiceImpl {
                 notificationService.createNotification(new NotificationRequest(
                         "Status da solicitação atualizado",
                         "A solicitação #" + savedRequest.getId() + " teve o status alterado para " + status.getName() + ".",
-                        NotificationType.STATUS_ALTERADO,
+                        NotificationType.STATUS_ALTERADO.toString(),
                         responsible.getId(),
                         savedRequest.getId()
                 ));

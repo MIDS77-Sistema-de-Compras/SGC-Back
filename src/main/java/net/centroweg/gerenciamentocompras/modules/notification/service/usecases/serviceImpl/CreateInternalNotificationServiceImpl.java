@@ -39,7 +39,7 @@ public class CreateInternalNotificationServiceImpl implements CreateInternalNoti
         return createNotifications(
                 notificationRequest.title(),
                 notificationRequest.message(),
-                notificationRequest.notificationType(),
+                NotificationType.valueOf(notificationRequest.notificationType()),
                 notificationRequest.requestId(),
                 List.of(notificationRequest.userId())
         ).getFirst();
@@ -68,7 +68,7 @@ public class CreateInternalNotificationServiceImpl implements CreateInternalNoti
                         new NotificationRequest(
                             title,
                             message,
-                            notificationType,
+                            notificationType.toString(),
                             requireUser(usersById, userId).userId(),
                             requestId
                 )))

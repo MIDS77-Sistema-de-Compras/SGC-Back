@@ -60,6 +60,13 @@ public class UpdateItemRequestProvisionServiceImpl {
             throw new AcessDeniedException();
         }
 
+        boolean contentChanged = item.getProvision() == null
+                || !Objects.equals(item.getProvision().getId(), requestDto.provisionId())
+                || !Objects.equals(normalize(item.getAdditionalInformation()), normalize(requestDto.additionalInformation()));
+        if (contentChanged) {
+            requestBusinessRuleValidator.validateCanEditContent(originalRequest, currentUser);
+        }
+
         Provision provision = provisionPublicApi.findById(requestDto.provisionId())
             .orElseThrow(() -> new ProvisionNotFoundException());
 
@@ -94,6 +101,10 @@ public class UpdateItemRequestProvisionServiceImpl {
         }
 
         return itemRequestProvisionMapper.toResponse(saved);
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.trim();
     }
 
 }

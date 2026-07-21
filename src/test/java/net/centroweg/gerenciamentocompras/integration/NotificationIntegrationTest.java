@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
@@ -66,6 +67,7 @@ class NotificationIntegrationTest {
     @Autowired private WebApplicationContext context;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private NotificationRepository notificationRepository;
+    @Autowired private JdbcTemplate jdbcTemplate;
     @Autowired private UserRepository userRepository;
     @Autowired private RequestRepository requestRepository;
     @Autowired private StatusRepository statusRepository;
@@ -143,10 +145,14 @@ class NotificationIntegrationTest {
     }
 
     private Notification criarNotificacao(String title, String message) {
+        return criarNotificacao(title, message, NotificationType.NOTIFICACAO_TESTE);
+    }
+
+    private Notification criarNotificacao(String title, String message, NotificationType notificationType) {
         Notification notification = new Notification();
         notification.setTitle(title);
         notification.setMessage(message);
-        notification.setNotificationType(NotificationType.NOTIFICACAO_TESTE);
+        notification.setNotificationType(notificationType);
         notification.setViewed(false);
         notification.setUserId(user.getId());
         notification.setRequestId(request.getId());
@@ -199,6 +205,36 @@ class NotificationIntegrationTest {
     void deveRetornarNotFoundParaNotificacaoInexistente() throws Exception {
         mockMvc.perform(patch("/notifications/{id}/viewed", 9999L))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("[Integracao] Deve persistir o tipo da notificacao como texto")
+    void devePersistirNotificationTypeComoTexto() {
+        Notification notificacaoTeste = criarNotificacao(
+                "Notificacao de teste",
+                "Mensagem de teste",
+                NotificationType.NOTIFICACAO_TESTE
+        );
+        Notification notificacaoStatus = criarNotificacao(
+                "Status alterado",
+                "O status da solicitacao foi alterado",
+                NotificationType.STATUS_ALTERADO
+        );
+        notificationRepository.flush();
+
+        String tipoTestePersistido = jdbcTemplate.queryForObject(
+                "SELECT notification_type FROM notification WHERE id = ?",
+                String.class,
+                notificacaoTeste.getId()
+        );
+        String tipoStatusPersistido = jdbcTemplate.queryForObject(
+                "SELECT notification_type FROM notification WHERE id = ?",
+                String.class,
+                notificacaoStatus.getId()
+        );
+
+        assertEquals(NotificationType.NOTIFICACAO_TESTE.name(), tipoTestePersistido);
+        assertEquals(NotificationType.STATUS_ALTERADO.name(), tipoStatusPersistido);
     }
 
     @Test

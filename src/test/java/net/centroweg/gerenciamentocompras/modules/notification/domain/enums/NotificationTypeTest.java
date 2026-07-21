@@ -97,15 +97,14 @@ class NotificationTypeTest {
         }
 
         @Test
-        @DisplayName("Should return correct ordinal for each enum constant")
-        void shouldReturnCorrectOrdinalForEachEnumConstant() {
+        @DisplayName("Should return correct textual value for each enum constant")
+        void shouldReturnCorrectTextualValueForEachEnumConstant() {
             // When/Then
-            assertThat(NotificationType.STATUS_ALTERADO.ordinal()).isEqualTo(0);
-            assertThat(NotificationType.ITEM_PARA_RETIRADA.ordinal()).isEqualTo(1);
-            assertThat(NotificationType.ENTREGA_CRIADA.ordinal()).isEqualTo(2);
-            assertThat(NotificationType.SOLICITACAO_VINCULADA_CR.ordinal()).isEqualTo(3);
-            assertThat(NotificationType.NOTIFICACAO_TESTE.ordinal()).isEqualTo(4);
-            assertThat(NotificationType.ALERTA_ADMINISTRATIVO.ordinal()).isEqualTo(5);
+            assertThat(NotificationType.STATUS_ALTERADO.toString()).isEqualTo("STATUS_ALTERADO");
+            assertThat(NotificationType.ITEM_PARA_RETIRADA.toString()).isEqualTo("ITEM_PARA_RETIRADA");
+            assertThat(NotificationType.ENTREGA_CRIADA.toString()).isEqualTo("ENTREGA_CRIADA");
+            assertThat(NotificationType.SOLICITACAO_VINCULADA_CR.toString()).isEqualTo("SOLICITACAO_VINCULADA_CR");
+            assertThat(NotificationType.NOTIFICACAO_TESTE.toString()).isEqualTo("NOTIFICACAO_TESTE");
         }
     }
 

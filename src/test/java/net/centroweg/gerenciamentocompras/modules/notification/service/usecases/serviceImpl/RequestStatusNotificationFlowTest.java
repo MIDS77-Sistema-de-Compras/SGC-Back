@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +27,7 @@ import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.li
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.url.RequestFrontendUrlBuilder;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.RequestStatusEmailContentFactory;
 import net.centroweg.gerenciamentocompras.modules.notification.service.factory.RequestStatusInternalNotificationFactory;
+import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.EmailNotificationPreferenceFilter;
 import net.centroweg.gerenciamentocompras.modules.notification.service.recipient.RequestNotificationRecipientDeduplicator;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.CreateInternalNotificationUseCase;
 import net.centroweg.gerenciamentocompras.modules.notification.service.usecases.serviceIntrf.HandleRequestStatusChangedNotificationUseCase;
@@ -45,6 +47,7 @@ class RequestStatusNotificationFlowTest {
     @Mock RequestStatusChangedEmailSender emailSender;
     @Mock EmailSenderService externalEmailSender;
     @Mock HandleRequestStatusChangedNotificationUseCase handler;
+    @Mock EmailNotificationPreferenceFilter preferenceFilter;
 
     @Test
     void shouldPersistForDistinctUsersAndDelegateSpecificEmail() {
@@ -90,9 +93,11 @@ class RequestStatusNotificationFlowTest {
 
     @Test
     void shouldDeduplicateEmailAndContinueAfterSmtpFailure() throws Exception {
+        when(preferenceFilter.filterEnabled(any(), any()))
+                .thenAnswer(invocation -> List.copyOf((Collection<?>) invocation.getArgument(0)));
         var sender = new SendRequestStatusChangedEmailServiceImpl(
                 externalEmailSender, new RequestNotificationRecipientDeduplicator(),
-                requestStatusEmailContentFactory());
+                requestStatusEmailContentFactory(), preferenceFilter);
         var recipients = List.of(
                 new RequestNotificationRecipient(1L, "Ana", " ANA@TESTE.COM "),
                 new RequestNotificationRecipient(2L, "Clone", "ana@teste.com"),
@@ -103,6 +108,24 @@ class RequestStatusNotificationFlowTest {
         sender.sendEmails(event("Em atendimento", null), data(recipients));
 
         verify(externalEmailSender, times(2)).sendEmail(any(DefaultEmail.class), anyString());
+    }
+
+    @Test
+    void shouldNotSendEmailToRecipientsWithEmailNotificationsDisabled() throws Exception {
+        var recipients = List.of(
+                new RequestNotificationRecipient(1L, "Ana", "ana@teste.com"),
+                new RequestNotificationRecipient(2L, "Bia", "bia@teste.com"));
+        when(preferenceFilter.filterEnabled(any(), any()))
+                .thenReturn(List.of(recipients.get(1)));
+        var sender = new SendRequestStatusChangedEmailServiceImpl(
+                externalEmailSender, new RequestNotificationRecipientDeduplicator(),
+                requestStatusEmailContentFactory(), preferenceFilter);
+
+        sender.sendEmails(event("Em atendimento", null), data(recipients));
+
+        var email = org.mockito.ArgumentCaptor.forClass(DefaultEmail.class);
+        verify(externalEmailSender, times(1)).sendEmail(email.capture(), anyString());
+        assertThat(email.getValue().getSendTo()).isEqualTo("bia@teste.com");
     }
 
     @Test

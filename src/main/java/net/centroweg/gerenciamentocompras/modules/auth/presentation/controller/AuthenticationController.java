@@ -25,6 +25,7 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.NewPassword;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.Recovery;
 import net.centroweg.gerenciamentocompras.shared.MessageDTO;
+import net.centroweg.gerenciamentocompras.shared.annotation.RateLimit;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.AuditParam;
 import net.centroweg.gerenciamentocompras.shared.audit.annotation.Auditable;
 import net.centroweg.gerenciamentocompras.shared.security.annotation.AdminOnly;
@@ -43,6 +44,7 @@ public class AuthenticationController {
 
     @Operation(description = "ENDPOINT responsável pela autenticação de usuário")
     @PostMapping("/login")
+    @RateLimit(profile = "login")
     @Auditable(action = "LOGAR")
     public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto,
                                             HttpServletResponse response){
@@ -51,8 +53,9 @@ public class AuthenticationController {
 
         addJwtCookie(response, token);
 
-        return  ResponseEntity.status(200)
+        return ResponseEntity.status(200)
                 .body(new MessageDTO(token));
+
     }
 
     /**
@@ -128,6 +131,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/recovery")
+    @RateLimit(profile = "recovery")
     @Auditable(action = "SOLICITAR_ALTERACAO_SENHA")
     public ResponseEntity<MessageDTO> sendEmailWithToken(@Valid @RequestBody Recovery recoveryDto){
         try{

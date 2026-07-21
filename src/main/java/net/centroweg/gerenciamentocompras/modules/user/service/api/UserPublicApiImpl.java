@@ -73,6 +73,13 @@ public class UserPublicApiImpl implements UserPublicApi {
                 .toList();
     }
 
+    @Override
+    public List<Long> findActiveUserIdsByRole(String roleName) {
+        return userRepository.findByRole_NameIgnoreCaseAndActiveTrueAndDeletedFalse(roleName).stream()
+                .map(User::getId)
+                .toList();
+    }
+
     private UserSummaryPublicResponse toSummary(User user) {
         String role = user.getRole() == null ? null : user.getRole().getName();
         return new UserSummaryPublicResponse(

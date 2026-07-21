@@ -267,6 +267,13 @@ class RequestStatusIntegrationTest {
                     assertThat(notification.getTitle()).isEqualTo("Status da solicitação atualizado");
                     assertThat(notification.getMessage()).contains("Aguardando aprova&ccedil;&atilde;o", "Aprovado");
                 });
+        assertThat(notificationRepository.findByUserId(buyer.getId()))
+                .hasSize(1)
+                .first()
+                .satisfies(notification -> {
+                    assertThat(notification.getRequestId()).isEqualTo(request.getId());
+                    assertThat(notification.getMessage()).contains("Aprovado");
+                });
         awaitAnyEmail();
     }
 

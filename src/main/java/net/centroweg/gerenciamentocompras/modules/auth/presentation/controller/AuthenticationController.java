@@ -1,6 +1,10 @@
 package net.centroweg.gerenciamentocompras.modules.auth.presentation.controller;
 
+import java.time.Duration;
+
+import net.centroweg.gerenciamentocompras.shared.annotation.RateLimit;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Refill;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
@@ -43,6 +50,7 @@ public class AuthenticationController {
 
     @Operation(description = "ENDPOINT responsável pela autenticação de usuário")
     @PostMapping("/login")
+    @RateLimit(profile = "login")
     @Auditable(action = "LOGAR")
     public ResponseEntity<MessageDTO> login(@Valid @RequestBody LogIn loginDto,
                                             HttpServletResponse response){
@@ -51,8 +59,9 @@ public class AuthenticationController {
 
         addJwtCookie(response, token);
 
-        return  ResponseEntity.status(200)
+        return ResponseEntity.status(200)
                 .body(new MessageDTO(token));
+
     }
 
     /**
@@ -128,6 +137,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/recovery")
+    @RateLimit(profile = "recovery")
     @Auditable(action = "SOLICITAR_ALTERACAO_SENHA")
     public ResponseEntity<MessageDTO> sendEmailWithToken(@Valid @RequestBody Recovery recoveryDto){
         try{

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,6 +42,7 @@ public class Provision {
     private Long id;
 
     @NonNull
+    @Column(unique = true, nullable = false)
     private String name;
     
     @NonNull

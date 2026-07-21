@@ -15,7 +15,6 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.exception.Measu
 import net.centroweg.gerenciamentocompras.modules.product.presentation.dto.request.CreateProductRequest;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.InsufficientProvisionDataException;
-import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionAlreadyExistsException;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.provision.service.api.ProvisionPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.ItemRequestProduct;
@@ -67,13 +66,16 @@ public class RequestItemsAssembler {
     ) {
         if (products == null) return;
 
-        Set<String> productNames = new HashSet<>();
+        // Rejeita o mesmo produto informado mais de uma vez na mesma solicitação.
+        Set<String> seenProductNames = new HashSet<>();
+
         for (RequestProductItemRequest productRequest : products) {
-            if (!productNames.add(normalizeNameKey(productRequest.productName()))) {
+            String productName = normalizeName(productRequest.productName());
+            if (!seenProductNames.add(normalizeNameKey(productName))) {
                 throw new ItemRequestProductAlreadyExistsException();
             }
 
-            Product product = findOrCreateProduct(productRequest);
+            Product product = findOrCreateProduct(productName, productRequest);
             MeasurementUnit measurementUnit = requestPublicApi
                     .findMeasurementByNameIgnoreCase(productRequest.measurementUnit())
                     .orElseThrow(MeasurementUnitNotFoundException::new);
@@ -90,10 +92,11 @@ public class RequestItemsAssembler {
         }
     }
 
-    private Product findOrCreateProduct(RequestProductItemRequest productRequest) {
-        return requestPublicApi.findProuctByNameIgnoreCase(productRequest.productName())
+    // Reaproveita o produto existente pelo nome (entre solicitações) ou cria um novo.
+    private Product findOrCreateProduct(String productName, RequestProductItemRequest productRequest) {
+        return requestPublicApi.findProuctByNameIgnoreCase(productName)
                 .orElseGet(() -> requestPublicApi.createProduct(new CreateProductRequest(
-                        productRequest.productName(),
+                        productName,
                         productRequest.additionalInformations(),
                         REQUEST_PRODUCT_DEFAULT_PRICE,
                         REQUEST_PRODUCT_TYPE,
@@ -108,11 +111,13 @@ public class RequestItemsAssembler {
     ) {
         if (provisions == null) return;
 
-        Set<Long> provisionIds = new HashSet<>();
-        Set<String> provisionNames = new HashSet<>();
+        // Rejeita o mesmo serviço informado mais de uma vez na mesma solicitação
+        // (por provisionId, para serviços existentes, ou por nome, para novos).
+        Set<Long> seenProvisionIds = new HashSet<>();
+        Set<String> seenNewProvisionNames = new HashSet<>();
+
         for (RequestProvisionItemRequest provisionRequest : provisions) {
-            validateUniqueProvision(provisionRequest, provisionIds, provisionNames);
-            Provision provision = findOrCreateProvision(provisionRequest);
+            Provision provision = resolveProvision(provisionRequest, seenProvisionIds, seenNewProvisionNames);
             ItemRequestProvision item = new ItemRequestProvision(
                     request,
                     provision,
@@ -123,44 +128,37 @@ public class RequestItemsAssembler {
         }
     }
 
-    private Provision findOrCreateProvision(RequestProvisionItemRequest request) {
+    private Provision resolveProvision(
+            RequestProvisionItemRequest request,
+            Set<Long> seenProvisionIds,
+            Set<String> seenNewProvisionNames
+    ) {
+        // Quando um provisionId é informado, ele DEVE existir (404 caso contrário),
+        // independentemente de virem dados de criação junto.
         if (request.provisionId() != null) {
+            if (!seenProvisionIds.add(request.provisionId())) {
+                throw new ItemRequestProvisionAlreadyExistsException();
+            }
             return provisionPublicApi.findById(request.provisionId())
                     .orElseThrow(ProvisionNotFoundException::new);
         }
 
+        // Serviço novo: exige dados completos e reaproveita por nome ou cria.
         if (!hasText(request.name()) || request.totalValue() == null || !hasText(request.description())) {
             throw new InsufficientProvisionDataException();
         }
 
-        String normalizedName = normalizeName(request.name());
-        if (provisionPublicApi.findByNameIgnoreCase(normalizedName).isPresent()) {
-            throw new ProvisionAlreadyExistsException();
-        }
-
-        return provisionPublicApi.createProvision(
-                normalizedName,
-                request.totalValue(),
-                request.description().trim()
-        );
-    }
-
-    private void validateUniqueProvision(
-            RequestProvisionItemRequest provisionRequest,
-            Set<Long> provisionIds,
-            Set<String> provisionNames
-    ) {
-        if (provisionRequest.provisionId() == null && !hasText(provisionRequest.name())) {
-            return;
-        }
-
-        boolean isDuplicated = provisionRequest.provisionId() != null
-                ? !provisionIds.add(provisionRequest.provisionId())
-                : !provisionNames.add(normalizeNameKey(provisionRequest.name()));
-
-        if (isDuplicated) {
+        String provisionName = normalizeName(request.name());
+        if (!seenNewProvisionNames.add(normalizeNameKey(provisionName))) {
             throw new ItemRequestProvisionAlreadyExistsException();
         }
+
+        return provisionPublicApi.findByNameIgnoreCase(provisionName)
+                .orElseGet(() -> provisionPublicApi.createProvision(
+                        provisionName,
+                        request.totalValue(),
+                        request.description().trim()
+                ));
     }
 
     private String normalizeVariation(String variation) {
@@ -172,10 +170,10 @@ public class RequestItemsAssembler {
     }
 
     private String normalizeName(String name) {
-        return name.trim().replaceAll("\\s+", " ");
+        return name == null ? null : name.trim().replaceAll("\\s+", " ");
     }
 
     private String normalizeNameKey(String name) {
-        return normalizeName(name).toLowerCase(Locale.ROOT);
+        return name == null ? "" : name.toLowerCase(Locale.ROOT);
     }
 }

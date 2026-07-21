@@ -2,7 +2,9 @@ package net.centroweg.gerenciamentocompras.modules.request.service.usecases.serv
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -63,13 +65,15 @@ public class CreateRequestServiceImpl {
         CrBranch crBranch = crPublicApi.findCrBranchById(request.crBranchId())
                 .orElseThrow(() -> new CrBranchNotFoundException(request.crBranchId()));
 
-        List<User> assignedUsers = new ArrayList<>();
-        assignedUsers.add(requester);
+        Map<Long, User> assignedUsersById = new LinkedHashMap<>();
+        assignedUsersById.put(requester.getId(), requester);
         if (request.userIds() != null) {
             request.userIds().forEach(userId ->
-                    userPublicApi.findUserById(userId).ifPresent(assignedUsers::add)
+                    userPublicApi.findUserById(userId)
+                            .ifPresent(user -> assignedUsersById.putIfAbsent(user.getId(), user))
             );
         }
+        List<User> assignedUsers = new ArrayList<>(assignedUsersById.values());
 
         Request requestToSave = requestMapper.toEntity(request, crBranch, status);
         requestToSave.setCreatedByUsers(assignedUsers);

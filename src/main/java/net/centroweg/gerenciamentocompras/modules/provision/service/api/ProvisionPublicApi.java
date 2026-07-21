@@ -19,6 +19,16 @@ public interface ProvisionPublicApi {
      */
     Optional<Provision> findById(Long id);
 
+
+    /**
+     * Busca uma provisão pelo nome, sem distinção entre maiúsculas e minúsculas.
+     *
+     * <p>Usada para reaproveitar uma provisão já cadastrada ao montar itens de
+     * serviço de uma solicitação, em vez de criar uma nova com o mesmo nome.</p>
+     *
+     * @param name nome da {@link Provision}
+     * @return um {@link Optional} com a provisão, caso exista
+     */
     Optional<Provision> findByNameIgnoreCase(String name);
 
     /**

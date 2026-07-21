@@ -67,5 +67,31 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findByNameIgnoreCase(String name);
 
+    /**
+     * Busca o primeiro produto cujo nome corresponda ao informado, sem distinção
+     * entre maiúsculas e minúsculas.
+     *
+     * <p>Diferente de {@link #findByNameIgnoreCase(String)}, aplica {@code LIMIT 1}
+     * e, portanto, nunca lança {@code IncorrectResultSizeDataAccessException} caso
+     * existam linhas com variação apenas de caixa (o índice único do banco é
+     * sensível a maiúsculas/minúsculas). Usado no reaproveitamento de produtos
+     * durante a montagem de itens de solicitação.</p>
+     *
+     * @param name nome a ser pesquisado; não deve ser {@code null}
+     * @return um {@link Optional} com o produto encontrado, ou vazio se não houver
+     */
+    Optional<Product> findFirstByNameIgnoreCase(String name);
+
+    /**
+     * Indica se existe outro produto (id diferente do informado) com o mesmo nome,
+     * sem distinção entre maiúsculas e minúsculas.
+     *
+     * <p>Usada na atualização para impedir dois produtos com nome duplicado sem
+     * conflitar com o próprio registro sendo editado.</p>
+     *
+     * @param name nome a ser verificado; não deve ser {@code null}
+     * @param id   id do produto que deve ser ignorado na verificação
+     * @return {@code true} se já existir outro produto com esse nome
+     */
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 }

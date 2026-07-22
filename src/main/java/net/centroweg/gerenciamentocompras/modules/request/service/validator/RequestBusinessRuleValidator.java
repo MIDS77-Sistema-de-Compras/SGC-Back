@@ -1,6 +1,5 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.validator;
 
-import java.text.Normalizer;
 import java.util.Set;
 
 import org.springframework.stereotype.Component;
@@ -12,12 +11,12 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Reque
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestCannotBeInactivatedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotEditableException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 
 @Component
 public class RequestBusinessRuleValidator {
 
-    // Sem underscore: normalize() converte "_" em espaço antes de comparar (ver normalize()).
     private static final Set<String> SUPERVISOR_APPROVED_OR_AFTER = Set.of(
             "aprovado",
             "auto aprovado",
@@ -32,18 +31,16 @@ public class RequestBusinessRuleValidator {
             "cancelado"
     );
 
-    // Sem acento: normalize() remove acentos antes de comparar (ver normalize()),
-    // então as constantes de comparação também precisam estar sem acento.
+    /**
+     * Único status em que o supervisor/coordenador ainda pode decidir a solicitação.
+     * Qualquer outro — Aprovado, Recusado, Auto-aprovado, Parcialmente aprovada, ou
+     * qualquer status que o comprador já tenha atribuído depois disso (Em atendimento,
+     * Entregue, etc.) — significa que a etapa dele já terminou. A checagem é negativa
+     * (não é mais o pendente) em vez de listar cada status "final", que cresceria a cada
+     * novo status adicionado ao fluxo do comprador.
+     */
     private static final String PENDING_STATUS = "aguardando aprovacao";
 
-    /**
-     * Status em que o supervisor/coordenador ainda pode decidir a solicitação — inclui
-     * "Em análise" porque o front exibe esse status agrupado sob o mesmo rótulo de
-     * "Aguardando aprovação" (mesma tela/botão de aprovar), então a regra de permissão
-     * precisa aceitar o mesmo conjunto. Qualquer outro — Aprovado, Recusado, Auto-aprovado,
-     * Parcialmente aprovada, ou qualquer status que o comprador já tenha atribuído depois
-     * disso (Em atendimento, Entregue, etc.) — significa que a etapa dele já terminou.
-     */
     private static final Set<String> EDITABLE_STATUSES = Set.of(
             PENDING_STATUS,
             "pendente",
@@ -156,9 +153,7 @@ public class RequestBusinessRuleValidator {
         if (value == null) {
             return "";
         }
-        String withoutAccents = Normalizer.normalize(value, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "");
-        return withoutAccents.replace("_", " ").trim().toLowerCase();
+        return RequestStatusNames.normalize(value);
     }
 
     private static String normalizeRole(String value) {
@@ -199,7 +194,7 @@ public class RequestBusinessRuleValidator {
 
     private boolean isFinalizedForSupervisor(Request request) {
         String statusName = normalize(request.getStatus().getName());
-        return !EDITABLE_STATUSES.contains(statusName);
+        return !statusName.equals(PENDING_STATUS);
     }
 
     private void validateActingRole(Request request, User currentUser) {

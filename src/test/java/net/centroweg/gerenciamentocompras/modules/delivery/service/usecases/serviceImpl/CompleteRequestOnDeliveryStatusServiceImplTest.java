@@ -38,7 +38,7 @@ class CompleteRequestOnDeliveryStatusServiceImplTest {
 
         service.apply(delivery);
 
-        verify(requestPublicApi).concludeRequest(delivery.getRequest().getId());
+        verify(requestPublicApi).concludeRequest(delivery.getRequest().getId(), "ENTREGUE");
     }
 
     @Test
@@ -50,7 +50,7 @@ class CompleteRequestOnDeliveryStatusServiceImplTest {
 
         service.apply(delivery);
 
-        verify(requestPublicApi).concludeRequest(delivery.getRequest().getId());
+        verify(requestPublicApi).concludeRequest(delivery.getRequest().getId(), "pedido CANCELADO");
     }
 
     @Test

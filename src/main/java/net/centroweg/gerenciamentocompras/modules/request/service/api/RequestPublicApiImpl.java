@@ -37,8 +37,8 @@ public class RequestPublicApiImpl implements RequestPublicApi {
     private final ConcludeRequestServiceImpl concludeRequestServiceImpl;
 
     @Override
-    public void concludeRequest(Long requestId) {
-        concludeRequestServiceImpl.concludeRequest(requestId);
+    public void concludeRequest(Long requestId, String statusName) {
+        concludeRequestServiceImpl.concludeRequest(requestId, statusName);
     }
 
     @Override

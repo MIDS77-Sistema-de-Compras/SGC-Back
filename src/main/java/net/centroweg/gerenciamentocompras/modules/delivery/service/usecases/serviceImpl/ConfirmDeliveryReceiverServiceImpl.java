@@ -14,6 +14,7 @@ import net.centroweg.gerenciamentocompras.modules.delivery.presentation.dto.resp
 import net.centroweg.gerenciamentocompras.modules.delivery.service.mapper.DeliveryMapper;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class ConfirmDeliveryReceiverServiceImpl {
 
-    private static final String DELIVERED_STATUS = "Entregue";
+    private static final String DELIVERED_STATUS = RequestStatusNames.ENTREGUE;
 
     private final DeliveryRepository deliveryRepository;
     private final StatusPublicApi statusPublicApi;

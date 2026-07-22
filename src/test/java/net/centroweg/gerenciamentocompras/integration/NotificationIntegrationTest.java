@@ -186,6 +186,27 @@ class NotificationIntegrationTest {
     }
 
     @Test
+    @DisplayName("[Integracao] Administrador deve visualizar somente alertas administrativos em suas notificacoes")
+    void administradorDeveVisualizarSomenteAlertasAdministrativos() throws Exception {
+        criarNotificacao(
+                "Item disponivel para retirada",
+                "Notificacao comum antiga",
+                NotificationType.ITEM_PARA_RETIRADA
+        );
+        criarNotificacao(
+                "Alerta administrativo",
+                "Uma acao critica foi registrada",
+                NotificationType.ALERTA_ADMINISTRATIVO
+        );
+
+        mockMvc.perform(get("/notifications/me")
+                        .with(authentication(authAs(user))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].notificationType").value("ALERTA_ADMINISTRATIVO"));
+    }
+
+    @Test
     @WithMockUser(authorities = "ADMIN")
     @DisplayName("[Integracao] Deve marcar uma notificacao como lida")
     void deveMarcarNotificacaoComoLida() throws Exception {

@@ -112,6 +112,8 @@ class RequestCreateItemsIntegrationTest {
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(responsible)));
 
         statusRepository.save(new Status("AGUARDANDO_APROVACAO", "Solicitacao em andamento"));
+        statusRepository.save(new Status("AUTO_APROVADO", "Solicitacao aprovada automaticamente"));
+        statusRepository.save(new Status("EM_ATENDIMENTO", "Compra em andamento"));
         productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
         measurementUnitRepository.save(new MeasurementUnit("Quilograma", "KG"));
         provision = provisionRepository.save(new Provision("Manutencao", 150.0, "Servico de manutencao"));
@@ -151,6 +153,18 @@ class RequestCreateItemsIntegrationTest {
         assertEquals("M8 zincado", savedItems.get(0).getVariation());
         assertEquals("AGUARDANDO_APROVACAO", savedItems.get(0).getStatus_id().getName());
         assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
+    }
+
+    @Test
+    @DisplayName("Supervisor deve criar solicitacao autoaprovada com os status canonicos")
+    void shouldCreateAutoApprovedRequestWithCanonicalStatuses() throws Exception {
+        mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(responsible)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productRequestJson("Parafuso", "KG")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.statusName").value("AUTO_APROVADO"))
+                .andExpect(jsonPath("$.products[0].statusName").value("AUTO_APROVADO"));
     }
 
     @Test

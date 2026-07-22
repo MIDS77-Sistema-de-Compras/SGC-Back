@@ -28,6 +28,7 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.service.api.UserPublicApi;
@@ -37,8 +38,8 @@ import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 @RequiredArgsConstructor
 public class CreateRequestServiceImpl {
 
-    private static final String INITIAL_STATUS = "AGUARDANDO_APROVACAO";
-    private static final String APPROVED_STATUS = "AUTO_APROVADO";
+    private static final String INITIAL_STATUS = RequestStatusNames.AGUARDANDO_APROVACAO;
+    private static final String APPROVED_STATUS = RequestStatusNames.AUTO_APROVADO;
     private final RequestRepository requestRepository;
     private final CrPublicApi crPublicApi;
     private final StatusRepository statusRepository;

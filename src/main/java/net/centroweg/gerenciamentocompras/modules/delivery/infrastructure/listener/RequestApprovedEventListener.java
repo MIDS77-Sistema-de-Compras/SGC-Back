@@ -5,8 +5,9 @@ import net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.serv
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestApprovedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
  * Listener que reage à aprovação de uma solicitação criando
@@ -23,7 +24,7 @@ public class RequestApprovedEventListener {
 
     private final CreateDeliveryForApprovedRequestServiceImpl createDeliveryService;
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onRequestApproved(RequestApprovedEvent event) {
         try {
             createDeliveryService.createForRequest(event.requestId());

@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.request.service.validator;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Request;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotApprovedForCompradorException;
 import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,15 +27,15 @@ public class CompradorRequestAccessValidator {
 
     private static final Set<String> ALLOWED_STATUSES = Set.of(
             "aprovado",
-            "auto_aprovado",
-            "parcialmente_aprovada",
+            "auto aprovado",
+            "parcialmente aprovada",
             "em atendimento",
             "atrasada",
-            "recebimento_parcial",
-            "fundo_rotativo",
-            "cd_central",
-            "solicitado_portal",
-            "parcialmente_atendida",
+            "recebimento parcial",
+            "fundo rotativo",
+            "cd central",
+            "solicitado portal",
+            "parcialmente atendida",
             "entregue",
             "pedido cancelado"
     );
@@ -51,8 +52,8 @@ public class CompradorRequestAccessValidator {
             return;
         }
 
-        String statusName = request.getStatus() != null && request.getStatus().getName() != null
-                ? request.getStatus().getName().trim().toLowerCase()
+        String statusName = request.getStatus() != null
+                ? RequestStatusNames.normalize(request.getStatus().getName())
                 : "";
 
         if (!ALLOWED_STATUSES.contains(statusName)) {

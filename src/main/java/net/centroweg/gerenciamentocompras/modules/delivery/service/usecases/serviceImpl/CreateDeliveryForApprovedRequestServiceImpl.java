@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class CreateDeliveryForApprovedRequestServiceImpl {
 
-    private static final String IN_SERVICE_STATUS = "Em atendimento";
+    private static final String IN_SERVICE_STATUS = "EM_ATENDIMENTO";
     private static final String DEFAULT_DELIVERY_LOCATION = "A definir";
     private static final String DEFAULT_DESCRIPTION =
             "Entrega criada automaticamente após a aprovação da solicitação.";

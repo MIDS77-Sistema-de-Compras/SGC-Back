@@ -37,7 +37,7 @@ import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 @RequiredArgsConstructor
 public class CreateRequestServiceImpl {
 
-    private static final String INITIAL_STATUS = "Aguardando aprovação";
+    private static final String INITIAL_STATUS = "AGUARDANDO_APROVACAO";
     private static final String APPROVED_STATUS = "AUTO_APROVADO";
     private final RequestRepository requestRepository;
     private final CrPublicApi crPublicApi;

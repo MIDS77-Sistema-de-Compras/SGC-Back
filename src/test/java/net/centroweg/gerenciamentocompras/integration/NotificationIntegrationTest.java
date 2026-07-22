@@ -109,7 +109,7 @@ class NotificationIntegrationTest {
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(this.user)));
 
-        waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
+        waitingStatus = statusRepository.save(new Status("AGUARDANDO_APROVACAO", "Solicitacao aguardando aprovacao"));
 
         productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
         measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));

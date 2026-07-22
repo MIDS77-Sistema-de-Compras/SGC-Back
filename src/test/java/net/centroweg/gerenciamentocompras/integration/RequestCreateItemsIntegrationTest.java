@@ -111,7 +111,7 @@ class RequestCreateItemsIntegrationTest {
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(responsible)));
 
-        statusRepository.save(new Status("Aguardando aprovação", "Solicitacao em andamento"));
+        statusRepository.save(new Status("AGUARDANDO_APROVACAO", "Solicitacao em andamento"));
         productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
         measurementUnitRepository.save(new MeasurementUnit("Quilograma", "KG"));
         provision = provisionRepository.save(new Provision("Manutencao", 150.0, "Servico de manutencao"));
@@ -130,7 +130,7 @@ class RequestCreateItemsIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestJson("Parafuso", "KG")))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"))
+                .andExpect(jsonPath("$.statusName").value("AGUARDANDO_APROVACAO"))
                 .andExpect(jsonPath("$.products.length()").value(1))
                 .andExpect(jsonPath("$.products[0].productName").value("Parafuso"))
                 .andExpect(jsonPath("$.products[0].variation").value("M8 zincado"))
@@ -149,7 +149,7 @@ class RequestCreateItemsIntegrationTest {
         assertEquals(1, productRepository.count());
         assertEquals(requestId, savedItems.get(0).getRequest().getId());
         assertEquals("M8 zincado", savedItems.get(0).getVariation());
-        assertEquals("Aguardando aprovação", savedItems.get(0).getStatus_id().getName());
+        assertEquals("AGUARDANDO_APROVACAO", savedItems.get(0).getStatus_id().getName());
         assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
     }
 
@@ -161,7 +161,7 @@ class RequestCreateItemsIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(provisionRequestJson(provision.getId())))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"))
+                .andExpect(jsonPath("$.statusName").value("AGUARDANDO_APROVACAO"))
                 .andExpect(jsonPath("$.products.length()").value(0))
                 .andExpect(jsonPath("$.provisions.length()").value(1))
                 .andExpect(jsonPath("$.provisions[0].provisionId").value(provision.getId()))

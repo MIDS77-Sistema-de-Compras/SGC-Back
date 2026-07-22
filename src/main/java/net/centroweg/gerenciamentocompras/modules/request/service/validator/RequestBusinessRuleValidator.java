@@ -1,5 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.validator;
 
+import java.text.Normalizer;
 import java.util.Set;
 
 import org.springframework.stereotype.Component;
@@ -16,9 +17,10 @@ import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 @Component
 public class RequestBusinessRuleValidator {
 
+    // Sem underscore: normalize() converte "_" em espaço antes de comparar (ver normalize()).
     private static final Set<String> SUPERVISOR_APPROVED_OR_AFTER = Set.of(
             "aprovado",
-            "auto_aprovado",
+            "auto aprovado",
             "em atendimento",
             "entregue",
             "cancelado"
@@ -30,20 +32,21 @@ public class RequestBusinessRuleValidator {
             "cancelado"
     );
 
-    /**
-     * Único status em que o supervisor/coordenador ainda pode decidir a solicitação.
-     * Qualquer outro — Aprovado, Recusado, Auto-aprovado, Parcialmente aprovada, ou
-     * qualquer status que o comprador já tenha atribuído depois disso (Em atendimento,
-     * Entregue, etc.) — significa que a etapa dele já terminou. A checagem é negativa
-     * (não é mais o pendente) em vez de listar cada status "final", que cresceria a cada
-     * novo status adicionado ao fluxo do comprador.
-     */
-    private static final String PENDING_STATUS = "aguardando aprovação";
+    // Sem acento: normalize() remove acentos antes de comparar (ver normalize()),
+    // então as constantes de comparação também precisam estar sem acento.
+    private static final String PENDING_STATUS = "aguardando aprovacao";
 
+    /**
+     * Status em que o supervisor/coordenador ainda pode decidir a solicitação — inclui
+     * "Em análise" porque o front exibe esse status agrupado sob o mesmo rótulo de
+     * "Aguardando aprovação" (mesma tela/botão de aprovar), então a regra de permissão
+     * precisa aceitar o mesmo conjunto. Qualquer outro — Aprovado, Recusado, Auto-aprovado,
+     * Parcialmente aprovada, ou qualquer status que o comprador já tenha atribuído depois
+     * disso (Em atendimento, Entregue, etc.) — significa que a etapa dele já terminou.
+     */
     private static final Set<String> EDITABLE_STATUSES = Set.of(
             PENDING_STATUS,
             "pendente",
-            "em análise",
             "em analise"
     );
 
@@ -153,7 +156,9 @@ public class RequestBusinessRuleValidator {
         if (value == null) {
             return "";
         }
-        return value.trim().toLowerCase();
+        String withoutAccents = Normalizer.normalize(value, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return withoutAccents.replace("_", " ").trim().toLowerCase();
     }
 
     private static String normalizeRole(String value) {
@@ -194,7 +199,7 @@ public class RequestBusinessRuleValidator {
 
     private boolean isFinalizedForSupervisor(Request request) {
         String statusName = normalize(request.getStatus().getName());
-        return !statusName.equals(PENDING_STATUS);
+        return !EDITABLE_STATUSES.contains(statusName);
     }
 
     private void validateActingRole(Request request, User currentUser) {

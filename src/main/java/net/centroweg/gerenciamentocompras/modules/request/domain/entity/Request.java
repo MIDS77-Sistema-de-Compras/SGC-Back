@@ -58,7 +58,6 @@ public class Request {
     @Column(nullable = false)
     private Boolean active = true;
 
-    /** Indica se o comprador já abriu o detalhe da solicitação (controle de "não lida"). */
     @Column(nullable = false)
     private Boolean viewedByComprador = false;
 

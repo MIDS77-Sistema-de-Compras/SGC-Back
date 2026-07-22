@@ -32,7 +32,7 @@ public class MarkRequestViewedByCompradorServiceImpl {
 
         if (!Boolean.TRUE.equals(request.getViewedByComprador())) {
             request.setViewedByComprador(true);
-            request = requestRepository.save(request);
+            requestRepository.save(request);
         }
 
         return requestMapper.toDTO(request);

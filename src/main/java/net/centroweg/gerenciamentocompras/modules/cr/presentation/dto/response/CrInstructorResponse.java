@@ -12,6 +12,8 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrInstructor;
  */
 public record CrInstructorResponse(
     Long id,
+
     List<UserResponse> user,
+
     Long crBranchId
 ) {}

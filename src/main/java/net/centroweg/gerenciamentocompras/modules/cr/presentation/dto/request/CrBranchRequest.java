@@ -13,8 +13,10 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 public record CrBranchRequest(
         @NotNull(message = "O ID da filial não deve ser nulo e nem vazio!")
         Long branchId,
+
         @NotNull(message = "O ID do CR não deve ser nulo e nem vazio!")
         Long crId,
+
         List<Long> responsibleUsersId
 ) {
 }

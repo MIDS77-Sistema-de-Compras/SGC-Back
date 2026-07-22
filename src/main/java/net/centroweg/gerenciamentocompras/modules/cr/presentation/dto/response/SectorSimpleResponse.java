@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
  */
 public record SectorSimpleResponse(
         Long id,
+
         String name
 ) {
 }

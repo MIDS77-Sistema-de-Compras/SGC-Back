@@ -13,9 +13,12 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 public record CrRequest(
         @NotBlank(message = "O nome do CR não deve ser nulo e nem vazio!")
         String name,
+
         @NotBlank(message = "O código do CR não deve ser nulo e nem vazio!")
         String code,
+
         Boolean master,
+
         @NotBlank(message = "O nome do bloco não deve ser nulo e nem vazio!")
         String sectorName
 ) {

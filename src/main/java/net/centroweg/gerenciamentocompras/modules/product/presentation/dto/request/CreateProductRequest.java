@@ -16,12 +16,16 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 public record CreateProductRequest(
             @NotBlank(message = "O nome do produto não deve ser nulo e nem vazio!")
             String name,
+
             String description,
+
             @NotNull(message = "O preço do produto não deve ser nulo e nem vazio!")
             @Positive(message = "O preço do produto deve ser maior ou igual a zero!")
             Double price,
+
             @NotBlank(message = "O tipo ou categoria do produto não deve ser nulo e nem vazio!")
             String type,
+
             @NotBlank(message = "O código único do produto não deve ser nulo e nem vazio!")
             String code
 ) {

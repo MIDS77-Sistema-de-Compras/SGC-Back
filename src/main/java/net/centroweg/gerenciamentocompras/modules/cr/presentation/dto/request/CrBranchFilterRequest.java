@@ -13,8 +13,10 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 public record CrBranchFilterRequest (
         @NotBlank(message = "O código do CR não deve ser nulo e nem vazio!")
         String crCode,
+
         @NotBlank(message = "O nome do CR não deve ser nulo e nem vazio!")
         String crName,
+
         List<String> responsibleName
 ){
 }

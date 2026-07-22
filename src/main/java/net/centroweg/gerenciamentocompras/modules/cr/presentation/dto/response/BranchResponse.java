@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
  */
 public record BranchResponse (
         Long id,
+
         String name
 ){
 }

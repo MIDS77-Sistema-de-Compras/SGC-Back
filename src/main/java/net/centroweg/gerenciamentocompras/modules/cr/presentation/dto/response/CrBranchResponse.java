@@ -13,9 +13,13 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
  */
 public record CrBranchResponse(
         Long id,
+
         String branchName,
+
         String crName,
+
         String crCode,
+
         List<String> responsibleUsersName
 ) {
 }

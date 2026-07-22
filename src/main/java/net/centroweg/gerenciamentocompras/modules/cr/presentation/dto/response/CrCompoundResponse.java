@@ -12,9 +12,13 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
  */
 public record CrCompoundResponse (
         long id,
+
         String name,
+
         String code,
+
         Boolean master,
+
         String sector
 ){
 }

@@ -14,9 +14,11 @@ import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provis
 public record ProvisionRequest(
     @NotBlank(message="O nome do serviço não deve ser nulo e nem vazio!")
     String name,
+
     @NotNull(message="O valor total do serviço não deve ser nulo e nem vazio!")
     @Positive(message = "O valor total do serviço deve ser maior que zero!")
     Double totalValue,
+
     @NotBlank(message="A descrição do serviço não deve ser nula e nem vazia!")
     String description
 ) {}

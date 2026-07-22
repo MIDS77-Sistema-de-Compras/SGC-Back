@@ -13,10 +13,15 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
  */
 public record ProductResponse(
         Long id,
+
         String name,
+
         String description,
+
         Double price,
+
         String type,
+
         String code
 ) {}
 

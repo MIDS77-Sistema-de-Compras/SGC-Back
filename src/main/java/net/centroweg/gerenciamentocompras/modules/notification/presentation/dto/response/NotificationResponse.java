@@ -15,11 +15,17 @@ import net.centroweg.gerenciamentocompras.modules.notification.domain.entity.Not
  */
 public record NotificationResponse(
         Long id,
+
         String title,
+
         String message,
+
         Boolean viewed,
+
         LocalDateTime createdAt,
+
         Long userId,
+
         Long requestId
 ) {
 }

@@ -2,28 +2,20 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.requ
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+
 /**
- * DTO responsável por receber os dados de criação
- * e atualização de um status.
- *
- * <p>Contém validações para garantir a integridade
- * das informações recebidas na requisição.</p>
- *
- * @param name nome do status
- * @param description descrição do status
- *
- * @author André
- * @since 1.0
+ * DTO de entrada para criação e atualização de um {@link Status}.
+ * @param name nome do status, não pode ser nulo ou vazio e deve respeitar o tamanho definido.
+ * @param description descrição do status, não pode ser nulo ou vazio e deve respeitar o tamanho definido.
  */
 public record StatusRequest(
-
-        @NotBlank(message = "O nome não pode ser nulo.")
-        @Size(min = 2, max = 25, message = "O nome deve ter entre 2 e 25 caracteres.")
+        @NotBlank(message = "O nome do status não deve ser nulo e nem vazio!")
+        @Size(min = 2, max = 25, message = "O nome deve conter entre 2 e 25 caracteres!")
         String name,
 
-        @NotBlank(message = "O status deve conter uma descrição.")
-        @Size(min = 10, max = 100, message = "A descrição deve conter entre 10 e 100 caracteres.")
+        @NotBlank(message = "A descrição do status não deve ser nula e nem vazia!")
+        @Size(min = 10, max = 100, message = "A descrição deve conter entre 10 e 100 caracteres!")
         String description
-
 ) {
 }

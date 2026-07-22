@@ -10,7 +10,9 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Measurem
  */
 public record MeasurementUnitResponse(
     Long id,
+
     String name,
+
     String abbreviation
 
 ) {

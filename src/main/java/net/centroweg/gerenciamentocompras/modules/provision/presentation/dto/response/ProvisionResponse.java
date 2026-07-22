@@ -11,7 +11,10 @@ import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provis
  */
 public record ProvisionResponse(
     Long id,
+
     String name,
+
     Double totalValue,
+
     String description
 ) {}

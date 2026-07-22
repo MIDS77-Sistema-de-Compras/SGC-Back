@@ -11,7 +11,9 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Sector;
  */
 public record SectorCompoundResponse(
         Long id,
+
         String name,
+
         List<CrSimpleResponse> crs
 ) {
 }

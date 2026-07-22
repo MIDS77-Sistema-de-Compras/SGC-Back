@@ -30,7 +30,10 @@ public class MarkRequestViewedByCompradorServiceImpl {
 
         compradorRequestAccessValidator.validate(request);
 
-
+        if (!Boolean.TRUE.equals(request.getViewedByComprador())) {
+            request.setViewedByComprador(true);
+            requestRepository.save(request);
+        }
 
         return requestMapper.toDTO(request);
     }

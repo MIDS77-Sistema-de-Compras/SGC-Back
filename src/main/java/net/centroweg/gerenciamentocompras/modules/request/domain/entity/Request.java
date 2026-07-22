@@ -58,6 +58,9 @@ public class Request {
     @Column(nullable = false)
     private Boolean active = true;
 
+    @Column(nullable = false)
+    private Boolean viewedByComprador = false;
+
     @BatchSize(size = 30)
     @ManyToMany
     @JoinTable(

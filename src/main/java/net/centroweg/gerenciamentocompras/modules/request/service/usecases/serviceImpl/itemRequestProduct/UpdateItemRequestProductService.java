@@ -73,7 +73,7 @@ public class UpdateItemRequestProductService {
                 || (dto.variation() != null && !sameText(itemRequestProduct.getVariation(), dto.variation()))
                 || !sameText(itemRequestProduct.getMeasurementUnit().getName(), dto.measurementUnit())
                 || !Objects.equals(itemRequestProduct.getQuantity(), dto.quantity())
-                || !Objects.equals(itemRequestProduct.getAdditionalInformations(), dto.additionalInformations());
+                || !sameText(itemRequestProduct.getAdditionalInformations(), dto.additionalInformations());
         if (contentChanged) {
             requestBusinessRuleValidator.validateCanEditContent(request, currentUser);
         } else {

@@ -26,6 +26,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -101,8 +102,10 @@ class RequestCreateItemsIntegrationTest {
 
         deleteData();
 
-        requester = saveUser("Solicitante", "11144477735", "solicitante@teste.com", "1111");
-        responsible = saveUser("Responsavel", "52998224725", "responsavel@teste.com", "2222");
+        // Solicitante DOCENTE (SUPERVISOR/COORDENADOR auto-aprovariam a solicitação) e
+        // responsável SUPERVISOR: usuários ADMIN não recebem notificações comuns, só alertas.
+        requester = saveUser("Solicitante", "11144477735", "solicitante@teste.com", "1111", Authorities.DOCENTE);
+        responsible = saveUser("Responsavel", "52998224725", "responsavel@teste.com", "2222", Authorities.SUPERVISOR);
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
@@ -387,9 +390,9 @@ class RequestCreateItemsIntegrationTest {
         assertEquals(0, notificationRepository.count());
     }
 
-    private User saveUser(String name, String cpf, String email, String extension) {
+    private User saveUser(String name, String cpf, String email, String extension, String roleName) {
         User user = new User(name, cpf, email, "Senha@123", extension, true);
-        user.setRole(roleRepository.save(new Role("ADMIN")));
+        user.setRole(roleRepository.save(new Role(roleName)));
         return userRepository.save(user);
     }
 
@@ -397,7 +400,7 @@ class RequestCreateItemsIntegrationTest {
         return new UsernamePasswordAuthenticationToken(
                 new UserPrincipal(user),
                 null,
-                List.of(new SimpleGrantedAuthority("ADMIN"))
+                List.of(new SimpleGrantedAuthority(user.getRole().getName()))
         );
     }
 

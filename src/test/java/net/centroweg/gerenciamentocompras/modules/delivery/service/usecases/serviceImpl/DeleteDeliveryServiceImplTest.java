@@ -52,9 +52,9 @@ class DeleteDeliveryServiceImplTest {
 
     @Test
     void shouldInactivateDeliveryAndApplyCancelledStatus() {
-        Status cancelled = new Status("Pedido cancelado", "A entrega foi cancelada pelo comprador.");
+        Status cancelled = new Status("PEDIDO CANCELADO", "A entrega foi cancelada pelo comprador.");
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(statusPublicApi.findByName("Pedido cancelado")).thenReturn(Optional.of(cancelled));
+        when(statusPublicApi.findByName("PEDIDO CANCELADO")).thenReturn(Optional.of(cancelled));
 
         service.delete(100L);
 
@@ -68,7 +68,7 @@ class DeleteDeliveryServiceImplTest {
     void shouldKeepStatusWhenCancelledStatusDoesNotExist() {
         Status original = delivery.getStatus();
         when(deliveryRepository.findById(100L)).thenReturn(Optional.of(delivery));
-        when(statusPublicApi.findByName("Pedido cancelado")).thenReturn(Optional.empty());
+        when(statusPublicApi.findByName("PEDIDO CANCELADO")).thenReturn(Optional.empty());
 
         service.delete(100L);
 

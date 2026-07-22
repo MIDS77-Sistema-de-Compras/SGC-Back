@@ -52,15 +52,15 @@ class ConcludeRequestServiceImplTest {
     void shouldConcludeRequestAndPublishEventWhenStatusChanges() {
         User agent = user(1L, "Sistema", "sistema@teste.com");
         Status previousStatus = status(1L, "Em atendimento");
-        Status concludedStatus = status(2L, "Concluída");
+        Status concludedStatus = status(2L, "ENTREGUE");
         Request request = request(100L, previousStatus);
 
         when(requestRepository.findById(100L)).thenReturn(Optional.of(request));
-        when(statusRepository.findByNameIgnoreCase("Concluída")).thenReturn(Optional.of(concludedStatus));
+        when(statusRepository.findByNameIgnoreCase("ENTREGUE")).thenReturn(Optional.of(concludedStatus));
         when(requestRepository.save(request)).thenReturn(request);
         when(currentUserService.getCurrentUser()).thenReturn(agent);
 
-        service.concludeRequest(100L);
+        service.concludeRequest(100L, "ENTREGUE");
 
         assertSame(concludedStatus, request.getStatus());
         verify(requestRepository).save(request);
@@ -69,7 +69,7 @@ class ConcludeRequestServiceImplTest {
         assertEquals(1L, eventCaptor.getValue().previousStatusId());
         assertEquals("Em atendimento", eventCaptor.getValue().previousStatusName());
         assertEquals(2L, eventCaptor.getValue().newStatusId());
-        assertEquals("Concluída", eventCaptor.getValue().newStatusName());
+        assertEquals("ENTREGUE", eventCaptor.getValue().newStatusName());
         assertNull(eventCaptor.getValue().justification());
         assertEquals(1L, eventCaptor.getValue().changedByUserId());
         assertEquals("Sistema", eventCaptor.getValue().changedByUserName());
@@ -78,13 +78,13 @@ class ConcludeRequestServiceImplTest {
     @Test
     @DisplayName("Não deve fazer nada quando a solicitação já está concluída")
     void shouldDoNothingWhenRequestAlreadyConcluded() {
-        Status concludedStatus = status(2L, "Concluída");
-        Request request = request(100L, status(2L, "Concluída"));
+        Status concludedStatus = status(2L, "PEDIDO CANCELADO");
+        Request request = request(100L, status(2L, "PEDIDO CANCELADO"));
 
         when(requestRepository.findById(100L)).thenReturn(Optional.of(request));
-        when(statusRepository.findByNameIgnoreCase("Concluída")).thenReturn(Optional.of(concludedStatus));
+        when(statusRepository.findByNameIgnoreCase("PEDIDO CANCELADO")).thenReturn(Optional.of(concludedStatus));
 
-        service.concludeRequest(100L);
+        service.concludeRequest(100L, "PEDIDO CANCELADO");
 
         verify(requestRepository, never()).save(request);
         verifyNoInteractions(eventPublisher, currentUserService);
@@ -96,9 +96,9 @@ class ConcludeRequestServiceImplTest {
         Request request = request(100L, status(1L, "Em atendimento"));
 
         when(requestRepository.findById(100L)).thenReturn(Optional.of(request));
-        when(statusRepository.findByNameIgnoreCase("Concluída")).thenReturn(Optional.empty());
+        when(statusRepository.findByNameIgnoreCase("ENTREGUE")).thenReturn(Optional.empty());
 
-        assertThrows(StatusNotFoundException.class, () -> service.concludeRequest(100L));
+        assertThrows(StatusNotFoundException.class, () -> service.concludeRequest(100L, "ENTREGUE"));
 
         verify(requestRepository, never()).save(request);
         verifyNoInteractions(eventPublisher, currentUserService);
@@ -109,7 +109,7 @@ class ConcludeRequestServiceImplTest {
     void shouldThrowRequestNotFoundExceptionWhenRequestMissing() {
         when(requestRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThrows(RequestNotFoundException.class, () -> service.concludeRequest(999L));
+        assertThrows(RequestNotFoundException.class, () -> service.concludeRequest(999L, "ENTREGUE"));
 
         verifyNoInteractions(statusRepository, eventPublisher, currentUserService);
     }

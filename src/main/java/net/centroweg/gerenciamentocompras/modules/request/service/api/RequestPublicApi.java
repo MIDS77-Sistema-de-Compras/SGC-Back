@@ -26,6 +26,6 @@ public interface RequestPublicApi {
     List<ItemRequestProduct> findItemProductsByIds(Collection<Long> ids);
     List<ItemRequestProvision> findItemProvisionsByIds(Collection<Long> ids);
 
-    /** Marca a solicitação vinculada como "Concluída" (idempotente), disparando o fluxo padrão de notificação quando o status realmente muda. */
-    void concludeRequest(Long requestId);
+    /** Propaga para a solicitação o status final da entrega, de forma idempotente. */
+    void concludeRequest(Long requestId, String statusName);
 }

@@ -109,7 +109,7 @@ class NotificationIntegrationTest {
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(this.user)));
 
-        waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
+        waitingStatus = statusRepository.save(new Status("AGUARDANDO_APROVACAO", "Solicitacao aguardando aprovacao"));
 
         productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
         measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));
@@ -183,6 +183,27 @@ class NotificationIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    @DisplayName("[Integracao] Administrador deve visualizar somente alertas administrativos em suas notificacoes")
+    void administradorDeveVisualizarSomenteAlertasAdministrativos() throws Exception {
+        criarNotificacao(
+                "Item disponivel para retirada",
+                "Notificacao comum antiga",
+                NotificationType.ITEM_PARA_RETIRADA
+        );
+        criarNotificacao(
+                "Alerta administrativo",
+                "Uma acao critica foi registrada",
+                NotificationType.ALERTA_ADMINISTRATIVO
+        );
+
+        mockMvc.perform(get("/notifications/me")
+                        .with(authentication(authAs(user))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].notificationType").value("ALERTA_ADMINISTRATIVO"));
     }
 
     @Test

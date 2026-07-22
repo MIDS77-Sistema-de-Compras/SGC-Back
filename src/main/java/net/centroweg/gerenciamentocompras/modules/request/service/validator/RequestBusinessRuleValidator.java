@@ -11,6 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.exception.Reque
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestCannotBeInactivatedException;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotEditableException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 
 @Component
@@ -18,7 +19,7 @@ public class RequestBusinessRuleValidator {
 
     private static final Set<String> SUPERVISOR_APPROVED_OR_AFTER = Set.of(
             "aprovado",
-            "auto_aprovado",
+            "auto aprovado",
             "em atendimento",
             "entregue",
             "cancelado"
@@ -38,12 +39,11 @@ public class RequestBusinessRuleValidator {
      * (não é mais o pendente) em vez de listar cada status "final", que cresceria a cada
      * novo status adicionado ao fluxo do comprador.
      */
-    private static final String PENDING_STATUS = "aguardando aprovação";
+    private static final String PENDING_STATUS = "aguardando aprovacao";
 
     private static final Set<String> EDITABLE_STATUSES = Set.of(
             PENDING_STATUS,
             "pendente",
-            "em análise",
             "em analise"
     );
 
@@ -153,7 +153,7 @@ public class RequestBusinessRuleValidator {
         if (value == null) {
             return "";
         }
-        return value.trim().toLowerCase();
+        return RequestStatusNames.normalize(value);
     }
 
     private static String normalizeRole(String value) {

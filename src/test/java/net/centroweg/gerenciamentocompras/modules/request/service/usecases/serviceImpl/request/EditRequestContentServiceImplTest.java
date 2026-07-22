@@ -52,7 +52,7 @@ class EditRequestContentServiceImplTest {
     void shouldReplaceItemsCrAndRemoveOnlyDiscardedAttachments() {
         User currentUser = new User();
         currentUser.setId(10L);
-        Status status = new Status("Aguardando aprovação", "Pendente");
+        Status status = new Status("AGUARDANDO_APROVACAO", "Pendente");
         CrBranch oldCr = new CrBranch();
         oldCr.setId(1L);
         CrBranch newCr = new CrBranch();
@@ -97,7 +97,7 @@ class EditRequestContentServiceImplTest {
         Request request = new Request();
         request.setId(100L);
         request.setActive(true);
-        request.setStatus(new Status("Aguardando aprovação", "Pendente"));
+        request.setStatus(new Status("AGUARDANDO_APROVACAO", "Pendente"));
         request.setCrBranch(new CrBranch());
         request.getAttachments().add(attachment(11L, "keep", request));
 

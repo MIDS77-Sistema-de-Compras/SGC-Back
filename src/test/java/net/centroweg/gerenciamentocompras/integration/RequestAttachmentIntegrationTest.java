@@ -97,7 +97,7 @@ class RequestAttachmentIntegrationTest {
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         CrBranch crBranch = crBranchRepository.save(new CrBranch(branch, cr, null));
-        Status status = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
+        Status status = statusRepository.save(new Status("AGUARDANDO_APROVACAO", "Solicitacao aguardando aprovacao"));
         Role role = roleRepository.save(new Role("DOCENTE"));
         User creator = new User("Docente", "12345678901", "docente@test.com", "senha", "1234", true);
         creator.setRole(role);

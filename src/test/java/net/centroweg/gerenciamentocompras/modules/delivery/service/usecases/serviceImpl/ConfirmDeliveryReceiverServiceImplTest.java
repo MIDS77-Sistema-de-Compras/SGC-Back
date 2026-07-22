@@ -81,11 +81,11 @@ class ConfirmDeliveryReceiverServiceImplTest {
         delivery.getReceivers().getFirst().setConfirmed(true);
         delivery.getReceivers().getFirst().setConfirmedAt(LocalDateTime.now().minusHours(1));
         mockDelivery(delivery, second);
-        when(statusPublicApi.findByName("Entregue")).thenReturn(Optional.of(deliveredStatus()));
+        when(statusPublicApi.findByName("ENTREGUE")).thenReturn(Optional.of(deliveredStatus()));
 
         var response = service.confirmReceiver(100L, 2L, confirmRequest());
 
-        assertThat(response.statusName()).isEqualTo("Entregue");
+        assertThat(response.statusName()).isEqualTo("ENTREGUE");
         assertThat(response.deliveredAt()).isEqualTo(response.receivers().get(1).confirmedAt());
         assertThat(response.receivers()).allMatch(value -> Boolean.TRUE.equals(value.confirmed()));
         verify(completeRequestOnDeliveryStatusService).apply(delivery);
@@ -115,7 +115,7 @@ class ConfirmDeliveryReceiverServiceImplTest {
         Delivery delivery = delivery(request(), pending, first, second);
         delivery.getReceivers().getFirst().setConfirmed(true);
         mockDelivery(delivery, second);
-        when(statusPublicApi.findByName("Entregue")).thenReturn(Optional.empty());
+        when(statusPublicApi.findByName("ENTREGUE")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.confirmReceiver(100L, 2L, confirmRequest()))
                 .isInstanceOf(DeliveryStatusNotFoundException.class);

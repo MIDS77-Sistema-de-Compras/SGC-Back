@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.delivery.service.usecases.ser
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.delivery.domain.entity.Delivery;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,21 +14,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CompleteRequestOnDeliveryStatusServiceImpl {
 
-    private static final String DELIVERED_STATUS = "Entregue";
-    private static final String CANCELLED_STATUS = "Pedido cancelado";
+    private static final String DELIVERED_STATUS = RequestStatusNames.ENTREGUE;
+    private static final String CANCELLED_STATUS = RequestStatusNames.PEDIDO_CANCELADO;
 
     private final RequestPublicApi requestPublicApi;
 
     public void apply(Delivery delivery) {
         String statusName = delivery.getStatus() != null ? delivery.getStatus().getName() : null;
         if (isCompletionStatus(statusName)) {
-            requestPublicApi.concludeRequest(delivery.getRequest().getId());
+            requestPublicApi.concludeRequest(delivery.getRequest().getId(), statusName);
         }
     }
 
     private boolean isCompletionStatus(String statusName) {
-        return statusName != null
-                && (statusName.trim().equalsIgnoreCase(DELIVERED_STATUS)
-                    || statusName.trim().equalsIgnoreCase(CANCELLED_STATUS));
+        String normalizedStatus = RequestStatusNames.normalize(statusName);
+        return normalizedStatus.equals(RequestStatusNames.normalize(DELIVERED_STATUS))
+                || normalizedStatus.equals(RequestStatusNames.normalize(CANCELLED_STATUS));
     }
 }

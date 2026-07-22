@@ -22,8 +22,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final FindNotificationByOwnUser findNotificationByOwnUser;
 
     @Override
-    public NotificationResponse createNotification(NotificationRequest request) {
-        return createNotificationService.createNotification(request);
+    public void createNotification(NotificationRequest request) {
+        createNotificationService.createNotification(request);
     }
 
     @Override

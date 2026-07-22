@@ -11,7 +11,8 @@ public enum NotificationType {
     ITEM_PARA_RETIRADA("ITEM_PARA_RETIRADA"),
     ENTREGA_CRIADA("ENTREGA_CRIADA"),
     SOLICITACAO_VINCULADA_CR("SOLICITACAO_VINCULADA_CR"),
-    NOTIFICACAO_TESTE ("NOTIFICACAO_TESTE"); // apenas para casos de testes
+    NOTIFICACAO_TESTE ("NOTIFICACAO_TESTE"), // apenas para casos de testes
+    ALERTA_ADMINISTRATIVO("ALERTA_ADMINISTRATIVO");
 
     /**
      * Valor textual do tipo, usado ao expor a notificação nos DTOs de request/response.

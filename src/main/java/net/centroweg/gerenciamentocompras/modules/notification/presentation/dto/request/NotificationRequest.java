@@ -10,6 +10,6 @@ public record NotificationRequest(
         @NotBlank String message,
         @NotNull String notificationType,
         @NotNull @Positive Long userId,
-        @NotNull @Positive Long requestId
+        @Positive Long requestId
 ) {
 }

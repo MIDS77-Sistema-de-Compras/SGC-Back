@@ -121,7 +121,6 @@ class DeliveryIntegrationTest {
     private Status pendingStatus;
     private Status deliveredStatus;
     private Status cancelledStatus;
-    private Status concludedStatus;
     private Request request;
     private User comprador;
     private User docente;
@@ -149,7 +148,6 @@ class DeliveryIntegrationTest {
         pendingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Em andamento"));
         deliveredStatus = statusRepository.save(new Status("Entregue", "Entrega concluida"));
         cancelledStatus = statusRepository.save(new Status("Pedido cancelado", "Entrega cancelada"));
-        concludedStatus = statusRepository.save(new Status("Concluída", "Solicitacao concluida"));
 
         request = requestRepository.save(new Request(crBranch, pendingStatus));
     }
@@ -329,7 +327,7 @@ class DeliveryIntegrationTest {
         confirm(delivery, secondReceiver, null).andExpect(status().isOk());
 
         Request persisted = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(persisted.getStatus().getId()).isEqualTo(concludedStatus.getId());
+        assertThat(persisted.getStatus().getId()).isEqualTo(deliveredStatus.getId());
     }
 
     @Test
@@ -342,7 +340,7 @@ class DeliveryIntegrationTest {
                 .andExpect(status().isNoContent());
 
         Request persisted = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(persisted.getStatus().getId()).isEqualTo(concludedStatus.getId());
+        assertThat(persisted.getStatus().getId()).isEqualTo(cancelledStatus.getId());
     }
 
     @Test
@@ -357,7 +355,7 @@ class DeliveryIntegrationTest {
                 .andExpect(status().isOk());
 
         Request persisted = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(persisted.getStatus().getId()).isEqualTo(concludedStatus.getId());
+        assertThat(persisted.getStatus().getId()).isEqualTo(deliveredStatus.getId());
     }
 
     @Test
@@ -372,7 +370,7 @@ class DeliveryIntegrationTest {
                 .andExpect(status().isOk());
 
         Request persisted = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(persisted.getStatus().getId()).isEqualTo(concludedStatus.getId());
+        assertThat(persisted.getStatus().getId()).isEqualTo(cancelledStatus.getId());
     }
 
     @Test
@@ -389,7 +387,7 @@ class DeliveryIntegrationTest {
                 .andExpect(status().isOk());
 
         Request persisted = requestRepository.findById(request.getId()).orElseThrow();
-        assertThat(persisted.getStatus().getId()).isEqualTo(concludedStatus.getId());
+        assertThat(persisted.getStatus().getId()).isEqualTo(deliveredStatus.getId());
     }
 
     @Test

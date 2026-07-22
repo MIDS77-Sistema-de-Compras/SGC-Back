@@ -96,18 +96,20 @@ class ItemRequestProductIntegrationTest {
     }
 
     @Test
-    @DisplayName("[Integração] Deve retornar 400 quando additionalInformations estiver em branco")
-    void createItemRequestProduct_shouldReturn400_whenAdditionalInformationsIsBlank() throws Exception {
-        ItemRequestProductRequest invalidRequest = new ItemRequestProductRequest(
+    @DisplayName("[Integração] Deve aceitar additionalInformations em branco")
+    void createItemRequestProduct_shouldAcceptBlankAdditionalInformations() throws Exception {
+        ItemRequestProductRequest requestWithoutAdditionalInformation = new ItemRequestProductRequest(
                 1L, "Parafuso", "UN", 10.0, "EM_ANDAMENTO", ""
         );
+        when(itemRequestProductService.createRequestProduct(any(ItemRequestProductRequest.class)))
+                .thenReturn(mockResponse);
 
         mockMvc.perform(post("/item-request-products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest());
+                        .content(objectMapper.writeValueAsString(requestWithoutAdditionalInformation)))
+                .andExpect(status().isCreated());
 
-        verify(itemRequestProductService, never()).createRequestProduct(any());
+        verify(itemRequestProductService).createRequestProduct(any(ItemRequestProductRequest.class));
     }
 
     // ─────────────────────────── GET /item-request-products ────────────────────────────

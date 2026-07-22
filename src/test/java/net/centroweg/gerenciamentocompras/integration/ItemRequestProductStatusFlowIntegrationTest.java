@@ -116,7 +116,7 @@ class ItemRequestProductStatusFlowIntegrationTest {
         item.setMeasurementUnit(unit);
         item.setQuantity(10.0);
         item.setStatus_id(approved);
-        item.setAdditionalInformations("Sem informacoes adicionais.");
+        item.setAdditionalInformations(null);
         this.item = itemRequestProductRepository.save(item);
     }
 
@@ -138,7 +138,7 @@ class ItemRequestProductStatusFlowIntegrationTest {
                     "measurementUnit": "%s",
                     "quantity": 10.0,
                     "statusName": "Entregue",
-                    "additionalInformations": "Sem informacoes adicionais."
+                    "additionalInformations": ""
                 }
                 """.formatted(request.getId(), product.getName(), unit.getName());
 

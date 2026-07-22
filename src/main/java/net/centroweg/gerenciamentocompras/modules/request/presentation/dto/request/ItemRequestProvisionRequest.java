@@ -18,7 +18,6 @@ public record ItemRequestProvisionRequest(
     @Positive(message = "O ID do status deve ser maior que 0")
     Long statusId,
 
-    @NotBlank(message = "As informações adicionais não podem estar em branco.")
     @Size(max=255, message = "Informações adicionais excedem o tamanho máximo permitido (255 caractéres).")
     String additionalInformation
 ) {

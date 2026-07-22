@@ -22,14 +22,12 @@ import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
  * Caso de uso responsável por concluir automaticamente uma solicitação.
  *
  * <p>É acionado via {@code RequestPublicApi} pelo módulo {@code delivery}
- * quando a entrega vinculada à solicitação é finalizada ("Entregue") ou
- * cancelada ("Pedido cancelado"), marcando a solicitação como "Concluída".</p>
+ * quando a entrega vinculada à solicitação é finalizada ou cancelada,
+ * propagando para a solicitação o mesmo status final da entrega.</p>
  */
 @Service
 @RequiredArgsConstructor
 public class ConcludeRequestServiceImpl {
-
-    private static final String CONCLUDED_STATUS = "Concluída";
 
     private final RequestRepository requestRepository;
     private final StatusRepository statusRepository;
@@ -37,11 +35,11 @@ public class ConcludeRequestServiceImpl {
     private final CurrentUserService currentUserService;
 
     @Transactional
-    public void concludeRequest(Long requestId) {
+    public void concludeRequest(Long requestId, String statusName) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(RequestNotFoundException::new);
 
-        Status concludedStatus = statusRepository.findByNameIgnoreCase(CONCLUDED_STATUS)
+        Status concludedStatus = statusRepository.findByNameIgnoreCase(statusName)
                 .orElseThrow(StatusNotFoundException::new);
 
         Status previousStatus = request.getStatus();

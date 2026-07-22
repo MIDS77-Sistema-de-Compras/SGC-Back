@@ -1,6 +1,7 @@
 package net.centroweg.gerenciamentocompras.modules.notification.service.factory;
 
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 
@@ -21,7 +22,7 @@ public class RequestStatusInternalNotificationFactory {
     }
 
     private String value(String value) {
-        return hasText(value) ? HtmlUtils.htmlEscape(value.trim()) : "Nao informado";
+        return HtmlUtils.htmlEscape(RequestStatusNames.toDisplayName(value));
     }
 
     private boolean hasText(String value) {

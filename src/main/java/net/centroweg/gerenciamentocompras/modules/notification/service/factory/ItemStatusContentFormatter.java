@@ -8,14 +8,17 @@ import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
+
 @Component
 public class ItemStatusContentFormatter {
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy 'as' HH:mm");
-    private static final String DELIVERED_STATUS = "Entregue";
+    private static final String DELIVERED_STATUS = RequestStatusNames.ENTREGUE;
 
     public boolean isDelivered(String statusName) {
-        return normalize(statusName).equals(normalize(DELIVERED_STATUS));
+        return RequestStatusNames.normalize(statusName)
+                .equals(RequestStatusNames.normalize(DELIVERED_STATUS));
     }
 
     public String formatDateTime(LocalDateTime dateTime) {

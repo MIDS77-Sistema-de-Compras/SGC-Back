@@ -1,9 +1,9 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.mapper.request;
 
 import net.centroweg.gerenciamentocompras.modules.request.domain.RequestStatusCategory;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import org.springframework.stereotype.Component;
 
-import java.text.Normalizer;
 import java.util.Set;
 
 /**
@@ -52,7 +52,7 @@ public class RequestStatusCategoryResolver {
      * @return a categoria conhecida, ou {@code null} se o nome não for reconhecido
      */
     public RequestStatusCategory resolve(String statusName) {
-        String normalized = normalize(statusName);
+        String normalized = RequestStatusNames.normalize(statusName);
 
         if (CONCLUIDA_NAMES.contains(normalized)) {
             return RequestStatusCategory.CONCLUIDA;
@@ -65,14 +65,4 @@ public class RequestStatusCategoryResolver {
         return null;
     }
 
-    private String normalize(String value) {
-        if (value == null) {
-            return "";
-        }
-
-        String withoutAccents = Normalizer.normalize(value, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "");
-
-        return withoutAccents.replace("_", " ").trim().toLowerCase();
-    }
 }

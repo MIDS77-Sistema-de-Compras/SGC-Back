@@ -33,7 +33,7 @@ public class AuditLogController {
             @RequestParam(required = false) String agentEmail,
             @RequestParam(required = false) LocalDateTime startDate,
             @RequestParam(required = false) LocalDateTime endDate,
-            @PageableDefault(size = 100, sort = "timestamp", direction = Sort.Direction.DESC)
+            @PageableDefault(size = 100, sort = {"timestamp", "id"}, direction = Sort.Direction.DESC)
             Pageable pageable
     ){
 

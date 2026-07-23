@@ -6,11 +6,10 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.status.IStatusMapper;
 import org.springframework.stereotype.Service;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+
 /**
- * Serviço responsável pela busca de status por nome.
- *
- * @author André
- * @since 1.0
+ * Caso de uso responsável por buscar um {@link Status} pelo seu nome.
  */
 @Service
 @RequiredArgsConstructor
@@ -18,11 +17,12 @@ public class FindStatusByNameService {
 
     private final StatusRepository repository;
     private final IStatusMapper mapper;
+
     /**
-     * Busca um status pelo nome.
-     *
-     * @param name nome do status
-     * @return status encontrado
+     * Busca um status no banco de dados pelo nome informado.
+     * @param name nome do status.
+     * @return status encontrado, caso exista.
+     * @throws StatusNotFoundException caso nenhum status seja encontrado.
      */
     public StatusResponse findStatusByName(String name){
         return mapper.toResponse(repository.findByNameIgnoreCase(name)

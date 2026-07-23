@@ -6,13 +6,10 @@ import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persist
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.status.IStatusMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+
 /**
- * Serviço responsável pela listagem de status.
- *
- * @author André
- * @since 1.0
+ * Caso de uso responsável por listar um {@link Status}.
  */
 @Service
 @RequiredArgsConstructor
@@ -20,10 +17,10 @@ public class ListStatusService {
 
     private final StatusRepository statusRepository;
     private final IStatusMapper statusMapper;
+
     /**
-     * Retorna todos os status cadastrados.
-     *
-     * @return lista de status
+     * Lista todos os status cadastrados no banco de dados.
+     * @return lista com todos os status encontrados, caso exista.
      */
     public List<StatusResponse> listStatus () {
         List<Status> list = statusRepository.findAll();

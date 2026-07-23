@@ -8,11 +8,9 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.status.IStatusMapper;
 import org.springframework.stereotype.Service;
+
 /**
- * Serviço responsável pela atualização de status.
- *
- * @author André
- * @since 1.0
+ * Caso de uso responsável pela atualização de um {@link Status}.
  */
 @Service
 @RequiredArgsConstructor
@@ -20,12 +18,13 @@ public class EditStatusService {
 
     private final IStatusMapper statusMapper;
     private final StatusRepository statusRepository;
+
     /**
-     * Atualiza os dados de um status existente.
-     *
-     * @param id identificador do status
-     * @param statusRequest novos dados do status
-     * @return status atualizado
+     * Atualiza um status existente no banco de dados.
+     * @param id identificador do status.
+     * @param statusRequest novos dados do status.
+     * @return status já atualizado.
+     * @throws StatusNotFoundException caso nenhum status seja encontrado.
      */
     public StatusResponse editStatus (Long id, StatusRequest statusRequest) {
         Status status = statusRepository.findById(id)

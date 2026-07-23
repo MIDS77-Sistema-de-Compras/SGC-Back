@@ -1,7 +1,6 @@
 package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serviceImpl.irprovision;
 
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.entity.Provision;
 import net.centroweg.gerenciamentocompras.modules.provision.domain.exception.ProvisionNotFoundException;
@@ -19,17 +18,29 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProvisionResponse;
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.irprovision.ItemRequestProvisionMapper;
 
+/**
+ * Caso de uso responsável pela atualização de um {@link ItemRequestProvision}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateItemRequestProvisionServiceImpl {
     
     private final ItemRequestProvisionMapper itemRequestProvisionMapper;
     private final ItemRequestProvisionRepository itemRequestProvisionRepository;
-
     private final RequestRepository requestRepository;
     private final ProvisionRepository provisionRepository;
     private final StatusRepository statusRepository;
 
+    /**
+     * Atualiza um item de provisão da solicitação existente no banco de dados.
+     * @param itemId identificador do item de provisão da solicitação.
+     * @param requestDto novos dados do item de provisão da solicitação.
+     * @return item de provisão da solicitação já atualizado.
+     * @throws RequestProvisionItemNotFoundException caso nenhum item de provisão da solicitação seja encontrado.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
+     * @throws ProvisionNotFoundException caso nenhuma provisão seja encontrada.
+     * @throws StatusNotFoundException caso nenhum status seja encontrado.
+     */
     public ItemRequestProvisionResponse updateItem(Long itemId, ItemRequestProvisionRequest requestDto){
         ItemRequestProvision item = itemRequestProvisionRepository.findById(itemId)
             .orElseThrow(() -> new RequestProvisionItemNotFoundException());

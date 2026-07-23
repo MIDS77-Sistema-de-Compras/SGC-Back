@@ -10,10 +10,7 @@ import net.centroweg.gerenciamentocompras.modules.request.service.mapper.status.
 import org.springframework.stereotype.Service;
 
 /**
- * Serviço responsável pelo cadastro de novos status.
- *
- * @author André
- * @since 1.0
+ * Caso de uso responsável pela criação de um {@link Status}.
  */
 @Service
 @RequiredArgsConstructor
@@ -21,11 +18,12 @@ public class AddStatusService {
 
     private final IStatusMapper statusMapper;
     private final StatusRepository statusRepository;
+
     /**
-     * Realiza o cadastro de um novo status.
-     *
-     * @param statusRequest dados do status
-     * @return status cadastrado
+     * Cria e persiste um novo status no banco de dados.
+     * @param statusRequest dados do status.
+     * @return status criado.
+     * @throws StatusAlreadyExistsException caso já exista um status com o mesmo nome.
      */
     public StatusResponse addStatus (StatusRequest statusRequest) {
         if (statusRepository.existsByName(statusRequest.name())) {

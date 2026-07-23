@@ -16,11 +16,13 @@ import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Caso de uso responsável pela atualização de uma {@link Request} pelo próprio usuário.
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateRequestByOwnUser {
@@ -30,6 +32,17 @@ public class UpdateRequestByOwnUser {
     private final UserRepository userRepository;
     private final RequestMapper requestMapper;
 
+    /**
+     * Atualiza uma solicitação existente no banco de dados pelo próprio usuário.
+     * @param requestDTO novos dados da solicitação.
+     * @param id identificador da solicitação.
+     * @param userPrincipal dados do usuário autenticado.
+     * @return solicitação já atualizada.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
+     * @throws AcessDeniedException caso o usuário não seja o dono da solicitação.
+     * @throws RequestAlreadyApprovedException caso a solicitação já esteja aprovada.
+     * @throws CrBranchNotFoundException caso nenhuma filial/CR seja encontrada.
+     */
     public RequestResponse updateRequest(RequestRequest requestDTO, Long id, UserPrincipal userPrincipal){
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());

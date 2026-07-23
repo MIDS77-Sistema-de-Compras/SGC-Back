@@ -15,12 +15,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Caso de uso responsável pelo upload de um {@link RequestAttachment}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UploadRequestAttachmentServiceImpl {
@@ -30,6 +32,14 @@ public class UploadRequestAttachmentServiceImpl {
     private final CloudinaryService cloudinaryService;
     private final RequestMapper requestMapper;
 
+    /**
+     * Realiza o upload de anexos de uma solicitação no banco de dados.
+     * @param requestId identificador da solicitação.
+     * @param files arquivos a serem anexados.
+     * @return lista com todos os anexos da solicitação criados.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
+     * @throws InvalidAttachmentException caso nenhum arquivo seja enviado.
+     */
     @Transactional
     public List<RequestAttachmentResponse> uploadAttachments(
             Long requestId,
@@ -49,6 +59,13 @@ public class UploadRequestAttachmentServiceImpl {
                 .toList();
     }
 
+    /**
+     * Realiza o upload de um único arquivo e persiste o anexo da solicitação no banco de dados.
+     * @param request dados da solicitação.
+     * @param file arquivo a ser anexado.
+     * @return anexo da solicitação criado.
+     * @throws AttachmentUploadException caso ocorra um erro durante o upload do arquivo.
+     */
     private RequestAttachmentResponse uploadFile(
             Request request,
             MultipartFile file

@@ -19,13 +19,15 @@ import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+/**
+ * Caso de uso responsável pela atualização do status de uma {@link Request}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateRequestStatusServiceImpl {
 
     private static final String REFUSED_STATUS = "recusado";
     private static final String APPROVED_STATUS = "aprovado";
-
     private final RequestRepository requestRepository;
     private final StatusRepository statusRepository;
     private final RequestMapper requestMapper;
@@ -33,6 +35,15 @@ public class UpdateRequestStatusServiceImpl {
     private final RequestBusinessRuleValidator validator;
     private final NotificationService notificationService;
 
+    /**
+     * Atualiza o status de uma solicitação existente no banco de dados.
+     * @param id identificador da solicitação.
+     * @param dto novos dados de status da solicitação.
+     * @return solicitação já atualizada.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
+     * @throws StatusNotFoundException caso nenhum status seja encontrado.
+     * @throws RequestRejectionJustificationRequiredException caso a solicitação seja recusada sem justificativa.
+     */
     public RequestResponse updateStatus(Long id, UpdateRequestStatus dto) {
         Request request = requestRepository.findById(id)
                 .orElseThrow(RequestNotFoundException::new);
@@ -67,14 +78,20 @@ public class UpdateRequestStatusServiceImpl {
         return requestMapper.toDTO(savedRequest);
     }
 
+    /**
+     * Notifica os solicitantes sobre a aprovação ou recusa da solicitação.
+     * @param request dados da solicitação.
+     * @param approved indica se a solicitação foi aprovada.
+     * @param justification justificativa da recusa da solicitação.
+     */
     private void notifyRequester(Request request, boolean approved, String justification) {
         String title = approved
-                ? "Solicitação aprovada"
-                : "Solicitação recusada";
+                ? "Solicitação aprovada!"
+                : "Solicitação recusada!";
 
         String message = approved
-                ? "A sua solicitação #" + request.getId() + " foi aprovada."
-                : "A sua solicitação #" + request.getId() + " foi recusada. Justificativa: " + justification;
+                ? "A sua solicitação #" + request.getId() + " foi aprovada!"
+                : "A sua solicitação #" + request.getId() + " foi recusada! Justificativa: " + justification;
 
         for (User requester : request.getCreatedByUsers()) {
             notificationService.createNotification(new NotificationRequest(
@@ -86,6 +103,12 @@ public class UpdateRequestStatusServiceImpl {
         }
     }
 
+    /**
+     * Verifica se o status informado corresponde ao status esperado, ignorando maiúsculas e minúsculas.
+     * @param status dados do status.
+     * @param expectedStatus nome do status esperado.
+     * @return {@code true} caso o status corresponda ao esperado, {@code false} caso contrário.
+     */
     private boolean isStatus(Status status, String expectedStatus) {
         return status.getName() != null
                 && status.getName().trim().equalsIgnoreCase(expectedStatus);

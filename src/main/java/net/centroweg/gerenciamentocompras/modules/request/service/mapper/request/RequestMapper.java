@@ -12,9 +12,11 @@ import org.springframework.stereotype.Component;
 import net.centroweg.gerenciamentocompras.modules.request.domain.entity.RequestAttachment;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.RequestAttachmentResponse;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
-
 import java.util.List;
 
+/**
+ * Componente responsável pela conversão entre a entidade({@link Request}) e seus DTOs de entrada({@link RequestRequest}) e saída({@link RequestResponse}).
+ */
 @Component
 @RequiredArgsConstructor
 public class RequestMapper {
@@ -22,6 +24,13 @@ public class RequestMapper {
     private final CrBranchRepository repositoryCR;
     private final StatusRepository repositorySt;
 
+    /**
+     * Converte um DTO de entrada da solicitação em uma entidade solicitação.
+     * @param request dados da solicitação.
+     * @param branch dados da filial/CR.
+     * @param status dados do status.
+     * @return dados convertidos para entidade.
+     */
     public Request toEntity(RequestRequest request, CrBranch branch, Status status){
         Request requestSave = new Request();
         requestSave.setCrBranch(branch);
@@ -29,6 +38,11 @@ public class RequestMapper {
         return requestSave;
     }
 
+    /**
+     * Converte uma entidade solicitação em um DTO de saída da solicitação.
+     * @param request entidade com os dados da solicitação.
+     * @return dados convertidos para DTO de saída.
+     */
     public RequestResponse toDTO(Request request){
         List<RequestAttachmentResponse> attachments =
                 request.getAttachments()
@@ -53,6 +67,11 @@ public class RequestMapper {
         );
     }
 
+    /**
+     * Converte uma entidade anexo da solicitação em um DTO de saída do anexo da solicitação.
+     * @param attachment entidade com os dados do anexo da solicitação.
+     * @return dados convertidos para DTO de saída.
+     */
     public RequestAttachmentResponse toAttachmentDTO(
             RequestAttachment attachment
     ) {
@@ -66,6 +85,11 @@ public class RequestMapper {
         );
     }
 
+    /**
+     * Converte uma lista de entidades solicitação em uma lista de DTOs de saída da solicitação.
+     * @param requests lista de entidades com os dados da solicitação.
+     * @return dados convertido para uma lista de DTOs de saída.
+     */
     public List<RequestResponse> toDTOList(List<Request> requests){
         return requests
                 .stream()

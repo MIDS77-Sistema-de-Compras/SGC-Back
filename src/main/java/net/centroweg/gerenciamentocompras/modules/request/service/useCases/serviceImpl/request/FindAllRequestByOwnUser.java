@@ -8,10 +8,12 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request.RequestMapper;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Caso de uso responsável por listar uma {@link Request} pelo próprio usuário.
+ */
 @Service
 @RequiredArgsConstructor
 public class FindAllRequestByOwnUser {
@@ -19,6 +21,11 @@ public class FindAllRequestByOwnUser {
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
 
+    /**
+     * Lista todas as solicitações cadastradas no banco de dados associadas ao próprio usuário.
+     * @param userPrincipal dados do usuário autenticado.
+     * @return lista com todas as solicitações encontradas, caso exista.
+     */
     public List<RequestResponse> findAllRequestByOwnUser(UserPrincipal userPrincipal) {
 
         List<RequestResponse> requestResponses = new ArrayList<>();

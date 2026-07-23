@@ -12,6 +12,11 @@ public class DeleteItemRequestProductService {
 
     private final ItemRequestProductRepository itemRequestProductRepository;
 
+    /**
+     * Remove um item de produto da solicitação do banco de dados.
+     * @param id identificador do item de produto da solicitação.
+     * @throws ItemRequestProductNotFoundException caso nenhum item de produto da solicitação seja encontrado.
+     */
     public void delete(Long id){
         ItemRequestProduct itemRequestProduct =
                 itemRequestProductRepository.findById(id)

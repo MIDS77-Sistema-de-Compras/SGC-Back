@@ -20,17 +20,30 @@ import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPub
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável pela atualização de um {@link ItemRequestProduct}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateItemRequestProductService {
 
     private final ItemRequestProductRepository itemRequestProductRepository;
     private final RequestRepository requestRepository;
-
     private final RequestPublicApi requestPublicApi;
     private final StatusRepository statusRepository;
     private final ItemRequestProductMapper itemRequestProductMapper;
 
+    /**
+     * Atualiza um item de produto da solicitação existente no banco de dados.
+     * @param id identificador do item de produto da solicitação.
+     * @param dto novos dados do item de produto da solicitação.
+     * @return item de produto da solicitação já atualizado.
+     * @throws ItemRequestProductNotFoundException caso nenhum item de produto da solicitação seja encontrado.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
+     * @throws ProductNotFoundException caso nenhum produto seja encontrado.
+     * @throws MeasurementUnitNotFoundException caso nenhuma unidade de medida seja encontrada.
+     * @throws StatusNotFoundException caso nenhum status seja encontrado.
+     */
     public ItemRequestProductResponse update(Long id, ItemRequestProductRequest dto) {
 
         ItemRequestProduct itemRequestProduct =
@@ -58,7 +71,7 @@ public class UpdateItemRequestProductService {
         itemRequestProduct.setProduct(product);
         itemRequestProduct.setMeasurementUnit(measurementUnit);
         itemRequestProduct.setQuantity(dto.quantity());
-        itemRequestProduct.setStatus_id(status);
+        itemRequestProduct.setStatusId(status);
         itemRequestProduct.setAdditionalInformations(dto.additionalInformations());
 
         return itemRequestProductMapper.toResponse(itemRequestProductRepository.save(itemRequestProduct));

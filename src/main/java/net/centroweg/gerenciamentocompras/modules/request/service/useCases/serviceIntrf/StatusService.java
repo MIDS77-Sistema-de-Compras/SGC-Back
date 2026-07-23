@@ -2,58 +2,52 @@ package net.centroweg.gerenciamentocompras.modules.request.service.useCases.serv
 
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.request.StatusRequest;
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.StatusResponse;
-
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
+
 /**
- * Interface responsável por definir os serviços
- * relacionados à entidade Status.
- *
- * <p>Contém as operações de criação, busca,
- * listagem, atualização e remoção de status.</p>
- *
- * @author André
- * @since 1.0
+ * Interface de serviço para operações de gerenciamento do {@link Status}.
  */
 public interface StatusService {
+
     /**
-     * Realiza o cadastro de um novo status.
-     *
-     * @param statusRequest dados do status
-     * @return status cadastrado
+     * Cria e persiste um novo status no banco de dados.
+     * @param statusRequest dados do status.
+     * @return status criado.
      */
     StatusResponse createStatus (StatusRequest statusRequest);
+
     /**
-     * Busca um status pelo identificador.
-     *
-     * @param id identificador do status
-     * @return status encontrado
+     * Busca um status no banco de dados pelo ID informado.
+     * @param id identificador do status.
+     * @return status encontrado, caso exista.
      */
     StatusResponse findStatusById (Long id);
+
     /**
-     * Busca um status pelo nome.
-     *
-     * @param name nome do status
-     * @return status encontrado
+     * Busca um status no banco de dados pelo nome informado.
+     * @param name nome do status.
+     * @return status encontrado, caso exista.
      */
     StatusResponse findStatusByName (String name);
+
     /**
-     * Lista todos os status cadastrados.
-     *
-     * @return lista de status
+     * Lista todos os status cadastrados no banco de dados.
+     * @return lista com todos os status encontrados, caso exista.
      */
     List<StatusResponse> findAllStatus ();
+
     /**
-     * Atualiza os dados de um status existente.
-     *
-     * @param id identificador do status
-     * @param statusRequest novos dados do status
-     * @return status atualizado
+     * Atualiza um status existente no banco de dados.
+     * @param id identificador do status.
+     * @param statusRequest novos dados do status.
+     * @return status já atualizado.
      */
     StatusResponse editStatus (Long id, StatusRequest statusRequest);
+
     /**
-     * Remove um status pelo identificador.
-     *
-     * @param id identificador do status
+     * Remove um status do banco de dados.
+     * @param id identificador do status.
      */
     void deleteStatus (Long id);
 

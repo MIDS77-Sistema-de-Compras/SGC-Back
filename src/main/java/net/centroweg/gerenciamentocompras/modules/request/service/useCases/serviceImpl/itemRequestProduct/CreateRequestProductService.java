@@ -19,6 +19,9 @@ import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPub
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável pela criação de um {@link ItemRequestProduct}.
+ */
 @Service
 @RequiredArgsConstructor
 public class CreateRequestProductService {
@@ -29,6 +32,15 @@ public class CreateRequestProductService {
     private final ItemRequestProductMapper itemRequestProductMapper;
     private final RequestPublicApi requestPublicApi;
 
+    /**
+     * Cria e persiste um novo item de produto da solicitação no banco de dados.
+     * @param dto dados do item de produto da solicitação.
+     * @return item de produto da solicitação criado.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
+     * @throws ProductNotFoundException caso nenhum produto seja encontrado.
+     * @throws MeasurementUnitNotFoundException caso nenhuma unidade de medida seja encontrada.
+     * @throws StatusNotFoundException caso nenhum status seja encontrado.
+     */
     public ItemRequestProductResponse create(ItemRequestProductRequest dto) {
 
         Request request = requestRepository.findById(dto.requestId()).orElseThrow(()-> new RequestNotFoundException());

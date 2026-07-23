@@ -13,6 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import net.centroweg.gerenciamentocompras.modules.request.infrastructure.persistence.repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável por remover uma {@link Request}.
+ */
 @Service
 @RequiredArgsConstructor
 public class DeleteRequestServiceImpl {
@@ -21,6 +24,13 @@ public class DeleteRequestServiceImpl {
     private final CurrentUserService currentUserService;
     private final RequestBusinessRuleValidator validator;
 
+    /**
+     * Remove uma solicitação do banco de dados.
+     * @param id identificador da solicitação.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
+     * @throws AcessDeniedException caso o usuário não seja o dono da solicitação.
+     * @throws RequestAlreadyApprovedException caso a solicitação já esteja aprovada.
+     */
     public void deleteRequest(Long id){
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean isOwner = false;

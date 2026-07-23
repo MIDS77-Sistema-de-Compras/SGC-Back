@@ -20,9 +20,11 @@ import net.centroweg.gerenciamentocompras.modules.request.service.validator.Requ
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.shared.security.CurrentUserService;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 
+/**
+ * Caso de uso responsável pela atualização de uma {@link Request}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateRequestServiceImpl {
@@ -35,6 +37,16 @@ public class UpdateRequestServiceImpl {
     private final CurrentUserService currentUserService;
     private final RequestBusinessRuleValidator validator;
 
+    /**
+     * Atualiza uma solicitação existente no banco de dados.
+     * @param requestDTO novos dados da solicitação.
+     * @param id identificador da solicitação.
+     * @return solicitação já atualizada.
+     * @throws RequestNotFoundException caso nenhuma solicitação seja encontrada.
+     * @throws StatusNotFoundException caso nenhum status seja encontrado.
+     * @throws CrBranchNotFoundException caso nenhuma filial/CR seja encontrada.
+     * @throws RequestAlreadyApprovedException caso a solicitação já esteja aprovada.
+     */
     public RequestResponse updateRequest(UpdateRequestRequest requestDTO, Long id){
         Request request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException());
@@ -68,7 +80,7 @@ public class UpdateRequestServiceImpl {
         if (statusChange && crBranch.getResponsibleUsers() != null) {
             for (User responsible : crBranch.getResponsibleUsers()) {
                 notificationService.createNotification(new NotificationRequest(
-                        "Status da solicitação atualizado",
+                        "Status da solicitação atualizado!",
                         "A solicitação #" + savedRequest.getId() + " teve o status alterado para " + status.getName() + ".",
                         responsible.getId(),
                         savedRequest.getId()

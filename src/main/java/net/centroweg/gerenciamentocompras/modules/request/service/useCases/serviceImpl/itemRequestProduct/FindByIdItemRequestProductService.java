@@ -8,6 +8,9 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.respo
 import net.centroweg.gerenciamentocompras.modules.request.service.mapper.itemRequestProduct.ItemRequestProductMapper;
 import org.springframework.stereotype.Service;
 
+/**
+ * Caso de uso responsável por buscar um {@link ItemRequestProduct} pelo seu identificador.
+ */
 @Service
 @RequiredArgsConstructor
 public class FindByIdItemRequestProductService {
@@ -15,6 +18,12 @@ public class FindByIdItemRequestProductService {
     private final ItemRequestProductRepository itemRequestProductRepository;
     private final ItemRequestProductMapper itemRequestProductMapper;
 
+    /**
+     * Busca um item de produto da solicitação no banco de dados pelo ID informado.
+     * @param id identificador do item de produto da solicitação.
+     * @return item de produto da solicitação encontrado, caso exista.
+     * @throws ItemRequestProductNotFoundException caso nenhum item de produto da solicitação seja encontrado.
+     */
     public ItemRequestProductResponse findById(Long id) {
 
         ItemRequestProduct itemRequestProduct =

@@ -18,12 +18,13 @@ import net.centroweg.gerenciamentocompras.modules.request.service.mapper.request
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.domain.exception.UserNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Caso de uso responsável pela criação de uma {@link Request}.
+ */
 @Service
 @RequiredArgsConstructor
 public class CreateRequestServiceImpl {
@@ -35,6 +36,15 @@ public class CreateRequestServiceImpl {
     private final RequestMapper requestMapper;
     private final NotificationService notificationService;
 
+    /**
+     * Cria e persiste uma nova solicitação no banco de dados.
+     * @param request dados da solicitação.
+     * @param userPrincipal dados do usuário autenticado.
+     * @return solicitação criada.
+     * @throws StatusNotFoundException caso nenhum status seja encontrado.
+     * @throws CrBranchNotFoundException caso nenhuma filial/CR seja encontrada.
+     * @throws UserNotFoundException caso nenhum usuário seja encontrado.
+     */
     public RequestResponse createRequest(RequestRequest request, UserPrincipal userPrincipal){
 
         Status status = statusRepository.findByNameIgnoreCase("EM_ANDAMENTO")
@@ -60,8 +70,8 @@ public class CreateRequestServiceImpl {
         if (crBranch.getResponsibleUsers() != null) {
             for (User responsible : crBranch.getResponsibleUsers()) {
                 notificationService.createNotification(new NotificationRequest(
-                        "Nova solicitação",
-                        "Há uma nova solicitação vinculada ao seu CR " + crBranch.getCr().getName() + ".",
+                        "Nova solicitação!",
+                        "Há uma nova solicitação vinculada ao seu CR." + crBranch.getCr().getName() + ".",
                         responsible.getId(),
                         savedRequest.getId()
                 ));

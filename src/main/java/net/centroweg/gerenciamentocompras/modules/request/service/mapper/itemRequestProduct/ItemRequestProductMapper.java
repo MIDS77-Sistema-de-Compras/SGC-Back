@@ -9,9 +9,17 @@ import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.reque
 import net.centroweg.gerenciamentocompras.modules.request.presentation.dto.response.ItemRequestProductResponse;
 import org.springframework.stereotype.Component;
 
+/**
+ * Componente responsável pela conversão entre a entidade({@link ItemRequestProduct}) e seus DTOs de entrada({@link ItemRequestProductRequest}) e saída({@link ItemRequestProductResponse}).
+ */
 @Component
 public class ItemRequestProductMapper {
 
+    /**
+     * Converte uma entidade item de produto da solicitação em um DTO de saída do item de produto da solicitação.
+     * @param item entidade com os dados do item de produto da solicitação.
+     * @return dados convertidos para DTO de saída.
+     */
     public ItemRequestProductResponse toResponse(ItemRequestProduct item) {
         return new ItemRequestProductResponse(
                 item.getId(),
@@ -19,11 +27,20 @@ public class ItemRequestProductMapper {
                 item.getProduct() != null ? item.getProduct().getName() : null,
                 item.getMeasurementUnit() != null ? item.getMeasurementUnit().getName() : null,
                 item.getQuantity(),
-                item.getStatus_id() != null ? item.getStatus_id().getName() : null,
+                item.getStatusId() != null ? item.getStatusId().getName() : null,
                 item.getAdditionalInformations()
         );
     }
 
+    /**
+     * Converte um DTO de entrada do item de produto da solicitação em uma entidade item de produto da solicitação.
+     * @param dto dados do item de produto da solicitação.
+     * @param request dados da solicitação.
+     * @param product dados do produto.
+     * @param measurementUnit dados da unidade de medida.
+     * @param status dados do status.
+     * @return dados convertidos para entidade.
+     */
     public ItemRequestProduct toEntity(
             ItemRequestProductRequest dto,
             Request request,
@@ -38,7 +55,7 @@ public class ItemRequestProductMapper {
         item.setProduct(product);
         item.setMeasurementUnit(measurementUnit);
         item.setQuantity(dto.quantity());
-        item.setStatus_id(status);
+        item.setStatusId(status);
         item.setAdditionalInformations(dto.additionalInformations());
         return item;
     }

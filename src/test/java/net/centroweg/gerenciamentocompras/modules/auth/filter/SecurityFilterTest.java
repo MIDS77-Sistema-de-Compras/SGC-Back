@@ -14,10 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,6 +53,33 @@ class SecurityFilterTest {
         securityFilter = new SecurityFilter(jwtService, customUserDetailsService, resolver);
         SecurityContextHolder.clearContext();
     }
+
+    @Test
+    void shouldAuthenticateUsingAuthorizationHeader() throws Exception {
+        when(request.getHeader(HttpHeaders.AUTHORIZATION))
+                .thenReturn("Bearer my-token");
+
+        when(jwtService.validateToken("my-token"))
+                .thenReturn("maria@gmail.com");
+
+        UserDetails userDetails = mock(UserDetails.class);
+
+        when(userDetails.isEnabled()).thenReturn(true);
+        when(userDetails.getAuthorities()).thenReturn(List.of());
+
+        when(customUserDetailsService.loadUserByUsername("maria@gmail.com"))
+                .thenReturn(userDetails);
+
+        securityFilter.doFilterInternal(request, response, filterChain);
+
+        verify(jwtService).validateToken("my-token");
+        verify(customUserDetailsService)
+                .loadUserByUsername("maria@gmail.com");
+
+        verify(request, never()).getCookies();
+        verify(filterChain).doFilter(request, response);
+    }
+
 
     @AfterEach
     void tearDown() {

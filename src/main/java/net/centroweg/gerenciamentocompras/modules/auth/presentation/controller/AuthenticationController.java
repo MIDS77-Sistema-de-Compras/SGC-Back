@@ -108,7 +108,7 @@ public class AuthenticationController {
     private void addJwtCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(secureCookie);
         cookie.setPath("/");
         cookie.setMaxAge(4000);
         cookie.setAttribute("SameSite", "None");

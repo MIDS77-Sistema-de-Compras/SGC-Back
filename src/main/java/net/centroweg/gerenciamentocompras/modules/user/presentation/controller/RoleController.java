@@ -10,11 +10,13 @@ import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceI
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 
-/** Endpoints relacionados aos niveis de acesso do usuário */
-@Tag(name = "ENDPOINTS da entidade ROLE")
+/**
+ * Controlador REST responsável pelos endpoints de gerenciamento de {@link Role}.
+ */
+@Tag(name = "ENDPOINTS da entidade nível de acesso")
 @RestController
 @RequestMapping("/role")
 @RequiredArgsConstructor
@@ -23,73 +25,66 @@ public class RoleController {
     private final RoleIntrf role;
 
     /**
-     * Cria uma nova role no sistema
-     * @param roleRequest DTO de criação de role
-     * @return status 201 - criado com sucesso, junto com DTO de reponse
-     * @see CreateRole
-     * @see RoleResponse
+     * Cria um novo nível de acesso.
+     * @param roleRequest dados do nível de acesso.
+     * @return nível de acesso criado.
      */
-    @Operation(description = "ENDPOINT responsável pela criação de Role")
+    @Operation(description = "ENDPOINT responsável pela criação de um nível de acesso")
     @PostMapping
     public ResponseEntity<RoleResponse> createRole(@Valid @RequestBody CreateRole roleRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(role.createRole(roleRequest));
     }
 
     /**
-     * Lista todas as roles sem filtros
-     * @return uma lista com todas as roles
-     * @see RoleResponse
+     * Lista todos os níveis de acesso cadastrados.
+     * @return lista com todos os níveis de acesso encontrados, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de todos Role")
+    @Operation(description = "ENDPOINT responsável pela listagem de todos os níveis de acesso")
     @GetMapping
     public ResponseEntity<List<RoleResponse>> listRole(){
         return ResponseEntity.ok(role.listRole());
     }
 
     /**
-     * Retorna uma role específica com base no ID
-     * @param RoleId ID da role requisitada
-     * @return role com o ID correspondente
-     * @see RoleResponse
+     * Busca um nível de acesso pelo seu identificador.
+     * @param RoleId identificador do nível de acesso.
+     * @return nível de acesso encontrado, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de Role por id")
+    @Operation(description = "ENDPOINT responsável pela busca de um nível de acesso por id")
     @GetMapping("/RoleId/{RoleId}")
     public ResponseEntity<RoleResponse> findRoleById(@PathVariable Long RoleId){
         return ResponseEntity.ok(role.findRoleById(RoleId));
     }
 
     /**
-     * Retorna a role que corresponde ao nome pesquisado
-     * @param RoleName nome pesquisado
-     * @return role com o nome correspondente
-     * @see RoleResponse
+     * Busca um nível de acesso pelo seu nome.
+     * @param RoleName nome do nível de acesso.
+     * @return nível de acesso encontrado, caso exista.
      */
-    @Operation(description = "ENDPOINT responsável pela listagem de Role por nome")
+    @Operation(description = "ENDPOINT responsável pela busca de um nível de acesso pelo nome")
     @GetMapping("/RoleName/{RoleName}")
     public ResponseEntity<RoleResponse> findRoleByName(@PathVariable String RoleName){
         return ResponseEntity.ok(role.findRoleByName(RoleName));
     }
 
     /**
-     * Atualiza uma role específica no sistema
-     * @param roleRequest novas informações para realizar a alteração
-     * @param RoleId ID da role a ser modificada
-     * @return status 200 com o objeto modificado
-     * @see RoleResponse
-     * @see CreateRole
+     * Atualiza um nível de acesso existente.
+     * @param roleRequest novos dados do nível de acesso.
+     * @param RoleId identificador do nível de acesso.
+     * @return nível de acesso já atualizado.
      */
-    @Operation(description = "ENDPOINT responsável pela atualização de Role")
+    @Operation(description = "ENDPOINT responsável pela atualização de um nível de acesso")
     @PutMapping("/RoleId/{RoleId}")
     public ResponseEntity<RoleResponse> updateRole(@Valid @RequestBody CreateRole roleRequest, @PathVariable Long RoleId){
         return ResponseEntity.ok(role.updateRole(RoleId, roleRequest));
     }
 
     /**
-     * Exclui role específica do sistema
-     * @param RoleId ID da role a ser excluída
-     * @return status 204
+     * Remove um nível de acesso.
+     * @param RoleId identificador do nível de acesso.
+     * @return resposta sem conteúdo confirmando a remoção.
      */
-    @Operation(description = "ENDPOINT responsável pelo delete de Role")
+    @Operation(description = "ENDPOINT responsável por remover um nível de acesso")
     @DeleteMapping("/RoleId/{RoleId}")
     public ResponseEntity<Void> deleteRole(@PathVariable Long RoleId){
         role.deleteRole(RoleId);

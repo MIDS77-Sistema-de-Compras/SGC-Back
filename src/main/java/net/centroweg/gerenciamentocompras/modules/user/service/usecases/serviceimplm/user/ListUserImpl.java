@@ -5,29 +5,23 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
- * Listar usuários
+ * Caso de uso responsável por listar um {@link User}.
  */
-
 @Service
 @RequiredArgsConstructor
 public class ListUserImpl {
-
-    /**
-     * Injeção de dependências
-     */
 
     private final UserMapper mapper;
     private final UserRepository repository;
 
     /**
-     * Método que lista todos usuário
-     * @return lista de usuários
+     * Lista todos os usuários cadastrados no banco de dados.
+     * @return lista com todos os usuários encontrados, caso exista.
      */
-
     public List<UserResponse> listUser(){
         return mapper.toDTOList(repository.findAll());
     }

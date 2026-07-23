@@ -2,19 +2,19 @@ package net.centroweg.gerenciamentocompras.shared.email.components;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 
 /**
- * Contém o HTML necessário para a criação do corpo padrão do email.
- * 
- * @param title Título do email (que aparece no nome da aba)
- * @param components Lista de componentes do email. Precisa implementar EmailBuilder para ser um componente
- * 
- * @author gabrielEFagundes
- * @version 0.1.0
+ * Componente de email que representa o corpo padrão.
+ * @param title título do email.
+ * @param components lista de componentes que compõem o corpo do email.
  */
 public record EmailLayout(String title, List<EmailBuilder> components) {
+
+    /**
+     * Gera o HTML do corpo padrão do email com todos os seus componentes.
+     * @return HTML do corpo do email já formatado.
+     */
     public String buildHtml(){
         String bodyContent = components.stream()
             .map(EmailBuilder::render)

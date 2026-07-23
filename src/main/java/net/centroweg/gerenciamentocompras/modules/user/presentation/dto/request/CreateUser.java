@@ -2,70 +2,56 @@ package net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request
 
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
- * DTO de entrada para criação e atualização de usuários.
+ * DTO de entrada para criação e atualização de um {@link User}.
+ * @param name nome completo do usuário, não pode ser nulo ou vazio e deve ter entre 3 e 100 caracteres.
+ * @param email endereço de email do usuário, não pode ser nulo ou vazio, deve ser válido e ter entre 10 e 120 caracteres.
+ * @param cpf CPF do usuário, não pode ser nulo ou vazio, deve ser válido e conter apenas números.
+ * @param password senha de acesso do usuário, não pode ser nula ou vazia, deve ter entre 8 e 30 caracteres e conter letra maiúscula e minúscula, número e caracteres especiais.
+ * @param extensionNumber ramal para contato interno com o usuário, não pode ser nulo ou vazio e deve ter entre 4 e 6 caracteres.
+ * @param active atividade do usuário, não pode ser nula.
+ * @param nameRole nome do nível de acesso do usuário, não pode ser nulo ou vazio.
  */
-
 public record CreateUser(
-        /**
-         * Nome completo do usuário
-         */
-        @NotBlank(message = "Nome não deve estar em branco.")
+        @NotBlank(message = "O nome do usuário não deve ser nulo e nem vazio!")
         @Size(  min = 3,
                 max = 100,
-                message = "O nome deve ter entre 3 e 100 caracteres.")
+                message = "O nome do usuário deve ter entre 3 e 100 caracteres!")
         String name,
 
-        /**
-         * Endereço de e-mail do usuário
-         */
-        @NotBlank(message = "Email não deve estar em branco.")
-        @Email(message = "Email inválido.")
+        @NotBlank(message = "O e-mail do usuário não deve ser nulo e nem vazio!")
+        @Email(message = "Deve ser um e-mail válido!")
         @Size(  min = 10,
                 max = 120,
-                message = "O email deve ter entre 10 e 120 caracteres.")
+                message = "O email do usuário deve ter entre 10 e 120 caracteres!")
         String email,
 
-        /**
-         * CPF do usuário
-         */
-        @NotBlank(message = "CPF não deve estar em branco.")
-        @CPF(message = "Deve ser um CPF válido.")
+        @NotBlank(message = "O CPF do usuário não deve ser nulo e nem vazio!")
+        @CPF(message = "Deve ser um CPF válido!")
         @Pattern(regexp = "\\d{11}",
-                 message = "O CPF deve conter apenas números.")
+                 message = "O CPF do usuário deve conter apenas números!")
         String cpf,
 
-        /**
-         * Senha de acesso do usuário
-         */
-        @NotBlank(message = "A senha não deve estar em branco.")
+        @NotBlank(message = "A senha do usuário não deve ser nula e nem vazia!")
         @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
-                 message = "A senha deve conter letra maiúscula e minúscula, número e caracteres especiais.")
+                 message = "A senha do usuário deve conter letras maiúsculas e minúsculas, números e caracteres especiais!")
         @Size(  min = 8,
                 max = 30,
-                message = "A senha deve ter entre 8 e 30 caracteres.")
+                message = "A senha do usuário deve ter entre 8 e 30 caracteres!")
         String password,
 
-        /**
-         * Ramal para contato interno com o usuário
-         */
-        @NotBlank(message = "O ramal não deve estar em branco.")
+        @NotBlank(message = "O ramal do usuário não deve ser nulo e nem vazio!")
         @Size(  min = 4,
                 max = 6,
-                message = "O ramal deve ter entre 4 e 6 caracteres.")
+                message = "O ramal do usuário deve ter entre 4 e 6 caracteres!")
         String extensionNumber,
 
-        /**
-         * Atividade do usuário
-         */
-        @NotNull(message = "A atividade do usuário deve ser informada.")
+        @NotNull(message = "A atividade do usuário não deve ser nula e nem vazia!")
         Boolean active,
 
-        /**
-         * Nível de permissão do usuário
-         */
-        @NotBlank(message = "A permissão do usuário não deve estar em branco")
+        @NotBlank(message = "A permissão do usuário não deve ser nula e nem vazia!")
         String nameRole
 ) {
 }

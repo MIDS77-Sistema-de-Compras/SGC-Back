@@ -5,27 +5,51 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.RoleIntrf;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 
-/** Implementa interfaces contendo todas as operações possíveis para a regra de negócio */
-
+/**
+ * Classe de serviço do {@link Role} que delega cada operação à sua respectiva classe de funcionalidade.
+ * Implementa {@link RoleIntrf} que segue o princípio de responsabilidade única, onde cada método apenas repassa a chamada para uma classe especializada responsável por uma única operação.
+ */
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleIntrf {
 
+    /**
+     * Componente responsável pela criação de um nível de acesso.
+     */
     private final CreateRoleImpl createRole;
+
+    /**
+     * Componente responsável por qualquer tipo de busca de nível de acesso.
+     */
     private final ListRoleImpl listRole;
+
+    /**
+     * Componente responsável pela busca de um nível de acesso pelo seu identificador.
+     */
     private final FindRoleByIdImpl findRoleById;
+
+    /**
+     * Componente responsável pela busca de um nível de acesso pelo seu nome.
+     */
     private final FindRoleByNameImpl findRoleByName;
+
+    /**
+     * Componente responsável pela atualização de um nível de acesso.
+     */
     private final UpdateRoleImpl updateRole;
+
+    /**
+     * Componente responsável por remover um nível de acesso.
+     */
     private final DeleteRoleImpl deleteRole;
 
     /**
-     * Reutiliza método de criação de role
-     * @param role role a ser criada
-     * @return response DTO de role criada
-     * @see CreateRoleImpl#createRole(CreateRole)
+     * Cria e persiste um novo nível de acesso no banco de dados.
+     * @param role dados do nível de acesso.
+     * @return nível de acesso criado.
      */
     @Override
     public RoleResponse createRole(CreateRole role) {
@@ -33,9 +57,8 @@ public class RoleServiceImpl implements RoleIntrf {
     }
 
     /**
-     * Reutiliza método de listagem geral de roles cadastradas
-     * @return lista com todas as roles presentes no sistema
-     * @see ListRoleImpl#listRole()
+     * Lista todos os níveis de acesso cadastrados no banco de dados.
+     * @return lista com todos os níveis de acesso encontrados, caso exista.
      */
     @Override
     public List<RoleResponse> listRole() {
@@ -43,10 +66,9 @@ public class RoleServiceImpl implements RoleIntrf {
     }
 
     /**
-     * Reutiliza método de busca de role por ID
-     * @param id ID da role requisitada
-     * @return response DTO de role requisitada
-     * @see FindRoleByIdImpl#findRoleById(Long) 
+     * Busca um nível de acesso no banco de dados pelo ID informado.
+     * @param id identificador do nível de acesso.
+     * @return nível de acesso encontrado, caso exista.
      */
     @Override
     public RoleResponse findRoleById(Long id) {
@@ -54,10 +76,9 @@ public class RoleServiceImpl implements RoleIntrf {
     }
 
     /**
-     * Reutiliza método de busca de role por nome
-     * @param name nome pesquisado
-     * @return response DTO da role correspondente ao nome pesquisado
-     * @see FindRoleByNameImpl#findRoleByName(String)
+     * Busca um nível de acesso no banco de dados pelo nome informado.
+     * @param name nome do nível de acesso.
+     * @return nível de acesso encontrado, caso exista.
      */
     @Override
     public RoleResponse findRoleByName(String name){
@@ -65,11 +86,10 @@ public class RoleServiceImpl implements RoleIntrf {
     }
 
     /**
-     * Reutiliza método de atualização de role
-     * @param id ID da role a ser atualizada
-     * @param role novas informações para a role
-     * @return responseDTO da role após atualização
-     * @see UpdateRoleImpl#updateRole(Long, CreateRole) 
+     * Atualiza um nível de acesso existente no banco de dados.
+     * @param id identificador do nível de acesso.
+     * @param role novos dados do nível de acesso.
+     * @return nível de acesso já atualizado.
      */
     @Override
     public RoleResponse updateRole(Long id, CreateRole role){
@@ -77,9 +97,8 @@ public class RoleServiceImpl implements RoleIntrf {
     }
 
     /**
-     * Reutiliza método de exclusão de role específica
-     * @param id ID da role a ser excluída
-     * @see DeleteRoleImpl#deleteRole(Long) 
+     * Remove um nível de acesso do banco de dados.
+     * @param id identificador do nível de acesso.
      */
     @Override
     public void deleteRole(Long id){

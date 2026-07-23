@@ -7,7 +7,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 /**
- * Entidade padrão utilizada para envio de email
+ * Entidade que representa os dados padrão utilizados para o envio de um email.
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,13 +16,13 @@ import lombok.Setter;
 public class DefaultEmail{
 
     /**
-     * Sobre o que é o email?
+     * Assunto do email, não pode ser nulo.
      */
     @NonNull
     private String subject;
 
     /**
-     * Para qual email será enviado?
+     * Endereço de email do destinatário, não pode ser nulo.
      */
     @NonNull
     private String sendTo;

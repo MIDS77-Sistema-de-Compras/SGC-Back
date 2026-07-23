@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
- * Entidade que representa um anexo de uma requisição de compra no sistema de gerenciamento de compras.
+ * Entidade que representa um anexo de uma solicitação(request attachment) de compra no sistema de gerenciamento de compras.
  */
 @Entity
 @Table(name = "request_attachments")

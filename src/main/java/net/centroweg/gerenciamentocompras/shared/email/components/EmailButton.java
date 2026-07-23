@@ -3,13 +3,9 @@ package net.centroweg.gerenciamentocompras.shared.email.components;
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 
 /**
- * Contém o HTML necessário para a criação de um botão estilizado
- * 
- * @param link A URL passada pelo <code>href</code> do botão.
- * @param text O texto que ficará dentro do botão.
- * 
- * @author gabrielEFagundes
- * @version 0.1.0
+ * Componente de email que representa um botão estilizado.
+ * @param link URL de destino do botão.
+ * @param text texto exibido dentro do botão.
  */
 public record EmailButton(String link, String text) implements EmailBuilder {
     @Override

@@ -3,17 +3,17 @@ package net.centroweg.gerenciamentocompras.shared.email.components;
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 
 /**
- * Contém o HTML necessário para criação de um parágrafo no email.
- * 
- * @param content Conteúdo do email
- * @param hexColor Cor do parágrafo
- * @param fontSize Tamanho da fonte do parágrafo
- * 
- * @author gabrielEFagundes
- * @version 0.1.0
+ * Componente de email que representa um parágrafo.
+ * @param content conteúdo do parágrafo.
+ * @param hexColor cor do parágrafo em hexadecimal.
+ * @param fontSize tamanho da fonte do parágrafo.
  */
 public record EmailParagraph(String content, String hexColor, int fontSize) implements EmailBuilder {
 
+    /**
+     * Gera o HTML do parágrafo do email.
+     * @return HTML do parágrafo já formatado.
+     */
     @Override
     public String render(){
         return """

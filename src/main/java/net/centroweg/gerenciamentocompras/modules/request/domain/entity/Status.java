@@ -11,7 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.intfr.StatusInt
 import org.hibernate.annotations.BatchSize;
 
 /**
- * Entidade que representa uma situação (status) aplicável a requisições e seus itens no sistema de gerenciamento de compras.
+ * Entidade que representa uma situação(status) aplicável a requisições e seus itens no sistema de gerenciamento de compras.
  */
 @BatchSize(size = 30)
 @Entity

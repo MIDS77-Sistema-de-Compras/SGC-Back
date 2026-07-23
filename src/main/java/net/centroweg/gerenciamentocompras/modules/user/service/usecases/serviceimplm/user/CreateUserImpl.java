@@ -15,9 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * Criação dos usuários
+ * Caso de uso responsável pela criação de um {@link User}.
  */
-
 @Service
 @RequiredArgsConstructor
 public class CreateUserImpl {
@@ -32,13 +31,12 @@ public class CreateUserImpl {
     private final UniquenessValidator uniquenessValidator;
 
     /**
-     * Método que cria o usuário
-     * @param user DTO que traz as informações do usuário
-     * @return usuário já criado
-     * @throws UserNotFoundException caso a role informada não seja encontrada
-     * @throws RoleNotAllowedException caso a role informada seja do tipo ADMIN
+     * Cria e persiste um novo usuário no banco de dados.
+     * @param user dados do usuário.
+     * @return usuário criado.
+     * @throws UserNotFoundException caso nenhum nível de acesso seja encontrado.
+     * @throws RoleNotAllowedException caso o nível de acesso informado seja do tipo ADMIN.
      */
-
     public UserResponse createUser(CreateUser user){
         uniquenessValidator.checkInfo(user);
         String encryptedPassword = passwordEncoder.encode(user.password());

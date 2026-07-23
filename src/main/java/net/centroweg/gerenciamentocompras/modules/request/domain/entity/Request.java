@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Entidade que representa uma requisição de compra no sistema de gerenciamento de compras.
+ * Entidade que representa uma solicitação(request) de compra no sistema de gerenciamento de compras.
  */
 @Entity
 @Table(name = "requests")

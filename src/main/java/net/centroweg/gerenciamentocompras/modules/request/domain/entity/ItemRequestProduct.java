@@ -9,7 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Measurem
 import net.centroweg.gerenciamentocompras.modules.product.domain.entity.Product;
 
 /**
- * Entidade que representa um item de produto dentro de uma requisição de compra.
+ * Entidade que representa um item de produto(item request product) dentro de uma requisição de compra.
  */
 @Table(name = "itemRequestProduct")
 @Getter

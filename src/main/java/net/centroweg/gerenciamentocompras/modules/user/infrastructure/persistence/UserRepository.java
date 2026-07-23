@@ -7,30 +7,45 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repositório de acesso aos dados da entidade
- * @see User
+ * Repositório de acesso a dados da entidade {@link User}.
  */
-
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    /**
+     * Busca um usuário pelo endereço de email.
+     * @param email endereço de email do usuário.
+     * @return o usuário encontrado, caso exista.
+     */
     Optional<User> findByEmail(String email);
 
     /**
-     * Consulta personalizada que busca o usuário por e-mail ou CPF.
-     * @param email endereço de email do usuário
-     * @param cpf cpf do usuário
-     * @return Opcional o retorno de um usuário, só retorna se encontrar.
+     * Busca um usuário pelo endereço de email ou pelo CPF.
+     * @param email endereço de email do usuário.
+     * @param cpf CPF do usuário.
+     * @return o usuário encontrado, caso exista.
      */
     Optional<User> findByEmailOrCpf(String email, String cpf);
 
     /**
-     * Consulta personalizada que busca usuário por nome mesmo não estando completo.
-     * @param name nome do usuário
-     * @return uma lista de usuário dos quais o nome correspondem a pesquisa.
+     * Lista todos os usuários cadastrados no banco de dados pelo nome, ignorando maiúsculas e minúsculas.
+     * @param name nome do usuário.
+     * @return lista com todos os usuários encontrados, caso exista.
      */
     List<User> findByNameIgnoringCase(String name);
+
+    /**
+     * Verifica se existe um usuário cadastrado com o endereço de email informado.
+     * @param email endereço de email do usuário.
+     * @return {@code true} caso exista um usuário com o endereço de email informado, {@code false} caso contrário.
+     */
     Boolean existsByEmail(String email);
+
+    /**
+     * Verifica se existe um usuário cadastrado com o CPF informado.
+     * @param cpf CPF do usuário.
+     * @return {@code true} caso exista um usuário com o CPF informado, {@code false} caso contrário.
+     */
     Boolean existsByCpf(String cpf);
 
 }

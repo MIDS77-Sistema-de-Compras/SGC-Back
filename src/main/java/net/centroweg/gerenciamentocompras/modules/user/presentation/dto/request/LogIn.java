@@ -1,22 +1,18 @@
 package net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
- * DTO para autenticação do usuário
+ * DTO de entrada para autenticação de um {@link User}.
+ * @param userName endereço de email ou CPF do usuário, não pode ser nulo ou vazio.
+ * @param password senha de acesso do usuário, não pode ser nula ou vazia.
  */
-
 public record LogIn(
-        /**
-         * Nome de usuário que seria e-mail ou CPF
-         */
-        @NotBlank(message = "O Email ou CPF é obrigatório")
+        @NotBlank(message = "O nome de usuário não deve ser nulo ou vazio!")
         String userName,
 
-        /**
-         * Senha de acesso do usuário
-         */
-        @NotBlank(message = "A senha é obrigatória")
+        @NotBlank(message = "A senha não deve ser nula ou vazia!")
         String password
 ) {
 }

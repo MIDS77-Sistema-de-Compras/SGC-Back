@@ -1,44 +1,37 @@
 package net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response;
 
 import java.time.LocalDateTime;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
- * DTO de resposta para métodos de CRUD do usuário
+ * DTO de saída com os dados de um {@link User}.
+ * @param id identificador do usuário.
+ * @param name nome do usuário.
+ * @param cpf CPF do usuário.
+ * @param email endereço de email do usuário.
+ * @param extensionNumber ramal para contato interno do usuário.
+ * @param active atividade do usuário.
+ * @param createdAt data e hora de criação do usuário.
+ * @param updatedAt data e hora da última atualização do usuário.
+ * @param userProfile foto de perfil do usuário.
  */
 public record UserResponse(
-        /**
-         * Id do usuário
-         */
         Long id,
-        /**
-         * Nome do usuário
-         */
-        String name,
-        /**
-         * CPF do usuário
-         */
-        String cpf,
-        /**
-         * E-mail do usuário
-         */
-        String email,
-        /**
-         * Ramal para contato interno do usuário
-         */
-        String extensionNumber,
-        /**
-         * Atividade do usuário
-         */
-        Boolean active,
-        /**
-         * Data de criação do usuário
-         */
-        LocalDateTime createdAt,
-        /**
-         * Data de atualização do usuário
-         */
-        LocalDateTime updatedAt,
-        String userProfile
 
+        String name,
+
+        String cpf,
+
+        String email,
+
+        String extensionNumber,
+
+        Boolean active,
+
+        LocalDateTime createdAt,
+
+        LocalDateTime updatedAt,
+
+        String userProfile
 ) {
 }

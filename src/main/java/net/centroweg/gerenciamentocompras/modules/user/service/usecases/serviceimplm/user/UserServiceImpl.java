@@ -7,35 +7,62 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response
 import net.centroweg.gerenciamentocompras.modules.user.service.usecases.serviceIntrf.UserIntrf;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
- * Classe que implementa todos os serviços do usuário
+ * Classe de serviço do {@link User} que delega cada operação à sua respectiva classe de funcionalidade.
+ * Implementa {@link UserIntrf} que segue o princípio de responsabilidade única, onde cada método apenas repassa a chamada para uma classe especializada responsável por uma única operação.
  */
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserIntrf {
 
     /**
-     * Injeção de dependências
+     * Componente responsável pela criação de um usuário.
      */
-
     private final CreateUserImpl createUser;
+
+    /**
+     * Componente responsável por qualquer tipo de busca de usuário.
+     */
     private final ListUserImpl listUser;
+
+    /**
+     * Componente responsável pela busca de um usuário pelo seu identificador.
+     */
     private final FindUserByIdImpl findUserById;
+
+    /**
+     * Componente responsável pela busca de um usuário pelo seu nome.
+     */
     private final FindUserByNameImpl findUserByName;
+
+    /**
+     * Componente responsável pela atualização de um usuário.
+     */
     private final UpdateUserAllImpl updateUserAll;
+
+    /**
+     * Componente responsável por remover um usuário.
+     */
     private final DeleteUserImpl deleteUser;
+
+    /**
+     * Componente responsável pela atualização da foto de perfil de um usuário.
+     */
     private final UploadProfilePicture uploadProfilePicture;
+
+    /**
+     * Componente responsável pela busca do usuário autenticado.
+     */
     private final FindLoggedUser findLoggedUser;
 
     /**
-     * Implementa inteface de criação do usuário
-     * @param user DTO vindo com os dados da requisição
-     * @return usuário já cadastrado
+     * Cria e persiste um novo usuário no banco de dados.
+     * @param user dados do usuário.
+     * @return usuário criado.
      */
     @Override
     public UserResponse createUser(CreateUser user){
@@ -43,8 +70,8 @@ public class UserServiceImpl implements UserIntrf {
     }
 
     /**
-     * Implementa interface para listar todos os usuários
-     * @return lista de usuários
+     * Lista todos os usuários cadastrados no banco de dados.
+     * @return lista com todos os usuários encontrados, caso exista.
      */
     @Override
     public List<UserResponse> listUser(){
@@ -52,9 +79,9 @@ public class UserServiceImpl implements UserIntrf {
     }
 
     /**
-     * Implementa interface para encontrar usuário pelo identificador único
-     * @param id identificador único do usuário
-     * @return usuário encontrado
+     * Busca um usuário no banco de dados pelo ID informado.
+     * @param id identificador do usuário.
+     * @return usuário encontrado, caso exista.
      */
     @Override
     public UserResponse findUserById(Long id){
@@ -62,9 +89,9 @@ public class UserServiceImpl implements UserIntrf {
     }
 
     /**
-     * Implementa interface para encontrar usuários pelo nome
-     * @param name nome do usuário
-     * @return lista de usuários encontrados
+     * Lista todos os usuários cadastrados no banco de dados pelo nome informado.
+     * @param name nome do usuário.
+     * @return lista com todos os usuários encontrados, caso exista.
      */
     @Override
     public List<UserResponse> findUserByName(String name){
@@ -72,10 +99,10 @@ public class UserServiceImpl implements UserIntrf {
     }
 
     /**
-     * Implementa interface de atualizção do usuário
-     * @param id identificador único do usuário
-     * @param user nome do usuário
-     * @return usuário já atualizado
+     * Atualiza um usuário existente no banco de dados.
+     * @param id identificador do usuário.
+     * @param user novos dados do usuário.
+     * @return usuário já atualizado.
      */
     @Override
     public UserResponse updateUserAll(Long id, CreateUser user){
@@ -83,19 +110,31 @@ public class UserServiceImpl implements UserIntrf {
     }
 
     /**
-     * Implementa interface para deletar usuário
-     * @param id identificador único do usuário
+     * Remove um usuário do banco de dados.
+     * @param id identificador do usuário.
      */
     @Override
     public void deleteUser(Long id){
         deleteUser.deleteUser(id);
     }
 
+    /**
+     * Realiza o upload da foto de perfil de um usuário existente no banco de dados.
+     * @param id identificador do usuário.
+     * @param file arquivo da foto de perfil.
+     * @return usuário já atualizado.
+     * @throws IOException caso ocorra um erro durante o upload do arquivo.
+     */
     @Override
     public UserResponse uploadProfilePicture(long id, MultipartFile file) throws IOException {
         return uploadProfilePicture.uploadProfilePicture(id, file);
     }
 
+    /**
+     * Busca o usuário autenticado no banco de dados.
+     * @param userPrincipal dados do usuário autenticado.
+     * @return usuário encontrado, caso exista.
+     */
     @Override
     public UserResponse findLoggedUser(UserPrincipal userPrincipal) {
         return findLoggedUser.findLoggedUser(userPrincipal);

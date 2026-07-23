@@ -3,16 +3,15 @@ package net.centroweg.gerenciamentocompras.shared.email.components;
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 
 /**
- * Contém o HTML necessário para criação de um título no email.
- * 
- * Um pouco mais estilizado que um parágrafo, prefira isto do que um parágrafo estilizado como título.
- * 
- * @param text Conteúdo do título
- * 
- * @author gabrielEFagundes
- * @version 0.1.0
+ * Componente de email que representa um título.
+ * @param text conteúdo do título.
  */
 public record EmailTitle(String text) implements EmailBuilder {
+
+    /**
+     * Gera o HTML do título do email.
+     * @return HTML do título já formatado.
+     */
     @Override
     public String render(){
         return """

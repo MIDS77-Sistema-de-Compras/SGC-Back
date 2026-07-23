@@ -6,11 +6,11 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.RoleResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
 import org.springframework.stereotype.Service;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 
-import java.util.List;
-
-/** Classe de gerenciamento de busca de role por nome */
-
+/**
+ * Caso de uso responsável por buscar um {@link Role} pelo seu nome.
+ */
 @Service
 @RequiredArgsConstructor
 public class FindRoleByNameImpl {
@@ -19,11 +19,10 @@ public class FindRoleByNameImpl {
     private final RoleRepository repository;
 
     /**
-     * Busca a role que corresponde ao nome pesquisado
-     * @param name nome pesquisado
-     * @return role correspondente ao nome pesquisado
-     * @throws RoleNotFoundException caso a role não seja encontrada
-     * @see RoleResponse
+     * Busca um nível de acesso no banco de dados pelo nome informado.
+     * @param name nome do nível de acesso.
+     * @return nível de acesso encontrado, caso exista.
+     * @throws RoleNotFoundException caso nenhum nível de acesso seja encontrado.
      */
     public RoleResponse findRoleByName(String name) {
         return mapper.toDTO(repository.findByNameIgnoreCase(name)

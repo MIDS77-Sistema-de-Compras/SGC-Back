@@ -4,22 +4,19 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.CreateUser;
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 /**
- * Classe responsável pela conversão entre entidade e DTO.
+ * Componente responsável pela conversão entre a entidade({@link User}) e seus DTOs de entrada({@link CreateUser}) e saída({@link UserResponse}).
  */
-
 @Component
 public class UserMapper {
 
     /**
-     * Converte a requisição em entidade.
-     * @param user requisição da API
-     * @return usuário entidade com dados convertidos
+     * Converte um DTO de entrada do usuário em uma entidade usuário.
+     * @param user dados do usuário.
+     * @return dados convertidos para entidade.
      */
-
     public User toEntity(CreateUser user){
         return new User(
                 user.name(),
@@ -32,11 +29,10 @@ public class UserMapper {
     }
 
     /**
-     * Converte a entidade em requisição.
-     * @param user entidade que vai se transformar em resposta
-     * @return usuário com dados convertidos para DTO
+     * Converte uma entidade usuário em um DTO de saída do usuário.
+     * @param user entidade com os dados do usuário.
+     * @return dados convertidos para DTO de saída.
      */
-
     public UserResponse toDTO(User user){
         return new UserResponse(
                 user.getId(),
@@ -51,11 +47,10 @@ public class UserMapper {
     }
 
     /**
-     * Converte a entidade em lista.
-     * @param users entidade que vai se transformar em uma lista de resposta
-     * @return lista de usuários com dados convertidos para DTO
+     * Converte uma lista de entidades usuário em uma lista de DTOs de saída do usuário.
+     * @param users lista de entidades com os dados do usuário.
+     * @return dados convertido para uma lista de DTOs de saída.
      */
-
     public List<UserResponse> toDTOList(List<User> users){
         return users.stream()
                     .map(this::toDTO)

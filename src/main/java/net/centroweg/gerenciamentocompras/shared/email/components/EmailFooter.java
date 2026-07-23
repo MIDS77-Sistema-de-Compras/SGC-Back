@@ -3,16 +3,15 @@ package net.centroweg.gerenciamentocompras.shared.email.components;
 import net.centroweg.gerenciamentocompras.shared.email.intrf.EmailBuilder;
 
 /**
+ * Componente de email que representa o rodapé padrão.
  * @deprecated O componente será implementado diretamente no corpo padrão do email assim que possível.
- * 
- * Contém o HTML necessário para criação do footer estilizado
- * 
- * Deve sempre ser utilizado por questões de padronização
- * 
- * @author gabrielEFagundes
- * @version 0.1.0
  */
 public record EmailFooter() implements EmailBuilder {
+
+    /**
+     * Gera o HTML do rodapé do email.
+     * @return HTML do rodapé já formatado.
+     */
     @Override
     public String render(){
         return """

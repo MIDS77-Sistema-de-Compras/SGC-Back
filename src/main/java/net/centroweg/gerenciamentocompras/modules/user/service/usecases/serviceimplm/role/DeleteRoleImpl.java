@@ -3,9 +3,11 @@ package net.centroweg.gerenciamentocompras.modules.user.service.usecases.service
 import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import org.springframework.stereotype.Service;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 
-/** Classe de gerenciamento de exclusão de role */
-
+/**
+ * Caso de uso responsável por remover um {@link Role}.
+ */
 @Service
 @RequiredArgsConstructor
 public class DeleteRoleImpl {
@@ -13,8 +15,8 @@ public class DeleteRoleImpl {
     private final RoleRepository repository;
 
     /**
-     * Exclui determinada role do sistema
-     * @param id ID da role a ser excluída
+     * Remove um nível de acesso do banco de dados.
+     * @param id identificador do nível de acesso.
      */
     public void deleteRole(Long id){
         repository.deleteById(id);

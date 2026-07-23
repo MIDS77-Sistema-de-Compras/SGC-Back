@@ -8,12 +8,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Classe de serviço responsável por obter o {@link User} autenticado no contexto de segurança.
+ */
 @Service
 @RequiredArgsConstructor
 public class CurrentUserService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Busca no banco de dados o usuário autenticado no contexto de segurança.
+     * @return usuário autenticado, caso exista.
+     * @throws AcessDeniedException caso não haja usuário autenticado ou nenhum usuário seja encontrado.
+     */
     public User getCurrentUser() {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();

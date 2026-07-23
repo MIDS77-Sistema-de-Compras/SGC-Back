@@ -8,33 +8,25 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.request.
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 
 /**
- * Atualizar usuário com o identificador único informado
+ * Caso de uso responsável pela atualização de um {@link User}.
  */
-
-
 @Service
 @RequiredArgsConstructor
 public class UpdateUserAllImpl {
-
-    /**
-     * Injeção de dependências
-     */
 
     private final UserMapper mapper;
     private final UserRepository repository;
 
     /**
-     * Método que atualiza usuário com o identificador único
-     * @param user dados do usuário
-     * @param id identificador único do usuário
-     * @return usuário já atualizado
-     * @throws UserNotFoundException caso o id não seja encontrado
+     * Atualiza um usuário existente no banco de dados.
+     * @param id identificador do usuário.
+     * @param user novos dados do usuário.
+     * @return usuário já atualizado.
+     * @throws UserNotFoundException caso nenhum usuário seja encontrado.
      */
-
     public UserResponse updateUserAll(Long id, CreateUser user){
         User userSave = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));

@@ -6,29 +6,24 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
- * Encontrar usuário pelo identificador único
+ * Caso de uso responsável por buscar um {@link User} pelo seu identificador.
  */
-
 @Service
 @RequiredArgsConstructor
 public class FindUserByIdImpl {
-
-    /**
-     * Injeção de dependências
-     */
 
     private final UserMapper mapper;
     private final UserRepository repository;
 
     /**
-     * Método que busca usuário pelo identificador único
-     * @param id identificador único do usuário
-     * @return usuário que foi encontrado
-     * @throws UserNotFoundException caso o id não seja encontrado
+     * Busca um usuário no banco de dados pelo ID informado.
+     * @param id identificador do usuário.
+     * @return usuário encontrado, caso exista.
+     * @throws UserNotFoundException caso nenhum usuário seja encontrado.
      */
-
     public UserResponse findUserById(Long id){
         return mapper.toDTO(repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id)));

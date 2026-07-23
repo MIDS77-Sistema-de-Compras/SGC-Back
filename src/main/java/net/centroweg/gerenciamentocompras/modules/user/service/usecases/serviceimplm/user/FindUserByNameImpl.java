@@ -5,31 +5,24 @@ import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistenc
 import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response.UserResponse;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Service;
-
-import java.io.Serial;
 import java.util.List;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
- * Encontrar usuários pelo nome
+ * Caso de uso responsável por buscar um {@link User} pelo seu nome.
  */
-
 @Service
 @RequiredArgsConstructor
 public class FindUserByNameImpl {
-
-    /**
-     * Injeção de dependências
-     */
 
     private final UserMapper mapper;
     private final UserRepository repository;
 
     /**
-     * Método que busca usuários pelo nome
-     * @param name nome do usuário
-     * @return lista de usuários que foram encontrados
+     * Lista todos os usuários cadastrados no banco de dados pelo nome informado.
+     * @param name nome do usuário.
+     * @return lista com todos os usuários encontrados, caso exista.
      */
-
     public List<UserResponse> findUserByName(String name){
         return mapper.toDTOList(repository.findByNameIgnoringCase(name));
     }

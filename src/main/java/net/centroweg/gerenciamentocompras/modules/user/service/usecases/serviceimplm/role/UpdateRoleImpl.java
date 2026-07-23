@@ -9,8 +9,9 @@ import net.centroweg.gerenciamentocompras.modules.user.presentation.dto.response
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.RoleMapper;
 import org.springframework.stereotype.Service;
 
-/** Classe de gerenciamento de atualização de role */
-
+/**
+ * Caso de uso responsável pela atualização de um {@link Role}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UpdateRoleImpl {
@@ -19,13 +20,11 @@ public class UpdateRoleImpl {
     private final RoleRepository repository;
 
     /**
-     * Atualiza informações de role específica
-     * @param id ID da role para atualizações
-     * @param role DTO contendo novos dados para a role
-     * @return response DTO de role atualizada
-     * @throws RoleNotFoundException caso a role não seja encontrada
-     * @see RoleResponse
-     * @see CreateRole
+     * Atualiza um nível de acesso existente no banco de dados.
+     * @param id identificador do nível de acesso.
+     * @param role novos dados do nível de acesso.
+     * @return nível de acesso já atualizado.
+     * @throws RoleNotFoundException caso nenhum nível de acesso seja encontrado.
      */
     public RoleResponse updateRole(Long id, CreateRole role){
         Role roleSave = repository.findById(id)

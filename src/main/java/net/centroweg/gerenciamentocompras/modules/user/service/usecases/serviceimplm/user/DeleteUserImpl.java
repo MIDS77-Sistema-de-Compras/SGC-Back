@@ -4,27 +4,22 @@ import lombok.RequiredArgsConstructor;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
 import net.centroweg.gerenciamentocompras.modules.user.service.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 
 /**
- * Deletar usuário
+ * Caso de uso responsável por remover um {@link User}.
  */
-
 @Service
 @RequiredArgsConstructor
 public class DeleteUserImpl {
-
-    /**
-     * Injeção de dependências
-     */
 
     private final UserMapper mapper;
     private final UserRepository repository;
 
     /**
-     * Método que deleta usuário
-     * @param id identificação única do usuário
+     * Remove um usuário do banco de dados.
+     * @param id identificador do usuário.
      */
-
     public void deleteUser(Long id){
         repository.deleteById(id);
     }

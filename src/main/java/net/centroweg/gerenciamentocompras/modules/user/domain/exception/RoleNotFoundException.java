@@ -2,25 +2,23 @@ package net.centroweg.gerenciamentocompras.modules.user.domain.exception;
 
 import net.centroweg.gerenciamentocompras.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
+import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 
-/** Lança exceção caso a role não seja encontrada */
+/**
+ * Exceção lançada quando nenhum {@link Role} é encontrado.
+ */
 
 public class RoleNotFoundException extends BusinessException {
     public RoleNotFoundException() {
-        super("Role não encontrada ", HttpStatus.NOT_FOUND);
+        super("Nível de acesso não encontrado!", HttpStatus.NOT_FOUND);
     }
 
-    /**
-     * Lançada caso a role não seja encontrada
-     * @param id ID da role
-     * @throws RoleNotFoundException status NOT FOUND caso o ID da role não seja encontrado
-     */
     public RoleNotFoundException(Long id) {
-        super("Role não encontrada com id: " + id, HttpStatus.NOT_FOUND);
+        super("Nível de acesso não encontrado com o id: " + id, HttpStatus.NOT_FOUND);
     }
 
     public RoleNotFoundException(String name) {
-        super("Role não encontrada com nome: " + name, HttpStatus.NOT_FOUND);
+        super("Nível de acesso não encontrado com o nome: " + name, HttpStatus.NOT_FOUND);
     }
 
 }

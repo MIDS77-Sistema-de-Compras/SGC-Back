@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.http.HttpHeaders;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -88,12 +89,26 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private String extractJwt(HttpServletRequest request) {
-        Cookie [] cookies = request.getCookies();
+        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (cookies == null) return null;
+        if (authorization != null
+                && authorization.regionMatches(true, 0, "Bearer ", 0, 7)) {
 
-        for(Cookie cookie: cookies){
-            if("jwt".equals(cookie.getName())){
+            String token = authorization.substring(7).trim();
+
+            if (!token.isEmpty()) {
+                return token;
+            }
+        }
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) {
+            return null;
+        }
+
+        for (Cookie cookie : cookies) {
+            if ("jwt".equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }

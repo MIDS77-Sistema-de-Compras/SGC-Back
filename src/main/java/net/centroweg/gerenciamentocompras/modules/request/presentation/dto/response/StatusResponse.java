@@ -6,6 +6,7 @@ package net.centroweg.gerenciamentocompras.modules.request.presentation.dto.resp
  * @param id identificador do status
  * @param name nome do status
  * @param description descrição do status
+ * @param color cor do status em hexadecimal (ex.: "#103D85")
  *
  * @author André
  * @since 1.0
@@ -14,7 +15,8 @@ public record StatusResponse(
 
         Long id,
         String name,
-        String description
+        String description,
+        String color
 
 ) {
 }

@@ -50,7 +50,7 @@ class StatusServiceTest {
     @DisplayName("Deve criar um status com sucesso quando não for duplicado")
     void shouldCreateStatusSuccessfully() {
         StatusRequest validRequest = new StatusRequest("Novo Status", "Descrição com mais de dez caracteres");
-        StatusResponse fakeResponse = new StatusResponse(1L, "Novo Status", "Descrição com mais de dez caracteres");
+        StatusResponse fakeResponse = new StatusResponse(1L, "Novo Status", "Descrição com mais de dez caracteres", null);
 
         when(addStatusService.addStatus(validRequest)).thenReturn(fakeResponse);
 
@@ -64,7 +64,7 @@ class StatusServiceTest {
     @Test
     @DisplayName("Deve buscar um status por ID com sucesso")
     void shouldFindStatusById() {
-        StatusResponse fakeResponse = new StatusResponse(1L, "Entregue", "Processo concluído com sucesso");
+        StatusResponse fakeResponse = new StatusResponse(1L, "Entregue", "Processo concluído com sucesso", null);
 
         when(findStatusByIdService.findStatusById(1L)).thenReturn(fakeResponse);
 

@@ -44,9 +44,12 @@ public class Product {
      * <p>Campo obrigatório — não pode ser nulo.</p>
      *
      * <p>Exemplo: "Parafuso M8", "Cabo de Aço 10mm".</p>
+     *
+     * <p>Campo único — não pode haver dois produtos com o mesmo nome. A criação de
+     * itens de solicitação reaproveita o produto existente por nome em vez de duplicar.</p>
      */
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
     /**
      * Descrição detalhada do produto.

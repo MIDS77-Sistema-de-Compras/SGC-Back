@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import net.centroweg.gerenciamentocompras.modules.auth.domain.entity.UserPrincipal;
@@ -66,6 +67,7 @@ class NotificationIntegrationTest {
     @Autowired private WebApplicationContext context;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private NotificationRepository notificationRepository;
+    @Autowired private JdbcTemplate jdbcTemplate;
     @Autowired private UserRepository userRepository;
     @Autowired private RequestRepository requestRepository;
     @Autowired private StatusRepository statusRepository;
@@ -107,7 +109,7 @@ class NotificationIntegrationTest {
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(this.user)));
 
-        waitingStatus = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
+        waitingStatus = statusRepository.save(new Status("AGUARDANDO_APROVACAO", "Solicitacao aguardando aprovacao"));
 
         productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
         measurementUnitRepository.save(new MeasurementUnit("UN", "UN"));
@@ -143,10 +145,14 @@ class NotificationIntegrationTest {
     }
 
     private Notification criarNotificacao(String title, String message) {
+        return criarNotificacao(title, message, NotificationType.NOTIFICACAO_TESTE);
+    }
+
+    private Notification criarNotificacao(String title, String message, NotificationType notificationType) {
         Notification notification = new Notification();
         notification.setTitle(title);
         notification.setMessage(message);
-        notification.setNotificationType(NotificationType.NOTIFICACAO_TESTE);
+        notification.setNotificationType(notificationType);
         notification.setViewed(false);
         notification.setUserId(user.getId());
         notification.setRequestId(request.getId());
@@ -180,6 +186,27 @@ class NotificationIntegrationTest {
     }
 
     @Test
+    @DisplayName("[Integracao] Administrador deve visualizar somente alertas administrativos em suas notificacoes")
+    void administradorDeveVisualizarSomenteAlertasAdministrativos() throws Exception {
+        criarNotificacao(
+                "Item disponivel para retirada",
+                "Notificacao comum antiga",
+                NotificationType.ITEM_PARA_RETIRADA
+        );
+        criarNotificacao(
+                "Alerta administrativo",
+                "Uma acao critica foi registrada",
+                NotificationType.ALERTA_ADMINISTRATIVO
+        );
+
+        mockMvc.perform(get("/notifications/me")
+                        .with(authentication(authAs(user))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].notificationType").value("ALERTA_ADMINISTRATIVO"));
+    }
+
+    @Test
     @WithMockUser(authorities = "ADMIN")
     @DisplayName("[Integracao] Deve marcar uma notificacao como lida")
     void deveMarcarNotificacaoComoLida() throws Exception {
@@ -202,22 +229,52 @@ class NotificationIntegrationTest {
     }
 
     @Test
+    @DisplayName("[Integracao] Deve persistir o tipo da notificacao como texto")
+    void devePersistirNotificationTypeComoTexto() {
+        Notification notificacaoTeste = criarNotificacao(
+                "Notificacao de teste",
+                "Mensagem de teste",
+                NotificationType.NOTIFICACAO_TESTE
+        );
+        Notification notificacaoStatus = criarNotificacao(
+                "Status alterado",
+                "O status da solicitacao foi alterado",
+                NotificationType.STATUS_ALTERADO
+        );
+        notificationRepository.flush();
+
+        String tipoTestePersistido = jdbcTemplate.queryForObject(
+                "SELECT notification_type FROM notification WHERE id = ?",
+                String.class,
+                notificacaoTeste.getId()
+        );
+        String tipoStatusPersistido = jdbcTemplate.queryForObject(
+                "SELECT notification_type FROM notification WHERE id = ?",
+                String.class,
+                notificacaoStatus.getId()
+        );
+
+        assertEquals(NotificationType.NOTIFICACAO_TESTE.name(), tipoTestePersistido);
+        assertEquals(NotificationType.STATUS_ALTERADO.name(), tipoStatusPersistido);
+    }
+
+    @Test
     @WithMockUser(authorities = "ADMIN")
-    @DisplayName("[Integracao] Deve gerar notificacao ao criar uma solicitacao")
-    void deveGerarNotificacaoAoCriarSolicitacao() throws Exception {
+    @DisplayName("[Integracao] Administrador nao deve receber notificacao comum ao criar solicitacao")
+    void administradorNaoDeveReceberNotificacaoComumAoCriarSolicitacao() throws Exception {
         mockMvc.perform(post("/requests")
                         .with(authentication(authAs(user)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestJson(crBranch.getId())))
                 .andExpect(status().isCreated());
 
-        assertEquals(1, notificationRepository.findByUserId(user.getId()).size());
+        assertEquals(0, notificationRepository.findByUserId(user.getId()).size());
     }
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    @DisplayName("[Integracao] Deve gerar notificacao ao mudar o status de uma solicitacao")
-    void deveGerarNotificacaoAoMudarStatus() throws Exception {
+    @DisplayName("[Integracao] Administrador deve receber apenas alerta ao atualizar solicitacao")
+    void administradorDeveReceberApenasAlertaAoAtualizarSolicitacao() throws Exception {
         statusRepository.save(new Status("Em atendimento", "Compra em andamento"));
 
         String response = mockMvc.perform(post("/requests")
@@ -243,7 +300,41 @@ class NotificationIntegrationTest {
                                 """.formatted(crBranch.getId())))
                 .andExpect(status().isOk());
 
-        assertEquals(2, notificationRepository.findByUserId(user.getId()).size());
+        List<Notification> notifications = notificationRepository.findByUserId(user.getId());
+        assertEquals(1, notifications.size());
+        assertEquals(NotificationType.ALERTA_ADMINISTRATIVO, notifications.getFirst().getNotificationType());
+    }
+
+    @Test
+    @DisplayName("[Integracao] Administrador deve receber alerta ao desativar usuario")
+    void administradorDeveReceberAlertaAoDesativarUsuario() throws Exception {
+        Role compradorRole = roleRepository.save(new Role("COMPRADOR"));
+        User targetUser = new User(
+                "Usuario Alvo",
+                "11144477735",
+                "usuario.alvo@teste.com",
+                "Senha@123",
+                "5678",
+                true
+        );
+        targetUser.setRole(compradorRole);
+        targetUser = userRepository.save(targetUser);
+
+        mockMvc.perform(patch("/users/userId/{id}/active", targetUser.getId())
+                        .with(authentication(authAs(user)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"active\":false}"))
+                .andExpect(status().isOk());
+
+        List<Notification> notifications = notificationRepository.findByUserId(user.getId());
+        assertEquals(1, notifications.size());
+        assertEquals(NotificationType.ALERTA_ADMINISTRATIVO, notifications.getFirst().getNotificationType());
+
+        mockMvc.perform(get("/notifications/me")
+                        .with(authentication(authAs(user))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].notificationType").value("ALERTA_ADMINISTRATIVO"));
     }
 
     private String productRequestJson(Long crBranchId) {

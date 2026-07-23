@@ -50,6 +50,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDataIntegrity(DataIntegrityViolationException exception) {
+        log.warn("Violação de integridade de dados: {}", exception.getMostSpecificCause().getMessage());
         return buildResponse(HttpStatus.CONFLICT, "Conflito de dados: este registro já existe ou possui dependências.", null);
     }
 

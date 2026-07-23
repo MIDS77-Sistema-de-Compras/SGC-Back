@@ -30,8 +30,14 @@ final class DeliveryServiceTestFixtures {
     }
 
     static Status deliveredStatus() {
-        Status status = new Status("Entregue", "Entrega concluida");
+        Status status = new Status("ENTREGUE", "Entrega concluida");
         status.setId(30L);
+        return status;
+    }
+
+    static Status cancelledStatus() {
+        Status status = new Status("PEDIDO CANCELADO", "Entrega cancelada");
+        status.setId(40L);
         return status;
     }
 

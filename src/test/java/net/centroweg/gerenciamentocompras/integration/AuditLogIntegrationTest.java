@@ -179,6 +179,25 @@ class AuditLogIntegrationTest {
     }
 
     @Test
+    @DisplayName("PATCH /users/userId/{id}/active grava a alteração de ativação no log")
+    void deveAuditarAlteracaoDoStatusDeAtivacao() throws Exception {
+        long createdId = criarUsuarioComoAdmin();
+        auditLogRepository.deleteAll();
+
+        mockMvc.perform(patch("/users/userId/{id}/active", createdId)
+                        .with(csrf())
+                        .with(user(adminPrincipal))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"active\":false}"))
+                .andExpect(status().isOk());
+
+        AuditLog log = findLogByAction("ALTERAR_STATUS_ATIVACAO_USUARIO");
+        assertThat(log.getUserAgent().getEmail()).isEqualTo(ADMIN_EMAIL);
+        assertThat(log.getUserTarget()).isNotNull();
+        assertThat(log.getUserTarget().getId()).isEqualTo(createdId);
+    }
+
+    @Test
     @DisplayName("Endpoint auditado com principal cujo e-mail não está no banco não gera log e não quebra a requisição")
     void endpointAuditadoComPrincipalInexistenteNaoGeraLog() throws Exception {
         CreateUser request = new CreateUser(

@@ -6,10 +6,11 @@ import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface CreateInternalNotificationUseCase {
 
-    Notification createNotification(NotificationRequest notificationRequest);
+    Optional<Notification> createNotification(NotificationRequest notificationRequest);
 
     List<Notification> createNotifications(String title, String message, NotificationType notificationType, Long requestId, Collection<Long> userIds);
 }

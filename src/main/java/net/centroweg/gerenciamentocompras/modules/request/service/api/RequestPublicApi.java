@@ -25,4 +25,7 @@ public interface RequestPublicApi {
     Optional<Request> findRequestById(Long requestId);
     List<ItemRequestProduct> findItemProductsByIds(Collection<Long> ids);
     List<ItemRequestProvision> findItemProvisionsByIds(Collection<Long> ids);
+
+    /** Propaga para a solicitação o status final da entrega, de forma idempotente. */
+    void concludeRequest(Long requestId, String statusName);
 }

@@ -30,6 +30,7 @@ public class UpdateDeliveryServiceImpl {
     private final DeliveryReceiverValidator deliveryReceiverValidator;
     private final DeliveryItemResolver deliveryItemResolver;
     private final DeliveryMapper deliveryMapper;
+    private final CompleteRequestOnDeliveryStatusServiceImpl completeRequestOnDeliveryStatusService;
 
     @Transactional
     public DeliveryResponse update(Long id, UpdateDeliveryRequest request) {
@@ -50,7 +51,9 @@ public class UpdateDeliveryServiceImpl {
         replaceReceivers(delivery, receivers);
         replaceItems(delivery, request);
 
-        return deliveryMapper.toDTO(deliveryRepository.save(delivery));
+        Delivery savedDelivery = deliveryRepository.save(delivery);
+        completeRequestOnDeliveryStatusService.apply(savedDelivery);
+        return deliveryMapper.toDTO(savedDelivery);
     }
 
     private void ensureActive(Delivery delivery) {

@@ -60,7 +60,7 @@ public class AssignCrBranchResponsible {
 
         if (!alreadyResponsible) {
             updatedResponsibles.add(user);
-            validateCrBranchResponsibles.validate(updatedResponsibles);
+            validateCrBranchResponsibles.validate(crBranch.getCr(), updatedResponsibles);
             crBranch.setResponsibleUsers(updatedResponsibles);
             crBranchRepository.save(crBranch);
         }

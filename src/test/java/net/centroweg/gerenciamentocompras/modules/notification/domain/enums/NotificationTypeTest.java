@@ -31,18 +31,19 @@ class NotificationTypeTest {
                 NotificationType.ITEM_PARA_RETIRADA,
                 NotificationType.ENTREGA_CRIADA,
                 NotificationType.SOLICITACAO_VINCULADA_CR,
-                NotificationType.NOTIFICACAO_TESTE
+                NotificationType.NOTIFICACAO_TESTE,
+                NotificationType.ALERTA_ADMINISTRATIVO
             );
         }
 
         @Test
-        @DisplayName("Should have exactly 5 notification types")
-        void shouldHaveExactlyFiveNotificationTypes() {
+        @DisplayName("Should have exactly 6 notification types")
+        void shouldHaveExactlySixNotificationTypes() {
             // When
             int totalTypes = NotificationType.values().length;
 
             // Then
-            assertThat(totalTypes).isEqualTo(5);
+            assertThat(totalTypes).isEqualTo(6);
         }
 
         @Test
@@ -92,17 +93,18 @@ class NotificationTypeTest {
             assertThat(NotificationType.ENTREGA_CRIADA.name()).isEqualTo("ENTREGA_CRIADA");
             assertThat(NotificationType.SOLICITACAO_VINCULADA_CR.name()).isEqualTo("SOLICITACAO_VINCULADA_CR");
             assertThat(NotificationType.NOTIFICACAO_TESTE.name()).isEqualTo("NOTIFICACAO_TESTE");
+            assertThat(NotificationType.ALERTA_ADMINISTRATIVO.name()).isEqualTo("ALERTA_ADMINISTRATIVO");
         }
 
         @Test
-        @DisplayName("Should return correct ordinal for each enum constant")
-        void shouldReturnCorrectOrdinalForEachEnumConstant() {
+        @DisplayName("Should return correct textual value for each enum constant")
+        void shouldReturnCorrectTextualValueForEachEnumConstant() {
             // When/Then
-            assertThat(NotificationType.STATUS_ALTERADO.ordinal()).isEqualTo(0);
-            assertThat(NotificationType.ITEM_PARA_RETIRADA.ordinal()).isEqualTo(1);
-            assertThat(NotificationType.ENTREGA_CRIADA.ordinal()).isEqualTo(2);
-            assertThat(NotificationType.SOLICITACAO_VINCULADA_CR.ordinal()).isEqualTo(3);
-            assertThat(NotificationType.NOTIFICACAO_TESTE.ordinal()).isEqualTo(4);
+            assertThat(NotificationType.STATUS_ALTERADO.toString()).isEqualTo("STATUS_ALTERADO");
+            assertThat(NotificationType.ITEM_PARA_RETIRADA.toString()).isEqualTo("ITEM_PARA_RETIRADA");
+            assertThat(NotificationType.ENTREGA_CRIADA.toString()).isEqualTo("ENTREGA_CRIADA");
+            assertThat(NotificationType.SOLICITACAO_VINCULADA_CR.toString()).isEqualTo("SOLICITACAO_VINCULADA_CR");
+            assertThat(NotificationType.NOTIFICACAO_TESTE.toString()).isEqualTo("NOTIFICACAO_TESTE");
         }
     }
 
@@ -132,6 +134,7 @@ class NotificationTypeTest {
                 case STATUS_ALTERADO -> "Status alterado";
                 case ITEM_PARA_RETIRADA -> "Item para retirada";
                 case ENTREGA_CRIADA -> "Entrega criada";
+                case ALERTA_ADMINISTRATIVO -> "Alerta administrativo";
                 case SOLICITACAO_VINCULADA_CR -> "Solicitação vinculada à CR";
                 case NOTIFICACAO_TESTE -> "Notificação de teste";
             };

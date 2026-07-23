@@ -11,7 +11,7 @@ import net.centroweg.gerenciamentocompras.modules.notification.presentation.dto.
 
 public interface NotificationService {
 
-    NotificationResponse createNotification(NotificationRequest request);
+    void createNotification(NotificationRequest request);
     List<NotificationResponse> findNotificationsByUser(Long userId);
     List<NotificationResponse> findUnviewedNotificationsByUser(Long userId);
     NotificationResponse markAsViewed(Long id);

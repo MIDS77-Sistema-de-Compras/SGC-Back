@@ -9,6 +9,7 @@ import net.centroweg.gerenciamentocompras.modules.request.domain.entity.Status;
 import net.centroweg.gerenciamentocompras.modules.request.domain.exception.RequestNotFoundException;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.RequestPublicApi;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.StatusPublicApi;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class CreateDeliveryForApprovedRequestServiceImpl {
 
-    private static final String IN_SERVICE_STATUS = "Em atendimento";
+    private static final String IN_SERVICE_STATUS = RequestStatusNames.EM_ATENDIMENTO;
     private static final String DEFAULT_DELIVERY_LOCATION = "A definir";
     private static final String DEFAULT_DESCRIPTION =
             "Entrega criada automaticamente após a aprovação da solicitação.";

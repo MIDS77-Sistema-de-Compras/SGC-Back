@@ -4,6 +4,7 @@ import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Branch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.CrBranch;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.InvalidCrBranchResponsibleRoleException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.InvalidCrMasterResponsibleException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.MaxActiveSupervisorsException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.MaxCrBranchCoordinatorsException;
 import net.centroweg.gerenciamentocompras.modules.cr.infrastructure.persistence.repository.BranchRepository;
@@ -122,6 +123,35 @@ class CreateCrBranchTest {
 
         verify(crBranchRepository, never()).save(org.mockito.ArgumentMatchers.any());
         verifyNoInteractions(crBranchMapper);
+    }
+
+    @Test
+    void shouldRejectSupervisorForMasterCrWithoutSaving() {
+        cr.setMaster(true);
+        List<User> responsibles = List.of(user(10L, Authorities.SUPERVISOR, true));
+        arrangeCreation(responsibles);
+
+        assertThrows(InvalidCrMasterResponsibleException.class,
+                () -> createCrBranch.create(new CrBranchRequest(1L, 2L, List.of(10L))));
+
+        verify(crBranchRepository, never()).save(org.mockito.ArgumentMatchers.any());
+        verifyNoInteractions(crBranchMapper);
+    }
+
+    @Test
+    void shouldCreateMasterCrBranchWithOneActiveCoordinator() {
+        cr.setMaster(true);
+        List<User> responsibles = List.of(user(10L, Authorities.COORDENADOR, true));
+        CrBranch crBranch = new CrBranch(branch, cr, responsibles);
+        CrBranchResponse response = new CrBranchResponse(30L, "Filial Centro", "TI", "7940", List.of("Viviane"));
+        arrangeCreation(responsibles);
+        when(crBranchMapper.toEntity(branch, cr, responsibles)).thenReturn(crBranch);
+        when(crBranchMapper.toResponse(crBranch)).thenReturn(response);
+
+        CrBranchResponse result = createCrBranch.create(new CrBranchRequest(1L, 2L, List.of(10L)));
+
+        assertThat(result).isEqualTo(response);
+        verify(crBranchRepository).save(crBranch);
     }
 
     private void arrangeCreation(List<User> responsibles) {

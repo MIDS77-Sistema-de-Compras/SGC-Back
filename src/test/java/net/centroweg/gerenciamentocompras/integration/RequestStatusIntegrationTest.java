@@ -93,7 +93,7 @@ class RequestStatusIntegrationTest {
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(responsible)));
 
-        pending = statusRepository.save(new Status("Aguardando aprovação", "Solicitacao aguardando aprovacao"));
+        pending = statusRepository.save(new Status("AGUARDANDO_APROVACAO", "Solicitacao aguardando aprovacao"));
         approved = statusRepository.save(new Status("Aprovado", "Solicitacao aprovada"));
         refused = statusRepository.save(new Status("Recusado", "Solicitacao recusada"));
         inService = statusRepository.save(new Status("Em atendimento", "Solicitacao em atendimento"));

@@ -1,6 +1,8 @@
 package net.centroweg.gerenciamentocompras.modules.cr.service.crbranchservice.functionality;
 
+import net.centroweg.gerenciamentocompras.modules.cr.domain.entity.Cr;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.InvalidCrBranchResponsibleRoleException;
+import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.InvalidCrMasterResponsibleException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.MaxActiveSupervisorsException;
 import net.centroweg.gerenciamentocompras.modules.cr.domain.exception.MaxCrBranchCoordinatorsException;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
@@ -17,6 +19,18 @@ public class ValidateCrBranchResponsibles {
 
     private static final int MAX_ACTIVE_SUPERVISORS = 2;
     private static final int MAX_COORDINATORS = 1;
+
+    /**
+     * Valida os responsáveis considerando se o CR é Master.
+     */
+    public void validate(Cr cr, List<User> responsibleUsers) {
+        if (cr != null && Boolean.TRUE.equals(cr.getMaster())) {
+            validateMasterResponsibles(responsibleUsers);
+            return;
+        }
+
+        validate(responsibleUsers);
+    }
 
     /**
      * Valida a lista completa de responsáveis antes de ela ser persistida.
@@ -43,6 +57,20 @@ public class ValidateCrBranchResponsibles {
         if (coordinators > MAX_COORDINATORS) {
             throw new MaxCrBranchCoordinatorsException(MAX_COORDINATORS);
         }
+    }
+
+    private void validateMasterResponsibles(List<User> responsibleUsers) {
+        if (responsibleUsers == null
+                || responsibleUsers.size() != 1
+                || !isEligibleMasterResponsible(responsibleUsers.get(0))) {
+            throw new InvalidCrMasterResponsibleException();
+        }
+    }
+
+    boolean isEligibleMasterResponsible(User user) {
+        return user != null
+                && Boolean.TRUE.equals(user.getActive())
+                && isCoordinator(user);
     }
 
     private void validateAllowedRole(User user) {

@@ -3,6 +3,7 @@ package net.centroweg.gerenciamentocompras.modules.notification.service.factory;
 import net.centroweg.gerenciamentocompras.modules.notification.infrastructure.url.RequestFrontendUrlBuilder;
 import net.centroweg.gerenciamentocompras.modules.request.service.api.dto.RequestStatusNotificationData;
 import net.centroweg.gerenciamentocompras.modules.request.service.event.RequestStatusChangedEvent;
+import net.centroweg.gerenciamentocompras.modules.request.service.util.RequestStatusNames;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailButton;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailFooter;
 import net.centroweg.gerenciamentocompras.shared.email.components.EmailLayout;
@@ -15,7 +16,6 @@ import org.springframework.web.util.HtmlUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 @Component
 public class RequestStatusEmailContentFactory {
@@ -77,9 +77,7 @@ public class RequestStatusEmailContentFactory {
     }
 
     private String formatStatus(String value) {
-        if (!hasText(value)) return "Nao informado";
-        String normalized = value.replace('_', ' ').trim().replaceAll("\\s+", " ").toLowerCase(Locale.forLanguageTag("pt-BR"));
-        return normalized.substring(0, 1).toUpperCase(Locale.forLanguageTag("pt-BR")) + normalized.substring(1);
+        return RequestStatusNames.toDisplayName(value);
     }
 
     private String formatDate(LocalDateTime value) {

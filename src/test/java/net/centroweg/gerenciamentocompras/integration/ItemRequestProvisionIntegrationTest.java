@@ -235,6 +235,28 @@ class ItemRequestProvisionIntegrationTest {
     }
 
     @Test
+    @DisplayName("PUT /item-provision-requests/request/{itemId} - Should accept blank additional information")
+    void updateItem_ShouldAcceptBlankAdditionalInformation() throws Exception {
+        ItemRequestProvisionRequest request = new ItemRequestProvisionRequest(
+                1L,
+                10L,
+                100L,
+                ""
+        );
+        when(itemRequestProvisionService.updateItemFromProvisionRequest(
+                eq(1000L), any(ItemRequestProvisionRequest.class)))
+                .thenReturn(validResponse);
+
+        mockMvc.perform(put("/item-provision-requests/request/1000")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(itemRequestProvisionService).updateItemFromProvisionRequest(
+                eq(1000L), any(ItemRequestProvisionRequest.class));
+    }
+
+    @Test
     @DisplayName("DELETE /item-provision-requests/request/{itemId} - Should delete item and return NO_CONTENT")
     void deleteItem_ShouldReturnNoContent() throws Exception {
         // Arrange

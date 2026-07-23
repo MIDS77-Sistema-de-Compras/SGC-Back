@@ -26,6 +26,7 @@ import net.centroweg.gerenciamentocompras.modules.user.domain.entity.Role;
 import net.centroweg.gerenciamentocompras.modules.user.domain.entity.User;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.RoleRepository;
 import net.centroweg.gerenciamentocompras.modules.user.infrastructure.persistence.UserRepository;
+import net.centroweg.gerenciamentocompras.shared.security.authority.Authorities;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -101,14 +102,18 @@ class RequestCreateItemsIntegrationTest {
 
         deleteData();
 
-        requester = saveUser("Solicitante", "11144477735", "solicitante@teste.com", "1111");
-        responsible = saveUser("Responsavel", "52998224725", "responsavel@teste.com", "2222");
+        // Solicitante DOCENTE (SUPERVISOR/COORDENADOR auto-aprovariam a solicitação) e
+        // responsável SUPERVISOR: usuários ADMIN não recebem notificações comuns, só alertas.
+        requester = saveUser("Solicitante", "11144477735", "solicitante@teste.com", "1111", Authorities.DOCENTE);
+        responsible = saveUser("Responsavel", "52998224725", "responsavel@teste.com", "2222", Authorities.SUPERVISOR);
 
         Branch branch = branchRepository.save(new Branch("Filial Centro"));
         Cr cr = crRepository.save(new Cr("TI", "7940", false));
         crBranch = crBranchRepository.save(new CrBranch(branch, cr, List.of(responsible)));
 
-        statusRepository.save(new Status("Aguardando aprovação", "Solicitacao em andamento"));
+        statusRepository.save(new Status("AGUARDANDO_APROVACAO", "Solicitacao em andamento"));
+        statusRepository.save(new Status("AUTO_APROVADO", "Solicitacao aprovada automaticamente"));
+        statusRepository.save(new Status("EM_ATENDIMENTO", "Compra em andamento"));
         productRepository.save(new Product(null, "Parafuso", "Parafuso de teste", 1.0, "Insumo", "PAR-001"));
         measurementUnitRepository.save(new MeasurementUnit("Quilograma", "KG"));
         provision = provisionRepository.save(new Provision("Manutencao", 150.0, "Servico de manutencao"));
@@ -127,7 +132,7 @@ class RequestCreateItemsIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestJson("Parafuso", "KG")))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"))
+                .andExpect(jsonPath("$.statusName").value("AGUARDANDO_APROVACAO"))
                 .andExpect(jsonPath("$.products.length()").value(1))
                 .andExpect(jsonPath("$.products[0].productName").value("Parafuso"))
                 .andExpect(jsonPath("$.products[0].variation").value("M8 zincado"))
@@ -146,8 +151,20 @@ class RequestCreateItemsIntegrationTest {
         assertEquals(1, productRepository.count());
         assertEquals(requestId, savedItems.get(0).getRequest().getId());
         assertEquals("M8 zincado", savedItems.get(0).getVariation());
-        assertEquals("Aguardando aprovação", savedItems.get(0).getStatus_id().getName());
+        assertEquals("AGUARDANDO_APROVACAO", savedItems.get(0).getStatus_id().getName());
         assertEquals(1, notificationRepository.findByUserId(responsible.getId()).size());
+    }
+
+    @Test
+    @DisplayName("Supervisor deve criar solicitacao autoaprovada com os status canonicos")
+    void shouldCreateAutoApprovedRequestWithCanonicalStatuses() throws Exception {
+        mockMvc.perform(post("/requests")
+                        .with(authentication(authAs(responsible)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productRequestJson("Parafuso", "KG")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.statusName").value("AUTO_APROVADO"))
+                .andExpect(jsonPath("$.products[0].statusName").value("AUTO_APROVADO"));
     }
 
     @Test
@@ -158,7 +175,7 @@ class RequestCreateItemsIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(provisionRequestJson(provision.getId())))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.statusName").value("Aguardando aprovação"))
+                .andExpect(jsonPath("$.statusName").value("AGUARDANDO_APROVACAO"))
                 .andExpect(jsonPath("$.products.length()").value(0))
                 .andExpect(jsonPath("$.provisions.length()").value(1))
                 .andExpect(jsonPath("$.provisions[0].provisionId").value(provision.getId()))
@@ -387,9 +404,9 @@ class RequestCreateItemsIntegrationTest {
         assertEquals(0, notificationRepository.count());
     }
 
-    private User saveUser(String name, String cpf, String email, String extension) {
+    private User saveUser(String name, String cpf, String email, String extension, String roleName) {
         User user = new User(name, cpf, email, "Senha@123", extension, true);
-        user.setRole(roleRepository.save(new Role("ADMIN")));
+        user.setRole(roleRepository.save(new Role(roleName)));
         return userRepository.save(user);
     }
 
@@ -397,7 +414,7 @@ class RequestCreateItemsIntegrationTest {
         return new UsernamePasswordAuthenticationToken(
                 new UserPrincipal(user),
                 null,
-                List.of(new SimpleGrantedAuthority("ADMIN"))
+                List.of(new SimpleGrantedAuthority(user.getRole().getName()))
         );
     }
 

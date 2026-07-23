@@ -120,6 +120,7 @@ class DeliveryIntegrationTest {
 
     private Status pendingStatus;
     private Status deliveredStatus;
+    private Status cancelledStatus;
     private Request request;
     private User comprador;
     private User docente;
@@ -146,6 +147,7 @@ class DeliveryIntegrationTest {
 
         pendingStatus = statusRepository.save(new Status("EM_ANDAMENTO", "Em andamento"));
         deliveredStatus = statusRepository.save(new Status("Entregue", "Entrega concluida"));
+        cancelledStatus = statusRepository.save(new Status("Pedido cancelado", "Entrega cancelada"));
 
         request = requestRepository.save(new Request(crBranch, pendingStatus));
     }
@@ -317,6 +319,78 @@ class DeliveryIntegrationTest {
     }
 
     @Test
+    @DisplayName("Solicitacao e concluida quando os dois recebedores confirmam a entrega")
+    void shouldConcludeRequestWhenBothReceiversConfirmDelivery() throws Exception {
+        Delivery delivery = createDelivery();
+
+        confirm(delivery, firstReceiver, null).andExpect(status().isOk());
+        confirm(delivery, secondReceiver, null).andExpect(status().isOk());
+
+        Request persisted = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(persisted.getStatus().getId()).isEqualTo(deliveredStatus.getId());
+    }
+
+    @Test
+    @DisplayName("Solicitacao e concluida quando a entrega e cancelada")
+    void shouldConcludeRequestWhenDeliveryIsCancelled() throws Exception {
+        Delivery delivery = createDelivery();
+
+        mockMvc.perform(delete("/deliveries/{id}", delivery.getId())
+                        .with(user(new UserPrincipal(comprador))))
+                .andExpect(status().isNoContent());
+
+        Request persisted = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(persisted.getStatus().getId()).isEqualTo(cancelledStatus.getId());
+    }
+
+    @Test
+    @DisplayName("Solicitacao e concluida quando o PUT define o status da entrega como Entregue")
+    void shouldConcludeRequestWhenPutSetsStatusToEntregue() throws Exception {
+        Delivery delivery = createDelivery();
+
+        mockMvc.perform(put("/deliveries/{id}", delivery.getId())
+                        .with(user(new UserPrincipal(comprador)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateBodyWithStatus(deliveredStatus.getId(), firstReceiver.getId(), secondReceiver.getId())))
+                .andExpect(status().isOk());
+
+        Request persisted = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(persisted.getStatus().getId()).isEqualTo(deliveredStatus.getId());
+    }
+
+    @Test
+    @DisplayName("Solicitacao e concluida quando o PUT define o status da entrega como Pedido cancelado")
+    void shouldConcludeRequestWhenPutSetsStatusToPedidoCancelado() throws Exception {
+        Delivery delivery = createDelivery();
+
+        mockMvc.perform(put("/deliveries/{id}", delivery.getId())
+                        .with(user(new UserPrincipal(comprador)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateBodyWithStatus(cancelledStatus.getId(), firstReceiver.getId(), secondReceiver.getId())))
+                .andExpect(status().isOk());
+
+        Request persisted = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(persisted.getStatus().getId()).isEqualTo(cancelledStatus.getId());
+    }
+
+    @Test
+    @DisplayName("Reenviar o mesmo status de conclusao nao gera erro nem reprocessa a conclusao")
+    void shouldNotFailWhenRequestIsAlreadyConcluded() throws Exception {
+        Delivery delivery = createDelivery();
+        confirm(delivery, firstReceiver, null).andExpect(status().isOk());
+        confirm(delivery, secondReceiver, null).andExpect(status().isOk());
+
+        mockMvc.perform(put("/deliveries/{id}", delivery.getId())
+                        .with(user(new UserPrincipal(comprador)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateBodyWithStatus(deliveredStatus.getId(), firstReceiver.getId(), secondReceiver.getId())))
+                .andExpect(status().isOk());
+
+        Request persisted = requestRepository.findById(request.getId()).orElseThrow();
+        assertThat(persisted.getStatus().getId()).isEqualTo(deliveredStatus.getId());
+    }
+
+    @Test
     @DisplayName("Restricao unica impede usuario duplicado na mesma entrega")
     void shouldRejectDuplicatedReceiverUniqueConstraint() {
         Delivery delivery = createDelivery();
@@ -483,6 +557,20 @@ class DeliveryIntegrationTest {
                     "receiverIds": [%d, %d]
                 }
                 """.formatted(pendingStatus.getId(), LocalDateTime.now().plusDays(2), firstReceiverId, secondReceiverId);
+    }
+
+    private String updateBodyWithStatus(Long statusId, Long firstReceiverId, Long secondReceiverId) {
+        return """
+                {
+                    "statusId": %d,
+                    "expectedDeliveryAt": "%s",
+                    "deliveredAt": null,
+                    "deliveryLocation": "Almoxarifado",
+                    "description": "Entrega atualizada",
+                    "proofUrl": "https://example.com/prova-atualizada.pdf",
+                    "receiverIds": [%d, %d]
+                }
+                """.formatted(statusId, LocalDateTime.now().plusDays(2), firstReceiverId, secondReceiverId);
     }
 
     private String createBodyWithItems(Long requestId, String productItemIds, String provisionItemIds) {
